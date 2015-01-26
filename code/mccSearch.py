@@ -11,7 +11,6 @@ import glob
 import itertools
 import json
 import math
-import Nio
 from netCDF4 import Dataset, num2date, date2num
 import numpy as np
 import numpy.ma as ma
@@ -42,8 +41,8 @@ import process
 #the first point closest the the value (for the min) from the MERG data is used, etc.
 LATMIN = '5.0' #min latitude; -ve values in the SH e.g. 5S = -5
 LATMAX = '19.0' #max latitude; -ve values in the SH e.g. 5S = -5 20.0
-LONMIN = '-17.5' #min longitude; -ve values in the WH e.g. 59.8W = -59.8 -30
-LONMAX = '20.0' #min longitude; -ve values in the WH e.g. 59.8W = -59.8  30
+LONMIN = '-5.0' #min longitude; -ve values in the WH e.g. 59.8W = -59.8 -30
+LONMAX = '9.0' #min longitude; -ve values in the WH e.g. 59.8W = -59.8  30
 XRES = 4.0				#x direction spatial resolution in km
 YRES = 4.0				#y direction spatial resolution in km
 TRES = 1 				#temporal resolution in hrs
@@ -130,14 +129,27 @@ def readMergData(dirname, filelist=None):
 		sys.exit()
 	else:
 		# Open the first file in the list to read in lats, lons and generate the  grid for comparison
-		tmp = Nio.open_file(filelist[0], format='nc')
+		#tmp = Nio.open_file(filelist[0], format='nc')
+		tmp = Dataset(filelist[0], 'r+',format='NETCDF4')
+
+		alllatsraw = tmp.variables[mergLatVarName][:]
+		alllonsraw = tmp.variables[mergLonVarName][:]
+		alllonsraw[alllonsraw > 180] = alllonsraw[alllonsraw > 180] - 360.  # convert to -180,180 if necessary
 		
-		#clip the lat/lon grid according to user input
-		#http://www.pyngl.ucar.edu/NioExtendedSelection.shtml
-		latsraw = tmp.variables[mergLatVarName][mergLatVarName+"|"+LATMIN+":"+LATMAX].astype('f2')
-		lonsraw = tmp.variables[mergLonVarName][mergLonVarName+"|"+LONMIN+":"+LONMAX].astype('f2')
-		lonsraw[lonsraw > 180] = lonsraw[lonsraw > 180] - 360.  # convert to -180,180 if necessary
+		#get the lat/lon info data (different resolution)
+		latminNETCDF = find_nearest(alllatsraw, float(LATMIN))
+		latmaxNETCDF = find_nearest(alllatsraw, float(LATMAX))
+		lonminNETCDF = find_nearest(alllonsraw, float(LONMIN))
+		lonmaxNETCDF = find_nearest(alllonsraw, float(LONMAX))
+		latminIndex = (np.where(alllatsraw == latminNETCDF))[0][0]
+		latmaxIndex = (np.where(alllatsraw == latmaxNETCDF))[0][0]
+		lonminIndex = (np.where(alllonsraw == lonminNETCDF))[0][0]
+		lonmaxIndex = (np.where(alllonsraw == lonmaxNETCDF))[0][0]
 		
+		#subsetting the data
+		latsraw = alllatsraw[latminIndex: latmaxIndex]
+		lonsraw = alllonsraw[lonminIndex:lonmaxIndex]
+
 		LON, LAT = np.meshgrid(lonsraw, latsraw)
 		#clean up
 		latsraw =[]
@@ -147,23 +159,23 @@ def readMergData(dirname, filelist=None):
 	
 	for files in filelist:
 		try:
-			thisFile = Nio.open_file(files, format='nc') 
+			thisFile = Dataset(files,'r', format='NETCDF4')
 			#clip the dataset according to user lat,lon coordinates
 			#mask the data and fill with zeros for later 
-			tempRaw = thisFile.variables[mergVarName][mergLatVarName+"|"+LATMIN+":"+LATMAX \
-			                           +" " +mergLonVarName+"|"+LONMIN+":"+LONMAX ].astype('int16')
-
-			tempMask = ma.masked_array(tempRaw, mask=(tempRaw > T_BB_MAX), fill_value=0) 
-			
+			tempRaw = thisFile.variables[mergVarName][:,latminIndex:latmaxIndex,lonminIndex:lonmaxIndex].astype('int16')
+ 			
+ 			tempMask = ma.masked_array(tempRaw, mask=(tempRaw > T_BB_MAX), fill_value=0) 
+ 			
 			#get the actual values that the mask returned
 			tempMaskedValue = ma.zeros((tempRaw.shape)).astype('int16')
+
 			for index, value in maenumerate(tempMask): 
 				time_index, lat_index, lon_index = index			
 				tempMaskedValue[time_index,lat_index, lon_index]=value	
-				
-			timesRaw = thisFile.variables[mergTimeVarName]
+			
+			xtimes = thisFile.variables[mergTimeVarName]
 			#convert this time to a python datastring
-			time2store, _ = process.getModelTimes(files, mergTimeVarName)
+			time2store, _ = getModelTimes(xtimes, mergTimeVarName)
 			#extend instead of append because getModelTimes returns a list already and we don't 
 			#want a list of list
 			timelist.extend(time2store)
@@ -172,10 +184,10 @@ def readMergData(dirname, filelist=None):
 			thisFile = None
 			
 		except:
-			print "bad file! ", file
+			print "bad file! ", files
 
 	mergImgs = ma.array(mergImgs)
-
+	
 	return mergImgs, timelist
 #******************************************************************
 def findCloudElements(mergImgs,timelist,TRMMdirName=None):
@@ -2452,6 +2464,193 @@ def tempMaskedImages(imgFilename):
 	gradscmd = 'grads -blc ' + '\'run tempMaskedImages.gs''\'' 
 	subprocess.call(gradscmd, shell=True)
 	return
+#******************************************************************
+def getModelTimes(xtimes, timeVarName):
+    '''
+    Taken from process.py, removed the file opening at the beginning 
+    TODO:  Do a better job handling dates here
+    Routine to convert from model times ('hours since 1900...', 'days since ...')
+    into a python datetime structure
+
+    Input::
+        modelFile - path to the model tile you want to extract the times list and modelTimeStep from
+        timeVarName - name of the time variable in the model file
+
+    Output::
+        times  - list of python datetime objects describing model data times
+        modelTimeStep - 'hourly','daily','monthly','annual'
+    '''
+
+    timeFormat = xtimes.units
+    # search to check if 'since' appears in units
+    try:
+        sinceLoc = re.search('since', timeFormat).end()
+
+    except AttributeError:
+        print 'Error decoding model times: time variable attributes do not contain "since"'
+        raise
+
+    units = None
+    TIME_UNITS = ('minutes', 'hours', 'days', 'months', 'years')
+    # search for 'seconds','minutes','hours', 'days', 'months', 'years' so know units
+    for unit in TIME_UNITS:
+        if re.search(unit, timeFormat):
+            units = unit
+            break
+
+    # cut out base time (the bit following 'since')
+    base_time_string = string.lstrip(timeFormat[sinceLoc:])
+    # decode base time
+    base_time = decodeTimeFromString(base_time_string)
+    
+    times = []
+
+    for xtime in xtimes[:]:
+        # Cast time as an int
+        #TODO: KDW this may cause problems for data that is hourly with more than one timestep in it
+        xtime = int(xtime)
+        
+        if int(xtime) == 0:
+        	xtime = 1
+        
+        if units == 'minutes':
+            dt = timedelta(minutes=xtime)
+            new_time = base_time + dt
+        elif units == 'hours':
+        	dt = timedelta(hours=int(xtime))
+        	new_time = base_time + dt# timedelta(hours=int(xtime))
+        elif units == 'days':
+            dt = timedelta(days=xtime)
+            new_time = base_time + dt
+        elif units == 'months':
+            # NB. adding months in python is complicated as month length varies and hence ambiguous.+
+            # Perform date arithmatic manually
+            #  Assumption: the base_date will usually be the first of the month
+            #              NB. this method will fail if the base time is on the 29th or higher day of month
+            #                      -as can't have, e.g. Feb 31st.
+            new_month = int(base_time.month + xtime % 12)
+            new_year = int(math.floor(base_time.year + xtime / 12.))
+            new_time = datetime.datetime(new_year, new_month, base_time.day, base_time.hour, base_time.second, 0)
+        elif units == 'years':
+            dt = datetime.timedelta(years=xtime)
+            new_time = base_time + dt
+
+        times.append(new_time)
+
+    try:
+        if len(xtimes) == 1:
+            timeStepLength = 0
+        else:
+            timeStepLength = int(xtimes[1] - xtimes[0] + 1.e-12)
+            
+        modelTimeStep = getModelTimeStep(units, timeStepLength)
+       
+        #if timeStepLength is zero do not normalize times as this would create an empty list for MERG (hourly) data
+        if timeStepLength != 0:
+            times = normalizeDatetimes(times, modelTimeStep) 
+    except:
+        raise
+
+    return times, modelTimeStep
+#******************************************************************
+def getModelTimeStep(units, stepSize):
+    # Time units are now determined. Determine the time intervals of input data (mdlTimeStep)
+    '''
+    Taken from process.py
+    '''
+    if units == 'minutes':
+        if stepSize == 60:
+            modelTimeStep = 'hourly'
+        elif stepSize == 1440:
+            modelTimeStep = 'daily'
+        # 28 days through 31 days
+        elif 40320 <= stepSize <= 44640:
+            modelTimeStep = 'monthly'
+        # 365 days through 366 days
+        elif 525600 <= stepSize <= 527040:
+            modelTimeStep = 'annual'
+        else:
+            raise Exception('model data time step interval exceeds the max time interval (annual)', units, stepSize)
+
+    elif units == 'hours':
+        #need a check for fractional hrs and only one hr i.e. stepSize=0 e.g. with MERG data
+        if stepSize == 0 or stepSize == 1:
+            modelTimeStep = 'hourly'
+        elif stepSize == 24:
+            modelTimeStep = 'daily'
+        elif 672 <= stepSize <= 744:
+            modelTimeStep = 'monthly'
+        elif 8760 <= stepSize <= 8784:
+            modelTimeStep = 'annual'
+        else:
+            raise Exception('model data time step interval exceeds the max time interval (annual)', units, stepSize)
+
+    elif units == 'days':
+        if stepSize == 1:
+            modelTimeStep = 'daily'
+        elif 28 <= stepSize <= 31:
+            modelTimeStep = 'monthly'
+        elif 365 <= stepSize <= 366:
+            modelTimeStep = 'annual'
+        else:
+            raise Exception('model data time step interval exceeds the max time interval (annual)', units, stepSize)
+
+    elif units == 'months':
+        if stepSize == 1:
+            modelTimeStep = 'monthly'
+        elif stepSize == 12:
+            modelTimeStep = 'annual'
+        else:
+            raise Exception('model data time step interval exceeds the max time interval (annual)', units, stepSize)
+
+    elif units == 'years':
+        if stepSize == 1:
+            modelTimeStep = 'annual'
+        else:
+            raise Exception('model data time step interval exceeds the max time interval (annual)', units, stepSize)
+
+    else:
+        errorMessage = 'the time unit ', units, ' is not currently handled in this version.'
+        raise Exception(errorMessage)
+
+    return modelTimeStep
+#******************************************************************
+def decodeTimeFromString(time_string):
+    '''
+    Taken from process.py
+     Decodes string into a python datetime object
+     *Method:* tries a bunch of different time format possibilities and hopefully one of them will hit.
+     ::
+
+       **Input:**  time_string - a string that represents a date/time
+
+       **Output:** mytime - a python datetime object
+    '''
+    # This will deal with times that use decimal seconds
+    if '.' in time_string:
+        time_string = time_string.split('.')[0] + '0'
+    else:
+        pass
+
+    try:
+    	mytime = datetime.strptime(time_string,'%Y-%m-%d %H')
+        return mytime
+
+    except ValueError:
+        pass
+
+    print 'Error decoding time string: string does not match a predefined time format'
+    return 0
+#******************************************************************
+def do_regrid(q, lat, lon, lat2, lon2, order=1, mdi=-999999999):
+    """ 
+    This function has been moved to the ocw/dataset_processor module
+    """
+    from ocw import dataset_processor
+    q2 = dataset_processor._rcmes_spatial_regrid(q, lat, lon, lat2, lon2, order=1)
+
+    return q2
+ 
 #******************************************************************
 # 
 #             METRICS FUNCTIONS FOR MERG.PY
