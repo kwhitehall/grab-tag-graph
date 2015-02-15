@@ -134,7 +134,7 @@ def main():
     print ("-"*80)
     #some calculations/metrics that work that work
     print "creating the MCC userfile ", mccSearch.createTextFile(MCCList,1)
-    #print "creating the MCS userfile ", mccSearch.createTextFile(MCSList,2)
+    print "creating the MCS userfile ", mccSearch.createTextFile(MCSList,2)
     plotMenu(MCCList, MCSList)
     
     #Let's get outta here! Engage!

@@ -2506,12 +2506,15 @@ def getModelTimes(xtimes, timeVarName):
     times = []
 
     for xtime in xtimes[:]:
+        
+        if xtime%10 != 0:
+        	xtime = 1
+
         # Cast time as an int
         #TODO: KDW this may cause problems for data that is hourly with more than one timestep in it
         xtime = int(xtime)
         
-        if int(xtime) == 0:
-        	xtime = 1
+        
         
         if units == 'minutes':
             dt = timedelta(minutes=xtime)
