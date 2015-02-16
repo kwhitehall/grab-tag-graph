@@ -31,10 +31,8 @@ from matplotlib import cm
 import matplotlib.cm as cm
 import matplotlib.colors as mcolors
 from matplotlib.ticker import FuncFormatter, FormatStrFormatter
+from scipy.ndimage import map_coordinates
 
-#existing modules in services
-import files
-import process
 #----------------------- GLOBAL VARIABLES --------------------------
 # --------------------- User defined variables ---------------------
 #FYI the lat lon values are not necessarily inclusive of the points given. These are the limits
@@ -374,7 +372,7 @@ def findCloudElements(mergImgs,timelist,TRMMdirName=None):
 					#---------regrid the TRMM data to the MERG dataset ----------------------------------
 					#regrid using the do_regrid stuff from the Apache OCW 
 					regriddedTRMM = ma.zeros((0, nygrd, nxgrd))
-					regriddedTRMM = process.do_regrid(precipRateMasked[0,:,:], LATTRMM,  LONTRMM, LAT, LON, order=1, mdi= -999999999)
+					regriddedTRMM = do_regrid(precipRateMasked[0,:,:], LATTRMM,  LONTRMM, LAT, LON, order=1, mdi= -999999999)
 					#----------------------------------------------------------------------------------
 		
 					# #get the lat/lon info from cloudElement
@@ -666,7 +664,7 @@ def findPrecipRate(TRMMdirName, timelist):
 		#---------regrid the TRMM data to the MERG dataset ----------------------------------
 		#regrid using the do_regrid stuff from the Apache OCW 
 		regriddedTRMM = ma.zeros((0, nygrd, nxgrd))
-		regriddedTRMM = process.do_regrid(precipRateMasked[0,:,:], LATTRMM,  LONTRMM, LAT, LON, order=1, mdi= -999999999)
+		regriddedTRMM = do_regrid(precipRateMasked[0,:,:], LATTRMM,  LONTRMM, LAT, LON, order=1, mdi= -999999999)
 		#----------------------------------------------------------------------------------
 
 		# #get the lat/lon info from
@@ -2644,17 +2642,106 @@ def decodeTimeFromString(time_string):
 
     print 'Error decoding time string: string does not match a predefined time format'
     return 0
+# #******************************************************************
+# def do_regrid(q, lat, lon, lat2, lon2, order=1, mdi=-999999999):
+#     """ 
+#     This function has been moved to the ocw/dataset_processor module
+#     """
+#     from ocw import dataset_processor
+#     q2 = dataset_processor._rcmes_spatial_regrid(q, lat, lon, lat2, lon2, order=1)
+
+#     return q2
 #******************************************************************
-def do_regrid(q, lat, lon, lat2, lon2, order=1, mdi=-999999999):
-    """ 
-    This function has been moved to the ocw/dataset_processor module
-    """
-    from ocw import dataset_processor
-    q2 = dataset_processor._rcmes_spatial_regrid(q, lat, lon, lat2, lon2, order=1)
+def do_regrid(q, lat, lon, lat2, lon2, order=1, mdi= -999999999):
+    '''
+     Perform regridding from one set of lat,lon values onto a new set (lat2,lon2)
+    
+     Input::
+         q          - the variable to be regridded
+         lat,lon    - original co-ordinates corresponding to q values
+         lat2,lon2  - new set of latitudes and longitudes that you want to regrid q onto 
+         order      - (optional) interpolation order 1=bi-linear, 3=cubic spline
+         mdi  	    - (optional) fill value for missing data (used in creation of masked array)
+      
+     Output::
+         q2  - q regridded onto the new set of lat2,lon2 
+    
+    '''
+
+    nlat = q.shape[0]
+    nlon = q.shape[1]
+
+    nlat2 = lat2.shape[0]
+    nlon2 = lon2.shape[1]
+
+    # To make our lives easier down the road, let's 
+    # turn these into arrays of x & y coords
+    loni = lon2.ravel()
+    lati = lat2.ravel()
+
+    loni = loni.copy() # NB. it won't run unless you do this...
+    lati = lati.copy()
+
+    # Now, we'll set points outside the boundaries to lie along an edge
+    loni[loni > lon.max()] = lon.max()
+    loni[loni < lon.min()] = lon.min()
+    
+    # To deal with the "hard" break, we'll have to treat y differently,
+    # so we're just setting the min here...
+    lati[lati > lat.max()] = lat.max()
+    lati[lati < lat.min()] = lat.min()
+    
+    
+    # We need to convert these to (float) indicies
+    #   (xi should range from 0 to (nx - 1), etc)
+    loni = (nlon - 1) * (loni - lon.min()) / (lon.max() - lon.min())
+    
+    # Deal with the "hard" break in the y-direction
+    lati = (nlat - 1) * (lati - lat.min()) / (lat.max() - lat.min())
+    
+    # Notes on dealing with MDI when regridding data.
+    #  Method adopted here:
+    #    Use bilinear interpolation of data by default (but user can specify other order using order=... in call)
+    #    Perform bilinear interpolation of data, and of mask.
+    #    To be conservative, new grid point which contained some missing data on the old grid is set to missing data.
+    #            -this is achieved by looking for any non-zero interpolated mask values.
+    #    To avoid issues with bilinear interpolation producing strong gradients leading into the MDI,
+    #     set values at MDI points to mean data value so little gradient visible = not ideal, but acceptable for now.
+    
+    # Set values in MDI so that similar to surroundings so don't produce large gradients when interpolating
+    # Preserve MDI mask, by only changing data part of masked array object.
+    for shift in (-1, 1):
+        for axis in (0, 1):
+            q_shifted = np.roll(q, shift=shift, axis=axis)
+            idx = ~q_shifted.mask * q.mask
+            q.data[idx] = q_shifted[idx]
+
+    # Now we actually interpolate
+    # map_coordinates does cubic interpolation by default, 
+    # use "order=1" to preform bilinear interpolation instead...
+    q2 = map_coordinates(q, [lati, loni], order=order)
+    q2 = q2.reshape([nlat2, nlon2])
+
+    # Set values to missing data outside of original domain
+    q2 = ma.masked_array(q2, mask=np.logical_or(np.logical_or(lat2 >= lat.max(), 
+                                                              lat2 <= lat.min()), 
+                                                np.logical_or(lon2 <= lon.min(), 
+                                                              lon2 >= lon.max())))
+    
+    # Make second map using nearest neighbour interpolation -use this to determine locations with MDI and mask these
+    qmdi = np.zeros_like(q)
+    qmdi[q.mask == True] = 1.
+    qmdi[q.mask == False] = 0.
+    qmdi_r = map_coordinates(qmdi, [lati, loni], order=order)
+    qmdi_r = qmdi_r.reshape([nlat2, nlon2])
+    mdimask = (qmdi_r != 0.0)
+    
+    # Combine missing data mask, with outside domain mask define above.
+    q2.mask = np.logical_or(mdimask, q2.mask)
 
     return q2
- 
-#******************************************************************
+
+#****************************************************************** 
 # 
 #             METRICS FUNCTIONS FOR MERG.PY
 # TODO: rewrite these metrics so that they use the data from the 
