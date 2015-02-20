@@ -4,13 +4,16 @@
 
 import sys
 import networkx as nx
-import mccSearch
 import numpy as np
 import numpy.ma as ma
-import files
 import matplotlib.pyplot as plt
 import subprocess
 
+import mccSearch
+import iomethods
+import utils
+import metrics
+import plotting
 
 def main():
     CEGraph = nx.DiGraph()
@@ -20,23 +23,27 @@ def main():
     MCSMCCNodesList =[]
     allMCSsList =[]
     allCETRMMList =[]
+    DIRS={}
+
+    DIRS={
+             mainDirStr= "/directory/to/where/to/store/outputs"
+             TRMMdirName = "/directory/to/the/TRMM/netCDF/files" 
+             CEoriDirName = "/directory/to/the/MERG/netCDF/files"
+            }
 
     #for GrADs
     subprocess.call('export DISPLAY=:0.0', shell=True)
 
-    mainDirStr= "/directory/to/where/to/store/outputs"
-    TRMMdirName = "/directory/to/the/TRMM/netCDF/files" 
-    CEoriDirName = "/directory/to/the/MERG/netCDF/files"
-
     #for first time working with the raw MERG zipped files 
-    # mccSearch.preprocessingMERG("/Users/kimwhitehall/Documents/HU/research/DATA")
+    # rawMERG = "/directory/to/the/raw/MERGfiles"
+    # utils.preprocessingMERG(rawMERG)
     # ---------------------------------------------------------------------------------
 
 
     #create main directory and file structure for storing intel
-    mccSearch.createMainDirectory(mainDirStr)
-    TRMMCEdirName = mainDirStr+'/TRMMnetcdfCEs'
-    CEdirName = mainDirStr+'/MERGnetcdfCEs'
+    DIRS['mainDirStr'] = utils.createMainDirectory(DIRS['mainDirStr'])
+    TRMMCEdirName = DIRS['mainDirStr']+'/TRMMnetcdfCEs'
+    CEdirName = DIRS['mainDirStr']+'/MERGnetcdfCEs'
 
     # for doing some postprocessing with the clipped datasets instead of running the full program, e.g.
     # mccSearch.postProcessingNetCDF(3,CEoriDirName)
@@ -45,17 +52,14 @@ def main():
 
     #let's go!
     print "\n -------------- Read MERG Data ----------"
-    mergImgs, timeList = mccSearch.readMergData(CEoriDirName)
+    mergImgs, timeList, LAT, LON = iomethods.readMergData(DIRS['CEoriDirName'], filelist)
     print ("-"*80)
 
-    print 'in main', len(mergImgs)
-    #print 'timeList', timeList
-    print 'TRMMdirName ', TRMMdirName
     print "\n -------------- TESTING findCloudElements ----------"
-    CEGraph = mccSearch.findCloudElements(mergImgs,timeList,TRMMdirName)
+    CEGraph = mccSearch.findCloudElements(mergImgs,timeList,DIRS['mainDirStr'], LAT,LON,DIRS['TRMMdirName'])
     #if the TRMMdirName wasnt entered for whatever reason, you can still get the TRMM data this way
-    # CEGraph = mccSearch.findCloudElements(mergImgs,timeList)
-    # allCETRMMList=mccSearch.findPrecipRate(TRMMdirName,timeList)
+    # CEGraph = mccSearch.findCloudElements(mergImgs,timeList,DIRS['mainDirStr'], LAT,LON)
+    # allCETRMMList=mccSearch.findPrecipRate(DIRS['TRMMdirName'],timeList)
     # ----------------------------------------------------------------------------------------------
     print ("-"*80)
     print "number of nodes in CEGraph is: ", CEGraph.number_of_nodes()
@@ -76,23 +80,22 @@ def main():
     print "\n -------------- TESTING METRICS ----------"
 
     #some calculations/metrics that work that work
-    # print "creating the MCC userfile ", mccSearch.createTextFile(MCCList,1)
-    # print "creating the MCS userfile ", mccSearch.createTextFile(MCSList,2)
-    # MCCTimes, tdelta = mccSearch.temporalAndAreaInfoMetric(MCCList)
-    # print "number of MCCs is: ", mccSearch.numberOfFeatures(MCCList)
-    # print "longest duration is: ", mccSearch.longestDuration(MCCTimes), "hrs"
-    # print "shortest duration is: ", mccSearch.shortestDuration(MCCTimes), "hrs"
-    # #print "Average duration is: ", mccSearch.convert_timedelta(mccSearch.averageMCCLength(MCCTimes))
-    # print "Average duration is: ", mccSearch.averageDuration(MCCTimes), "hrs"
-    # print "Average size is: ", mccSearch.averageFeatureSize(MCCList), "km^2" 
+    # print "creating the MCC userfile ", metrics.createTextFile(MCCList,1)
+    # print "creating the MCS userfile ", metrics.createTextFile(MCSList,2)
+    # MCCTimes, tdelta = metrics.temporalAndAreaInfoMetric(MCCList)
+    # print "number of MCCs is: ", metrics.numberOfFeatures(MCCList)
+    # print "longest duration is: ", metrics.longestDuration(MCCTimes), "hrs"
+    # print "shortest duration is: ", metrics.shortestDuration(MCCTimes), "hrs"
+    # print "Average duration is: ", metrics.averageDuration(MCCTimes), "hrs"
+    # print "Average size is: ", mmetrics.averageFeatureSize(MCCList), "km^2" 
     
     #some plots that work
-    # mccSearch.plotAccTRMM(MCCList)
-    # mccSearch.displayPrecip(MCCList)
-    # mccSearch.plotAccuInTimeRange('2009-09-01_00:00:00', '2009-09-01_09:00:00')
-    # mccSearch.displaySize(MCCList)
-    # mccSearch.displayPrecip(MCCList)
-    # mccSearch.plotHistogram(MCCList)
+    # plotting.plotAccTRMM(MCCList)
+    # plotting.displayPrecip(MCCList)
+    # plotting.plotAccuInTimeRange('yyyy-mm-dd_hh:mm:ss', 'yyyy-mm-dd_hh:mm:ss')
+    # plotting.displaySize(MCCList)
+    # plotting.displayPrecip(MCCList)
+    # plotting.plotHistogram(MCCList)
     #
     print ("-"*80)
     
