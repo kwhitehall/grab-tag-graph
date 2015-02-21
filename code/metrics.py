@@ -1,25 +1,8 @@
 import datetime
 from datetime import timedelta, datetime
+
 import numpy as np
 
-import calendar
-import fileinput
-import glob
-import itertools
-import json
-import math
-from netCDF4 import Dataset, num2date, date2num
-import numpy.ma as ma
-import os
-import pickle
-import re
-from scipy import ndimage
-import string
-import subprocess
-import sys
-import time
-
-import networkx as nx
 import mccSearch
 
 #****************************************************************** 

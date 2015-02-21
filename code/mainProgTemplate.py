@@ -2,18 +2,13 @@
 # running the program
 '''
 
-import sys
 import networkx as nx
-import numpy as np
-import numpy.ma as ma
-import matplotlib.pyplot as plt
 import subprocess
 
-import mccSearch
 import iomethods
+import mccSearch
 import utils
-import metrics
-import plotting
+
 
 def main():
     CEGraph = nx.DiGraph()

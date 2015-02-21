@@ -10,27 +10,25 @@
 # from scipy import ndimage
 # import string
 
-
-
-import mccSearch
-
-import os
-import subprocess
-import networkx as nx
-import numpy as np
 import datetime 
 from datetime import timedelta, datetime
-import numpy.ma as ma
-import matplotlib.pyplot as plt
-import matplotlib.dates as mdates
-import matplotlib.cm as cm
-import matplotlib.colors as mcolors
-import time
 import glob
-from matplotlib.dates import DateFormatter,HourLocator 
+import os
+import subprocess
+import time
+
+import matplotlib.cm as cm
 from matplotlib import cm
-from netCDF4 import Dataset, num2date, date2num
+import matplotlib.colors as mcolors
+import matplotlib.dates as mdates
+import matplotlib.pyplot as plt
 from matplotlib.ticker import FuncFormatter, FormatStrFormatter
+from netCDF4 import Dataset
+import networkx as nx
+import numpy.ma as ma
+import numpy as np
+
+import mccSearch
 
 
 def drawGraph (thisGraph, graphTitle, MAINDIRECTORY, edgeWeight=None):

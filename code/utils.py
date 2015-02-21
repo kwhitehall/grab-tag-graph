@@ -1,15 +1,16 @@
-import numpy as np
-import numpy.ma as ma
+from datetime import timedelta, datetime
 import itertools
 import os
 import subprocess
 import re
 import string
 import math
-from netCDF4 import Dataset, num2date, date2num
-from datetime import timedelta, datetime
-from scipy import ndimage
+
+from netCDF4 import Dataset
+import numpy.ma as ma
+import numpy as np
 from scipy.ndimage import map_coordinates
+
 
 def checkForFiles(startTime, endTime, thisDir, fileType):
 	'''

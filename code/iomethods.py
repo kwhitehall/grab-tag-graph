@@ -1,11 +1,9 @@
-import datetime
-from datetime import timedelta, datetime
+
 import glob
-import itertools
-from netCDF4 import Dataset, num2date, date2num
-import numpy as np
+
 import numpy.ma as ma
-import os
+import numpy as np
+from netCDF4 import Dataset
 
 import utils
 #----------------------- GLOBAL VARIABLES --------------------------

@@ -2,13 +2,10 @@
 # Wizard for running the mccSearch program
 '''
 
-import sys
-import networkx as nx
-import numpy as np
-import numpy.ma as ma
 import os
-import matplotlib.pyplot as plt
 import subprocess
+
+import networkx as nx
 
 #mccSearch modules
 import mccSearch
