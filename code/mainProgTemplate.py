@@ -25,11 +25,11 @@ def main():
     allCETRMMList =[]
     DIRS={}
 
-    DIRS={
-             mainDirStr= "/directory/to/where/to/store/outputs"
-             TRMMdirName = "/directory/to/the/TRMM/netCDF/files" 
-             CEoriDirName = "/directory/to/the/MERG/netCDF/files"
-            }
+    # DIRS={
+    #          mainDirStr= "/directory/to/where/to/store/outputs"
+    #          TRMMdirName = "/directory/to/the/TRMM/netCDF/files" 
+    #          CEoriDirName = "/directory/to/the/MERG/netCDF/files"
+    #         }
 
     #for GrADs
     subprocess.call('export DISPLAY=:0.0', shell=True)

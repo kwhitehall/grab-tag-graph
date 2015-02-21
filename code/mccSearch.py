@@ -3,35 +3,16 @@
 # Following RCMES dataformat in format (t,lat,lon), value
 '''
 
-import datetime
-from datetime import timedelta, datetime
-import calendar
-import fileinput
+from datetime import timedelta
 import glob
 import itertools
-import json
-import math
-from netCDF4 import Dataset, num2date, date2num
+from netCDF4 import Dataset, date2num
 import numpy as np
 import numpy.ma as ma
 import os
-import pickle
-import re
 from scipy import ndimage
-import string
-import subprocess
-import sys
-import time
 
 import networkx as nx
-import matplotlib.pyplot as plt
-import matplotlib.dates as mdates
-from matplotlib.dates import DateFormatter,HourLocator 
-from matplotlib import cm
-import matplotlib.cm as cm
-import matplotlib.colors as mcolors
-from matplotlib.ticker import FuncFormatter, FormatStrFormatter
-from scipy.ndimage import map_coordinates
 
 #GTG modules
 import utils
