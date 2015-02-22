@@ -454,8 +454,8 @@ def findCloudElements(mergImgs,timelist,mainStrDir,LAT,LON,TRMMdirName=None):
         prevFrameCEs = currFrameCEs
         currFrameCEs =[]
 
-    cloudElementsFile.close
-    cloudElementsUserFile.close
+    cloudElementsFile.close()
+    cloudElementsUserFile.close()
     #if using ARCGIS data store code, uncomment this file close line
     #cloudElementsTextFile.close
 
@@ -706,7 +706,7 @@ def findCloudClusters(CEGraph):
 
     graphTitle = "Cloud Clusters observed over somewhere during sometime"
     plotting.drawGraph(PRUNED_GRAPH, graphTitle, MAINDIRECTORY, edgeWeight)
-    cloudClustersFile.close
+    cloudClustersFile.close()
 
     return PRUNED_GRAPH
 #******************************************************************
