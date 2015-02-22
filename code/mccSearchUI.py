@@ -25,7 +25,7 @@ def main():
     DIRS={}
     # DIRS={
     #          mainDirStr= "/directory/to/where/to/store/outputs"
-    #          TRMMdirName = "/directory/to/the/TRMM/netCDF/files" 
+    #          TRMMdirName = "/directory/to/the/TRMM/netCDF/files"
     #          CEoriDirName = "/directory/to/the/MERG/netCDF/files"
     #         }
     preprocessing = ''
@@ -34,7 +34,7 @@ def main():
     #for GrADs
     subprocess.call('export DISPLAY=:0.0', shell=True)
 
-   
+
     print "Running MCCSearch ..... \n"
     DIRS['mainDirStr'] = raw_input("> Please enter working directory: \n" )   # This is where data created will be stored
 
@@ -51,7 +51,7 @@ def main():
         else:
             print "Error! Invalid choice "
             preprocessing = raw_input ("> Do you need to preprocess the MERG files? [y/n]: \n")
-    
+
 
     #get the location of the MERG and TRMM data
     DIRS['CEoriDirName'] = raw_input("> Please enter the directory to the MERG netCDF files: \n")
@@ -83,14 +83,14 @@ def main():
     while utils.validDate(endDateTime) == 0:
         print "Invalid time entered for endDateTime!"
         endDateTime = raw_input("> Please enter the end date and time yyyymmddhr: \n")
-    
+
     #check if all the files exisits in the MERG and TRMM directories entered
     test,_ = utils.checkForFiles(startDateTime, endDateTime, DIRS['TRMMdirName'], 2)
     if test == False:
         print "Error with files in the original MERG directory entered. Please check your files before restarting. "
         return
     test,filelist = utils.checkForFiles(startDateTime, endDateTime, DIRS['CEoriDirName'],1)
-    
+
     if test == False:
         print "Error with files in the original TRMM directory entered. Please check your files before restarting. "
         return
@@ -115,7 +115,7 @@ def main():
     # Getting started. Make it so number one!
     print ("-"*80)
     print "\t\t Starting the MCCSearch Analysis "
-    print ("-"*80) 
+    print ("-"*80)
     print "\n -------------- Reading MERG and TRMM Data ----------"
     mergImgs, timeList, LAT, LON = iomethods.readMergData(DIRS['CEoriDirName'], filelist)
     print "\n -------------- findCloudElements ----------"
@@ -124,7 +124,7 @@ def main():
     #if the TRMMdirName wasnt entered for whatever reason, you can still get the TRMM data this way
     # CEGraph = mccSearch.findCloudElements(mergImgs,timeList)
     # allCETRMMList=mccSearch.findPrecipRate(DIRS['TRMMdirName'],timeList)
-    # ----------------------------------------------------------------------------------------------   
+    # ----------------------------------------------------------------------------------------------
     print "\n -------------- findCloudClusters ----------"
     prunedGraph = mccSearch.findCloudClusters(CEGraph)
     print "\n -------------- findMCCs ----------"
@@ -137,7 +137,7 @@ def main():
     print "creating the MCC userfile ", metrics.createTextFile(MCCList,1, DIRS['mainDirStr'], 80000.0, 1)
     print "creating the MCS userfile ", metrics.createTextFile(MCSList,2, DIRS['mainDirStr'], 80000.0, 1)
     plotMenu(MCCList, MCSList, DIRS)
-    
+
     #Let's get outta here! Engage!
     print ("-"*80)
 #*********************************************************************************************************************
@@ -148,12 +148,12 @@ def plotMenu(MCCList, MCSList, DIRS):
     Input:: MCCList: a list of directories representing a list of nodes in the MCC
             MCSList: a list of directories representing a list of nodes in the MCS
             DIRS: a dictionary indicating the paths to data, both original and generated
-            
+
     Output:: None
     '''
     option = displayPlotMenu()
     while option != 0:
-        #try:   
+        #try:
         if option == 1:
             print "Generating Accumulated Rainfall from TRMM for the entire period ...\n"
             plotting.plotAccTRMM(MCSList, DIRS['mainDirStr'])
@@ -176,8 +176,8 @@ def plotMenu(MCCList, MCSList, DIRS):
                 pass
         # except:
         #     print "Invalid option. Please try again, enter 0 to exit \n"
-     
-        option = displayPlotMenu() 
+
+        option = displayPlotMenu()
     return
 #*********************************************************************************************************************
 def displayPlotMenu():
@@ -224,7 +224,7 @@ def postProcessingplotMenu(DIRS):
     Input:: DIRS a dictionary of directories
     #       DIRS={
     #          mainDirStr= "/directory/to/where/to/store/outputs"
-    #          TRMMdirName = "/directory/to/the/TRMM/netCDF/files" 
+    #          TRMMdirName = "/directory/to/the/TRMM/netCDF/files"
     #          CEoriDirName = "/directory/to/the/MERG/netCDF/files"
     #         }
 
@@ -238,10 +238,10 @@ def postProcessingplotMenu(DIRS):
         try:
             if option == 1:
                 print "Generating images from the original MERG dataset ... \n"
-                utils.postProcessingNetCDF(3, DIRS['CEoriDirName']) 
+                utils.postProcessingNetCDF(3, DIRS['CEoriDirName'])
             if option == 2:
                 print "Generating images from the cloud elements using MERG IR data ... \n"
-                utils.postProcessingNetCDF(1, CEdirName) 
+                utils.postProcessingNetCDF(1, CEdirName)
             if option == 3:
                 print "Generating precipitation accumulation images from the cloud elements using TRMM data ... \n"
                 utils.postProcessingNetCDF(2, TRMMCEdirName)
@@ -258,9 +258,9 @@ def postProcessingplotMenu(DIRS):
             #     mccSearch.plotAccuInTimeRange()
         except:
             print "Invalid option, please try again"
-        option = displayPostprocessingPlotMenu() 
+        option = displayPostprocessingPlotMenu()
     return
 #*********************************************************************************************************************
-        
+
 main()
 
