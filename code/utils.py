@@ -17,15 +17,15 @@ def checkForFiles(startTime, endTime, thisDir, fileType):
     Purpose:: To ensure all the files between the starttime and endTime
               exist in the directory supplied
 
-    Input:: 
-            startTime: a string yyyymmmddhh representing the starttime 
+    Input::
+            startTime: a string yyyymmmddhh representing the starttime
             endTime: a string yyyymmmddhh representing the endTime
-            thisDir: a string representing the directory path where to 
+            thisDir: a string representing the directory path where to
                 look for the file
             fileType: an integer representing the type of file in the directory
                 1 - MERG original files, 2 - TRMM original files
 
-    Output:: 
+    Output::
             status: a boolean representing whether all files exists
 
     '''
@@ -59,10 +59,10 @@ def checkForFiles(startTime, endTime, thisDir, fileType):
         endFilename = thisDir+"/merg_"+endTime+"_4km-pixel.nc"
 
     if fileType == 2:
-        #TODO:: determine closest time for TRMM files for end 
+        #TODO:: determine closest time for TRMM files for end
         #http://disc.sci.gsfc.nasa.gov/additional/faq/precipitation_faq.shtml#convert
         if starthr%3 == 2:
-            currhr += 1 
+            currhr += 1
         elif starthr%3 ==1:
             currhr -= 1
         else:
@@ -70,7 +70,7 @@ def checkForFiles(startTime, endTime, thisDir, fileType):
 
         curryr, currmmStr, currddStr, currhrStr,_,_,_ = findTime(curryr, currmm, currdd, currhr)
 
-        startFilename = "3B42."+str(curryr)+currmmStr+currddStr+"."+currhrStr+".7A.nc"  
+        startFilename = "3B42."+str(curryr)+currmmStr+currddStr+"."+currhrStr+".7A.nc"
         if endhh%3 == 2:
             endhh += 1
         elif endhh%3 ==1:
@@ -91,7 +91,7 @@ def checkForFiles(startTime, endTime, thisDir, fileType):
         else:
             #create filelist
             filelist.append(currFilename)
-        
+
         status = True
         if currFilename == endFilename:
             break
@@ -113,10 +113,10 @@ def checkForFiles(startTime, endTime, thisDir, fileType):
 #******************************************************************
 def createMainDirectory(mainDirStr):
     '''
-    Purpose:: 
+    Purpose::
         To create the main directory for storing information and
         the subdirectories for storing information
-    Input:: 
+    Input::
         mainDir: a directory for where all information generated from
             the program are to be stored
     Output:: None
@@ -131,7 +131,7 @@ def createMainDirectory(mainDirStr):
 
     os.chdir((MAINDIRECTORY))
     #create the subdirectories
-    try:    
+    try:
         os.makedirs('images')
         os.makedirs('textFiles')
         os.makedirs('MERGnetcdfCEs')
@@ -172,17 +172,17 @@ def decodeTimeFromString(time_string):
 def doRegrid(q, lat, lon, lat2, lon2, order=1, mdi= -999999999):
     '''
      Perform regridding from one set of lat,lon values onto a new set (lat2,lon2)
-    
+
      Input::
          q          - the variable to be regridded
          lat,lon    - original co-ordinates corresponding to q values
-         lat2,lon2  - new set of latitudes and longitudes that you want to regrid q onto 
+         lat2,lon2  - new set of latitudes and longitudes that you want to regrid q onto
          order      - (optional) interpolation order 1=bi-linear, 3=cubic spline
          mdi        - (optional) fill value for missing data (used in creation of masked array)
-      
+
      Output::
-         q2  - q regridded onto the new set of lat2,lon2 
-    
+         q2  - q regridded onto the new set of lat2,lon2
+
     '''
 
     nlat = q.shape[0]
@@ -191,7 +191,7 @@ def doRegrid(q, lat, lon, lat2, lon2, order=1, mdi= -999999999):
     nlat2 = lat2.shape[0]
     nlon2 = lon2.shape[1]
 
-    # To make our lives easier down the road, let's 
+    # To make our lives easier down the road, let's
     # turn these into arrays of x & y coords
     loni = lon2.ravel()
     lati = lat2.ravel()
@@ -202,20 +202,20 @@ def doRegrid(q, lat, lon, lat2, lon2, order=1, mdi= -999999999):
     # Now, we'll set points outside the boundaries to lie along an edge
     loni[loni > lon.max()] = lon.max()
     loni[loni < lon.min()] = lon.min()
-    
+
     # To deal with the "hard" break, we'll have to treat y differently,
     # so we're just setting the min here...
     lati[lati > lat.max()] = lat.max()
     lati[lati < lat.min()] = lat.min()
-    
-    
+
+
     # We need to convert these to (float) indicies
     #   (xi should range from 0 to (nx - 1), etc)
     loni = (nlon - 1) * (loni - lon.min()) / (lon.max() - lon.min())
-    
+
     # Deal with the "hard" break in the y-direction
     lati = (nlat - 1) * (lati - lat.min()) / (lat.max() - lat.min())
-    
+
     # Notes on dealing with MDI when regridding data.
     #  Method adopted here:
     #    Use bilinear interpolation of data by default (but user can specify other order using order=... in call)
@@ -224,7 +224,7 @@ def doRegrid(q, lat, lon, lat2, lon2, order=1, mdi= -999999999):
     #            -this is achieved by looking for any non-zero interpolated mask values.
     #    To avoid issues with bilinear interpolation producing strong gradients leading into the MDI,
     #     set values at MDI points to mean data value so little gradient visible = not ideal, but acceptable for now.
-    
+
     # Set values in MDI so that similar to surroundings so don't produce large gradients when interpolating
     # Preserve MDI mask, by only changing data part of masked array object.
     for shift in (-1, 1):
@@ -234,17 +234,17 @@ def doRegrid(q, lat, lon, lat2, lon2, order=1, mdi= -999999999):
             q.data[idx] = q_shifted[idx]
 
     # Now we actually interpolate
-    # map_coordinates does cubic interpolation by default, 
+    # map_coordinates does cubic interpolation by default,
     # use "order=1" to preform bilinear interpolation instead...
     q2 = map_coordinates(q, [lati, loni], order=order)
     q2 = q2.reshape([nlat2, nlon2])
 
     # Set values to missing data outside of original domain
-    q2 = ma.masked_array(q2, mask=np.logical_or(np.logical_or(lat2 >= lat.max(), 
-                                                              lat2 <= lat.min()), 
-                                                np.logical_or(lon2 <= lon.min(), 
+    q2 = ma.masked_array(q2, mask=np.logical_or(np.logical_or(lat2 >= lat.max(),
+                                                              lat2 <= lat.min()),
+                                                np.logical_or(lon2 <= lon.min(),
                                                               lon2 >= lon.max())))
-    
+
     # Make second map using nearest neighbour interpolation -use this to determine locations with MDI and mask these
     qmdi = np.zeros_like(q)
     qmdi[q.mask == True] = 1.
@@ -252,7 +252,7 @@ def doRegrid(q, lat, lon, lat2, lon2, order=1, mdi= -999999999):
     qmdi_r = map_coordinates(qmdi, [lati, loni], order=order)
     qmdi_r = qmdi_r.reshape([nlat2, nlon2])
     mdimask = (qmdi_r != 0.0)
-    
+
     # Combine missing data mask, with outside domain mask define above.
     q2.mask = np.logical_or(mdimask, q2.mask)
 
@@ -260,7 +260,7 @@ def doRegrid(q, lat, lon, lat2, lon2, order=1, mdi= -999999999):
 #******************************************************************
 def findNearest(thisArray,value):
     '''
-    Purpose :: to determine the value within an array closes to 
+    Purpose :: to determine the value within an array closes to
             another value
 
     Input ::
@@ -268,7 +268,7 @@ def findNearest(thisArray,value):
     '''
     idx = (np.abs(thisArray-value)).argmin()
     return thisArray[idx]
-#****************************************************************** 
+#******************************************************************
 def findTime(curryr, currmm, currdd, currhr):
     '''
     Purpose:: To determine the new yr, mm, dd, hr
@@ -319,10 +319,10 @@ def findTime(curryr, currmm, currdd, currhr):
         currhrStr = str(currhr)
 
     return curryr, currmmStr, currddStr, currhrStr, currmm, currdd, currhr
-#****************************************************************** 
+#******************************************************************
 def getModelTimes(xtimes, timeVarName):
     '''
-    Taken from process.py, removed the file opening at the beginning 
+    Taken from process.py, removed the file opening at the beginning
     TODO:  Do a better job handling dates here
     Routine to convert from model times ('hours since 1900...', 'days since ...')
     into a python datetime structure
@@ -357,18 +357,18 @@ def getModelTimes(xtimes, timeVarName):
     base_time_string = string.lstrip(timeFormat[sinceLoc:])
     # decode base time
     base_time = decodeTimeFromString(base_time_string)
-    
+
     times = []
 
     for xtime in xtimes[:]:
-        
+
         if xtime%10 != 0:
             xtime = 1
 
         # Cast time as an int
         #TODO: KDW this may cause problems for data that is hourly with more than one timestep in it
-        xtime = int(xtime) 
-        
+        xtime = int(xtime)
+
         if units == 'minutes':
             dt = timedelta(minutes=xtime)
             new_time = base_time + dt
@@ -398,12 +398,12 @@ def getModelTimes(xtimes, timeVarName):
             timeStepLength = 0
         else:
             timeStepLength = int(xtimes[1] - xtimes[0] + 1.e-12)
-            
+
         modelTimeStep = getModelTimeStep(units, timeStepLength)
-       
+
         #if timeStepLength is zero do not normalize times as this would create an empty list for MERG (hourly) data
         if timeStepLength != 0:
-            times = normalizeDatetimes(times, modelTimeStep) 
+            times = normalizeDatetimes(times, modelTimeStep)
     except:
         raise
 
@@ -476,41 +476,41 @@ def maenumerate(mArray):
     Purpose::
         Utility script for returning the actual values from the masked array
         Taken from: http://stackoverflow.com/questions/8620798/numpy-ndenumerate-for-masked-arrays
-    
+
     Input::
         mArray: the masked array returned from the ma.array() command
-        
-        
+
+
     Output::
         maskedValues: 3D (t,lat,lon), value of only masked values
-    
+
     '''
 
     mask = ~mArray.mask.ravel()
     #beware yield fast, but generates a type called "generate" that does not allow for array methods
     for index, maskedValue in itertools.izip(np.ndenumerate(mArray), mask):
-        if maskedValue: 
-            yield index 
+        if maskedValue:
+            yield index
 #******************************************************************
 def preprocessingMERG(MERGdirname):
     '''
     Purpose::
-        Utility script for unzipping and converting the merg*.Z files from Mirador to 
+        Utility script for unzipping and converting the merg*.Z files from Mirador to
         NETCDF format. The files end up in a folder called mergNETCDF in the directory
         where the raw MERG data is
-        NOTE: VERY RAW AND DIRTY 
+        NOTE: VERY RAW AND DIRTY
 
     Input::
         Directory to the location of the raw MERG files, preferably zipped
-        
+
     Output::
        none
 
     Assumptions::
        1 GrADS (http://www.iges.org/grads/gadoc/) and lats4D (http://opengrads.org/doc/scripts/lats4d/)
-         have been installed on the system and the user can access 
+         have been installed on the system and the user can access
        2 User can write files in location where script is being called
-       3 the files havent been unzipped 
+       3 the files havent been unzipped
     '''
 
     os.chdir((MERGdirname+'/'))
@@ -567,7 +567,7 @@ def preprocessingMERG(MERGdirname):
         subprocess.call('touch merg.ctl', shell=True)
         replaceExpDset = 'echo DSET ' + fname +' >> merg.ctl'
         replaceExpTdef = 'echo TDEF 99999 LINEAR '+hr+'z'+day+mth+yy +' 30mn' +' >> merg.ctl'
-        subprocess.call(replaceExpDset, shell=True) 
+        subprocess.call(replaceExpDset, shell=True)
         subprocess.call('echo "OPTIONS yrev little_endian template" >> merg.ctl', shell=True)
         subprocess.call('echo "UNDEF  330" >> merg.ctl', shell=True)
         subprocess.call('echo "TITLE  globally merged IR data" >> merg.ctl', shell=True)
@@ -581,7 +581,7 @@ def preprocessingMERG(MERGdirname):
 
         #generate the lats4D command for GrADS
         #lats4D = 'lats4d -v -q -lat '+LATMIN + ' ' +LATMAX +' -lon ' +LONMIN +' ' +LONMAX +' -time '+hr+'Z'+day+mth+yy + ' -func @+75 ' + '-i merg.ctl' + ' -o ' + fname
-        
+
         #lats4D = 'lats4d -v -q -lat -40 -15 -lon 10 40 -time '+hr+'Z'+day+mth+yy + ' -func @+75 ' + '-i merg.ctl' + ' -o ' + fname
         #lats4D = 'lats4d -v -q -lat -5 40 -lon -90 60 -func @+75 ' + '-i merg.ctl' + ' -o ' + fname
 
@@ -601,27 +601,27 @@ def preprocessingMERG(MERGdirname):
 #******************************************************************
 def postProcessingNetCDF(dataset, dirName = None):
     '''
-    
+
     TODO: UPDATE TO PICK UP LIMITS FROM FILE FOR THE GRADS SCRIPTS
 
     Purpose::
-        Utility script displaying the data in generated NETCDF4 files 
+        Utility script displaying the data in generated NETCDF4 files
         in GrADS
-        NOTE: VERY RAW AND DIRTY 
+        NOTE: VERY RAW AND DIRTY
 
     Input::
         dataset: integer representing post-processed MERG (1) or TRMM data (2) or original MERG(3)
         string: Directory to the location of the raw (MERG) files, preferably zipped
-        
+
     Output::
        images in location as specfied in the code
 
     Assumptions::
        1 GrADS (http://www.iges.org/grads/gadoc/) and lats4D (http://opengrads.org/doc/scripts/lats4d/)
-         have been installed on the system and the user can access 
-       2 User can write files in location where script is being called  
-    ''' 
-    
+         have been installed on the system and the user can access
+       2 User can write files in location where script is being called
+    '''
+
     coreDir = os.path.dirname(os.path.abspath(__file__))
     ImgFilename = ''
     frameList=[]
@@ -644,7 +644,7 @@ def postProcessingNetCDF(dataset, dirName = None):
         gsFile = coreDir+"/../GrADSscripts/cs2.gs"
         sologsFile = coreDir+"/../GrADSscripts/mergeCE.gs"
         lineNum = 50
-    
+
     elif dataset ==2:
         var = 'precipAcc'
         ctlTitle ='TITLE  TRMM MCS accumulated precipitation search Output Grid: Time  lat lon '
@@ -660,7 +660,7 @@ def postProcessingNetCDF(dataset, dirName = None):
         ctlLine = 'ch4=\>ch4     1  t,y,x    brightnesstemperature'
         origsFile = coreDir+"/../GrADSscripts/cs1.gs"
         sologsFile = coreDir+"/../GrADSscripts/infrared.gs"
-        lineNum = 54            
+        lineNum = 54
 
     #sort files
     os.chdir((dirName+'/'))
@@ -668,19 +668,19 @@ def postProcessingNetCDF(dataset, dirName = None):
         os.makedirs('ctlFiles')
     except:
         print "ctl file folder created already"
-        
+
     files = filter(os.path.isfile, glob.glob("*.nc"))
     files.sort(key=lambda x: os.path.getmtime(x))
     for eachfile in files:
         fullFname = os.path.splitext(eachfile)[0]
         fnameNoExtension = fullFname.split('.nc')[0]
-        
+
         if dataset == 2 and fnameNoExtension[:4] != "TRMM":
             continue
 
         if dataset == 1 or dataset == 2:
             frameNum = int((fnameNoExtension.split('CE')[0]).split('00F')[1])
-        
+
         #create the ctlFile
         ctlFile1 = dirName+'/ctlFiles/'+fnameNoExtension + '.ctl'
         #the ctl file
@@ -688,8 +688,8 @@ def postProcessingNetCDF(dataset, dirName = None):
         subprocess.call(subprocessCall, shell=True)
         subprocessCall = 'touch '+ctlFile1
         subprocess.call(subprocessCall, shell=True)
-        lineToWrite = 'echo DSET ' + dirName+'/'+fnameNoExtension+'.nc' +' >>' + ctlFile1 
-        subprocess.call(lineToWrite, shell=True)  
+        lineToWrite = 'echo DSET ' + dirName+'/'+fnameNoExtension+'.nc' +' >>' + ctlFile1
+        subprocess.call(lineToWrite, shell=True)
         lineToWrite = 'echo DTYPE netcdf >> '+ctlFile1
         subprocess.call(lineToWrite, shell=True)
         lineToWrite = 'echo UNDEF 0 >> '+ctlFile1
@@ -697,14 +697,14 @@ def postProcessingNetCDF(dataset, dirName = None):
         lineToWrite = 'echo '+ctlTitle+' >> '+ctlFile1
         subprocess.call(lineToWrite, shell=True)
         fname = dirName+'/'+fnameNoExtension+'.nc'
-        if os.path.isfile(fname):   
-            #open NetCDF file add info to the accu 
+        if os.path.isfile(fname):
+            #open NetCDF file add info to the accu
             print "opening file ", fname
             fileData = Dataset(fname,'r',format='NETCDF4')
             lats = fileData.variables['latitude'][:]
             lons = fileData.variables['longitude'][:]
             LONDATA, LATDATA = np.meshgrid(lons,lats)
-            nygrd = len(LATDATA[:,0]) 
+            nygrd = len(LATDATA[:,0])
             nxgrd = len(LONDATA[0,:])
             fileData.close()
         lineToWrite = 'echo XDEF '+ str(nxgrd) + ' LINEAR ' + str(min(lons)) +' '+ str((max(lons)-min(lons))/nxgrd) +' >> ' +ctlFile1
@@ -729,13 +729,13 @@ def postProcessingNetCDF(dataset, dirName = None):
         subprocess.call(subprocessCall, shell=True)
 
         ImgFilename = fnameNoExtension + '.gif'
-                    
+
         displayCmd = '\''+'d '+ var+'\''+'\n'
         newFileCmd = '\''+'open '+ ctlFile1+'\''+'\n'
         colorbarCmd = '\''+'run cbarn'+'\''+'\n'
         printimCmd = '\''+'printim '+MAINDIRECTORY+'/images/'+ImgFilename+' x800 y600 white\''+'\n'
         quitCmd = '\''+'quit'+'\''+'\n'
-            
+
         GrADSscript = open(sologsFile,'r+')
         lines1 = GrADSscript.readlines()
         GrADSscript.seek(0)
@@ -764,8 +764,8 @@ def postProcessingNetCDF(dataset, dirName = None):
 
                     fnameNoExtension = fileName.split('.nc')[0]
                     frameNum = int((fnameNoExtension.split('CE')[0]).split('00F')[1])
-                    
-                    if frameNum == frame1: 
+
+                    if frameNum == frame1:
                         CE_num = fnameNoExtension.split('CE')[1]
                         ImgFilename = fnameNoExtension.split('CE')[0] + '.gif'
                         ctlFile1 = dirName+'/ctlFiles/'+fnameNoExtension + '.ctl'
@@ -794,15 +794,15 @@ def postProcessingNetCDF(dataset, dirName = None):
                 lines1.insert((lineNum + (count*2)+3), quitCmd)
                 GrADSscript.writelines(lines1)
                 GrADSscript.close()
-                
+
                 #run the script
                 runGrads = 'run '+ gsFile
                 gradscmd = 'grads -blc ' + '\'' +runGrads + '\''+'\n'
                 subprocess.call(gradscmd, shell=True)
-                
+
                 #remove the file data stuff
                 subprocessCall = 'cd '+dirName
-                
+
                 #reset the list for the next frame
                 fileList = frameList
                 frameList = []
@@ -811,33 +811,33 @@ def postProcessingNetCDF(dataset, dirName = None):
                         frameList.append(thisFile)
                 frameList.append(eachfile)
                 prevFrameNum = frameNum
-                
+
             else:
                 frameList.append(eachfile)
                 prevFrameNum = frameNum
                 firstTime = False
-                
-    return  
-#****************************************************************** 
+
+    return
+#******************************************************************
 def tempMaskedImages(imgFilename):
     '''
-    Purpose:: 
+    Purpose::
         To generate temperature-masked images for a first pass verification
 
     Input::
         imgFilename: filename for the gif file
-        
+
     Output::
         None - Gif images for each file of T_bb less than 250K are generated in folder called mergImgs
 
     Assumptions::
        Same as for preprocessingMERG
        1 GrADS (http://www.iges.org/grads/gadoc/) and lats4D (http://opengrads.org/doc/scripts/lats4d/)
-         have been installed on the system and the user can access 
+         have been installed on the system and the user can access
        2 User can write files in location where script is being called
-       3 the files havent been unzipped 
+       3 the files havent been unzipped
     '''
-    
+
     subprocess.call('rm tempMaskedImages.gs', shell=True)
     subprocess.call('touch tempMaskedImages.gs', shell=True)
     subprocess.call('echo "''\'open merg.ctl''\'" >> tempMaskedImages.gs', shell=True)
@@ -852,7 +852,7 @@ def tempMaskedImages(imgFilename):
     subprocess.call('echo "''\'draw title Masked Temp @ '+imgFilename +'\'" >> tempMaskedImages.gs', shell=True)
     subprocess.call('echo "''\'printim '+imgFilename +' x1000 y800''\'" >> tempMaskedImages.gs', shell=True)
     subprocess.call('echo "''\'quit''\'" >> tempMaskedImages.gs', shell=True)
-    gradscmd = 'grads -blc ' + '\'run tempMaskedImages.gs''\'' 
+    gradscmd = 'grads -blc ' + '\'run tempMaskedImages.gs''\''
     subprocess.call(gradscmd, shell=True)
     return
 #******************************************************************

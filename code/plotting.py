@@ -10,7 +10,7 @@
 # from scipy import ndimage
 # import string
 
-import datetime 
+import datetime
 from datetime import timedelta, datetime
 import glob
 import os
@@ -33,21 +33,21 @@ import mccSearch
 
 def drawGraph (thisGraph, graphTitle, MAINDIRECTORY, edgeWeight=None):
     '''
-    Purpose:: 
+    Purpose::
         Utility function to draw graph in the hierachial format
 
-    Input:: 
-        thisGraph: a Networkx directed graph 
+    Input::
+        thisGraph: a Networkx directed graph
         graphTitle: a string representing the graph title
         edgeWeight: (optional) a list of integers representing the edge weights in the graph
-    
+
     Output:: None
 
     '''
-    
+
     imgFilename = MAINDIRECTORY+'/images/'+ graphTitle+".gif"
-    fig=plt.figure(facecolor='white', figsize=(16,12)) 
-    
+    fig=plt.figure(facecolor='white', figsize=(16,12))
+
     edge95 = [(u,v) for (u,v,d) in thisGraph.edges(data=True) if d['weight'] == edgeWeight[0]]
     edge90 = [(u,v) for (u,v,d) in thisGraph.edges(data=True) if d['weight'] == edgeWeight[1]]
     edegeOverlap = [(u,v) for (u,v,d) in thisGraph.edges(data=True) if d['weight'] == edgeWeight[2]]
@@ -59,7 +59,7 @@ def drawGraph (thisGraph, graphTitle, MAINDIRECTORY, edgeWeight=None):
     #nodes
     nx.draw_networkx_nodes(thisGraph, pos, with_labels=True, arrows=False)
     #edges
-    nx.draw_networkx_edges(thisGraph, pos, edgelist=edge95, alpha=0.5, arrows=False) 
+    nx.draw_networkx_edges(thisGraph, pos, edgelist=edge95, alpha=0.5, arrows=False)
     nx.draw_networkx_edges(thisGraph, pos, edgelist=edge90,  edge_color='b', style='dashed', arrows=False)
     nx.draw_networkx_edges(thisGraph, pos, edgelist=edegeOverlap, edge_color='y', style='dashed', arrows=False)
     #labels
@@ -70,15 +70,15 @@ def drawGraph (thisGraph, graphTitle, MAINDIRECTORY, edgeWeight=None):
     os.chdir((MAINDIRECTORY+'/'))
     subprocess.call('rm test.dot', shell=True)
 #******************************************************************
-def displaySize(finalMCCList, MAINDIRECTORY): 
+def displaySize(finalMCCList, MAINDIRECTORY):
     '''
-    Purpose:: 
+    Purpose::
         To create a figure showing the area verse time for each MCS
 
-    Input:: 
+    Input::
         finalMCCList: a list of list of strings representing the list of nodes representing a MCC
-    
-    Output:: 
+
+    Output::
         None
 
     '''
@@ -103,8 +103,8 @@ def displaySize(finalMCCList, MAINDIRECTORY):
                     minArea = eachNode['cloudElementArea']
                 if eachNode['cloudElementArea'] > maxArea:
                     maxArea = eachNode['cloudElementArea']
-                
-            #sort and remove duplicates 
+
+            #sort and remove duplicates
             timeList=list(set(timeList))
             timeList.sort()
             tdelta = timeList[1] - timeList[0]
@@ -118,7 +118,7 @@ def displaySize(finalMCCList, MAINDIRECTORY):
             title = 'Area distribution of the MCC over somewhere'
             fig=plt.figure(facecolor='white', figsize=(18,10)) #figsize=(10,8))#figsize=(16,12))
             fig,ax = plt.subplots(1, facecolor='white', figsize=(10,10))
-            
+
             #the data
             for node in eachMCC: #for eachNode in eachMCC:
                 eachNode = mccSearch.thisDict(node)
@@ -128,7 +128,7 @@ def displaySize(finalMCCList, MAINDIRECTORY):
                     ax.plot(eachNode['cloudElementTime'], eachNode['cloudElementArea'],'yo',markersize=20)
                 else:
                     ax.plot(eachNode['cloudElementTime'], eachNode['cloudElementArea'],'ro',markersize=30)
-                
+
             #axes and labels
             maxArea += 1000.00
             ax.set_xlim(starttime,endtime)
@@ -137,23 +137,23 @@ def displaySize(finalMCCList, MAINDIRECTORY):
             ax.set_title(title)
             ax.fmt_xdata = mdates.DateFormatter('%Y-%m-%d%H:%M:%S')
             fig.autofmt_xdate()
-            
+
             plt.subplots_adjust(bottom=0.2)
-            
+
             imgFilename = MAINDIRECTORY+'/images/'+ str(count)+'MCS.gif'
             plt.savefig(imgFilename, facecolor=fig.get_facecolor(), transparent=True)
-            
+
             #if time in not already in the time list, append it
             timeList=[]
             count += 1
-    return 
+    return
 #******************************************************************
-def displayPrecip(finalMCCList, MAINDIRECTORY): 
+def displayPrecip(finalMCCList, MAINDIRECTORY):
     '''
-    Purpose:: 
+    Purpose::
         To create a figure showing the precip rate verse time for each MCS
 
-    Input:: 
+    Input::
         finalMCCList: a list of dictionaries representing a list of nodes representing a MCC
 
     Output:: None
@@ -181,7 +181,7 @@ def displayPrecip(finalMCCList, MAINDIRECTORY):
 
     num_bins = 5
 
-    
+
     #for each node in the list, get the area information from the dictionary
     #in the graph and calculate the area
 
@@ -200,13 +200,13 @@ def displayPrecip(finalMCCList, MAINDIRECTORY):
                 # print eachNode['uniqueID'], eachNode['cloudElementCenter'][1], eachNode['cloudElementCenter'][0]
                 x.append(eachNode['cloudElementCenter'][1])#-xStart)
                 y.append(eachNode['cloudElementCenter'][0])#-yStart)
-                
+
                 firstTime= False
 
             #convert the timeList[] to list of floats
             for i in xrange(len(timeList)): #oriTimeList:
                 colorBarTime.append(time.mktime(timeList[i].timetuple()))
-            
+
             totalSize = sum(CEArea)
             partialArea = [(a/totalSize)*30000 for a in CEArea]
 
@@ -217,19 +217,19 @@ def displayPrecip(finalMCCList, MAINDIRECTORY):
             fig,ax = plt.subplots(1, facecolor='white', figsize=(20,7))
 
             cmap = cm.jet
-            ax.scatter(x, y, s=partialArea,  c= colorBarTime, edgecolors='none', marker='o', cmap =cmap)  
+            ax.scatter(x, y, s=partialArea,  c= colorBarTime, edgecolors='none', marker='o', cmap =cmap)
             colorBarTime=[]
             colorBarTime =list(set(timeList))
             colorBarTime.sort()
             cb = colorbar_index(ncolors=len(colorBarTime), nlabels=colorBarTime, cmap = cmap)
-            
+
             #axes and labels
             ax.set_xlabel('Degrees Longtude', fontsize=12)
             ax.set_ylabel('Degrees Latitude', fontsize=12)
             ax.set_title(title)
             ax.grid(True)
             plt.subplots_adjust(bottom=0.2)
-            
+
             for i, txt in enumerate(nodes):
                 if CEArea[i] >= 2400.00:
                     ax.annotate('%d'%percentagePrecipitating[i]+'%', (x[i],y[i]))
@@ -237,7 +237,7 @@ def displayPrecip(finalMCCList, MAINDIRECTORY):
 
             imgFilename = MAINDIRECTORY+'/images/MCSprecip'+ str(count)+'.gif'
             plt.savefig(imgFilename, facecolor=fig.get_facecolor(), transparent=True)
-            
+
             #reset for next image
             timeList=[]
             percentagePrecipitating =[]
@@ -249,18 +249,18 @@ def displayPrecip(finalMCCList, MAINDIRECTORY):
             precip=[]
             count += 1
             firstTime = True
-    return 
+    return
 #******************************************************************
 def plotAccuInTimeRange(starttime, endtime,MAINDIRECTORY,TRES):
     '''
-    Purpose:: 
+    Purpose::
         Create accumulated precip plot within a time range given using all CEs
 
-    Input:: 
+    Input::
         starttime: a string representing the time to start the accumulations format yyyy-mm-dd_hh:mm:ss
         endtime: a string representing the time to end the accumulations format yyyy-mm-dd_hh:mm:ss
         TRES: a float representing the time res of the input data e.g. 30min=0.5
-    Output:: 
+    Output::
         a netcdf file containing the accumulated precip for specified times
         a gif (generated in Grads)
 
@@ -288,7 +288,7 @@ def plotAccuInTimeRange(starttime, endtime,MAINDIRECTORY,TRES):
             lats = TRMMCEData.variables['latitude'][:]
             lons = TRMMCEData.variables['longitude'][:]
             LONTRMM, LATTRMM = np.meshgrid(lons,lats)
-            nygrdTRMM = len(LATTRMM[:,0]) 
+            nygrdTRMM = len(LATTRMM[:,0])
             nxgrdTRMM = len(LONTRMM[0,:])
             precipRate = ma.masked_array(precipRate, mask=(precipRate < 0.0))
             TRMMCEData.close()
@@ -314,7 +314,7 @@ def plotAccuInTimeRange(starttime, endtime,MAINDIRECTORY,TRES):
     accuTRMMData.createDimension('time', None)
     accuTRMMData.createDimension('lat', nygrdTRMM)
     accuTRMMData.createDimension('lon', nxgrdTRMM)
-    
+
     # variables
     TRMMprecip = ('time','lat', 'lon',)
     times = accuTRMMData.createVariable('time', 'f8', ('time',))
@@ -325,8 +325,8 @@ def plotAccuInTimeRange(starttime, endtime,MAINDIRECTORY,TRES):
     rainFallacc.units = 'mm'
 
     longitude[:] = LONTRMM[0,:]
-    longitude.units = "degrees_east" 
-    longitude.long_name = "Longitude" 
+    longitude.units = "degrees_east"
+    longitude.long_name = "Longitude"
 
     latitude[:] =  LATTRMM[:,0]
     latitude.units = "degrees_north"
@@ -341,7 +341,7 @@ def plotAccuInTimeRange(starttime, endtime,MAINDIRECTORY,TRES):
     subprocess.call('rm acc.ctl', shell=True)
     subprocess.call('touch acc.ctl', shell=True)
     replaceExpDset = 'echo DSET ' + accuTRMMFile +' >> acc.ctl'
-    subprocess.call(replaceExpDset, shell=True)  
+    subprocess.call(replaceExpDset, shell=True)
     subprocess.call('echo "OPTIONS yrev little_endian template" >> acc.ctl', shell=True)
     subprocess.call('echo "DTYPE netcdf" >> acc.ctl', shell=True)
     subprocess.call('echo "UNDEF  0" >> acc.ctl', shell=True)
@@ -379,21 +379,21 @@ def plotAccuInTimeRange(starttime, endtime,MAINDIRECTORY,TRES):
     subprocess.call('rm accuTRMM1.gs', shell=True)
     subprocess.call('rm acc.ctl', shell=True)
 
-    return  
+    return
 #******************************************************************
 def plotAccTRMM (finalMCCList,MAINDIRECTORY):
     '''
-    Purpose:: 
+    Purpose::
         (1) generate a file with the accumulated precipiation for the MCS
         (2) generate the appropriate image
         TODO: NB: as the domain changes, will need to change XDEF and YDEF by hand to accomodate the new domain
         TODO: look into getting the info from the NETCDF file
 
-    Input:: 
+    Input::
         finalMCCList: a list of dictionaries representing a list of nodes representing a MCC
-  
-    Output:: 
-        a netcdf file containing the accumulated precip 
+
+    Output::
+        a netcdf file containing the accumulated precip
         a gif (generated in Grads)
     '''
     os.chdir((MAINDIRECTORY+'/TRMMnetcdfCEs'))
@@ -403,7 +403,7 @@ def plotAccTRMM (finalMCCList,MAINDIRECTORY):
     firstTime = True
     replaceExpXDef = ''
     thisNode =''
-    
+
     #Just incase the X11 server is giving problems
     subprocess.call('export DISPLAY=:0.0', shell=True)
 
@@ -414,15 +414,15 @@ def plotAccTRMM (finalMCCList,MAINDIRECTORY):
         for eachNode in path:
             thisNode = mccSearch.thisDict(eachNode)
             fname = 'TRMM'+ str(thisNode['cloudElementTime']).replace(" ", "_") + thisNode['uniqueID'] +'.nc'
-            
-            if os.path.isfile(fname):   
-                #open NetCDF file add info to the accu 
+
+            if os.path.isfile(fname):
+                #open NetCDF file add info to the accu
                 TRMMCEData = Dataset(fname,'r',format='NETCDF4')
                 precipRate = TRMMCEData.variables['precipitation_Accumulation'][:]
                 lats = TRMMCEData.variables['latitude'][:]
                 lons = TRMMCEData.variables['longitude'][:]
                 LONTRMM, LATTRMM = np.meshgrid(lons,lats)
-                nygrdTRMM = len(LATTRMM[:,0]) 
+                nygrdTRMM = len(LATTRMM[:,0])
                 nxgrdTRMM = len(LONTRMM[0,:])
                 precipRate = ma.masked_array(precipRate, mask=(precipRate < 0.0))
                 TRMMCEData.close()
@@ -446,7 +446,7 @@ def plotAccTRMM (finalMCCList,MAINDIRECTORY):
         accuTRMMData.createDimension('time', None)
         accuTRMMData.createDimension('lat', nygrdTRMM)
         accuTRMMData.createDimension('lon', nxgrdTRMM)
-        
+
         # variables
         TRMMprecip = ('time','lat', 'lon',)
         times = accuTRMMData.createVariable('time', 'f8', ('time',))
@@ -457,8 +457,8 @@ def plotAccTRMM (finalMCCList,MAINDIRECTORY):
         rainFallacc.units = 'mm'
 
         longitude[:] = LONTRMM[0,:]
-        longitude.units = "degrees_east" 
-        longitude.long_name = "Longitude" 
+        longitude.units = "degrees_east"
+        longitude.long_name = "Longitude"
 
         latitude[:] =  LATTRMM[:,0]
         latitude.units = "degrees_north"
@@ -472,7 +472,7 @@ def plotAccTRMM (finalMCCList,MAINDIRECTORY):
         subprocess.call('rm acc.ctl', shell=True)
         subprocess.call('touch acc.ctl', shell=True)
         replaceExpDset = 'echo DSET ' + accuTRMMFile +' >> acc.ctl'
-        subprocess.call(replaceExpDset, shell=True)  
+        subprocess.call(replaceExpDset, shell=True)
         subprocess.call('echo "OPTIONS yrev little_endian template" >> acc.ctl', shell=True)
         subprocess.call('echo "DTYPE netcdf" >> acc.ctl', shell=True)
         subprocess.call('echo "UNDEF  0" >> acc.ctl', shell=True)
@@ -503,24 +503,24 @@ def plotAccTRMM (finalMCCList,MAINDIRECTORY):
         subprocess.call('echo "''\'quit''\'" >> accuTRMM1.gs', shell=True)
         gradscmd = 'grads -blc ' + '\'run accuTRMM1.gs''\''
         subprocess.call(gradscmd, shell=True)
-        
+
         #clean up
         subprocess.call('rm accuTRMM1.gs', shell=True)
         subprocess.call('rm acc.ctl', shell=True)
 
-    return  
+    return
 #******************************************************************
 def plotHistogram(aList, aTitle, aLabel):
     '''
-    Purpose:: 
+    Purpose::
         To create plots (histograms) of the data entered in aList
 
-    Input:: 
+    Input::
         aList: the list of floating points representing values for e.g. averageArea, averageDuration, etc.
         aTitle: a string representing the title and the name of the plot e.g. "Average area [km^2]"
         aLabel: a string representing the x axis info i.e. the data that is being passed and the units e.g. "Area km^2"
 
-    Output:: 
+    Output::
         plots (gif files)
     '''
     num_bins = 10
@@ -531,12 +531,12 @@ def plotHistogram(aList, aTitle, aLabel):
     MCScount = 0
     MSClen =0
     thisCount = 0
-    
+
     #TODO: use try except block instead
     if aList:
-        
+
         fig,ax = plt.subplots(1, facecolor='white', figsize=(7,5))
-    
+
         n,binsdg = np.histogram(aList, num_bins, density=True)
         wid = binsdg[1:] - binsdg[:-1]
         #plt.bar(binsdg[:-1], n/float(len(aList)), width=wid)
@@ -558,18 +558,18 @@ def plotHistogram(aList, aTitle, aLabel):
 
         imgFilename = MAINDIRECTORY+'/images/'+aTitle.replace(" ","_")+'.gif'
         plt.savefig(imgFilename, facecolor=fig.get_facecolor(), transparent=True)
-                
-    return 
+
+    return
 #******************************************************************
 def plotPrecipHistograms(finalMCCList, MAINDIRECTORY):
     '''
-    Purpose:: 
+    Purpose::
         To create plots (histograms) of the each TRMMnetcdfCEs files
 
-    Input:: 
+    Input::
         finalMCCList: a list of dictionaries representing a list of nodes representing a MCC
 
-    Output:: 
+    Output::
         plots
     '''
     num_bins = 5
@@ -597,16 +597,16 @@ def plotPrecipHistograms(finalMCCList, MAINDIRECTORY):
                 thisTime = eachNode['cloudElementTime']
                 MCSlen = len(eachMCC)
                 thisCount += 1
-                
+
                 #this is the precipitation distribution plot from displayPrecip
 
                 if eachNode['cloudElementArea'] >= 2400.0:
-                    if (str(thisTime) != lastTime and lastTime != " ") or thisCount == MCSlen:  
+                    if (str(thisTime) != lastTime and lastTime != " ") or thisCount == MCSlen:
                         plt.close('all')
                         title = 'TRMM precipitation distribution for '+ str(thisTime)
-                        
+
                         fig,ax = plt.subplots(1, facecolor='white', figsize=(7,5))
-                    
+
                         n,binsdg = np.histogram(precip, num_bins)
                         wid = binsdg[1:] - binsdg[:-1]
                         plt.bar(binsdg[:-1], n/float(len(precip)), width=wid)
@@ -622,10 +622,10 @@ def plotPrecipHistograms(finalMCCList, MAINDIRECTORY):
                         plt.gca().yaxis.set_major_formatter(formatter)
                         plt.gca().xaxis.set_major_formatter(FormatStrFormatter('%0.0f'))
                         imgFilename = MAINDIRECTORY+'/images/'+str(thisTime)+eachNode['uniqueID']+'TRMMMCS.gif'
-                        
+
                         plt.savefig(imgFilename, transparent=True)
                         precip =[]
-                        
+
                     # ------ NETCDF File get info ------------------------------------
                     thisFileName = MAINDIRECTORY+'/TRMMnetcdfCEs/TRMM' + str(thisTime).replace(" ", "_") + eachNode['uniqueID'] +'.nc'
                     TRMMData = Dataset(thisFileName,'r', format='NETCDF4')
@@ -634,10 +634,10 @@ def plotPrecipHistograms(finalMCCList, MAINDIRECTORY):
                     TRMMData.close()
                     if firstTime==True:
                         totalPrecip=np.zeros((CEprecipRate.shape))
-                    
+
                     totalPrecip = np.add(totalPrecip, precipRate)
                     # ------ End NETCDF File ------------------------------------
-                    for index, value in np.ndenumerate(CEprecipRate): 
+                    for index, value in np.ndenumerate(CEprecipRate):
                         if value != 0.0:
                             precip.append(value)
 
@@ -645,21 +645,21 @@ def plotPrecipHistograms(finalMCCList, MAINDIRECTORY):
                     firstTime = False
                 else:
                     lastTime = str(thisTime)
-                    firstTime = False   
-    return 
+                    firstTime = False
+    return
 #******************************************************************
 #           PLOTTING UTIL SCRIPTS
 #******************************************************************
 def to_percent(y,position):
     '''
-    Purpose:: 
+    Purpose::
         Utility script for generating the y-axis for plots
     '''
     return (str(100*y)+'%')
 #******************************************************************
 def colorbar_index(ncolors, nlabels, cmap):
     '''
-    Purpose:: 
+    Purpose::
         Utility script for crating a colorbar
         Taken from http://stackoverflow.com/questions/18704353/correcting-matplotlib-colorbar-ticks
     '''
@@ -678,7 +678,7 @@ def cmap_discretize(cmap, N):
     http://wiki.scipy.org/Cookbook/Matplotlib/ColormapTransformations
     Return a discrete colormap from the continuous colormap cmap.
 
-        cmap: colormap instance, eg. cm.jet. 
+        cmap: colormap instance, eg. cm.jet.
         N: number of colors.
 
     Example
