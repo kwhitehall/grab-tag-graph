@@ -6,6 +6,7 @@ import subprocess
 import re
 import string
 import math
+import glob
 from netCDF4 import Dataset, num2date, date2num
 from datetime import timedelta, datetime
 from scipy import ndimage
@@ -159,7 +160,7 @@ def decodeTimeFromString(time_string):
         pass
 
     try:
-    	mytime = datetime.strptime(time_string,'%Y-%m-%d %H')
+        mytime = datetime.strptime(time_string,'%Y-%m-%d %H')
         return mytime
 
     except ValueError:
@@ -471,25 +472,24 @@ def getModelTimeStep(units, stepSize):
     return modelTimeStep
 #******************************************************************
 def maenumerate(mArray):
-	'''
-	Purpose::
-	    Utility script for returning the actual values from the masked array
-	    Taken from: http://stackoverflow.com/questions/8620798/numpy-ndenumerate-for-masked-arrays
-	
-	Input::
-		mArray: the masked array returned from the ma.array() command
-		
-		
-	Output::
-		maskedValues: 3D (t,lat,lon), value of only masked values
-	
-	'''
+    '''
+    Purpose::
+        Utility script for returning the actual values from the masked array
+        Taken from: http://stackoverflow.com/questions/8620798/numpy-ndenumerate-for-masked-arrays
 
-	mask = ~mArray.mask.ravel()
-	#beware yield fast, but generates a type called "generate" that does not allow for array methods
-	for index, maskedValue in itertools.izip(np.ndenumerate(mArray), mask):
-	    if maskedValue: 
-			yield index	
+    Input::
+    	mArray: the masked array returned from the ma.array() command
+    	
+    	
+    Output::
+    	maskedValues: 3D (t,lat,lon), value of only masked values
+    '''
+
+    mask = ~mArray.mask.ravel()
+    #beware yield fast, but generates a type called "generate" that does not allow for array methods
+    for index, maskedValue in itertools.izip(np.ndenumerate(mArray), mask):
+        if maskedValue:
+            yield index	
 #******************************************************************
 def preprocessingMERG(MERGdirname):
 	'''
@@ -599,224 +599,234 @@ def preprocessingMERG(MERGdirname):
 	return
 #******************************************************************
 def postProcessingNetCDF(dataset, dirName = None):
-	'''
-	
-	TODO: UPDATE TO PICK UP LIMITS FROM FILE FOR THE GRADS SCRIPTS
+    '''
 
-	Purpose::
-	    Utility script displaying the data in generated NETCDF4 files 
-	    in GrADS
-	    NOTE: VERY RAW AND DIRTY 
+    TODO: UPDATE TO PICK UP LIMITS FROM FILE FOR THE GRADS SCRIPTS
 
-	Input::
-	    dataset: integer representing post-processed MERG (1) or TRMM data (2) or original MERG(3)
-	    string: Directory to the location of the raw (MERG) files, preferably zipped
-		
-	Output::
-	   images in location as specfied in the code
+    Purpose::
+        Utility script displaying the data in generated NETCDF4 files 
+        in GrADS
+        NOTE: VERY RAW AND DIRTY 
 
-	Assumptions::
-	   1 GrADS (http://www.iges.org/grads/gadoc/) and lats4D (http://opengrads.org/doc/scripts/lats4d/)
-	     have been installed on the system and the user can access 
-	   2 User can write files in location where script is being called	
-	'''	
-	
-	coreDir = os.path.dirname(os.path.abspath(__file__))
-	ImgFilename = ''
-	frameList=[]
-	fileList =[]
-	lines =[]
-	var =''
-	firstTime = True
-	printLine = 0
-	lineNum = 1
-	#Just incase the X11 server is giving problems
-	subprocess.call('export DISPLAY=:0.0', shell=True)
+    Input::
+        dataset: integer representing post-processed MERG (1) or TRMM data (2) or original MERG(3)
+        string: Directory to the location of the raw (MERG) files, preferably zipped
+    	
+    Output::
+       images in location as specfied in the code
 
-	prevFrameNum = 0
+    Assumptions::
+       1 GrADS (http://www.iges.org/grads/gadoc/) and lats4D (http://opengrads.org/doc/scripts/lats4d/)
+         have been installed on the system and the user can access 
+       2 User can write files in location where script is being called	
+    '''	
 
-	if dataset == 1:
-		var = 'ch4'
-		ctlTitle = 'TITLE MCC search Output Grid: Time  lat lon'
-		ctlLine = 'brightnesstemp=\>ch4     1  t,y,x    brightnesstemperature'
-		origsFile = coreDir+"/../GrADSscripts/cs1.gs"
-		gsFile = coreDir+"/../GrADSscripts/cs2.gs"
-		sologsFile = coreDir+"/../GrADSscripts/mergeCE.gs"
-		lineNum = 50
-	
-	elif dataset ==2:
-		var = 'precipAcc'
-		ctlTitle ='TITLE  TRMM MCS accumulated precipitation search Output Grid: Time  lat lon '
-		ctlLine = 'precipitation_Accumulation=\>precipAcc     1  t,y,x    precipAccu'
-		origsFile = coreDir+"/../GrADSscripts/cs3.gs"
-		gsFile = coreDir+"/../GrADSscripts/cs4.gs"
-		sologsFile = coreDir+"/../GrADSscripts/TRMMCE.gs"
-		lineNum = 10
+    coreDir = os.path.dirname(os.path.abspath(__file__))
+    ImgFilename = ''
+    frameList=[]
+    fileList =[]
+    lines =[]
+    var =''
+    firstTime = True
+    printLine = 0
+    lineNum = 1
+    #Just incase the X11 server is giving problems
+    subprocess.call('export DISPLAY=:0.0', shell=True)
 
-	elif dataset ==3:
-		var = 'ch4'
-		ctlTitle = 'TITLE MERG DATA'
-		ctlLine = 'ch4=\>ch4     1  t,y,x    brightnesstemperature'
-		origsFile = coreDir+"/../GrADSscripts/cs1.gs"
-		sologsFile = coreDir+"/../GrADSscripts/infrared.gs"
-		lineNum = 54			
+    prevFrameNum = 0
 
-	#sort files
-	os.chdir((dirName+'/'))
-	try:
-		os.makedirs('ctlFiles')
-	except:
-		print "ctl file folder created already"
-		
-	files = filter(os.path.isfile, glob.glob("*.nc"))
-	files.sort(key=lambda x: os.path.getmtime(x))
-	for eachfile in files:
-		fullFname = os.path.splitext(eachfile)[0]
-		fnameNoExtension = fullFname.split('.nc')[0]
-		
-		if dataset == 2 and fnameNoExtension[:4] != "TRMM":
-			continue
+    if dataset == 1:
+        var = 'ch4'
+        ctlTitle = 'TITLE MCC search Output Grid: Time  lat lon'
+        ctlLine = 'brightnesstemp=\>ch4     1  t,y,x    brightnesstemperature'
+        origsFile = coreDir+"/cs1.gs"
+        subprocessCall = 'touch '+origsFile
+        subprocess.call(subprocessCall,shell=True)
+        writec3GrADScript(origsFile)
+        gsFile = coreDir+"/cs2.gs"
+        sologsFile = coreDir+"/mergeCE.gs"
+        lineNum = 32
+    elif dataset == 2:
+        var = 'precipAcc'
+        ctlTitle ='TITLE  TRMM MCS accumulated precipitation search Output Grid: Time  lat lon '
+        ctlLine = 'precipitation_Accumulation=\>precipAcc     1  t,y,x    precipAccu'
+        origsFile = coreDir+"/cs3.gs"
+        subprocessCall = 'touch '+origsFile
+        subprocess.call(subprocessCall,shell=True)
+        writec1GrADScript(origsFile)
+        gsFile = coreDir+"/cs4.gs"
+        sologsFile = coreDir+"/TRMMCE.gs"
+        lineNum = 10
+    elif dataset ==3:
+        var = 'ch4'
+        ctlTitle = 'TITLE MERG DATA'
+        ctlLine = 'ch4=\>ch4     1  t,y,x    brightnesstemperature'
+        origsFile = coreDir+"/cs1.gs"
+        subprocessCall = 'touch '+origsFile
+        subprocess.call(subprocessCall,shell=True)
+        writec3GrADScript(origsFile)
+        sologsFile = coreDir+"/infrared.gs"
+        lineNum = 32			
 
-		if dataset == 1 or dataset == 2:
-			frameNum = int((fnameNoExtension.split('CE')[0]).split('00F')[1])
-		
-		#create the ctlFile
-		ctlFile1 = dirName+'/ctlFiles/'+fnameNoExtension + '.ctl'
-		#the ctl file
-		subprocessCall = 'rm ' +ctlFile1
-		subprocess.call(subprocessCall, shell=True)
-		subprocessCall = 'touch '+ctlFile1
-		subprocess.call(subprocessCall, shell=True)
-		lineToWrite = 'echo DSET ' + dirName+'/'+fnameNoExtension+'.nc' +' >>' + ctlFile1 
-		subprocess.call(lineToWrite, shell=True)  
-		lineToWrite = 'echo DTYPE netcdf >> '+ctlFile1
-		subprocess.call(lineToWrite, shell=True)
-		lineToWrite = 'echo UNDEF 0 >> '+ctlFile1
-		subprocess.call(lineToWrite, shell=True)
-		lineToWrite = 'echo '+ctlTitle+' >> '+ctlFile1
-		subprocess.call(lineToWrite, shell=True)
-		fname = dirName+'/'+fnameNoExtension+'.nc'
-		if os.path.isfile(fname):	
-			#open NetCDF file add info to the accu 
-			print "opening file ", fname
-			fileData = Dataset(fname,'r',format='NETCDF4')
-			lats = fileData.variables['latitude'][:]
-			lons = fileData.variables['longitude'][:]
-			LONDATA, LATDATA = np.meshgrid(lons,lats)
-			nygrd = len(LATDATA[:,0]) 
-			nxgrd = len(LONDATA[0,:])
-			fileData.close()
-		lineToWrite = 'echo XDEF '+ str(nxgrd) + ' LINEAR ' + str(min(lons)) +' '+ str((max(lons)-min(lons))/nxgrd) +' >> ' +ctlFile1
-		subprocess.call(lineToWrite, shell=True)
-		lineToWrite = 'echo YDEF '+ str(nygrd)+' LINEAR  ' + str(min(lats)) + ' ' + str((max(lats)-min(lats))/nygrd) +' >> '+ctlFile1
-		subprocess.call(lineToWrite, shell=True)
-		lineToWrite = 'echo ZDEF   01 LEVELS 1 >> '+ctlFile1
-		subprocess.call(lineToWrite, shell=True)
-		lineToWrite = 'echo TDEF 99999 linear 31aug2009 1hr >> '+ctlFile1
-		subprocess.call(lineToWrite, shell=True)
-		lineToWrite = 'echo VARS 1 >> '+ctlFile1
-		subprocess.call(lineToWrite, shell=True)
-		lineToWrite ='echo '+ctlLine+' >> '+ctlFile1
-		subprocess.call(lineToWrite, shell=True)
-		lineToWrite = 'echo ENDVARS >>  '+ctlFile1
-		subprocess.call(lineToWrite, shell=True)
-		lineToWrite = 'echo  >>  '+ctlFile1
-		subprocess.call(lineToWrite, shell=True)
+    #sort files
+    os.chdir((dirName+'/'))
+    try:
+    	os.makedirs('ctlFiles')
+    except:
+    	print "ctl file folder created already"
+    	
+    files = filter(os.path.isfile, glob.glob("*.nc"))
+    files.sort(key=lambda x: os.path.getmtime(x))
+    for eachfile in files:
+    	fullFname = os.path.splitext(eachfile)[0]
+    	fnameNoExtension = fullFname.split('.nc')[0]
+    	
+    	if dataset == 2 and fnameNoExtension[:4] != "TRMM":
+    		continue
 
-		#create plot of just that data
-		subprocessCall = 'cp '+ origsFile+' '+sologsFile
-		subprocess.call(subprocessCall, shell=True)
+    	if dataset == 1 or dataset == 2:
+    		frameNum = int((fnameNoExtension.split('CE')[0]).split('00F')[1])
+    	
+    	#create the ctlFile
+    	ctlFile1 = dirName+'/ctlFiles/'+fnameNoExtension + '.ctl'
+    	#the ctl file
+    	subprocessCall = 'rm ' +ctlFile1
+    	subprocess.call(subprocessCall, shell=True)
+    	subprocessCall = 'touch '+ctlFile1
+    	subprocess.call(subprocessCall, shell=True)
+    	lineToWrite = 'echo DSET ' + dirName+'/'+fnameNoExtension+'.nc' +' >>' + ctlFile1 
+    	subprocess.call(lineToWrite, shell=True)  
+    	lineToWrite = 'echo DTYPE netcdf >> '+ctlFile1
+    	subprocess.call(lineToWrite, shell=True)
+    	lineToWrite = 'echo UNDEF 0 >> '+ctlFile1
+    	subprocess.call(lineToWrite, shell=True)
+    	lineToWrite = 'echo '+ctlTitle+' >> '+ctlFile1
+    	subprocess.call(lineToWrite, shell=True)
+    	fname = dirName+'/'+fnameNoExtension+'.nc'
+    	if os.path.isfile(fname):	
+    		#open NetCDF file add info to the accu 
+    		print "opening file ", fname
+    		fileData = Dataset(fname,'r',format='NETCDF4')
+    		lats = fileData.variables['latitude'][:]
+    		lons = fileData.variables['longitude'][:]
+    		LONDATA, LATDATA = np.meshgrid(lons,lats)
+    		nygrd = len(LATDATA[:,0]) 
+    		nxgrd = len(LONDATA[0,:])
+    		fileData.close()
+    	lineToWrite = 'echo XDEF '+ str(nxgrd) + ' LINEAR ' + str(min(lons)) +' '+ str((max(lons)-min(lons))/nxgrd) +' >> ' +ctlFile1
+    	subprocess.call(lineToWrite, shell=True)
+    	lineToWrite = 'echo YDEF '+ str(nygrd)+' LINEAR  ' + str(min(lats)) + ' ' + str((max(lats)-min(lats))/nygrd) +' >> '+ctlFile1
+    	subprocess.call(lineToWrite, shell=True)
+    	lineToWrite = 'echo ZDEF   01 LEVELS 1 >> '+ctlFile1
+    	subprocess.call(lineToWrite, shell=True)
+    	lineToWrite = 'echo TDEF 99999 linear 31aug2009 1hr >> '+ctlFile1
+    	subprocess.call(lineToWrite, shell=True)
+    	lineToWrite = 'echo VARS 1 >> '+ctlFile1
+    	subprocess.call(lineToWrite, shell=True)
+    	lineToWrite ='echo '+ctlLine+' >> '+ctlFile1
+    	subprocess.call(lineToWrite, shell=True)
+    	lineToWrite = 'echo ENDVARS >>  '+ctlFile1
+    	subprocess.call(lineToWrite, shell=True)
+    	lineToWrite = 'echo  >>  '+ctlFile1
+    	subprocess.call(lineToWrite, shell=True)
 
-		ImgFilename = fnameNoExtension + '.gif'
-					
-		displayCmd = '\''+'d '+ var+'\''+'\n'
-		newFileCmd = '\''+'open '+ ctlFile1+'\''+'\n'
-		colorbarCmd = '\''+'run cbarn'+'\''+'\n'
-		printimCmd = '\''+'printim '+MAINDIRECTORY+'/images/'+ImgFilename+' x800 y600 white\''+'\n'
-		quitCmd = '\''+'quit'+'\''+'\n'
-			
-		GrADSscript = open(sologsFile,'r+')
-		lines1 = GrADSscript.readlines()
-		GrADSscript.seek(0)
-		lines1.insert((1),newFileCmd)
-		lines1.insert((lineNum+1),displayCmd)
-		lines1.insert((lineNum+2), colorbarCmd)
-		lines1.insert((lineNum+3), printimCmd)
-		lines1.insert((lineNum + 4), quitCmd)
-		GrADSscript.writelines(lines1)
-		GrADSscript.close()
-		#run the script
-		runGrads = 'run '+ sologsFile
-		gradscmd = 'grads -blc ' + '\'' +runGrads + '\''+'\n'
-		subprocess.call(gradscmd, shell=True)
+    	#create plot of just that data
+    	subprocessCall = 'cp '+ origsFile+' '+sologsFile
+    	subprocess.call(subprocessCall, shell=True)
 
-		if dataset == 1 or dataset == 2:
+    	ImgFilename = fnameNoExtension + '.gif'
+    				
+    	displayCmd = '\''+'d '+ var+'\''+'\n'
+    	newFileCmd = '\''+'open '+ ctlFile1+'\''+'\n'
+    	colorbarCmd = '\''+'run cbarn'+'\''+'\n'
+    	printimCmd = '\''+'printim '+MAINDIRECTORY+'/images/'+ImgFilename+' x800 y600 white\''+'\n'
+    	quitCmd = '\''+'quit'+'\''+'\n'
+    		
+    	GrADSscript = open(sologsFile,'r+')
+    	lines1 = GrADSscript.readlines()
+    	GrADSscript.seek(0)
+    	lines1.insert((1),newFileCmd)
+    	lines1.insert((lineNum+1),displayCmd)
+    	lines1.insert((lineNum+2), colorbarCmd)
+    	lines1.insert((lineNum+3), printimCmd)
+    	lines1.insert((lineNum + 4), quitCmd)
+    	GrADSscript.writelines(lines1)
+    	GrADSscript.close()
+    	#run the script
+    	runGrads = 'run '+ sologsFile
+    	gradscmd = 'grads -blc ' + '\'' +runGrads + '\''+'\n'
+    	subprocess.call(gradscmd, shell=True)
 
-			if prevFrameNum != frameNum and firstTime == False:
-				#counter for number of files (and for appending info to lines)
-				count = 0
-				subprocessCall = 'cp '+ origsFile+ ' '+gsFile
-				subprocess.call(subprocessCall, shell=True)
-				for fileName in frameList:
-					if count == 0:
-						frame1 = int((fileName.split('.nc')[0].split('CE')[0]).split('00F')[1])
+    	if dataset == 1 or dataset == 2:
 
-					fnameNoExtension = fileName.split('.nc')[0]
-					frameNum = int((fnameNoExtension.split('CE')[0]).split('00F')[1])
-					
-					if frameNum == frame1: 
-						CE_num = fnameNoExtension.split('CE')[1]
-						ImgFilename = fnameNoExtension.split('CE')[0] + '.gif'
-						ctlFile1 = dirName+'/ctlFiles/'+fnameNoExtension + '.ctl'
+            #TODO: for either dataset 1 or 2, write writec3GrADScript and then use the for loop to gen the line to add at the end to display
+            #at the end, run the GrADS script
 
-						#build cs.gs script will all the CE ctl files and the appropriate display command
-						newVar = var+'.'+CE_num
-						newDisplayCmd = '\''+'d '+ newVar+'\''+'\n'
-						newFileCmd = '\''+'open '+ ctlFile1+'\''+'\n'
-						GrADSscript = open(gsFile,'r+')
-						lines1 = GrADSscript.readlines()
-						GrADSscript.seek(0)
-						lines1.insert((1+count),newFileCmd)
-						lines1.insert((lineNum+count+1),newDisplayCmd)
-						GrADSscript.writelines(lines1)
-						GrADSscript.close()
-					count +=1
+    		if prevFrameNum != frameNum and firstTime == False:
+    			#counter for number of files (and for appending info to lines)
+    			count = 0
+    			subprocessCall = 'cp '+ origsFile+ ' '+gsFile
+    			subprocess.call(subprocessCall, shell=True)
+    			for fileName in frameList:
+    				if count == 0:
+    					frame1 = int((fileName.split('.nc')[0].split('CE')[0]).split('00F')[1])
 
-				colorbarCmd = '\''+'run cbarn'+'\''+'\n'
-				printimCmd = '\''+'printim '+MAINDIRECTORY+'/images/'+ImgFilename+' x800 y600 white\''+'\n'
-				quitCmd = '\''+'quit'+'\''+'\n'
-				GrADSscript = open(gsFile,'r+')
-				lines1 = GrADSscript.readlines()
-				GrADSscript.seek(0)
-				lines1.insert((lineNum+(count*2)+1), colorbarCmd)
-				lines1.insert((lineNum + (count*2)+2), printimCmd)
-				lines1.insert((lineNum + (count*2)+3), quitCmd)
-				GrADSscript.writelines(lines1)
-				GrADSscript.close()
-				
-				#run the script
-				runGrads = 'run '+ gsFile
-				gradscmd = 'grads -blc ' + '\'' +runGrads + '\''+'\n'
-				subprocess.call(gradscmd, shell=True)
-				
-				#remove the file data stuff
-				subprocessCall = 'cd '+dirName
-				
-				#reset the list for the next frame
-				fileList = frameList
-				frameList = []
-				for thisFile in fileList:
-					if int(((thisFile.split('.nc')[0]).split('CE')[0]).split('00F')[1]) == frameNum:
-						frameList.append(thisFile)
-				frameList.append(eachfile)
-				prevFrameNum = frameNum
-				
-			else:
-				frameList.append(eachfile)
-				prevFrameNum = frameNum
-				firstTime = False
-				
-	return	
+    				fnameNoExtension = fileName.split('.nc')[0]
+    				frameNum = int((fnameNoExtension.split('CE')[0]).split('00F')[1])
+    				
+    				if frameNum == frame1: 
+    					CE_num = fnameNoExtension.split('CE')[1]
+    					ImgFilename = fnameNoExtension.split('CE')[0] + '.gif'
+    					ctlFile1 = dirName+'/ctlFiles/'+fnameNoExtension + '.ctl'
+
+    					#build cs.gs script will all the CE ctl files and the appropriate display command
+    					newVar = var+'.'+CE_num
+    					newDisplayCmd = '\''+'d '+ newVar+'\''+'\n'
+    					newFileCmd = '\''+'open '+ ctlFile1+'\''+'\n'
+    					GrADSscript = open(gsFile,'r+')
+    					lines1 = GrADSscript.readlines()
+    					GrADSscript.seek(0)
+    					lines1.insert((1+count),newFileCmd)
+    					lines1.insert((lineNum+count+1),newDisplayCmd)
+    					GrADSscript.writelines(lines1)
+    					GrADSscript.close()
+    				count +=1
+
+    			colorbarCmd = '\''+'run cbarn'+'\''+'\n'
+    			printimCmd = '\''+'printim '+MAINDIRECTORY+'/images/'+ImgFilename+' x800 y600 white\''+'\n'
+    			quitCmd = '\''+'quit'+'\''+'\n'
+    			GrADSscript = open(gsFile,'r+')
+    			lines1 = GrADSscript.readlines()
+    			GrADSscript.seek(0)
+    			lines1.insert((lineNum+(count*2)+1), colorbarCmd)
+    			lines1.insert((lineNum + (count*2)+2), printimCmd)
+    			lines1.insert((lineNum + (count*2)+3), quitCmd)
+    			GrADSscript.writelines(lines1)
+    			GrADSscript.close()
+    			
+    			#run the script
+    			runGrads = 'run '+ gsFile
+    			gradscmd = 'grads -blc ' + '\'' +runGrads + '\''+'\n'
+    			subprocess.call(gradscmd, shell=True)
+    			
+    			#remove the file data stuff
+    			subprocessCall = 'cd '+dirName
+    			
+    			#reset the list for the next frame
+    			fileList = frameList
+    			frameList = []
+    			for thisFile in fileList:
+    				if int(((thisFile.split('.nc')[0]).split('CE')[0]).split('00F')[1]) == frameNum:
+    					frameList.append(thisFile)
+    			frameList.append(eachfile)
+    			prevFrameNum = frameNum
+    			
+    		else:
+    			frameList.append(eachfile)
+    			prevFrameNum = frameNum
+    			firstTime = False
+    			
+    return	
 #******************************************************************	
 def tempMaskedImages(imgFilename):
 	'''
@@ -885,4 +895,83 @@ def validDate(dataString):
     else:
         return 1
 #*********************************************************************************************************************
+def writec3GrADScript(origsFile):
+    '''
+    Input:: a string representing the filename with full path to the GrADS script being created
 
+    Output::
+
+    Assumptions::
+
+    '''
+    subprocess.call('echo "''\'reinit''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'set grads off''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'set mpdset hires''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'set gxout shaded''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'set csmooth on''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'set gxout shaded on''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'set datawarn off''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'set gxout shaded on''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'set csmooth on''\'" >> '+origsFile, shell=True)
+    return
+#*********************************************************************************************************************
+def writec1GrADScript(origsFile):
+    '''
+    Input:: a string representing the filename with full path to the GrADS script being created
+
+    Output::
+
+    Assumptions::
+
+    '''
+    subprocess.call('echo "''\'reinit''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'set grads off''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'set mpdset hires''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'set gxout shaded''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'set csmooth on''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'set rgb 16 255 255 255''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'set rgb 17 108 20 156''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'set rgb 18 77 50 183''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'set rgb 19 48 83 213''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'set rgb 20 22 107 236''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'set rgb 21 0 193 254''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'set rgb 22 42 166 255''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'set rgb 23 66 197 249''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'set rgb 24 92 226 255''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'set rgb 25 124 255 249''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'set rgb 26 132 252 204''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'set rgb 27 135 252 145''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'set rgb 28 151 255 130''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'set rgb 29 209 255 128''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'set rgb 30 255 246 117''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'set rgb 31 255 189 58''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'set rgb 32 249 136 6''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'set rgb 33 241 110 0''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'set rgb 34 212 93 1''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'set rgb 35 208 68 0''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'set rgb 36 182 48 10''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'set rgb 37 163 29 2''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'set rgb 38 138 15 0''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'set rgb 39 255 255 255''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'set_plot(198,312,5)''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\' ''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\' ''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\' ''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'function set_plot(min,max,int)''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'    value = min''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'    cval=16''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'    c_levs = ''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'    c_cols = ''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'    while( value <= max )''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'      c_levs = c_levs ' ' value''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'      c_cols = c_cols ' ' cval''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'      value = value + int''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'      cval=cval+1''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'    endwhile''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'    c_cols=c_cols' 'cval-1''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'    set c_levs = \'c_levs''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'    set c_cols = \'c_cols''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'return''\'" >> '+origsFile, shell=True)
+#*********************************************************************************************************************
+        
+        
