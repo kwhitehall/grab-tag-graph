@@ -512,55 +512,41 @@ def plotAccTRMM (finalMCCList,MAINDIRECTORY):
 
 	return	
 #******************************************************************
-def plotHistogram(aList, aTitle, aLabel):
+def plotHistogram(precip, aTitle, imgFilename, xlabel, ylabel, num_bins):
 	'''
 	Purpose:: 
 		To create plots (histograms) of the data entered in aList
 
 	Input:: 
-		aList: the list of floating points representing values for e.g. averageArea, averageDuration, etc.
+		precip: a list of the values to generate the histogram
 	    aTitle: a string representing the title and the name of the plot e.g. "Average area [km^2]"
-	    aLabel: a string representing the x axis info i.e. the data that is being passed and the units e.g. "Area km^2"
+	    imgFilename: a string representing filename for the image
+	    xlabel: a string for the label on the x-axis
+	    ylabel: a string for the label on the y-axis
+	    num_bins: an integer representing the num of bins to use in the histogram
 
 	Output:: 
 		plots (gif files)
 	'''
-	num_bins = 10
-	precip =[]
-	imgFilename = " "
-	lastTime =" "
-	firstTime = True
-	MCScount = 0
-	MSClen =0
-	thisCount = 0
+
+	fig,ax = plt.subplots(1, facecolor='white', figsize=(7,5))
+
+	n,binsdg = np.histogram(precip, num_bins)
+	wid = binsdg[1:] - binsdg[:-1]
+	plt.bar(binsdg[:-1], n/float(len(precip)), width=wid)
 	
-	#TODO: use try except block instead
-	if aList:
-		
-		fig,ax = plt.subplots(1, facecolor='white', figsize=(7,5))
-	
-		n,binsdg = np.histogram(aList, num_bins, density=True)
-		wid = binsdg[1:] - binsdg[:-1]
-		#plt.bar(binsdg[:-1], n/float(len(aList)), width=wid)
-		plt.bar(binsdg[:-1], n, width=wid)
-		# plt.hist(aList, num_bins, width=wid )
-
-
-		#make percentage plot
-		#formatter = FuncFormatter(to_percent)
-		plt.xlim(min(binsdg), max(binsdg))
-		ax.set_xticks(binsdg)#, rotation=45)
-		ax.set_xlabel(aLabel, fontsize=12)
-		ax.set_title(aTitle)
-
-		plt.xticks(rotation =45)
-		# Set the formatter
-		plt.gca().xaxis.set_major_formatter(FormatStrFormatter('%0.0f'))
-		plt.subplots_adjust(bottom=0.2)
-
-		imgFilename = MAINDIRECTORY+'/images/'+aTitle.replace(" ","_")+'.gif'
-		plt.savefig(imgFilename, facecolor=fig.get_facecolor(), transparent=True)
-				
+	#make percentage plot
+	formatter = FuncFormatter(to_percent)
+	plt.xlim(min(binsdg), max(binsdg))
+	ax.set_xticks(binsdg)
+	ax.set_xlabel(xlabel, fontsize=12)
+	ax.set_ylabel(ylabel, fontsize=12)
+	ax.set_title(aTitle)
+	# Set the formatter
+	plt.gca().yaxis.set_major_formatter(formatter)
+	plt.gca().xaxis.set_major_formatter(FormatStrFormatter('%0.0f'))
+	plt.savefig(imgFilename, transparent=True)
+					
 	return 
 #******************************************************************
 def plotPrecipHistograms(finalMCCList, MAINDIRECTORY):
@@ -570,6 +556,7 @@ def plotPrecipHistograms(finalMCCList, MAINDIRECTORY):
 
 	Input:: 
 		finalMCCList: a list of dictionaries representing a list of nodes representing a MCC
+		MAINDIRECTORY: a string representing the path to the main directory where the data generated is saved
 
 	Output:: 
 		plots
@@ -577,77 +564,66 @@ def plotPrecipHistograms(finalMCCList, MAINDIRECTORY):
 	num_bins = 5
 	precip =[]
 	imgFilename = " "
+	startTime =" "
 	lastTime =" "
 	firstTime = True
-	MCScount = 0
-	MSClen =0
-	thisCount = 0
-	totalPrecip=np.zeros((1,137,440))
-
-	#TODO: use try except block instead
+	
 	if finalMCCList:
-
+		
 		for eachMCC in finalMCCList:
 			firstTime = True
-			MCScount +=1
-			#totalPrecip=np.zeros((1,137,440))
-			totalPrecip=np.zeros((1,413,412))
-
-			#get the info from the node
+			
 			for node in eachMCC:
 				eachNode = mccSearch.thisDict(node)
 				thisTime = eachNode['cloudElementTime']
-				MCSlen = len(eachMCC)
-				thisCount += 1
 				
-				#this is the precipitation distribution plot from displayPrecip
+				thisFileName = MAINDIRECTORY+'/TRMMnetcdfCEs/TRMM' + str(thisTime).replace(" ", "_") + eachNode['uniqueID'] +'.nc'
+				TRMMData = Dataset(thisFileName,'r', format='NETCDF4')
+				precipRate = TRMMData.variables['precipitation_Accumulation'][:,:,:]
+				CEprecipRate = precipRate[0,:,:]
+				TRMMData.close()
 
-				if eachNode['cloudElementArea'] >= 2400.0:
-					if (str(thisTime) != lastTime and lastTime != " ") or thisCount == MCSlen:	
-						plt.close('all')
-						title = 'TRMM precipitation distribution for '+ str(thisTime)
-						
-						fig,ax = plt.subplots(1, facecolor='white', figsize=(7,5))
-					
-						n,binsdg = np.histogram(precip, num_bins)
-						wid = binsdg[1:] - binsdg[:-1]
-						plt.bar(binsdg[:-1], n/float(len(precip)), width=wid)
-
-						#make percentage plot
-						formatter = FuncFormatter(to_percent)
-						plt.xlim(min(binsdg), max(binsdg))
-						ax.set_xticks(binsdg)
-						ax.set_xlabel('Precipitation [mm]', fontsize=12)
-						ax.set_ylabel('Area', fontsize=12)
-						ax.set_title(title)
-						# Set the formatter
-						plt.gca().yaxis.set_major_formatter(formatter)
-						plt.gca().xaxis.set_major_formatter(FormatStrFormatter('%0.0f'))
-	    				imgFilename = MAINDIRECTORY+'/images/'+str(thisTime)+eachNode['uniqueID']+'TRMMMCS.gif'
-	    				
-	    				plt.savefig(imgFilename, transparent=True)
-	    				precip =[]
-	    				
-	    			# ------ NETCDF File get info ------------------------------------
-					thisFileName = MAINDIRECTORY+'/TRMMnetcdfCEs/TRMM' + str(thisTime).replace(" ", "_") + eachNode['uniqueID'] +'.nc'
-					TRMMData = Dataset(thisFileName,'r', format='NETCDF4')
-					precipRate = TRMMData.variables['precipitation_Accumulation'][:,:,:]
-					CEprecipRate = precipRate[0,:,:]
-					TRMMData.close()
-					if firstTime==True:
-						totalPrecip=np.zeros((CEprecipRate.shape))
-					
-					totalPrecip = np.add(totalPrecip, precipRate)
-					# ------ End NETCDF File ------------------------------------
-					for index, value in np.ndenumerate(CEprecipRate): 
-						if value != 0.0:
-							precip.append(value)
-
-					lastTime = str(thisTime)
+				if firstTime==True:
+					totalPrecip=np.zeros((CEprecipRate.shape))
+					startTime = str(thisTime) + eachNode['uniqueID']
 					firstTime = False
+				
+				totalPrecip = np.add(totalPrecip, precipRate)
+				
+				for index, value in np.ndenumerate(CEprecipRate): 
+					if value != 0.0:
+						precip.append(value)
+
+				plt.close('all')
+				title = 'TRMM precipitation distribution for '+ str(thisTime)
+				imgFilename = MAINDIRECTORY+'/images/'+str(thisTime)+eachNode['uniqueID']+'TRMMMCS.gif'
+				xlabel = "Precipitation [mm]"
+				ylabel = "Area [km^2]"
+				num_bins = 5
+				if all(value==0 for value in precip):
+					print "NO Precipitation at "+str(thisTime)+eachNode['uniqueID']
 				else:
-					lastTime = str(thisTime)
-					firstTime = False  	
+					plotHistogram(precip, title, imgFilename, xlabel, ylabel, num_bins)
+				
+				precip =[]
+			
+			#the image at the end of each MCS
+			title = 'TRMM precipitation distribution for '+startTime+' to '+str(thisTime)
+			imgFilename = MAINDIRECTORY+'/images/'+startTime+'_'+str(thisTime)+eachNode['uniqueID']+'TRMMMCS.gif'
+			xlabel = "Precipitation [mm]"
+			ylabel = "Area [km^2]"
+			num_bins = 10
+			for index, value in np.ndenumerate(totalPrecip): 
+				if value != 0.0:
+					precip.append(value)
+
+			if all(value==0 for value in precip):
+				print "No precipitation for MCS starting at "+startTime+' and ending at '+str(thisTime)+eachNode['uniqueID']
+			else:
+				plotHistogram(precip, title, imgFilename, xlabel, ylabel, num_bins)
+				
+			precip=[]
+		
 	return 
 #******************************************************************
 #			PLOTTING UTIL SCRIPTS
