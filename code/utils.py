@@ -6,9 +6,8 @@ import re
 import string
 import math
 
+import glob
 from netCDF4 import Dataset
-import numpy.ma as ma
-import numpy as np
 from scipy.ndimage import map_coordinates
 
 
@@ -29,9 +28,9 @@ def checkForFiles(startTime, endTime, thisDir, fileType):
             status: a boolean representing whether all files exists
 
     '''
-    filelist=[]
+    filelist = []
     startFilename = ''
-    endFilename =''
+    endFilename = ''
     currFilename = ''
     status = False
     startyr = int(startTime[:4])
@@ -50,7 +49,7 @@ def checkForFiles(startTime, endTime, thisDir, fileType):
     currddStr = ''
     currhrStr = ''
     endmmStr = ''
-    endddStr =''
+    endddStr = ''
     endhhStr = ''
 
     #check that the startTime is before the endTime
@@ -109,7 +108,7 @@ def checkForFiles(startTime, endTime, thisDir, fileType):
         if fileType == 2:
             currFilename = thisDir+"/"+"3B42."+str(curryr)+currmmStr+currddStr+"."+currhrStr+".7A.nc"
 
-    return status,filelist
+    return status, filelist
 #******************************************************************
 def createMainDirectory(mainDirStr):
     '''
@@ -491,6 +490,7 @@ def maenumerate(mArray):
     for index, maskedValue in itertools.izip(np.ndenumerate(mArray), mask):
         if maskedValue:
             yield index
+
 #******************************************************************
 def preprocessingMERG(MERGdirname):
     '''
@@ -609,6 +609,7 @@ def postProcessingNetCDF(dataset, dirName = None):
         in GrADS
         NOTE: VERY RAW AND DIRTY
 
+
     Input::
         dataset: integer representing post-processed MERG (1) or TRMM data (2) or original MERG(3)
         string: Directory to the location of the raw (MERG) files, preferably zipped
@@ -618,6 +619,7 @@ def postProcessingNetCDF(dataset, dirName = None):
 
     Assumptions::
        1 GrADS (http://www.iges.org/grads/gadoc/) and lats4D (http://opengrads.org/doc/scripts/lats4d/)
+
          have been installed on the system and the user can access
        2 User can write files in location where script is being called
     '''
@@ -640,27 +642,35 @@ def postProcessingNetCDF(dataset, dirName = None):
         var = 'ch4'
         ctlTitle = 'TITLE MCC search Output Grid: Time  lat lon'
         ctlLine = 'brightnesstemp=\>ch4     1  t,y,x    brightnesstemperature'
-        origsFile = coreDir+"/../GrADSscripts/cs1.gs"
-        gsFile = coreDir+"/../GrADSscripts/cs2.gs"
-        sologsFile = coreDir+"/../GrADSscripts/mergeCE.gs"
-        lineNum = 50
-
-    elif dataset ==2:
+        origsFile = coreDir+"/cs1.gs"
+        subprocessCall = 'touch '+origsFile
+        subprocess.call(subprocessCall,shell=True)
+        writec3GrADScript(origsFile)
+        gsFile = coreDir+"/cs2.gs"
+        sologsFile = coreDir+"/mergeCE.gs"
+        lineNum = 32
+    elif dataset == 2:
         var = 'precipAcc'
         ctlTitle ='TITLE  TRMM MCS accumulated precipitation search Output Grid: Time  lat lon '
         ctlLine = 'precipitation_Accumulation=\>precipAcc     1  t,y,x    precipAccu'
-        origsFile = coreDir+"/../GrADSscripts/cs3.gs"
-        gsFile = coreDir+"/../GrADSscripts/cs4.gs"
-        sologsFile = coreDir+"/../GrADSscripts/TRMMCE.gs"
+        origsFile = coreDir+"/cs3.gs"
+        subprocessCall = 'touch '+origsFile
+        subprocess.call(subprocessCall,shell=True)
+        writec1GrADScript(origsFile)
+        gsFile = coreDir+"/cs4.gs"
+        sologsFile = coreDir+"/TRMMCE.gs"
         lineNum = 10
-
     elif dataset ==3:
         var = 'ch4'
         ctlTitle = 'TITLE MERG DATA'
         ctlLine = 'ch4=\>ch4     1  t,y,x    brightnesstemperature'
-        origsFile = coreDir+"/../GrADSscripts/cs1.gs"
-        sologsFile = coreDir+"/../GrADSscripts/infrared.gs"
-        lineNum = 54
+        origsFile = coreDir+"/cs1.gs"
+        subprocessCall = 'touch '+origsFile
+        subprocess.call(subprocessCall,shell=True)
+        writec3GrADScript(origsFile)
+        sologsFile = coreDir+"/infrared.gs"
+        lineNum = 32
+
 
     #sort files
     os.chdir((dirName+'/'))
@@ -752,6 +762,9 @@ def postProcessingNetCDF(dataset, dirName = None):
         subprocess.call(gradscmd, shell=True)
 
         if dataset == 1 or dataset == 2:
+
+            #TODO: for either dataset 1 or 2, write writec3GrADScript and then use the for loop to gen the line to add at the end to display
+            #at the end, run the GrADS script
 
             if prevFrameNum != frameNum and firstTime == False:
                 #counter for number of files (and for appending info to lines)
@@ -886,4 +899,83 @@ def validDate(dataString):
     else:
         return 1
 #*********************************************************************************************************************
+def writec3GrADScript(origsFile):
+    '''
+    Input:: a string representing the filename with full path to the GrADS script being created
+
+    Output::
+
+    Assumptions::
+
+    '''
+    subprocess.call('echo "''\'reinit''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'set grads off''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'set mpdset hires''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'set gxout shaded''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'set csmooth on''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'set gxout shaded on''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'set datawarn off''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'set gxout shaded on''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'set csmooth on''\'" >> '+origsFile, shell=True)
+    return
+#*********************************************************************************************************************
+def writec1GrADScript(origsFile):
+    '''
+    Input:: a string representing the filename with full path to the GrADS script being created
+
+    Output::
+
+    Assumptions::
+
+    '''
+    subprocess.call('echo "''\'reinit''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'set grads off''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'set mpdset hires''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'set gxout shaded''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'set csmooth on''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'set rgb 16 255 255 255''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'set rgb 17 108 20 156''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'set rgb 18 77 50 183''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'set rgb 19 48 83 213''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'set rgb 20 22 107 236''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'set rgb 21 0 193 254''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'set rgb 22 42 166 255''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'set rgb 23 66 197 249''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'set rgb 24 92 226 255''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'set rgb 25 124 255 249''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'set rgb 26 132 252 204''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'set rgb 27 135 252 145''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'set rgb 28 151 255 130''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'set rgb 29 209 255 128''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'set rgb 30 255 246 117''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'set rgb 31 255 189 58''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'set rgb 32 249 136 6''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'set rgb 33 241 110 0''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'set rgb 34 212 93 1''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'set rgb 35 208 68 0''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'set rgb 36 182 48 10''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'set rgb 37 163 29 2''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'set rgb 38 138 15 0''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'set rgb 39 255 255 255''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'set_plot(198,312,5)''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\' ''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\' ''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\' ''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'function set_plot(min,max,int)''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'    value = min''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'    cval=16''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'    c_levs = ''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'    c_cols = ''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'    while( value <= max )''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'      c_levs = c_levs ' ' value''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'      c_cols = c_cols ' ' cval''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'      value = value + int''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'      cval=cval+1''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'    endwhile''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'    c_cols=c_cols' 'cval-1''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'    set c_levs = \'c_levs''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'    set c_cols = \'c_cols''\'" >> '+origsFile, shell=True)
+    subprocess.call('echo "''\'return''\'" >> '+origsFile, shell=True)
+#*********************************************************************************************************************
+
 
