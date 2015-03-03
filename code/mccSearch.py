@@ -115,20 +115,13 @@ def findCloudElements(mergImgs, timelist, mainStrDir, LAT, LON, TRMMdirName=None
     cloudElementLon = []        #list for a particular CE's lon values
     cloudElementLatLons = []    #list for a particular CE's (lat,lon) values
 
-    prevLatValue = 0.0
-    prevLonValue = 0.0
     TIR_min = 0.0
     TIR_max = 0.0
     temporalRes = 3 # TRMM data is 3 hourly
     precipTotal = 0.0
     CETRMMList =[]
     precip =[]
-    TRMMCloudElementLatLons =[]
 
-    minCELatLimit = 0.0
-    minCELonLimit = 0.0
-    maxCELatLimit = 0.0
-    maxCELonLimit = 0.0
 
     nygrd = len(LAT[:, 0])
     nxgrd = len(LON[0, :])
@@ -166,7 +159,7 @@ def findCloudElements(mergImgs, timelist, mainStrDir, LAT, LON, TRMMdirName=None
 
 
             cloudElement = mergImgs[t, :, :][loc]
-            labels, lcounter = ndimage.label(cloudElement)
+            labels, _ = ndimage.label(cloudElement)
 
             #determine the true lats and lons for this particular CE
             cloudElementLat = LAT[loc[0], 0]
@@ -182,7 +175,6 @@ def findCloudElements(mergImgs, timelist, mainStrDir, LAT, LON, TRMMdirName=None
             if cloudElementArea >= AREA_MIN or (cloudElementArea < AREA_MIN and ((ndimage.minimum(cloudElement, labels=labels))/float((ndimage.maximum(cloudElement, labels=labels)))) < CONVECTIVE_FRACTION ):
 
                 #get some time information and labeling info
-                frameTime = str(timelist[t])
                 frameCEcounter += 1
                 CEuniqueID = 'F' + str(frameNum) + 'CE' + str(frameCEcounter)
 
@@ -250,8 +242,8 @@ def findCloudElements(mergImgs, timelist, mainStrDir, LAT, LON, TRMMdirName=None
                     lonsrawTRMMData[lonsrawTRMMData > 180] = lonsrawTRMMData[lonsrawTRMMData > 180] - 360.
                     LONTRMM, LATTRMM = np.meshgrid(lonsrawTRMMData, latsrawTRMMData)
 
-                    nygrdTRMM = len(LATTRMM[:, 0])
-                    nxgrdTRMM = len(LONTRMM[0, :])
+                    # nygrdTRMM = len(LATTRMM[:, 0])
+                    # nxgrdTRMM = len(LONTRMM[0, :])
                     precipRateMasked = ma.masked_array(precipRate, mask=(precipRate < 0.0))
                     #---------regrid the TRMM data to the MERG dataset ----------------------------------
                     #regrid using the do_regrid stuff from the Apache OCW
@@ -271,13 +263,15 @@ def findCloudElements(mergImgs, timelist, mainStrDir, LAT, LON, TRMMdirName=None
                     latEndT = utils.findNearest(latsrawTRMMData, latCEEnd)
                     lonStartT = utils.findNearest(lonsrawTRMMData, lonCEStart)
                     lonEndT = utils.findNearest(lonsrawTRMMData, lonCEEnd)
-                    latStartIndex = np.where(latsrawTRMMData == latStartT)
-                    latEndIndex = np.where(latsrawTRMMData == latEndT)
-                    lonStartIndex = np.where(lonsrawTRMMData == lonStartT)
-                    lonEndIndex = np.where(lonsrawTRMMData == lonEndT)
+                    # Unused since CEPrecipRate isn't used and these are just inputs
+                    # latStartIndex = np.where(latsrawTRMMData == latStartT)
+                    # latEndIndex = np.where(latsrawTRMMData == latEndT)
+                    # lonStartIndex = np.where(lonsrawTRMMData == lonStartT)
+                    # lonEndIndex = np.where(lonsrawTRMMData == lonEndT)
 
                     #get the relevant TRMM info
-                    CEprecipRate = precipRate[:, (latStartIndex[0][0]-1):latEndIndex[0][0], (lonStartIndex[0][0]-1):lonEndIndex[0][0]]
+                    # Unused Variable
+                    # CEprecipRate = precipRate[:, (latStartIndex[0][0]-1):latEndIndex[0][0], (lonStartIndex[0][0]-1):lonEndIndex[0][0]]
                     TRMMData.close()
 
                     # ------ NETCDF File info for writing TRMM CE rainfall ------------------------------------
@@ -388,7 +382,6 @@ def findCloudElements(mergImgs, timelist, mainStrDir, LAT, LON, TRMMdirName=None
 
                 if frameNum != 1:
                     for cloudElementDict in prevFrameCEs:
-                        thisCElen = len(cloudElementLatLons)
                         percentageOverlap, areaOverlap = cloudElementOverlap(cloudElementLatLons, cloudElementDict['cloudElementLatLon'])
 
                         #change weights to integers because the built in shortest path chokes on floating pts according to Networkx doc
@@ -439,7 +432,6 @@ def findCloudElements(mergImgs, timelist, mainStrDir, LAT, LON, TRMMdirName=None
                     cloudElementsFile.write("\n-----------------------------------------------")
 
             #reset list for the next CE
-            nodeExist = False
             cloudElementCenter=[]
             cloudElement = []
             cloudElementLat=[]
@@ -452,7 +444,6 @@ def findCloudElements(mergImgs, timelist, mainStrDir, LAT, LON, TRMMdirName=None
             CETRMMList =[]
             precipTotal = 0.0
             precip=[]
-            TRMMCloudElementLatLons=[]
 
         #reset for the next time
         prevFrameCEs =[]
@@ -496,11 +487,9 @@ def findPrecipRate(TRMMdirName, timelist):
 
     '''
     allCEnodesTRMMdata =[]
-    TRMMdataDict={}
     precipTotal = 0.0
 
     os.chdir((MAINDIRECTORY+'/MERGnetcdfCEs/'))
-    imgFilename = ''
     temporalRes = 3 #3 hours for TRMM
 
     #sort files
@@ -568,7 +557,8 @@ def findPrecipRate(TRMMdirName, timelist):
         lonEndIndex = np.where(lonsrawTRMMData == lonEndT)
 
         #get the relevant TRMM info
-        CEprecipRate = precipRate[:,(latStartIndex[0][0]-1):latEndIndex[0][0],(lonStartIndex[0][0]-1):lonEndIndex[0][0]]
+        # Unused Variable
+        # CEprecipRate = precipRate[:,(latStartIndex[0][0]-1):latEndIndex[0][0],(lonStartIndex[0][0]-1):lonEndIndex[0][0]]
         TRMMData.close()
 
 
@@ -603,7 +593,6 @@ def findPrecipRate(TRMMdirName, timelist):
         #-----------End most of NETCDF file stuff ------------------------------------
         for index,value in np.ndenumerate(brightnesstemp):
             lat_index, lon_index = index
-            currTimeValue = 0
             if value > 0:
 
                 finalCETRMMvalues[0,lat_index,lon_index] = regriddedTRMM[int(np.where(LAT[:,0]==LAT[lat_index,0])[0]), int(np.where(LON[0,:]==LON[0,lon_index])[0])]
@@ -652,7 +641,6 @@ def findPrecipRate(TRMMdirName, timelist):
         finalCETRMMvalues =[]
         CEprecipRate =[]
         brightnesstemp =[]
-        TRMMdataDict ={}
 
     return allCEnodesTRMMdata
 #******************************************************************
