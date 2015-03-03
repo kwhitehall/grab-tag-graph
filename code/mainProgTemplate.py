@@ -2,18 +2,13 @@
 # running the program
 '''
 
-import sys
 import networkx as nx
-import numpy as np
-import numpy.ma as ma
-import matplotlib.pyplot as plt
 import subprocess
 
-import mccSearch
 import iomethods
+import mccSearch
 import utils
-import metrics
-import plotting
+
 
 def main():
     CEGraph = nx.DiGraph()
@@ -25,16 +20,16 @@ def main():
     allCETRMMList =[]
     DIRS={}
 
-    DIRS={
-             mainDirStr= "/directory/to/where/to/store/outputs"
-             TRMMdirName = "/directory/to/the/TRMM/netCDF/files" 
-             CEoriDirName = "/directory/to/the/MERG/netCDF/files"
-            }
+    # DIRS={
+    #          mainDirStr= "/directory/to/where/to/store/outputs"
+    #          TRMMdirName = "/directory/to/the/TRMM/netCDF/files"
+    #          CEoriDirName = "/directory/to/the/MERG/netCDF/files"
+    #         }
 
     #for GrADs
     subprocess.call('export DISPLAY=:0.0', shell=True)
 
-    #for first time working with the raw MERG zipped files 
+    #for first time working with the raw MERG zipped files
     # rawMERG = "/directory/to/the/raw/MERGfiles"
     # utils.preprocessingMERG(rawMERG)
     # ---------------------------------------------------------------------------------
@@ -63,7 +58,7 @@ def main():
     # ----------------------------------------------------------------------------------------------
     print ("-"*80)
     print "number of nodes in CEGraph is: ", CEGraph.number_of_nodes()
-    print ("-"*80)    
+    print ("-"*80)
     print "\n -------------- TESTING findCloudClusters ----------"
     prunedGraph = mccSearch.findCloudClusters(CEGraph)
     print ("-"*80)
@@ -87,8 +82,8 @@ def main():
     # print "longest duration is: ", metrics.longestDuration(MCCTimes), "hrs"
     # print "shortest duration is: ", metrics.shortestDuration(MCCTimes), "hrs"
     # print "Average duration is: ", metrics.averageDuration(MCCTimes), "hrs"
-    # print "Average size is: ", mmetrics.averageFeatureSize(MCCList), "km^2" 
-    
+    # print "Average size is: ", mmetrics.averageFeatureSize(MCCList), "km^2"
+
     #some plots that work
     # plotting.plotAccTRMM(MCCList)
     # plotting.displayPrecip(MCCList)
@@ -98,5 +93,5 @@ def main():
     # plotting.plotHistogram(MCCList)
     #
     print ("-"*80)
-    
+
 main()
