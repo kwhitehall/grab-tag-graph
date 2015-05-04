@@ -530,12 +530,10 @@ def findPrecipRate(TRMMdirName, timelist):
         lonsrawTRMMData[lonsrawTRMMData > 180] = lonsrawTRMMData[lonsrawTRMMData>180] - 360.
         LONTRMM, LATTRMM = np.meshgrid(lonsrawTRMMData, latsrawTRMMData)
 
-        #nygrdTRMM = len(LATTRMM[:,0])
-        #nxgrd = len(LONTRMM[0,:])
-
         # TODO: From this point onward 'LAT' and 'LON' are used but undefined.
         #       perhaps they have been replaced with LONTRMM and LATTRMM??
-        nygrd = len(LAT[:, 0]); nxgrd = len(LON[0, :])
+        nygrd = len(LAT[:, 0])
+        nxgrd = len(LON[0, :])
 
         precipRateMasked = ma.masked_array(precipRate, mask=(precipRate < 0.0))
         #---------regrid the TRMM data to the MERG dataset ----------------------------------
@@ -544,25 +542,6 @@ def findPrecipRate(TRMMdirName, timelist):
         regriddedTRMM = utils.doRegrid(precipRateMasked[0,:,:], LATTRMM,  LONTRMM, LAT, LON, order=1, mdi= -999999999)
         #----------------------------------------------------------------------------------
 
-        # #get the lat/lon info from
-        #latCEStart = LAT[0][0]
-        #latCEEnd = LAT[-1][0]
-        #lonCEStart = LON[0][0]
-        #lonCEEnd = LON[0][-1]
-
-        #get the lat/lon info for TRMM data (different resolution)
-        #latStartT = utils.findNearest(latsrawTRMMData, latCEStart)
-        #latEndT = utils.findNearest(latsrawTRMMData, latCEEnd)
-        #lonStartT = utils.findNearest(lonsrawTRMMData, lonCEStart)
-        #lonEndT = utils.findNearest(lonsrawTRMMData, lonCEEnd)
-        #latStartIndex = np.where(latsrawTRMMData == latStartT)
-        #latEndIndex = np.where(latsrawTRMMData == latEndT)
-        #lonStartIndex = np.where(lonsrawTRMMData == lonStartT)
-        #lonEndIndex = np.where(lonsrawTRMMData == lonEndT)
-
-        #get the relevant TRMM info
-        # Unused Variable
-        # CEprecipRate = precipRate[:,(latStartIndex[0][0]-1):latEndIndex[0][0],(lonStartIndex[0][0]-1):lonEndIndex[0][0]]
         TRMMData.close()
 
 
@@ -1402,8 +1381,7 @@ def checkCriteria (thisCloudElementLatLon, aTemperature):
         lat_index, lon_index = index
         criteriaB[lat_index, lon_index]=value
 
-    # This doesn't seem to use the 'count' variable.
-    for count in xrange(CEcounter):
+    for _ in xrange(CEcounter):
         #[0] is time dimension. Determine the actual values from the data
         #loc is a masked array
         #***** returns elements down then across thus (6,4) is 6 arrays deep of size 4
@@ -1612,8 +1590,7 @@ def eccentricity (cloudElementLatLon):
     #loop over all lons and determine longest (non-zero) col
     #loop over all lats and determine longest (non-zero) row
 
-    # TODO: This loop isn't making use of the 'latLon' variable
-    for latLon in cloudElementLatLon:
+    for _ in cloudElementLatLon:
         #assign a matrix to determine the legit values
 
         nonEmptyLons = sum(sum(cloudElementLatLon)>0)
