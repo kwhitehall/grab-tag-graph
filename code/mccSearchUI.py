@@ -85,18 +85,20 @@ def main():
         endDateTime = raw_input("> Please enter the end date and time yyyymmddhr: \n")
 
     #check if all the files exisits in the MERG and TRMM directories entered
-    test,_ = utils.checkForFiles(startDateTime, endDateTime, DIRS['TRMMdirName'], 2)
+    #test,_ = iomethods.checkForFiles(startDateTime, endDateTime, DIRS['TRMMdirName'], 2)
+    test,_ = iomethods.checkForFiles(DIRS['TRMMdirName'], startDateTime, endDateTime, 3, 'hour')
     if test == False:
         print "Error with files in the original MERG directory entered. Please check your files before restarting. "
         return
-    test,filelist = utils.checkForFiles(startDateTime, endDateTime, DIRS['CEoriDirName'],1)
-
+    #test,filelist = iomethods.checkForFiles(startDateTime, endDateTime, DIRS['CEoriDirName'],1)
+    test,filelist = iomethods.checkForFiles(DIRS['CEoriDirName'], startDateTime, endDateTime, 1, 'hour')
+    
     if test == False:
         print "Error with files in the original TRMM directory entered. Please check your files before restarting. "
         return
 
     #create main directory and file structure for storing intel
-    DIRS['mainDirStr'] = utils.createMainDirectory(DIRS['mainDirStr'])
+    DIRS['mainDirStr'] = iomethods.createMainDirectory(DIRS['mainDirStr'])
     TRMMCEdirName = DIRS['mainDirStr']+'/TRMMnetcdfCEs'
     CEdirName = DIRS['mainDirStr']+'/MERGnetcdfCEs'
 
@@ -117,7 +119,7 @@ def main():
     print "\t\t Starting the MCCSearch Analysis "
     print ("-"*80)
     print "\n -------------- Reading MERG and TRMM Data ----------"
-    mergImgs, timeList, LAT, LON = iomethods.readMergData(DIRS['CEoriDirName'], filelist)
+    mergImgs, timeList, LAT, LON = iomethods.readData(DIRS['CEoriDirName'],'ch4','latitude','longitude', filelist)
     print "\n -------------- findCloudElements ----------"
     CEGraph = mccSearch.findCloudElements(mergImgs,timeList,DIRS['mainDirStr'], LAT,LON,DIRS['TRMMdirName'])
     #theList = CEGraph.successors(node)
