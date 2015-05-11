@@ -120,11 +120,6 @@ def checkForFiles(dirPath, startTime, endTime, tdelta, tRes):
     endTimeInFile = find_time_in_file(endTime, startTimeInFile)
     endFile = glob.glob(dirPath+'/'+filenamePattern + '*'+endTimeInFile+'*')[0]
     
-    print "filenamePattern is ", filenamePattern, startTime, startTimeInFile
-    print "dirPath is ", dirPath
-    print "startFile is ", startFile
-    print "endFile is ", endFile
-
     currFile = startFile
     filelist =[]
     
@@ -493,9 +488,8 @@ def decodeTimeFromString(timeString):
        Returns:: myTime: a python datetime object of the time_string
 
     '''
-    
     # This will deal with times that use decimal seconds
-   if '.' in timeString:
+    if '.' in timeString:
         timeString = timeString.split('.')[0] + '0'
 
     else:
