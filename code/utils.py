@@ -574,7 +574,7 @@ def validDate(dataString):
         return 0
     elif (dd < 0 or dd > 30) and (mm == 4 or mm == 6 or mm == 9 or mm == 11):
         return 0
-    elif (dd < 0 or dd > 31) and (mm == 1 or mm ==3 or mm == 5 or mm == 7 or mm == 8 or mm == 10):
+    elif (dd < 0 or dd > 31) and (mm == 1 or mm == 3 or mm == 5 or mm == 7 or mm == 8 or mm == 10):
         return 0
     elif dd > 28 and mm == 2 and (yr%4) != 0:
         return 0
