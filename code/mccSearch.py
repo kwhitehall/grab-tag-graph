@@ -248,7 +248,7 @@ def findCloudElements(mergImgs, timelist, mainStrDir, LAT, LON, TRMMdirName=None
                     #---------regrid the TRMM data to the MERG dataset ----------------------------------
                     #regrid using the do_regrid stuff from the Apache OCW
                     regriddedTRMM = ma.zeros((0, nygrd, nxgrd))
-                    regriddedTRMM = utils.doRegrid(precipRateMasked[0, :, :], LATTRMM,  LONTRMM, LAT, LON, order=1, mdi= -999999999)
+                    regriddedTRMM = utils.do_regrid(precipRateMasked[0, :, :], LATTRMM,  LONTRMM, LAT, LON, order=1, mdi= -999999999)
                     #----------------------------------------------------------------------------------
 
                     # #get the lat/lon info from cloudElement
@@ -539,7 +539,7 @@ def findPrecipRate(TRMMdirName, timelist):
         #---------regrid the TRMM data to the MERG dataset ----------------------------------
         #regrid using the do_regrid stuff from the Apache OCW
         regriddedTRMM = ma.zeros((0, nygrd, nxgrd))
-        regriddedTRMM = utils.doRegrid(precipRateMasked[0,:,:], LATTRMM,  LONTRMM, LAT, LON, order=1, mdi= -999999999)
+        regriddedTRMM = utils.do_regrid(precipRateMasked[0,:,:], LATTRMM,  LONTRMM, LAT, LON, order=1, mdi= -999999999)
         #----------------------------------------------------------------------------------
 
         TRMMData.close()

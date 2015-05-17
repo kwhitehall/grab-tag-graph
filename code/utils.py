@@ -1,16 +1,16 @@
+import glob
 import itertools
 import os
-import subprocess
 import re
-import glob
+import subprocess
 
+from netCDF4 import Dataset
 import numpy as np
 import numpy.ma as ma
-from netCDF4 import Dataset
 from scipy.ndimage import map_coordinates
 
 
-def doRegrid(q, lat, lon, lat2, lon2, order=1, mdi=-999999999):
+def do_regrid(q, lat, lon, lat2, lon2, order=1, mdi=-999999999):
     '''
      Perform regridding from one set of lat,lon values onto a new set (lat2,lon2)
 
