@@ -2,14 +2,10 @@ import itertools
 import os
 import subprocess
 import re
-import string
-import math
 import glob
+
 import numpy as np
 import numpy.ma as ma
-
-
-from datetime import timedelta, datetime
 from netCDF4 import Dataset
 from scipy.ndimage import map_coordinates
 
@@ -322,10 +318,8 @@ def postProcessingNetCDF(dataset, dirName = None):
     ImgFilename = ''
     frameList=[]
     fileList =[]
-    lines =[]
     var =''
     firstTime = True
-    printLine = 0
     lineNum = 1
     #Just incase the X11 server is giving problems
     subprocess.call('export DISPLAY=:0.0', shell=True)
