@@ -10,7 +10,7 @@ from netCDF4 import Dataset
 from scipy.ndimage import map_coordinates
 
 
-def doRegrid(q, lat, lon, lat2, lon2, order=1, mdi= -999999999):
+def doRegrid(q, lat, lon, lat2, lon2, order=1, mdi=-999999999):
     '''
      Perform regridding from one set of lat,lon values onto a new set (lat2,lon2)
 
@@ -57,16 +57,26 @@ def doRegrid(q, lat, lon, lat2, lon2, order=1, mdi= -999999999):
     # Deal with the "hard" break in the y-direction
     lati = (nlat - 1) * (lati - lat.min()) / (lat.max() - lat.min())
 
-    # Notes on dealing with MDI when regridding data.
-    #  Method adopted here:
-    #    Use bilinear interpolation of data by default (but user can specify other order using order=... in call)
-    #    Perform bilinear interpolation of data, and of mask.
-    #    To be conservative, new grid point which contained some missing data on the old grid is set to missing data.
-    #            -this is achieved by looking for any non-zero interpolated mask values.
-    #    To avoid issues with bilinear interpolation producing strong gradients leading into the MDI,
-    #     set values at MDI points to mean data value so little gradient visible = not ideal, but acceptable for now.
+    """
+    Notes on dealing with MDI when regridding data.
+      Method adopted here:
 
-    # Set values in MDI so that similar to surroundings so don't produce large gradients when interpolating
+        *  Use bilinear interpolation of data by default (but user can specify
+        other order using order=... in call)
+
+        *  Perform bilinear interpolation of data, and of mask.
+
+        *  To be conservative, new grid point which contained some missing data
+        on the old grid is set to missing data.  This is achieved by looking
+        for any non-zero interpolated mask values.
+
+        *  To avoid issues with bilinear interpolation producing strong
+        gradients leading into the MDI, set values at MDI points to mean data
+        value so little gradient visible = not ideal, but acceptable for now.
+
+    """
+    # Set values in MDI so that similar to surroundings so don't produce large
+    # gradients when interpolating
     # Preserve MDI mask, by only changing data part of masked array object.
     for shift in (-1, 1):
         for axis in (0, 1):
@@ -99,7 +109,7 @@ def doRegrid(q, lat, lon, lat2, lon2, order=1, mdi= -999999999):
 
     return q2
 #******************************************************************
-def findNearest(thisArray,value):
+def findNearest(thisArray, value):
     '''
     Purpose :: to determine the value within an array closes to
             another value
@@ -128,24 +138,24 @@ def findTime(curryr, currmm, currdd, currhr):
         currhr = 0
         currdd += 1
         if currdd > 30 and (currmm == 4 or currmm == 6 or currmm == 9 or currmm == 11):
-            currmm +=1
+            currmm += 1
             currdd = 1
-        elif currdd > 31 and (currmm == 1 or currmm ==3 or currmm == 5 or currmm == 7 or currmm == 8 or currmm == 10):
-            currmm +=1
+        elif currdd > 31 and (currmm == 1 or currmm == 3 or currmm == 5 or currmm == 7 or currmm == 8 or currmm == 10):
+            currmm += 1
             currdd = 1
         elif currdd > 31 and currmm == 12:
             currmm = 1
             currdd = 1
             curryr += 1
-        elif currdd > 28 and currmm == 2 and (curryr%4)!=0:
+        elif currdd > 28 and currmm == 2 and (curryr%4) != 0:
             currmm = 3
             currdd = 1
-        elif (curryr%4)==0 and currmm == 2 and currdd>29:
+        elif (curryr%4) == 0 and currmm == 2 and currdd > 29:
             currmm = 3
             currdd = 1
 
     if currmm < 10:
-        currmmStr="0"+str(currmm)
+        currmmStr = "0"+str(currmm)
     else:
         currmmStr = str(currmm)
 
@@ -218,40 +228,28 @@ def preprocessingMERG(MERGdirname):
         #subprocess.call(bash_cmd, shell=True)
 
         #determine the time from the filename
-        ftime = re.search('\_(.*)\_',fname).group(1)
+        ftime = re.search('\_(.*)\_', fname).group(1)
 
         yy = ftime[0:4]
         mm = ftime[4:6]
         day = ftime[6:8]
-        hr = ftime [8:10]
+        hr = ftime[8:10]
 
-        #TODO: must be something more efficient!
+        mm_to_mth = {'01' : 'Jan',
+                     '02' : 'Feb',
+                     '03' : 'Mar',
+                     '04' : 'Apr',
+                     '05' : 'May',
+                     '06' : 'Jun',
+                     '07' : 'Jul',
+                     '08' : 'Aug',
+                     '09' : 'Sep',
+                     '10' : 'Oct',
+                     '11' : 'Nov',
+                     '12' : 'Dec'
+                    }
 
-        if mm=='01':
-            mth = 'Jan'
-        if mm == '02':
-            mth = 'Feb'
-        if mm == '03':
-            mth = 'Mar'
-        if mm == '04':
-            mth = 'Apr'
-        if mm == '05':
-            mth = 'May'
-        if mm == '06':
-            mth = 'Jun'
-        if mm == '07':
-            mth = 'Jul'
-        if mm == '08':
-            mth = 'Aug'
-        if mm == '09':
-            mth = 'Sep'
-        if mm == '10':
-            mth = 'Oct'
-        if mm == '11':
-            mth = 'Nov'
-        if mm == '12':
-            mth = 'Dec'
-
+        mth = mm_to_mth[mm]
 
         subprocess.call('rm merg.ctl', shell=True)
         subprocess.call('touch merg.ctl', shell=True)
@@ -289,7 +287,7 @@ def preprocessingMERG(MERGdirname):
     subprocess.call('mv *.gif mergImgs', shell=True)
     return
 #******************************************************************
-def postProcessingNetCDF(dataset, dirName = None):
+def postProcessingNetCDF(dataset, dirName=None):
     '''
 
     TODO: UPDATE TO PICK UP LIMITS FROM FILE FOR THE GRADS SCRIPTS
@@ -316,9 +314,9 @@ def postProcessingNetCDF(dataset, dirName = None):
 
     coreDir = os.path.dirname(os.path.abspath(__file__))
     ImgFilename = ''
-    frameList=[]
-    fileList =[]
-    var =''
+    frameList = []
+    fileList = []
+    var = ''
     firstTime = True
     lineNum = 1
     #Just incase the X11 server is giving problems
@@ -332,29 +330,29 @@ def postProcessingNetCDF(dataset, dirName = None):
         ctlLine = 'brightnesstemp=\>ch4     1  t,y,x    brightnesstemperature'
         origsFile = coreDir+"/cs1.gs"
         subprocessCall = 'touch '+origsFile
-        subprocess.call(subprocessCall,shell=True)
+        subprocess.call(subprocessCall, shell=True)
         writec3GrADScript(origsFile)
         gsFile = coreDir+"/cs2.gs"
         sologsFile = coreDir+"/mergeCE.gs"
         lineNum = 32
     elif dataset == 2:
         var = 'precipAcc'
-        ctlTitle ='TITLE  TRMM MCS accumulated precipitation search Output Grid: Time  lat lon '
+        ctlTitle = 'TITLE  TRMM MCS accumulated precipitation search Output Grid: Time  lat lon '
         ctlLine = 'precipitation_Accumulation=\>precipAcc     1  t,y,x    precipAccu'
         origsFile = coreDir+"/cs3.gs"
         subprocessCall = 'touch '+origsFile
-        subprocess.call(subprocessCall,shell=True)
+        subprocess.call(subprocessCall, shell=True)
         writec1GrADScript(origsFile)
         gsFile = coreDir+"/cs4.gs"
         sologsFile = coreDir+"/TRMMCE.gs"
         lineNum = 10
-    elif dataset ==3:
+    elif dataset == 3:
         var = 'ch4'
         ctlTitle = 'TITLE MERG DATA'
         ctlLine = 'ch4=\>ch4     1  t,y,x    brightnesstemperature'
         origsFile = coreDir+"/cs1.gs"
         subprocessCall = 'touch '+origsFile
-        subprocess.call(subprocessCall,shell=True)
+        subprocess.call(subprocessCall, shell=True)
         writec3GrADScript(origsFile)
         sologsFile = coreDir+"/infrared.gs"
         lineNum = 32
@@ -364,7 +362,7 @@ def postProcessingNetCDF(dataset, dirName = None):
     os.chdir((dirName+'/'))
     try:
         os.makedirs('ctlFiles')
-    except:
+    except OSError:
         print "ctl file folder created already"
 
     files = filter(os.path.isfile, glob.glob("*.nc"))
@@ -398,12 +396,12 @@ def postProcessingNetCDF(dataset, dirName = None):
         if os.path.isfile(fname):
             #open NetCDF file add info to the accu
             print "opening file ", fname
-            fileData = Dataset(fname,'r',format='NETCDF4')
+            fileData = Dataset(fname, 'r', format='NETCDF4')
             lats = fileData.variables['latitude'][:]
             lons = fileData.variables['longitude'][:]
-            LONDATA, LATDATA = np.meshgrid(lons,lats)
-            nygrd = len(LATDATA[:,0])
-            nxgrd = len(LONDATA[0,:])
+            LONDATA, LATDATA = np.meshgrid(lons, lats)
+            nygrd = len(LATDATA[:, 0])
+            nxgrd = len(LONDATA[0, :])
             fileData.close()
         lineToWrite = 'echo XDEF '+ str(nxgrd) + ' LINEAR ' + str(min(lons)) +' '+ str((max(lons)-min(lons))/nxgrd) +' >> ' +ctlFile1
         subprocess.call(lineToWrite, shell=True)
@@ -415,7 +413,7 @@ def postProcessingNetCDF(dataset, dirName = None):
         subprocess.call(lineToWrite, shell=True)
         lineToWrite = 'echo VARS 1 >> '+ctlFile1
         subprocess.call(lineToWrite, shell=True)
-        lineToWrite ='echo '+ctlLine+' >> '+ctlFile1
+        lineToWrite = 'echo '+ctlLine+' >> '+ctlFile1
         subprocess.call(lineToWrite, shell=True)
         lineToWrite = 'echo ENDVARS >>  '+ctlFile1
         subprocess.call(lineToWrite, shell=True)
@@ -434,11 +432,11 @@ def postProcessingNetCDF(dataset, dirName = None):
         printimCmd = '\''+'printim '+MAINDIRECTORY+'/images/'+ImgFilename+' x800 y600 white\''+'\n'
         quitCmd = '\''+'quit'+'\''+'\n'
 
-        GrADSscript = open(sologsFile,'r+')
+        GrADSscript = open(sologsFile, 'r+')
         lines1 = GrADSscript.readlines()
         GrADSscript.seek(0)
-        lines1.insert((1),newFileCmd)
-        lines1.insert((lineNum+1),displayCmd)
+        lines1.insert((1), newFileCmd)
+        lines1.insert((lineNum+1), displayCmd)
         lines1.insert((lineNum+2), colorbarCmd)
         lines1.insert((lineNum+3), printimCmd)
         lines1.insert((lineNum + 4), quitCmd)
@@ -475,22 +473,22 @@ def postProcessingNetCDF(dataset, dirName = None):
                         newVar = var+'.'+CE_num
                         newDisplayCmd = '\''+'d '+ newVar+'\''+'\n'
                         newFileCmd = '\''+'open '+ ctlFile1+'\''+'\n'
-                        GrADSscript = open(gsFile,'r+')
+                        GrADSscript = open(gsFile, 'r+')
                         lines1 = GrADSscript.readlines()
                         GrADSscript.seek(0)
-                        lines1.insert((1+count),newFileCmd)
-                        lines1.insert((lineNum+count+1),newDisplayCmd)
+                        lines1.insert((1+count), newFileCmd)
+                        lines1.insert((lineNum+count+1), newDisplayCmd)
                         GrADSscript.writelines(lines1)
                         GrADSscript.close()
-                    count +=1
+                    count += 1
 
                 colorbarCmd = '\''+'run cbarn'+'\''+'\n'
                 printimCmd = '\''+'printim '+MAINDIRECTORY+'/images/'+ImgFilename+' x800 y600 white\''+'\n'
                 quitCmd = '\''+'quit'+'\''+'\n'
-                GrADSscript = open(gsFile,'r+')
+                GrADSscript = open(gsFile, 'r+')
                 lines1 = GrADSscript.readlines()
                 GrADSscript.seek(0)
-                lines1.insert((lineNum+(count*2)+1), colorbarCmd)
+                lines1.insert((lineNum + (count*2)+1), colorbarCmd)
                 lines1.insert((lineNum + (count*2)+2), printimCmd)
                 lines1.insert((lineNum + (count*2)+3), quitCmd)
                 GrADSscript.writelines(lines1)
@@ -574,13 +572,13 @@ def validDate(dataString):
         return 0
     elif hh < 0 or hh > 23:
         return 0
-    elif (dd< 0 or dd > 30) and (mm == 4 or mm == 6 or mm == 9 or mm == 11):
+    elif (dd < 0 or dd > 30) and (mm == 4 or mm == 6 or mm == 9 or mm == 11):
         return 0
-    elif (dd< 0 or dd > 31) and (mm == 1 or mm ==3 or mm == 5 or mm == 7 or mm == 8 or mm == 10):
+    elif (dd < 0 or dd > 31) and (mm == 1 or mm ==3 or mm == 5 or mm == 7 or mm == 8 or mm == 10):
         return 0
-    elif dd > 28 and mm == 2 and (yr%4)!=0:
+    elif dd > 28 and mm == 2 and (yr%4) != 0:
         return 0
-    elif (yr%4)==0 and mm == 2 and dd>29:
+    elif (yr%4) == 0 and mm == 2 and dd > 29:
         return 0
     elif dd > 31 and mm == 12:
         return 0
