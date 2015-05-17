@@ -331,7 +331,7 @@ def postProcessingNetCDF(dataset, dirName=None):
         origsFile = coreDir+"/cs1.gs"
         subprocessCall = 'touch '+origsFile
         subprocess.call(subprocessCall, shell=True)
-        writec3GrADScript(origsFile)
+        write_c3_grad_script(origsFile)
         gsFile = coreDir+"/cs2.gs"
         sologsFile = coreDir+"/mergeCE.gs"
         lineNum = 32
@@ -342,7 +342,7 @@ def postProcessingNetCDF(dataset, dirName=None):
         origsFile = coreDir+"/cs3.gs"
         subprocessCall = 'touch '+origsFile
         subprocess.call(subprocessCall, shell=True)
-        writec1GrADScript(origsFile)
+        write_c1_grad_script(origsFile)
         gsFile = coreDir+"/cs4.gs"
         sologsFile = coreDir+"/TRMMCE.gs"
         lineNum = 10
@@ -353,7 +353,7 @@ def postProcessingNetCDF(dataset, dirName=None):
         origsFile = coreDir+"/cs1.gs"
         subprocessCall = 'touch '+origsFile
         subprocess.call(subprocessCall, shell=True)
-        writec3GrADScript(origsFile)
+        write_c3_grad_script(origsFile)
         sologsFile = coreDir+"/infrared.gs"
         lineNum = 32
 
@@ -449,7 +449,7 @@ def postProcessingNetCDF(dataset, dirName=None):
 
         if dataset == 1 or dataset == 2:
 
-            #TODO: for either dataset 1 or 2, write writec3GrADScript and then use the for loop to gen the line to add at the end to display
+            #TODO: for either dataset 1 or 2, write write_c3_grad_script and then use the for loop to gen the line to add at the end to display
             #at the end, run the GrADS script
 
             if prevFrameNum != frameNum and firstTime == False:
@@ -585,7 +585,7 @@ def validDate(dataString):
     else:
         return 1
 #*********************************************************************************************************************
-def writec3GrADScript(origsFile):
+def write_c3_grad_script(origsFile):
     '''
     Input:: a string representing the filename with full path to the GrADS script being created
 
@@ -605,7 +605,7 @@ def writec3GrADScript(origsFile):
     subprocess.call('echo "''\'set csmooth on''\'" >> '+origsFile, shell=True)
     return
 #*********************************************************************************************************************
-def writec1GrADScript(origsFile):
+def write_c1_grad_script(origsFile):
     '''
     Input:: a string representing the filename with full path to the GrADS script being created
 
