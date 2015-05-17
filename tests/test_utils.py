@@ -23,14 +23,7 @@ class test_validDate(unittest.TestCase):
 
 	def test_good_input(self):
 		good_datetime = "2015010100"
-		self.assertEqual(utils.validDate(good_datetime), 1)
-
-
-
-
-
-
-
+		self.assertEqual(utils.validDate(good_datetime), True)
 
 
 if __name__ == '__main__':

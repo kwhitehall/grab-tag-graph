@@ -558,6 +558,9 @@ def tempMaskedImages(imgFilename):
 #******************************************************************
 def validDate(dataString):
     '''
+    Input:: Datetime string of format YYYYMMDDHH.
+
+    Output:: Boolean if the input is valid, otherwise it will raise a ValueError exception.
     '''
 
     if len(dataString) > 10:
@@ -568,7 +571,7 @@ def validDate(dataString):
     except ValueError, e:
         raise ValueError("Expected input string format is YYYYMMDDHH.  Python error: {0}".format(e))
 
-    return 1
+    return True
 
 #*********************************************************************************************************************
 def writec3GrADScript(origsFile):
