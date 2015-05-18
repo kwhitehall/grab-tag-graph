@@ -4,37 +4,36 @@ from datetime import timedelta, datetime
 import numpy as np
 
 import mccSearch
-
-#******************************************************************
+#**********************************************************************************************************************
 #
 #             METRICS FUNCTIONS FOR MERG.PY
 # TODO: rewrite these metrics so that they use the data from the
 #   file instead of the graph as this reduce mem resources needed
 #
 #
-#******************************************************************
-def averageDuration(allMCCtimes):
+#**********************************************************************************************************************
+def average_duration(allMCCtimes):
     '''
     Purpose:: To determine the average MCC length for the period
 
-    Input:: list of dictionaries - allMCCtimes {MCCtimes, starttime, endtime, duration): a list of dictionaries
-              of MCC temporal details for each MCC in the period considered
+    Inputs:: allMCCtimes {MCCtimes, starttime, endtime, duration): a list of dictionaries
+            of MCC temporal details for each MCC in the period considered
 
-    Output::a floating-point representing the average duration of a MCC in the period
+    Returns:: a floating-point representing the average duration of a MCC in the period
 
     Assumptions::
 
     '''
 
     return sum([MCC['duration'] for MCC in allMCCtimes], timedelta(seconds=0))/len(allMCCtimes)
-#******************************************************************
-def averageFeatureSize(finalMCCList):
+#**********************************************************************************************************************
+def average_feature_size(finalMCCList):
     '''
     Purpose:: To determine the average MCC size for the period
 
-    Input:: a list of list of strings - finalMCCList: a list of list of nodes representing a MCC
+    Inputs:: finalMCCList: a list of list of strings representing  a list of list of nodes representing a MCC
 
-    Output::a floating-point representing the average area of a MCC in the period
+    Returns::a floating-point representing the average area of a MCC in the period
 
     Assumptions::
 
@@ -53,17 +52,14 @@ def averageFeatureSize(finalMCCList):
 
     #calcuate final average
     return thisMCCAvg/(len(finalMCCList))
-#******************************************************************
-def averageTime(allTimes):
+#**********************************************************************************************************************
+def average_time(allTimes):
     '''
-    Purpose::
-        To determine the average time in a list of datetimes
-        e.g. of use is finding avg starttime,
-    Input::
-        allTimes: a list of datetimes representing all of a given event e.g. start time
+    Purpose:: To determine the average time in a list of datetimes e.g. of use is finding avg starttime,
+    
+    Inputs:: allTimes: a list of datetimes representing all of a given event e.g. start time
 
-    Output::
-        a floating-point number representing the average of the times given
+    Returns:: a floating-point number representing the average of the times given
 
     '''
     avgTime = 0
@@ -75,18 +71,16 @@ def averageTime(allTimes):
         avgTime /= len(allTimes)
 
     rez = str(avgTime/3600) + ' ' + str((avgTime%3600)/60) + ' ' + str(avgTime%60)
-    return datetime.strptime(rez, "%H %M %S")
-#******************************************************************
-def commonFeatureSize(finalMCCList):
+    return datetime.strptime(rez, '%H %M %S')
+#**********************************************************************************************************************
+def common_feature_size(finalMCCList):
     '''
-    Purpose::
-        To determine the common (mode) MCC size for the period
+    Purpose:: To determine the common (mode) MCC size for the period
 
-    Input::
-        finalMCCList: a list of list of strings representing the list of nodes representing a MCC
+    Inputs:: finalMCCList: a list of list of strings representing the list of nodes representing a MCC
 
-    Output::
-        a floating-point representing the average area of a MCC in the period
+    Returns:: hist: an array representing the values of the histogram
+              bin_edges: an array of floating-point representing the bin edges for the histogram
 
     Assumptions::
 
@@ -106,21 +100,24 @@ def commonFeatureSize(finalMCCList):
     #calcuate
     hist, bin_edges = np.histogram(thisMCCAvg)
     return hist, bin_edges
-#******************************************************************
-def createTextFile(finalMCCList, identifier, MAINDIRECTORY, OUTER_CLOUD_SHIELD_AREA, TRES):
+#**********************************************************************************************************************
+def create_text_file(finalMCCList, identifier, MAIN_DIRECTORY, OUTER_CLOUD_SHIELD_AREA, TRES):
     '''
     Purpose::
         Create a text file with information about the MCS
         This function is expected to be especially of use regarding long term record checks
 
-    Input::
+    Inputs::
         finalMCCList: a list of dictionaries representing a list of nodes representing a MCC
         identifier: an integer representing the type of list that has been entered...this is for creating file purposes
-            1 - MCCList; 2- MCSList
+            1 - MCCList; 2- mcsList
 
-    Output::
-        a user readable text file with all information about each MCS
-        a user readable text file with the summary of the MCS
+    Returns:: None
+
+    Generates::
+        mcsUserFile: a user readable text file with all information about each MCS
+        mcsSummaryFile: a user readable text file with the summary of the MCS
+        mcsPostFile: a user readable text file with each MCS identified
 
     Assumptions::
 
@@ -128,7 +125,7 @@ def createTextFile(finalMCCList, identifier, MAINDIRECTORY, OUTER_CLOUD_SHIELD_A
     '''
 
     durations = 0.0
-    startTimes =[]
+    startTimes = []
     endTimes = []
     averagePropagationSpeed = 0.0
     speedCounter = 0
@@ -150,11 +147,11 @@ def createTextFile(finalMCCList, identifier, MAINDIRECTORY, OUTER_CLOUD_SHIELD_A
     avgMaxPrecipRateCounter = 0
     avgMinPrecipRate = 0.0
     avgMinPrecipRateCounter = 0
-    CEspeed = 0.0
-    MCSspeed = 0.0
-    MCSspeedCounter = 0
-    MCSPrecipTotal = 0.0
-    avgMCSPrecipTotalCounter = 0
+    cloudElementSpeed = 0.0
+    mcsSpeed = 0.0
+    mcsSpeedCounter = 0
+    mcsPrecipTotal = 0.0
+    avgmcsPrecipTotalCounter = 0
     bigPtotal = 0.0
     bigPtotalCounter = 0
     allPropagationSpeeds = []
@@ -162,11 +159,10 @@ def createTextFile(finalMCCList, identifier, MAINDIRECTORY, OUTER_CLOUD_SHIELD_A
     areaAvg = 0.0
     avgPrecipTotal = 0.0
     avgPrecipTotalCounter = 0
-    avgMaxMCSPrecipRate = 0.0
-    avgMaxMCSPrecipRateCounter = 0
-    avgMinMCSPrecipRate = 0.0
-    avgMinMCSPrecipRateCounter = 0
-    minMax = []
+    avgMaxmcsPrecipRate = 0.0
+    avgMaxmcsPrecipRateCounter = 0
+    avgMinmcsPrecipRate = 0.0
+    avgMinmcsPrecipRateCounter = 0
     avgPrecipArea = []
     location = []
     avgPrecipAreaPercent = 0.0
@@ -176,21 +172,21 @@ def createTextFile(finalMCCList, identifier, MAINDIRECTORY, OUTER_CLOUD_SHIELD_A
     precipCounter = 0
     precipAreaAvg = 0.0
     minSpeed = 0.0
-    maxSpeed =0.0
+    maxSpeed = 0.0
 
     if identifier == 1:
-        MCSUserFile = open((MAINDIRECTORY + '/textFiles/MCCsUserFile.txt'),'wb')
-        MCSSummaryFile = open((MAINDIRECTORY + '/textFiles/MCCSummary.txt'),'wb')
-        MCSPostFile = open((MAINDIRECTORY + '/textFiles/MCCPostPrecessing.txt'),'wb')
+        mcsUserFile = open((MAIN_DIRECTORY + '/textFiles/MCCsUserFile.txt'), 'wb')
+        mcsSummaryFile = open((MAIN_DIRECTORY + '/textFiles/MCCSummary.txt'), 'wb')
+        mcsPostFile = open((MAIN_DIRECTORY + '/textFiles/MCCPostPrecessing.txt'), 'wb')
 
     if identifier == 2:
-        MCSUserFile = open((MAINDIRECTORY + '/textFiles/MCSsUserFile.txt'),'wb')
-        MCSSummaryFile = open((MAINDIRECTORY + '/textFiles/MCSSummary.txt'),'wb')
-        MCSPostFile = open((MAINDIRECTORY + '/textFiles/MCSPostPrecessing.txt'),'wb')
+        mcsUserFile = open((MAIN_DIRECTORY + '/textFiles/MCSsUserFile.txt'), 'wb')
+        mcsSummaryFile = open((MAIN_DIRECTORY + '/textFiles/MCSSummary.txt'), 'wb')
+        mcsPostFile = open((MAIN_DIRECTORY + '/textFiles/MCSPostPrecessing.txt'), 'wb')
 
     for eachPath in finalMCCList:
-        eachPath.sort(key=lambda nodeID:(len(nodeID.split('C')[0]), nodeID.split('C')[0], nodeID.split('CE')[1]))
-        MCSPostFile.write("\n %s" % eachPath)
+        eachPath.sort(key=lambda nodeID: (len(nodeID.split('C')[0]), nodeID.split('C')[0], nodeID.split('CE')[1]))
+        mcsPostFile.write('\n %s' % eachPath)
 
         startTime = mccSearch.thisDict(eachPath[0])['cloudElementTime']
         endTime = mccSearch.thisDict(eachPath[-1])['cloudElementTime']
@@ -204,20 +200,16 @@ def createTextFile(finalMCCList, identifier, MAINDIRECTORY, OUTER_CLOUD_SHIELD_A
         endTimes.append(endTime)
 
         #get the precip info
-
         for eachNode in eachPath:
-
             thisNode = mccSearch.thisDict(eachNode)
-
-            #set first time min "fake" values
+            #set first time min 'fake' values
             if firstTime == True:
                 minCEprecipRate = thisNode['CETRMMmin']
-                avgMinMCSPrecipRate += thisNode['CETRMMmin']
+                avgMinmcsPrecipRate += thisNode['CETRMMmin']
                 firstTime = False
-
             #calculate the speed
             # if thisNode['cloudElementArea'] >= OUTER_CLOUD_SHIELD_AREA:
-            #   averagePropagationSpeed += findCESpeed(eachNode, eachPath)
+            #   averagePropagationSpeed += find_cloud_element_speed(eachNode, eachPath)
             #   speedCounter +=1
 
             #Amax: find max area
@@ -239,8 +231,6 @@ def createTextFile(finalMCCList, identifier, MAINDIRECTORY, OUTER_CLOUD_SHIELD_A
             if thisNode['CETRMMmax'] > maxCEprecipRate:
                 maxCEprecipRate = thisNode['CETRMMmax']
 
-
-
             #if MCC, then calculate for only mature phase else, calculate for full MCS
             if identifier == 1:
                 #calculations for only the mature stage
@@ -249,15 +239,15 @@ def createTextFile(finalMCCList, identifier, MAINDIRECTORY, OUTER_CLOUD_SHIELD_A
                         #calculate average area of the maturity feature only
                         averageArea += thisNode['cloudElementArea']
                         averageAreaCounter += 1
-                        durationOfMatureMCC +=1
+                        durationOfMatureMCC += 1
                         avgMaxPrecipRate += thisNode['CETRMMmax']
                         avgMaxPrecipRateCounter += 1
                         avgMinPrecipRate += thisNode['CETRMMmin']
                         avgMinPrecipRateCounter += 1
-                        avgMaxMCSPrecipRate += thisNode['CETRMMmax']
-                        avgMaxMCSPrecipRateCounter += 1
-                        avgMinMCSPrecipRate += thisNode['CETRMMmin']
-                        avgMinMCSPrecipRateCounter += 1
+                        avgMaxmcsPrecipRate += thisNode['CETRMMmax']
+                        avgMaxmcsPrecipRateCounter += 1
+                        avgMinmcsPrecipRate += thisNode['CETRMMmin']
+                        avgMinmcsPrecipRateCounter += 1
 
                         #the precip percentage (TRMM area/CE area)
                         if thisNode['cloudElementArea'] >= 0.0 and thisNode['TRMMArea'] >= 0.0:
@@ -268,28 +258,28 @@ def createTextFile(finalMCCList, identifier, MAINDIRECTORY, OUTER_CLOUD_SHIELD_A
                             precipCounter += 1
 
                         #system speed for only mature stage
-                        # CEspeed = findCESpeed(eachNode,eachPath)
-                        # if CEspeed > 0.0 :
-                        #   MCSspeed += CEspeed
-                        #   MCSspeedCounter += 1
+                        # cloudElementSpeed = find_cloud_element_speed(eachNode,eachPath)
+                        # if cloudElementSpeed > 0.0 :
+                        #   mcsSpeed += cloudElementSpeed
+                        #   mcsSpeedCounter += 1
                 except:
-                    print "MCS node has no nodeMCSIdentifier ", thisNode['uniqueID']
-                    avgMaxMCSPrecipRate += thisNode['CETRMMmax']
-                    avgMaxMCSPrecipRateCounter += 1
-                    avgMinMCSPrecipRate += thisNode['CETRMMmin']
-                    avgMinMCSPrecipRateCounter += 1
+                    print 'MCS node has no nodeMCSIdentifier ', thisNode['uniqueID']
+                    avgMaxmcsPrecipRate += thisNode['CETRMMmax']
+                    avgMaxmcsPrecipRateCounter += 1
+                    avgMinmcsPrecipRate += thisNode['CETRMMmin']
+                    avgMinmcsPrecipRateCounter += 1
             else:
                 averageArea += thisNode['cloudElementArea']
                 averageAreaCounter += 1
-                durationOfMatureMCC +=1
+                durationOfMatureMCC += 1
                 avgMaxPrecipRate += thisNode['CETRMMmax']
                 avgMaxPrecipRateCounter += 1
                 avgMinPrecipRate += thisNode['CETRMMmin']
                 avgMinPrecipRateCounter += 1
-                avgMaxMCSPrecipRate += thisNode['CETRMMmax']
-                avgMaxMCSPrecipRateCounter += 1
-                avgMinMCSPrecipRate += thisNode['CETRMMmin']
-                avgMinMCSPrecipRateCounter += 1
+                avgMaxmcsPrecipRate += thisNode['CETRMMmax']
+                avgMaxmcsPrecipRateCounter += 1
+                avgMinmcsPrecipRate += thisNode['CETRMMmin']
+                avgMinmcsPrecipRateCounter += 1
 
             #the precip percentage (TRMM area/CE area)
             if thisNode['cloudElementArea'] >= 0.0 and thisNode['TRMMArea'] >= 0.0:
@@ -300,43 +290,43 @@ def createTextFile(finalMCCList, identifier, MAINDIRECTORY, OUTER_CLOUD_SHIELD_A
                 precipCounter += 1
 
             #system speed for only mature stage
-            # CEspeed = findCESpeed(eachNode,eachPath)
-            # if CEspeed > 0.0 :
-            #   MCSspeed += CEspeed
-            #   MCSspeedCounter += 1
+            # cloudElementSpeed = find_cloud_element_speed(eachNode,eachPath)
+            # if cloudElementSpeed > 0.0 :
+            #   mcsSpeed += cloudElementSpeed
+            #   mcsSpeedCounter += 1
 
             #find accumulated precip
             if thisNode['cloudElementPrecipTotal'] > 0.0:
-                MCSPrecipTotal += thisNode['cloudElementPrecipTotal']
-                avgMCSPrecipTotalCounter +=1
+                mcsPrecipTotal += thisNode['cloudElementPrecipTotal']
+                avgmcsPrecipTotalCounter += 1
 
         #A: calculate the average Area of the (mature) MCS
         if averageAreaCounter > 0: # and averageAreaCounter > 0:
-            averageArea/= averageAreaCounter
+            averageArea /= averageAreaCounter
             averageAreas.append(averageArea)
 
         #v: MCS speed
-        if MCSspeedCounter > 0: # and MCSspeed > 0.0:
-            MCSspeed /= MCSspeedCounter
+        if mcsSpeedCounter > 0: # and mcsSpeed > 0.0:
+            mcsSpeed /= mcsSpeedCounter
 
         #smallP_max: calculate the average max precip rate (mm/h)
-        if avgMaxMCSPrecipRateCounter > 0 : #and avgMaxPrecipRate > 0.0:
-            avgMaxMCSPrecipRate /= avgMaxMCSPrecipRateCounter
+        if avgMaxmcsPrecipRateCounter > 0: #and avgMaxPrecipRate > 0.0:
+            avgMaxmcsPrecipRate /= avgMaxmcsPrecipRateCounter
 
         #smallP_min: calculate the average min precip rate (mm/h)
-        if avgMinMCSPrecipRateCounter > 0 : #and avgMinPrecipRate > 0.0:
-            avgMinMCSPrecipRate /= avgMinMCSPrecipRateCounter
+        if avgMinmcsPrecipRateCounter > 0: #and avgMinPrecipRate > 0.0:
+            avgMinmcsPrecipRate /= avgMinmcsPrecipRateCounter
 
         #smallP_avg: calculate the average precipitation (mm hr-1)
-        if MCSPrecipTotal > 0.0: # and avgMCSPrecipTotalCounter> 0:
-            avgMCSPrecipTotal = MCSPrecipTotal/avgMCSPrecipTotalCounter
-            avgPrecipTotal += avgMCSPrecipTotal
+        if mcsPrecipTotal > 0.0: # and avgmcsPrecipTotalCounter> 0:
+            avgmcsPrecipTotal = mcsPrecipTotal/avgmcsPrecipTotalCounter
+            avgPrecipTotal += avgmcsPrecipTotal
             avgPrecipTotalCounter += 1
 
-        #smallP_total = MCSPrecipTotal
+        #smallP_total = mcsPrecipTotal
         #precip over the MCS lifetime prep for bigP_total
-        if MCSPrecipTotal > 0.0:
-            bigPtotal += MCSPrecipTotal
+        if mcsPrecipTotal > 0.0:
+            bigPtotal += mcsPrecipTotal
             bigPtotalCounter += 1
 
         if maxArea > 0.0:
@@ -350,58 +340,57 @@ def createTextFile(finalMCCList, identifier, MAINDIRECTORY, OUTER_CLOUD_SHIELD_A
 
 
         #write stuff to file
-        MCSUserFile.write("\n\n\nStarttime is: %s " %(str(startTime)))
-        MCSUserFile.write("\nEndtime is: %s " %(str(endTime)))
-        MCSUserFile.write("\nLife duration is %s hrs" %(str(duration)))
-        MCSUserFile.write("\nTime of maturity is %s " %(timeMCSMatures))
-        MCSUserFile.write("\nDuration mature stage is: %s " %durationOfMatureMCC*TRES)
-        MCSUserFile.write("\nAverage area is: %.4f km^2 " %(averageArea))
-        MCSUserFile.write("\nMax area is: %.4f km^2 " %(maxArea))
-        MCSUserFile.write("\nMax area time is: %s " %(maxAreaTime))
-        MCSUserFile.write("\nEccentricity at max area is: %.4f " %(eccentricity))
-        MCSUserFile.write("\nCenter (lat,lon) at max area is: %.2f\t%.2f" %(location[0], location[1]))
-        MCSUserFile.write("\nPropagation speed is %.4f " %(MCSspeed))
-        MCSUserFile.write("\nMCS minimum preicip rate is %.4f mmh^-1" %(minCEprecipRate))
-        MCSUserFile.write("\nMCS maximum preicip rate is %.4f mmh^-1" %(maxCEprecipRate))
-        MCSUserFile.write("\nTotal precipitation during MCS is %.4f mm/lifetime" %(MCSPrecipTotal))
-        MCSUserFile.write("\nAverage MCS precipitation is %.4f mm" %(avgMCSPrecipTotal))
-        MCSUserFile.write("\nAverage MCS maximum precipitation is %.4f mmh^-1" %(avgMaxMCSPrecipRate))
-        MCSUserFile.write("\nAverage MCS minimum precipitation is %.4f mmh^-1" %(avgMinMCSPrecipRate))
-        MCSUserFile.write("\nAverage precipitation area is %.4f km^2 " %(precipArea))
-        MCSUserFile.write("\nPrecipitation area percentage of mature system %.4f percent " %(avgPrecipAreaPercent*100))
+        mcsUserFile.write('\n\n\nStarttime is: %s ' %(str(startTime)))
+        mcsUserFile.write('\nEndtime is: %s ' %(str(endTime)))
+        mcsUserFile.write('\nLife duration is %s hrs' %(str(duration)))
+        mcsUserFile.write('\nTime of maturity is %s ' %(timeMCSMatures))
+        mcsUserFile.write('\nDuration mature stage is: %s ' %durationOfMatureMCC*TRES)
+        mcsUserFile.write('\nAverage area is: %.4f km^2 ' %(averageArea))
+        mcsUserFile.write('\nMax area is: %.4f km^2 ' %(maxArea))
+        mcsUserFile.write('\nMax area time is: %s ' %(maxAreaTime))
+        mcsUserFile.write('\nEccentricity at max area is: %.4f ' %(eccentricity))
+        mcsUserFile.write('\nCenter (lat,lon) at max area is: %.2f\t%.2f' %(location[0], location[1]))
+        mcsUserFile.write('\nPropagation speed is %.4f ' %(mcsSpeed))
+        mcsUserFile.write('\nMCS minimum preicip rate is %.4f mmh^-1' %(minCEprecipRate))
+        mcsUserFile.write('\nMCS maximum preicip rate is %.4f mmh^-1' %(maxCEprecipRate))
+        mcsUserFile.write('\nTotal precipitation during MCS is %.4f mm/lifetime' %(mcsPrecipTotal))
+        mcsUserFile.write('\nAverage MCS precipitation is %.4f mm' %(avgmcsPrecipTotal))
+        mcsUserFile.write('\nAverage MCS maximum precipitation is %.4f mmh^-1' %(avgMaxmcsPrecipRate))
+        mcsUserFile.write('\nAverage MCS minimum precipitation is %.4f mmh^-1' %(avgMinmcsPrecipRate))
+        mcsUserFile.write('\nAverage precipitation area is %.4f km^2 ' %(precipArea))
+        mcsUserFile.write('\nPrecipitation area percentage of mature system %.4f percent ' %(avgPrecipAreaPercent*100))
 
 
         #append stuff to lists for the summary file
-        if MCSspeed > 0.0:
-            allPropagationSpeeds.append(MCSspeed)
-            averagePropagationSpeed += MCSspeed
+        if mcsSpeed > 0.0:
+            allPropagationSpeeds.append(mcsSpeed)
+            averagePropagationSpeed += mcsSpeed
             speedCounter += 1
 
         #reset vars for next MCS in list
-        aaveragePropagationSpeed = 0.0
         averageArea = 0.0
         averageAreaCounter = 0
         durationOfMatureMCC = 0
-        MCSspeed = 0.0
-        MCSspeedCounter = 0
-        MCSPrecipTotal = 0.0
-        avgMaxMCSPrecipRate =0.0
-        avgMaxMCSPrecipRateCounter = 0
-        avgMinMCSPrecipRate = 0.0
-        avgMinMCSPrecipRateCounter = 0
+        mcsSpeed = 0.0
+        mcsSpeedCounter = 0
+        mcsPrecipTotal = 0.0
+        avgMaxmcsPrecipRate = 0.0
+        avgMaxmcsPrecipRateCounter = 0
+        avgMinmcsPrecipRate = 0.0
+        avgMinmcsPrecipRateCounter = 0
         firstTime = True
         matureFlag = True
-        avgMCSPrecipTotalCounter=0
+        avgmcsPrecipTotalCounter = 0
         avgPrecipAreaPercent = 0.0
         precipArea = 0.0
         precipCounter = 0
         maxArea = 0.0
-        maxAreaTime=''
+        maxAreaTime = ''
         eccentricity = 0.0
-        timeMCSMatures=''
+        timeMCSMatures = ''
         maxCEprecipRate = 0.0
         minCEprecipRate = 0.0
-        location =[]
+        location = []
 
     #LD: average duration
     if len(finalMCCList) > 1:
@@ -412,21 +401,21 @@ def createTextFile(finalMCCList, identifier, MAINDIRECTORY, OUTER_CLOUD_SHIELD_A
         areaAvg = sum(averageAreas)/ len(finalMCCList)
     #create histogram plot here
     #if len(averageAreas) > 1:
-    #   plotHistogram(averageAreas, "Average Area [km^2]", "Area [km^2]")
+    #   plotHistogram(averageAreas, 'Average Area [km^2]', 'Area [km^2]')
 
     #Amax: average maximum area
     if maxAreaCounter > 0.0: #and avgMaxArea > 0.0 :
         amax = sum(avgMaxArea)/ maxAreaCounter
         #create histogram plot here
         #if len(avgMaxArea) > 1:
-        #   plotHistogram(avgMaxArea, "Maximum Area [km^2]", "Area [km^2]")
+        #   plotHistogram(avgMaxArea, 'Maximum Area [km^2]', 'Area [km^2]')
 
     #v_avg: calculate the average propagation speed
-    if speedCounter > 0 :  # and averagePropagationSpeed > 0.0
+    if speedCounter > 0:  # and averagePropagationSpeed > 0.0
         averagePropagationSpeed /= speedCounter
 
     #bigP_min: calculate the min rate in mature system
-    if avgMinPrecipRate >  0.0: # and avgMinPrecipRateCounter > 0.0:
+    if avgMinPrecipRate > 0.0: # and avgMinPrecipRateCounter > 0.0:
         avgMinPrecipRate /= avgMinPrecipRateCounter
 
     #bigP_max: calculate the max rate in mature system
@@ -449,313 +438,260 @@ def createTextFile(finalMCCList, identifier, MAINDIRECTORY, OUTER_CLOUD_SHIELD_A
     if len(avgPrecipArea) > 0:
         precipAreaAvg = sum(avgPrecipArea)/len(avgPrecipArea)
         #if len(avgPrecipArea) > 1:
-        #   plotHistogram(avgPrecipArea, "Average Rainfall Area [km^2]", "Area [km^2]")
+        #   plotHistogram(avgPrecipArea, 'Average Rainfall Area [km^2]', 'Area [km^2]')
 
 
-    sTime = str(averageTime(startTimes))
-    eTime = str(averageTime(endTimes))
-    if len (allPropagationSpeeds) > 1:
+    sTime = str(average_time(startTimes))
+    eTime = str(average_time(endTimes))
+    if len(allPropagationSpeeds) > 1:
         maxSpeed = max(allPropagationSpeeds)
         minSpeed = min(allPropagationSpeeds)
 
     #write stuff to the summary file
-    MCSSummaryFile.write("\nNumber of features is %d " %(len(finalMCCList)))
-    MCSSummaryFile.write("\nAverage duration is %.4f hrs " %(durations))
-    MCSSummaryFile.write("\nAverage startTime is %s " %(sTime[-8:]))
-    MCSSummaryFile.write("\nAverage endTime is %s " %(eTime[-8:]))
-    MCSSummaryFile.write("\nAverage size is %.4f km^2 " %(areaAvg))
-    MCSSummaryFile.write("\nAverage precipitation area is %.4f km^2 " %(precipAreaAvg))
-    MCSSummaryFile.write("\nAverage maximum size is %.4f km^2 " %(amax))
-    MCSSummaryFile.write("\nAverage propagation speed is %.4f ms^-1" %(averagePropagationSpeed))
-    MCSSummaryFile.write("\nMaximum propagation speed is %.4f ms^-1 " %(maxSpeed))
-    MCSSummaryFile.write("\nMinimum propagation speed is %.4f ms^-1 " %(minSpeed))
-    MCSSummaryFile.write("\nAverage minimum precipitation rate is %.4f mmh^-1" %(avgMinPrecipRate))
-    MCSSummaryFile.write("\nAverage maximum precipitation rate is %.4f mm h^-1" %(avgMaxPrecipRate))
-    MCSSummaryFile.write("\nAverage precipitation is %.4f mm " %(avgPrecipTotal))
-    MCSSummaryFile.write("\nAverage total precipitation during MCSs is %.4f mm/LD " %(bigPtotal))
-    MCSSummaryFile.write("\nAverage precipitation area percentage is %.4f percent " %(precipAreaPercent))
+    mcsSummaryFile.write('\nNumber of features is %d ' %(len(finalMCCList)))
+    mcsSummaryFile.write('\nAverage duration is %.4f hrs ' %(durations))
+    mcsSummaryFile.write('\nAverage startTime is %s ' %(sTime[-8:]))
+    mcsSummaryFile.write('\nAverage endTime is %s ' %(eTime[-8:]))
+    mcsSummaryFile.write('\nAverage size is %.4f km^2 ' %(areaAvg))
+    mcsSummaryFile.write('\nAverage precipitation area is %.4f km^2 ' %(precipAreaAvg))
+    mcsSummaryFile.write('\nAverage maximum size is %.4f km^2 ' %(amax))
+    mcsSummaryFile.write('\nAverage propagation speed is %.4f ms^-1' %(averagePropagationSpeed))
+    mcsSummaryFile.write('\nMaximum propagation speed is %.4f ms^-1 ' %(maxSpeed))
+    mcsSummaryFile.write('\nMinimum propagation speed is %.4f ms^-1 ' %(minSpeed))
+    mcsSummaryFile.write('\nAverage minimum precipitation rate is %.4f mmh^-1' %(avgMinPrecipRate))
+    mcsSummaryFile.write('\nAverage maximum precipitation rate is %.4f mm h^-1' %(avgMaxPrecipRate))
+    mcsSummaryFile.write('\nAverage precipitation is %.4f mm ' %(avgPrecipTotal))
+    mcsSummaryFile.write('\nAverage total precipitation during MCSs is %.4f mm/LD ' %(bigPtotal))
+    mcsSummaryFile.write('\nAverage precipitation area percentage is %.4f percent ' %(precipAreaPercent))
 
-
-    MCSUserFile.close
-    MCSSummaryFile.close
-    MCSPostFile.close
+    mcsUserFile.close
+    mcsSummaryFile.close
+    mcsPostFile.close
     return
-
-#******************************************************************
-def findCESpeed(node, MCSList, theList):
+#**********************************************************************************************************************
+def find_cloud_element_speed(node, mcsList, theList):
     '''
-    Purpose::
-        To determine the speed of the CEs uses vector displacement delta_lat/delta_lon (y/x)
+    Purpose:: To determine the speed of the cloud elements uses vector displacement deltaLat/deltaLon (y/x)
 
-    Input::
-        node: a string representing the CE
-        MCSList: a list of strings representing the feature
+    Inputs:: node: a string representing the cloud element
+        mcsList: a list of strings representing the feature
 
-    Output::
-        CEspeed: a floating-point number representing the speed of the CE
+    Returns:: cloudElementSpeed: a floating-point number representing the speed of the cloud element
 
     '''
 
-    delta_lon =0.0
-    delta_lat =0.0
-    CEspeed =[]
+    deltaLon = 0.0
+    deltaLat = 0.0
+    cloudElementSpeed = []
     theSpeed = 0.0
 
-    nodeLatLon=mccSearch.thisDict(node)['cloudElementCenter']
-
+    nodeLatLon = mccSearch.thisDict(node)['cloudElementCenter']
 
     for aNode in theList:
-        if aNode in MCSList:
-            #if aNode is part of the MCSList then determine distance
+        if aNode in mcsList:
+            #if aNode is part of the mcsList then determine distance
             aNodeLatLon = mccSearch.thisDict(aNode)['cloudElementCenter']
             #calculate CE speed
             #checking the lats
             # nodeLatLon[0] += 90.0
             # aNodeLatLon[0] += 90.0
-            # delta_lat = (nodeLatLon[0] - aNodeLatLon[0])
-            delta_lat = ((mccSearch.thisDict(node)['cloudElementCenter'][0] +90.0) - (mccSearch.thisDict(aNode)['cloudElementCenter'][0]+90.0))
+            # deltaLat = (nodeLatLon[0] - aNodeLatLon[0])
+            deltaLat = ((mccSearch.thisDict(node)['cloudElementCenter'][0] +90.0) - \
+                (mccSearch.thisDict(aNode)['cloudElementCenter'][0]+90.0))
             # nodeLatLon[1] += 360.0
             # aNodeLatLon[1] += 360.0
-            # delta_lon = (nodeLatLon[1] - aNodeLatLon[1])
-            delta_lon = ((mccSearch.thisDict(node)['cloudElementCenter'][1]+360.0) - (mccSearch.thisDict(aNode)['cloudElementCenter'][1]+360.0))
+            # deltaLon = (nodeLatLon[1] - aNodeLatLon[1])
+            deltaLon = ((mccSearch.thisDict(node)['cloudElementCenter'][1]+360.0) - \
+                (mccSearch.thisDict(aNode)['cloudElementCenter'][1]+360.0))
             #failsafe for movement only in one dir
-            if delta_lat == 0.0:
-                delta_lat = 1.0
+            if deltaLat == 0.0:
+                deltaLat = 1.0
 
-            if delta_lon == 0.0:
-                delta_lon = 1.0
+            if deltaLon == 0.0:
+                deltaLon = 1.0
 
             try:
-                theSpeed = abs((((delta_lat/delta_lon)*LAT_DISTANCE*1000)/(TRES*3600))) #convert to s --> m/s
+                theSpeed = abs((((deltaLat/deltaLon)*LAT_DISTANCE*1000)/(TRES*3600))) #convert to s --> m/s
             except:
                 theSpeed = 0.0
 
-            CEspeed.append(theSpeed)
+            cloudElementSpeed.append(theSpeed)
 
-            # print "~~~ ", thisDict(aNode)['uniqueID']
-            # print "*** ", nodeLatLon, thisDict(node)['cloudElementCenter']
-            # print "*** ", aNodeLatLon, thisDict(aNode)['cloudElementCenter']
-
-    if not CEspeed:
+    if not cloudElementSpeed:
         return 0.0
     else:
-        return min(CEspeed)
-#******************************************************************
-def longestDuration(allMCCtimes):
+        return min(cloudElementSpeed)
+#**********************************************************************************************************************
+def longest_duration(allMCCtimes):
     '''
-    Purpose::
-        To determine the longest MCC for the period
+    Purpose:: To determine the longest MCC for the period
 
-    Input::
-        allMCCtimes: a list of dictionaries {MCCtimes, starttime, endtime, duration, area} representing a list of dictionaries
-            of MCC temporal details for each MCC in the period considered
+    Inputs:: allMCCtimes: a list of dictionaries {MCCtimes, starttime, endtime, duration, area} representing
+        all the detected MCC temporal details for each MCC in the period considered
 
-    Output::
-        an integer - lenMCC: representing the duration of the longest MCC found
-           a list of strings - longestMCC: representing the nodes of longest MCC
+    Returns:: a floating-point number representing the maximum duration MCC detected
 
     Assumptions::
 
     '''
 
-    # MCCList = []
-    # lenMCC = 0
-    # longestMCC =[]
-
-    # #remove duplicates
-    # MCCList = list(set(finalMCCList))
-
-    # longestMCC = max(MCCList, key = lambda tup:len(tup))
-    # lenMCC = len(longestMCC)
-
-    # return lenMCC, longestMCC
-
     return max([MCC['duration'] for MCC in allMCCtimes])
-#******************************************************************
-def numberOfFeatures(finalMCCList):
+#**********************************************************************************************************************
+def number_of_features(finalMCCList):
     '''
-    Purpose::
-        To count the number of MCCs found for the period
+    Purpose:: To count the number of MCCs found for the period
 
-    Input::
-        finalMCCList: a list of list of strings representing a list of list of nodes representing a MCC
+    Inputs:: finalMCCList: a list of list of strings representing a list of list of nodes in each MCC
 
-    Output::
-        an integer representing the number of MCCs found
+    Returns:: an integer representing the number of MCCs found
 
     '''
     return len(finalMCCList)
-#******************************************************************
-def precipMaxMin(finalMCCList):
+#**********************************************************************************************************************
+def precip_max_min(finalMCCList):
     '''
-    TODO: this doesnt work the np.min/max function seems to be not working with the nonzero option..possibly a problem upstream with cloudElementLatLonTRMM
-    Purpose::
-        Precipitation maximum and min rates associated with each CE in MCS
-    Input::
-        finalMCCList: a list of dictionaries representing a list of nodes representing a MCC
+    TODO: this doesnt work the np.min/max function seems to be not working with the nonzero option
+        ..possibly a problem upstream with cloudElementLatLonTRMM
 
-    Output::
-        MCSPrecip: a list indicating max and min rate for each CE identified
+    Purpose:: Precipitation maximum and min rates associated with each cloud elements in MCS
+    
+    Inputs:: finalMCCList: a list of dictionaries representing a list of nodes representing a MCC
+
+    Returns:: mcsPrecip: a list representing the max and min rate for each cloud elements identified
 
     '''
     maxCEprecip = 0.0
-    minCEprecip =0.0
-    MCSPrecip=[]
-    allMCSPrecip =[]
-
+    minCEprecip = 0.0
+    mcsPrecip = []
+    allmcsPrecip = []
 
     if finalMCCList:
         if type(finalMCCList[0]) is str: # len(finalMCCList) == 1:
             for node in finalMCCList:
                 eachNode = mccSearch.thisDict(node)
-                CETRMM = eachNode['cloudElementLatLonTRMM']
-
-                # print "all ", np.min(CETRMM[np.nonzero(CETRMM)])
-                # print "minCEprecip ", np.min(eachNode['cloudElementLatLonTRMM']) #[np.nonzero(eachNode['cloudElementLatLonTRMM'])])
-
-                # print "maxCEprecip ", np.max(eachNode['cloudElementLatLonTRMM'][np.nonzero(eachNode['cloudElementLatLonTRMM'])])
-                # sys.exit()
+                #cloudElementTRMM = eachNode['cloudElementLatLonTRMM']
                 maxCEprecip = np.max(eachNode['cloudElementLatLonTRMM'][np.nonzero(eachNode['cloudElementLatLonTRMM'])])
                 minCEprecip = np.min(eachNode['cloudElementLatLonTRMM'][np.nonzero(eachNode['cloudElementLatLonTRMM'])])
-                MCSPrecip.append((eachNode['uniqueID'],minCEprecip, maxCEprecip))
-
+                mcsPrecip.append((eachNode['uniqueID'], minCEprecip, maxCEprecip))
         else:
             for eachMCC in finalMCCList:
                 #get the info from the node
                 for node in eachMCC:
-                    eachNode=mccSearch.thisDict(node)
+                    eachNode = mccSearch.thisDict(node)
                     #find min and max precip
-                    maxCEprecip =  np.max(eachNode['cloudElementLatLonTRMM'][np.nonzero(eachNode['cloudElementLatLonTRMM'])])
-                    minCEprecip =  np.min(eachNode['cloudElementLatLonTRMM'][np.nonzero(eachNode['cloudElementLatLonTRMM'])])
-                    MCSPrecip.append((eachNode['uniqueID'],minCEprecip, maxCEprecip))
-                allMCSPrecip.append(MCSPrecip)
-                MCSPrecip =[]
+                    maxCEprecip = np.max(eachNode['cloudElementLatLonTRMM'][np.nonzero(eachNode['cloudElementLatLonTRMM'])])
+                    minCEprecip = np.min(eachNode['cloudElementLatLonTRMM'][np.nonzero(eachNode['cloudElementLatLonTRMM'])])
+                    mcsPrecip.append((eachNode['uniqueID'], minCEprecip, maxCEprecip))
+                allmcsPrecip.append(mcsPrecip)
+                mcsPrecip = []
 
-    return MCSPrecip
-#******************************************************************
-def precipTotals(finalMCCList):
+    return mcsPrecip
+#**********************************************************************************************************************
+def precip_totals(finalMCCList):
     '''
-    Purpose::
-        Precipitation totals associated with a cloud element
+    Purpose:: Precipitation totals associated with a cloud element
 
-    Input::
-        finalMCCList: a list of dictionaries representing a list of nodes representing a MCC
+    Inputs:: finalMCCList: a list of dictionaries representing a list of nodes per a MCC
 
-    Output::
-        precipTotal: a floating-point number representing the total amount of precipitation associated
-            with the feature
+    Returns:: precipTotal: a floating-point number representing the total amount of precipitation associated
+       with the feature
+
     '''
     precipTotal = 0.0
-    CEprecip =0.0
-    MCSPrecip=[]
-    allMCSPrecip =[]
+    cloudElementPrecip = 0.0
+    mcsPrecip = []
+    allmcsPrecip = []
     count = 0
 
     if finalMCCList:
-        #print "len finalMCCList is: ", len(finalMCCList)
+        #print 'len finalMCCList is: ', len(finalMCCList)
         for eachMCC in finalMCCList:
             #get the info from the node
             for node in eachMCC:
-                eachNode=mccSearch.thisDict(node)
+                eachNode = mccSearch.thisDict(node)
                 count += 1
                 if count == 1:
-                    prevHr = int(str(eachNode['cloudElementTime']).replace(" ", "")[-8:-6])
+                    prevHr = int(str(eachNode['cloudElementTime']).replace(' ', '')[-8:-6])
 
-                currHr =int(str(eachNode['cloudElementTime']).replace(" ", "")[-8:-6])
+                currHr = int(str(eachNode['cloudElementTime']).replace(' ', '')[-8:-6])
                 if prevHr == currHr:
-                    CEprecip += eachNode['cloudElementPrecipTotal']
+                    cloudElementPrecip += eachNode['cloudElementPrecipTotal']
                 else:
-                    MCSPrecip.append((prevHr,CEprecip))
-                    CEprecip = eachNode['cloudElementPrecipTotal']
+                    mcsPrecip.append((prevHr, cloudElementPrecip))
+                    cloudElementPrecip = eachNode['cloudElementPrecipTotal']
                 #last value in for loop
                 if count == len(eachMCC):
-                    MCSPrecip.append((currHr, CEprecip))
+                    mcsPrecip.append((currHr, cloudElementPrecip))
 
                 precipTotal += eachNode['cloudElementPrecipTotal']
                 prevHr = currHr
 
-            MCSPrecip.append(('0',precipTotal))
+            mcsPrecip.append(('0', precipTotal))
 
-            allMCSPrecip.append(MCSPrecip)
-            precipTotal =0.0
-            CEprecip = 0.0
-            MCSPrecip = []
+            allmcsPrecip.append(mcsPrecip)
+            precipTotal = 0.0
+            cloudElementPrecip = 0.0
+            mcsPrecip = []
             count = 0
 
-        print "allMCSPrecip ", allMCSPrecip
+        print 'allmcsPrecip ', allmcsPrecip
 
-    return allMCSPrecip
-#******************************************************************
-def shortestDuration(allMCCtimes):
+    return allmcsPrecip
+#**********************************************************************************************************************
+def shortest_duration(allMCCtimes):
     '''
     Purpose:: To determine the shortest MCC for the period
 
-    Input:: list of dictionaries - allMCCtimes {MCCtimes, starttime, endtime, duration): a list of dictionaries
-              of MCC temporal details for each MCC in the period considered
+    Inputs:: allMCCtimes {MCCtimes, starttime, endtime, duration): a list of dictionaries of MCC temporal details for
+        each MCC in the period considered
 
-    Output::an integer - lenMCC: representing the duration of the shortest MCC found
-            a list of strings - longestMCC: representing the nodes of shortest MCC
+    Returns:: a floating-point number representing the minimum duration MCC detected
 
     Assumptions::
 
     '''
-    # lenMCC = 0
-    # shortestMCC =[]
-    # MCCList =[]
 
-    # #remove duplicates
-    # MCCList = list(set(finalMCCList))
-
-    # shortestMCC = min(MCCList, key = lambda tup:len(tup))
-    # lenMCC = len(shortestMCC)
-
-    # return lenMCC, shortestMCC
     return min([MCC['duration'] for MCC in allMCCtimes])
-#******************************************************************
-def temporalAndAreaInfoMetric(finalMCCList):
+#**********************************************************************************************************************
+def temporal_and_area_info_metric(finalMCCList):
     '''
-    Purpose::
-        To provide information regarding the temporal properties of the MCCs found
+    Purpose:: To provide information regarding the temporal properties of the MCCs found
 
-    Input::
-        finalMCCList: a list of dictionaries representing a list of nodes representing a MCC
+    Inputs:: finalMCCList: a list of dictionaries representing a list of nodes representing a MCC
 
-    Output::
-        allMCCtimes: a list of dictionaries {MCCtimes, starttime, endtime, duration, area} representing a list of dictionaries
-            of MCC temporal details for each MCC in the period considered
+    Returns:: allMCCtimes: a list of dictionaries {mccTimes, starttime, endtime, duration, area} representing the MCC
+       temporal details for each MCC in the period considered
 
     Assumptions::
         the final time hour --> the event lasted throughout that hr, therefore +1 to endtime
     '''
     #TODO: in real data edit this to use datetime
-    #starttime =0
-    #endtime =0
-    #duration = 0
-    MCCtimes =[]
-    allMCCtimes=[]
-    MCSArea =[]
+    mccTimes = []
+    allMCCtimes = []
+    mcsArea = []
 
     if finalMCCList:
         for eachMCC in finalMCCList:
             #get the info from the node
             for eachNode in eachMCC:
-                MCCtimes.append(mccSearch.thisDict(eachNode)['cloudElementTime'])
-                MCSArea.append(mccSearch.thisDict(eachNode)['cloudElementArea'])
+                mccTimes.append(mccSearch.thisDict(eachNode)['cloudElementTime'])
+                mcsArea.append(mccSearch.thisDict(eachNode)['cloudElementArea'])
 
             #sort and remove duplicates
-            MCCtimes=list(set(MCCtimes))
-            MCCtimes.sort()
-            tdelta = MCCtimes[1] - MCCtimes[0]
-            starttime = MCCtimes[0]
-            endtime = MCCtimes[-1]
+            mccTimes = list(set(mccTimes))
+            mccTimes.sort()
+            tdelta = mccTimes[1] - mccTimes[0]
+            starttime = mccTimes[0]
+            endtime = mccTimes[-1]
             duration = (endtime - starttime) + tdelta
-            print "starttime ", starttime, "endtime ", endtime, "tdelta ", tdelta, "duration ", duration, "MCSAreas ", MCSArea
-            allMCCtimes.append({'MCCtimes':MCCtimes, 'starttime':starttime, 'endtime':endtime, 'duration':duration, 'MCSArea': MCSArea})
-            MCCtimes=[]
-            MCSArea=[]
+            print 'starttime ', starttime, 'endtime ', endtime, 'tdelta ', tdelta, 'duration ', duration, 'MCSAreas ', mcsArea
+            allMCCtimes.append({'MCCtimes':mccTimes, 'starttime':starttime, 'endtime':endtime, \
+                'duration':duration, 'MCSArea': mcsArea})
+            mccTimes = []
+            mcsArea = []
     else:
-        allMCCtimes =[]
+        allMCCtimes = []
         tdelta = 0
 
     return allMCCtimes, tdelta
-#******************************************************************
+#**********************************************************************************************************************
