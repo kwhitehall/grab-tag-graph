@@ -259,10 +259,10 @@ def findCloudElements(mergImgs, timelist, mainStrDir, LAT, LON, TRMMdirName=None
                     #lonCEEnd = LON[0][-1]
 
                     #get the lat/lon info for TRMM data (different resolution)
-                    # latStartT = utils.findNearest(latsrawTRMMData, latCEStart)
-                    # latEndT = utils.findNearest(latsrawTRMMData, latCEEnd)
-                    # lonStartT = utils.findNearest(lonsrawTRMMData, lonCEStart)
-                    # lonEndT = utils.findNearest(lonsrawTRMMData, lonCEEnd)
+                    # latStartT = utils.find_nearest(latsrawTRMMData, latCEStart)
+                    # latEndT = utils.find_nearest(latsrawTRMMData, latCEEnd)
+                    # lonStartT = utils.find_nearest(lonsrawTRMMData, lonCEStart)
+                    # lonEndT = utils.find_nearest(lonsrawTRMMData, lonCEEnd)
                     # Unused since CEPrecipRate isn't used and these are just inputs
                     # latStartIndex = np.where(latsrawTRMMData == latStartT)
                     # latEndIndex = np.where(latsrawTRMMData == latEndT)

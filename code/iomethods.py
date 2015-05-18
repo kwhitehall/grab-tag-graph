@@ -51,17 +51,17 @@ def checkForFiles(dirPath, startTime, endTime, tdelta, tRes):
         Purpose:: To ensure all the files between the starttime and endTime
                   exist in the directory supplied
 
-        Input:: dirPath: a string representing the path to the files 
+        Input:: dirPath: a string representing the path to the files
 
                 startTime: a string representing the starttime.
                     Must have atleast yyyymm
-                
+
                 endTime: a string representing the endTime
                     Must have atleast yyyymm
 
                 tdelta: an integer representing the time between files
 
-                tRes: a string representing the time resolution for tdelta. 
+                tRes: a string representing the time resolution for tdelta.
                     Must be month, day, hour or minutes
 
         Output::
@@ -80,7 +80,7 @@ def checkForFiles(dirPath, startTime, endTime, tdelta, tRes):
     endTimeInFile = ''
     currTimeInfile = ''
     tokenCounter = 0
-    
+
     if 'month' in tRes:
         currFileTime = datetime.strptime(startTime[:6], "%Y%m")
         tRes = 'month'
@@ -94,11 +94,11 @@ def checkForFiles(dirPath, startTime, endTime, tdelta, tRes):
         currFileTime = datetime.strptime(startTime[:12], "%Y%m%d%H%m")
         tRes = "minute"
 
-    
+
     filelist = filter(path.isfile, glob.glob((dirPath+'/*.nc')))
     filelist.sort()
-    
-    #check for the filename pattern 
+
+    #check for the filename pattern
     for eachPart in re.split(r'[_,-,.,/]',re.split(r'.nc',path.basename(filelist[0]))[0]):
         tokenCounter += 1
         if tokenCounter == 1:
@@ -119,10 +119,10 @@ def checkForFiles(dirPath, startTime, endTime, tdelta, tRes):
     startFile = glob.glob(dirPath+'/'+filenamePattern +'*'+startTimeInFile)[0]
     endTimeInFile = find_time_in_file(endTime, startTimeInFile)
     endFile = glob.glob(dirPath+'/'+filenamePattern + '*'+endTimeInFile+'*')[0]
-    
+
     currFile = startFile
     filelist =[]
-    
+
     #check for files between startTime and endTime
     while currFile is not endFile:
         if not path.isfile(currFile):
@@ -130,7 +130,7 @@ def checkForFiles(dirPath, startTime, endTime, tdelta, tRes):
             return status, filelist
         else:
             filelist.append(currFile)
-    
+
         status = True
         if currFile == endFile:
             break
@@ -156,10 +156,10 @@ def checkForFiles(dirPath, startTime, endTime, tdelta, tRes):
 #******************************************************************
 def find_time_in_file(myTime, myTimeInFile):
     '''
-        Purpose:: To return the file pattern of the time string 
+        Purpose:: To return the file pattern of the time string
 
-        Inputs:: myTime: a string in time format representing the time 
-                 myTimeInFile: a string representing the time pattern of the time 
+        Inputs:: myTime: a string in time format representing the time
+                 myTimeInFile: a string representing the time pattern of the time
                  in a file
 
         Returns:: currTimeInfile: a string representing the pattern of the time in the file
@@ -168,27 +168,27 @@ def find_time_in_file(myTime, myTimeInFile):
 
     lastPos = 0
     currTimeInFile = ''
-    
+
     for eachPart in re.split(r'[*]',myTimeInFile):
         if eachPart:
             currTimeInFile += myTime[ lastPos:lastPos+len(eachPart) ]+'*'
             lastPos += len(eachPart)
-            
+
     return currTimeInFile
 #******************************************************************
 def createMainDirectory(mainDirStr):
     '''
         Purpose:: To create the main directory for storing information and
             the subdirectories for storing information
-        
-        Input:: mainDir: string representing the directory for where all 
+
+        Input:: mainDir: string representing the directory for where all
                 information generated from the program are to be stored
-        
+
         Returns:: None
 
-        Outputs:: a file structure where data generated from GTG will be stored 
+        Outputs:: a file structure where data generated from GTG will be stored
 
-        Assumptions:: The user running the program can write at mainDirStr 
+        Assumptions:: The user running the program can write at mainDirStr
 
     '''
     global MAINDIRECTORY
@@ -231,7 +231,7 @@ def readData(dirname, varName, latName, lonName, filelist=None):
 
         Assumptions::
             (1) All the files requested to extract data are from the same instrument/model, and thus have the same metadata
-            properties (varName, latName, lonName) as entered 
+            properties (varName, latName, lonName) as entered
             (2) Assumes rectilinear grids for input datasets i.e. lat, lon will be 1D arrays
     '''
 
@@ -267,10 +267,10 @@ def readData(dirname, varName, latName, lonName, filelist=None):
         alllonsraw[alllonsraw > 180] = alllonsraw[alllonsraw > 180] - 360.  # convert to -180,180 if necessary
 
         #get the lat/lon info data (different resolution)
-        latminNETCDF = utils.findNearest(alllatsraw, float(LATMIN))
-        latmaxNETCDF = utils.findNearest(alllatsraw, float(LATMAX))
-        lonminNETCDF = utils.findNearest(alllonsraw, float(LONMIN))
-        lonmaxNETCDF = utils.findNearest(alllonsraw, float(LONMAX))
+        latminNETCDF = utils.find_nearest(alllatsraw, float(LATMIN))
+        latmaxNETCDF = utils.find_nearest(alllatsraw, float(LATMAX))
+        lonminNETCDF = utils.find_nearest(alllonsraw, float(LONMIN))
+        lonmaxNETCDF = utils.find_nearest(alllonsraw, float(LONMAX))
         latminIndex = (np.where(alllatsraw == latminNETCDF))[0][0]
         latmaxIndex = (np.where(alllatsraw == latmaxNETCDF))[0][0]
         lonminIndex = (np.where(alllonsraw == lonminNETCDF))[0][0]
@@ -281,7 +281,7 @@ def readData(dirname, varName, latName, lonName, filelist=None):
         lonsraw = alllonsraw[lonminIndex:lonmaxIndex]
 
         LON, LAT = np.meshgrid(lonsraw, latsraw)
-        
+
         latsraw =[]
         lonsraw = []
         nygrd = len(LAT[:, 0]); nxgrd = len(LON[0, :])
@@ -327,19 +327,19 @@ def getModelTimes(xtimes, timeVarName):
     into a python datetime structure. Leveraged from Apache OCW
 
     Inputs::
-        modelFile: a string representing the path to the model tile you want to 
+        modelFile: a string representing the path to the model tile you want to
         extract the times list and modelTimeStep from
         timeVarName: a string representing the name of the time variable in the model file
 
     Returns::
         times: a list of python datetime objects describing model data times
-        modelTimeStep: a string representing the time step found in the file e.g. 
+        modelTimeStep: a string representing the time step found in the file e.g.
         'hourly','daily','monthly','annual'
 
     Outputs:: None
 
     Assumptions:: None
-    
+
     '''
 
     timeFormat = xtimes.units
@@ -410,7 +410,7 @@ def getModelTimes(xtimes, timeVarName):
 #******************************************************************
 def getModelTimeStep(units, stepSize):
     '''
-        Purpose:: To determine the time intervals of input data. 
+        Purpose:: To determine the time intervals of input data.
                   Levaraged from Apache OCW
 
         Inputs:: units: a string representing the time units found in the
@@ -418,7 +418,7 @@ def getModelTimeStep(units, stepSize):
                  stepSize: an integer representing the time interval found
                  in the file's metadata
 
-        Returns:: modelTimeStep: a string representing the step interval in the 
+        Returns:: modelTimeStep: a string representing the step interval in the
                  dataset e.g. 'hourly', 'daily', etc.
     '''
 
