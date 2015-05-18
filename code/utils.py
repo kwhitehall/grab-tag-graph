@@ -563,18 +563,20 @@ def valid_date(dataString):
     '''
     Input:: Datetime string of format YYYYMMDDHH.
 
-    Output:: Boolean if the input is valid, otherwise it will raise a ValueError exception.
+    Output:: Boolean if the input is valid.
     '''
 
     if len(dataString) > 10:
-        raise ValueError("Expected input string format is YYYYMMDDHH. You sent in %s" % dataString)
+        isInputValid = False
+    else:
+        try:
+            datetime.strptime(dataString, "%Y%m%d%H")
+            isInputValid = True
+        except ValueError:
+            isInputValid = False
 
-    try:
-        datetime.strptime(dataString, "%Y%m%d%H")
-    except ValueError, e:
-        raise ValueError("Expected input string format is YYYYMMDDHH.  Python error: {0}".format(e))
 
-    return True
+    return isInputValid
 
 #*********************************************************************************************************************
 def write_c3_grad_script(origsFile):

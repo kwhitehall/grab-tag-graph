@@ -75,12 +75,12 @@ def main():
     #get the dates for analysis
     startDateTime = raw_input("> Please enter the start date and time yyyymmddhr: \n")
     #check validity of time
-    while utils.valid_date(startDateTime) == 0:
+    while utils.valid_date(startDateTime) != True:
         print "Invalid time entered for startDateTime!"
         startDateTime = raw_input("> Please enter the start date and time yyyymmddhr: \n")
 
     endDateTime = raw_input("> Please enter the end date and time yyyymmddhr: \n")
-    while utils.valid_date(endDateTime) == 0:
+    while utils.valid_date(endDateTime) != True:
         print "Invalid time entered for endDateTime!"
         endDateTime = raw_input("> Please enter the end date and time yyyymmddhr: \n")
 
