@@ -1,3 +1,4 @@
+from datetime import datetime
 import glob
 import itertools
 import os
@@ -560,33 +561,32 @@ def temp_masked_images(imgFilename):
 #******************************************************************
 def valid_date(dataString):
     '''
+    Input:: Datetime string of format YYYYMMDDHH or YYYYMMDDHHmm.
+
+    Output:: Boolean if the input is valid.
     '''
 
-    if len(dataString) > 10:
-        print "invalid time entered"
-        return 0
+    stringLength = len(dataString)
 
-    yr = int(dataString[:4])
-    mm = int(dataString[4:6])
-    dd = int(dataString[6:8])
-    hh = int(dataString[-2:])
+    if stringLength == 10:
+        try:
+            datetime.strptime(dataString, "%Y%m%d%H")
+            isInputValid = True
+        except ValueError:
+            isInputValid = False
 
-    if mm < 1 or mm > 12:
-        return 0
-    elif hh < 0 or hh > 23:
-        return 0
-    elif (dd < 0 or dd > 30) and (mm == 4 or mm == 6 or mm == 9 or mm == 11):
-        return 0
-    elif (dd < 0 or dd > 31) and (mm == 1 or mm == 3 or mm == 5 or mm == 7 or mm == 8 or mm == 10):
-        return 0
-    elif dd > 28 and mm == 2 and (yr%4) != 0:
-        return 0
-    elif (yr%4) == 0 and mm == 2 and dd > 29:
-        return 0
-    elif dd > 31 and mm == 12:
-        return 0
+    elif stringLength == 12:
+        try:
+            datetime.strptime(dataString, "%Y%m%d%H%M")
+            isInputValid = True
+        except ValueError:
+            isInputValid = False
+
     else:
-        return 1
+        isInputValid = False
+
+    return isInputValid
+
 #*********************************************************************************************************************
 def write_c3_grad_script(origsFile):
     '''
