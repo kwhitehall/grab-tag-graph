@@ -561,20 +561,29 @@ def temp_masked_images(imgFilename):
 #******************************************************************
 def valid_date(dataString):
     '''
-    Input:: Datetime string of format YYYYMMDDHH.
+    Input:: Datetime string of format YYYYMMDDHH or YYYYMMDDHHmm.
 
     Output:: Boolean if the input is valid.
     '''
 
-    if len(dataString) > 10:
-        isInputValid = False
-    else:
+    stringLength = len(dataString)
+
+    if stringLength == 10:
         try:
             datetime.strptime(dataString, "%Y%m%d%H")
             isInputValid = True
         except ValueError:
             isInputValid = False
 
+    elif stringLength == 12:
+        try:
+            datetime.strptime(dataString, "%Y%m%d%H%M")
+            isInputValid = True
+        except ValueError:
+            isInputValid = False
+
+    else:
+        isInputValid = False
 
     return isInputValid
 
