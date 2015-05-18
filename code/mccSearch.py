@@ -248,7 +248,7 @@ def findCloudElements(mergImgs, timelist, mainStrDir, LAT, LON, TRMMdirName=None
                     #---------regrid the TRMM data to the MERG dataset ----------------------------------
                     #regrid using the do_regrid stuff from the Apache OCW
                     regriddedTRMM = ma.zeros((0, nygrd, nxgrd))
-                    regriddedTRMM = utils.doRegrid(precipRateMasked[0, :, :], LATTRMM,  LONTRMM, LAT, LON, order=1, mdi= -999999999)
+                    regriddedTRMM = utils.do_regrid(precipRateMasked[0, :, :], LATTRMM,  LONTRMM, LAT, LON, order=1, mdi= -999999999)
                     #----------------------------------------------------------------------------------
 
                     # #get the lat/lon info from cloudElement
@@ -259,10 +259,10 @@ def findCloudElements(mergImgs, timelist, mainStrDir, LAT, LON, TRMMdirName=None
                     #lonCEEnd = LON[0][-1]
 
                     #get the lat/lon info for TRMM data (different resolution)
-                    # latStartT = utils.findNearest(latsrawTRMMData, latCEStart)
-                    # latEndT = utils.findNearest(latsrawTRMMData, latCEEnd)
-                    # lonStartT = utils.findNearest(lonsrawTRMMData, lonCEStart)
-                    # lonEndT = utils.findNearest(lonsrawTRMMData, lonCEEnd)
+                    # latStartT = utils.find_nearest(latsrawTRMMData, latCEStart)
+                    # latEndT = utils.find_nearest(latsrawTRMMData, latCEEnd)
+                    # lonStartT = utils.find_nearest(lonsrawTRMMData, lonCEStart)
+                    # lonEndT = utils.find_nearest(lonsrawTRMMData, lonCEEnd)
                     # Unused since CEPrecipRate isn't used and these are just inputs
                     # latStartIndex = np.where(latsrawTRMMData == latStartT)
                     # latEndIndex = np.where(latsrawTRMMData == latEndT)
@@ -539,7 +539,7 @@ def findPrecipRate(TRMMdirName, timelist):
         #---------regrid the TRMM data to the MERG dataset ----------------------------------
         #regrid using the do_regrid stuff from the Apache OCW
         regriddedTRMM = ma.zeros((0, nygrd, nxgrd))
-        regriddedTRMM = utils.doRegrid(precipRateMasked[0,:,:], LATTRMM,  LONTRMM, LAT, LON, order=1, mdi= -999999999)
+        regriddedTRMM = utils.do_regrid(precipRateMasked[0,:,:], LATTRMM,  LONTRMM, LAT, LON, order=1, mdi= -999999999)
         #----------------------------------------------------------------------------------
 
         TRMMData.close()

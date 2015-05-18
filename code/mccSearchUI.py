@@ -44,7 +44,7 @@ def main():
             #get location for raw files
             rawMERG = raw_input("> Please enter the directory to the RAW MERG (.Z) files: \n")
             #run preprocessing
-            utils.preprocessingMERG(rawMERG)
+            utils.preprocessing_merg(rawMERG)
             continue
         elif preprocessing.lower() == 'n' :
             pass
@@ -75,12 +75,12 @@ def main():
     #get the dates for analysis
     startDateTime = raw_input("> Please enter the start date and time yyyymmddhr: \n")
     #check validity of time
-    while utils.validDate(startDateTime) == 0:
+    while utils.valid_date(startDateTime) == 0:
         print "Invalid time entered for startDateTime!"
         startDateTime = raw_input("> Please enter the start date and time yyyymmddhr: \n")
 
     endDateTime = raw_input("> Please enter the end date and time yyyymmddhr: \n")
-    while utils.validDate(endDateTime) == 0:
+    while utils.valid_date(endDateTime) == 0:
         print "Invalid time entered for endDateTime!"
         endDateTime = raw_input("> Please enter the end date and time yyyymmddhr: \n")
 
@@ -92,7 +92,7 @@ def main():
         return
     #test,filelist = iomethods.checkForFiles(startDateTime, endDateTime, DIRS['CEoriDirName'],1)
     test,filelist = iomethods.checkForFiles(DIRS['CEoriDirName'], startDateTime, endDateTime, 1, 'hour')
-    
+
     if test == False:
         print "Error with files in the original TRMM directory entered. Please check your files before restarting. "
         return
@@ -240,13 +240,13 @@ def postProcessingplotMenu(DIRS):
         try:
             if option == 1:
                 print "Generating images from the original MERG dataset ... \n"
-                utils.postProcessingNetCDF(3, DIRS['CEoriDirName'])
+                utils.post_processing_netcdf(3, DIRS['CEoriDirName'])
             if option == 2:
                 print "Generating images from the cloud elements using MERG IR data ... \n"
-                utils.postProcessingNetCDF(1, CEdirName)
+                utils.post_processing_netcdf(1, CEdirName)
             if option == 3:
                 print "Generating precipitation accumulation images from the cloud elements using TRMM data ... \n"
-                utils.postProcessingNetCDF(2, TRMMCEdirName)
+                utils.post_processing_netcdf(2, TRMMCEdirName)
             # if option == 4:
             #     print "Generating Accumulated TRMM rainfall from cloud elements for each MCS ... \n"
             #     featureType = int(raw_input("> Please enter type of MCS MCC-1 or MCS-2: \n"))

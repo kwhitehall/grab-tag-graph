@@ -31,7 +31,7 @@ def main():
 
     #for first time working with the raw MERG zipped files
     # rawMERG = "/directory/to/the/raw/MERGfiles"
-    # utils.preprocessingMERG(rawMERG)
+    # utils.preprocessing_merg(rawMERG)
     # ---------------------------------------------------------------------------------
 
 
@@ -41,8 +41,8 @@ def main():
     CEdirName = DIRS['mainDirStr']+'/MERGnetcdfCEs'
 
     # for doing some postprocessing with the clipped datasets instead of running the full program, e.g.
-    # mccSearch.postProcessingNetCDF(3,CEoriDirName)
-    # mccSearch.postProcessingNetCDF(2)
+    # mccSearch.post_processing_netcdf(3,CEoriDirName)
+    # mccSearch.post_processing_netcdf(2)
     # -------------------------------------------------------------------------------------------------
 
     #let's go!
