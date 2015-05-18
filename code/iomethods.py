@@ -108,6 +108,7 @@ def check_for_files(dirPath, startTime, endTime, tdelta, tRes):
     filelist.sort()
 
     #check for the filename pattern
+
     for eachPart in re.split(r'[_,-,.,/]', re.split(r'.nc', path.basename(filelist[0]))[0]):
         tokenCounter += 1
         if tokenCounter == 1:
@@ -126,8 +127,10 @@ def check_for_files(dirPath, startTime, endTime, tdelta, tRes):
     startFile = glob.glob(dirPath+'/'+filenamePattern +'*'+startTimeInFile)[0]
     endTimeInFile = find_time_in_file(endTime, startTimeInFile)
     endFile = glob.glob(dirPath+'/'+filenamePattern + '*'+endTimeInFile+'*')[0]
+
     currFile = startFile
     filelist = []
+
     #check for files between startTime and endTime
     while currFile is not endFile:
         if not path.isfile(currFile):
@@ -272,10 +275,10 @@ def read_data(dirName, varName, latName, lonName, filelist=None):
         alllonsraw[alllonsraw > 180] = alllonsraw[alllonsraw > 180] - 360.  # convert to -180,180 if necessary
 
         #get the lat/lon info data (different resolution)
-        latminNETCDF = utils.findNearest(alllatsraw, float(LATMIN))
-        latmaxNETCDF = utils.findNearest(alllatsraw, float(LATMAX))
-        lonminNETCDF = utils.findNearest(alllonsraw, float(LONMIN))
-        lonmaxNETCDF = utils.findNearest(alllonsraw, float(LONMAX))
+        latminNETCDF = utils.find_nearest(alllatsraw, float(LATMIN))
+        latmaxNETCDF = utils.find_nearest(alllatsraw, float(LATMAX))
+        lonminNETCDF = utils.find_nearest(alllonsraw, float(LONMIN))
+        lonmaxNETCDF = utils.find_nearest(alllonsraw, float(LONMAX))
         latminIndex = (np.where(alllatsraw == latminNETCDF))[0][0]
         latmaxIndex = (np.where(alllatsraw == latmaxNETCDF))[0][0]
         lonminIndex = (np.where(alllonsraw == lonminNETCDF))[0][0]
