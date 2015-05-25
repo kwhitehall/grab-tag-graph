@@ -2,6 +2,7 @@
 import glob
 import numpy.ma as ma
 import numpy as np
+import networkx as nx
 import re
 import string
 import os
