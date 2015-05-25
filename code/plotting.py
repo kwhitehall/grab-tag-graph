@@ -84,7 +84,7 @@ def display_size(finalMCCList, MAIN_DIRECTORY):
         for eachMCC in finalMCCList:
             #get the info from the node
             for node in eachMCC:
-                eachNode = mccSearch.thisDict(node)
+                eachNode = mccSearch.this_dict(node)
                 timeList.append(eachNode['cloudElementTime'])
 
                 if eachNode['cloudElementArea'] < minArea:
@@ -109,7 +109,7 @@ def display_size(finalMCCList, MAIN_DIRECTORY):
 
             #the data
             for node in eachMCC:
-                eachNode = mccSearch.thisDict(node)
+                eachNode = mccSearch.this_dict(node)
                 if eachNode['cloudElementArea'] < 80000:
                     ax.plot(eachNode['cloudElementTime'], eachNode['cloudElementArea'], 'bo', markersize=10)
                 elif eachNode['cloudElementArea'] >= 80000.00 and eachNode['cloudElementArea'] < 160000.00:
@@ -172,7 +172,7 @@ def display_precip(finalMCCList, MAIN_DIRECTORY):
         for eachMCC in finalMCCList:
             #get the info from the node
             for node in eachMCC:
-                eachNode = mccSearch.thisDict(node)
+                eachNode = mccSearch.this_dict(node)
                 if firstTime == True:
                     xStart = eachNode['cloudElementCenter'][1]#lon
                     yStart = eachNode['cloudElementCenter'][0]#lat
@@ -233,15 +233,15 @@ def display_precip(finalMCCList, MAIN_DIRECTORY):
             firstTime = True
     return
 #**********************************************************************************************************************
-def plot_accu_in_time_range(starttime, endtime, tRes, MAIN_DIRECTORY):
+def plot_accu_in_time_range(starttime, endtime, MAIN_DIRECTORY, tRes):
     '''
     Purpose:: Create accumulated precip plot within a time range given using all CEs
 
     Inputs:: starttime: a string representing the time to start the accumulations format yyyy-mm-dd_hh:mm:ss
              endtime: a string representing the time to end the accumulations format yyyy-mm-dd_hh:mm:ss
-             tRes: a float representing the time res of the input data e.g. 30min=0.5
              MAIN_DIRECTORY: a string representing the path to the main directory where the data generated is saved
-    
+             tRes: a float representing the time res of the input data e.g. 30min=0.5
+             
     Returns:: a netcdf file containing the accumulated precip for specified times a gif (generated in Grads)
 
     Generates:: a plot of the amount of precipitation accumulated between two dates for the domain
@@ -391,7 +391,7 @@ def plot_accu_TRMM(finalMCCList,MAIN_DIRECTORY):
     for path in finalMCCList:
         firstTime = True
         for eachNode in path:
-            thisNode = mccSearch.thisDict(eachNode)
+            thisNode = mccSearch.this_dict(eachNode)
             fname = 'TRMM'+ str(thisNode['cloudElementTime']).replace(' ', '_') + thisNode['uniqueID'] +'.nc'
 
             if os.path.isfile(fname):
@@ -552,7 +552,7 @@ def plot_precip_histograms(finalMCCList, MAIN_DIRECTORY):
             firstTime = True
 
             for node in eachMCC:
-                eachNode = mccSearch.thisDict(node)
+                eachNode = mccSearch.this_dict(node)
                 thisTime = eachNode['cloudElementTime']
 
                 thisFileName = MAIN_DIRECTORY+'/TRMMnetcdfCEs/TRMM' + str(thisTime).replace(' ', '_') + \

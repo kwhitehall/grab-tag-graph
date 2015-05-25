@@ -85,20 +85,20 @@ def main():
         endDateTime = raw_input("> Please enter the end date and time yyyymmddhrmm: \n")
 
     #check if all the files exisits in the MERG and TRMM directories entered
-    #test,_ = iomethods.checkForFiles(startDateTime, endDateTime, DIRS['TRMMdirName'], 2)
-    test,_ = iomethods.checkForFiles(DIRS['TRMMdirName'], startDateTime, endDateTime, 3, 'hour')
+    #test,_ = iomethods.check_for_files(startDateTime, endDateTime, DIRS['TRMMdirName'], 2)
+    test,_ = iomethods.check_for_files(DIRS['TRMMdirName'], startDateTime, endDateTime, 3, 'hour')
     if test == False:
         print "Error with files in the original MERG directory entered. Please check your files before restarting. "
         return
-    #test,filelist = iomethods.checkForFiles(startDateTime, endDateTime, DIRS['CEoriDirName'],1)
-    test,filelist = iomethods.checkForFiles(DIRS['CEoriDirName'], startDateTime, endDateTime, 1, 'hour')
+    #test,filelist = iomethods.check_for_files(startDateTime, endDateTime, DIRS['CEoriDirName'],1)
+    test,filelist = iomethods.check_for_files(DIRS['CEoriDirName'], startDateTime, endDateTime, 1, 'hour')
 
     if test == False:
         print "Error with files in the original TRMM directory entered. Please check your files before restarting. "
         return
 
     #create main directory and file structure for storing intel
-    DIRS['mainDirStr'] = iomethods.createMainDirectory(DIRS['mainDirStr'])
+    DIRS['mainDirStr'] = iomethods.create_main_directory(DIRS['mainDirStr'])
     TRMMCEdirName = DIRS['mainDirStr']+'/TRMMnetcdfCEs'
     CEdirName = DIRS['mainDirStr']+'/MERGnetcdfCEs'
 
@@ -106,7 +106,7 @@ def main():
     postprocessing = raw_input("> Do you wish to postprocess data? [y/n] \n")
     while postprocessing.lower() != 'n':
         if postprocessing.lower() == 'y':
-            option = postProcessingplotMenu(DIRS)
+            option = postprocessing_plot_menu(DIRS)
             return
         elif postprocessing.lower() == 'n':
             pass
@@ -119,31 +119,31 @@ def main():
     print "\t\t Starting the MCCSearch Analysis "
     print ("-"*80)
     print "\n -------------- Reading MERG and TRMM Data ----------"
-    mergImgs, timeList, LAT, LON = iomethods.readData(DIRS['CEoriDirName'],'ch4','latitude','longitude', filelist)
+    mergImgs, timeList, LAT, LON = iomethods.read_data(DIRS['CEoriDirName'],'ch4','latitude','longitude', filelist)
     print "\n -------------- findCloudElements ----------"
-    CEGraph = mccSearch.findCloudElements(mergImgs,timeList,DIRS['mainDirStr'], LAT,LON,DIRS['TRMMdirName'])
+    CEGraph = mccSearch.find_cloud_elements(mergImgs,timeList,DIRS['mainDirStr'], LAT,LON,DIRS['TRMMdirName'])
     #theList = CEGraph.successors(node)
     #if the TRMMdirName wasnt entered for whatever reason, you can still get the TRMM data this way
     # CEGraph = mccSearch.findCloudElements(mergImgs,timeList)
     # allCETRMMList=mccSearch.findPrecipRate(DIRS['TRMMdirName'],timeList)
     # ----------------------------------------------------------------------------------------------
     print "\n -------------- findCloudClusters ----------"
-    prunedGraph = mccSearch.findCloudClusters(CEGraph)
+    prunedGraph = mccSearch.find_cloud_clusters(CEGraph)
     print "\n -------------- findMCCs ----------"
-    MCCList,MCSList = mccSearch.findMCC(prunedGraph)
+    MCCList,MCSList = mccSearch.find_MCC(prunedGraph)
     #now ready to perform various calculations/metrics
     print ("-"*80)
     print "\n -------------- METRICS ----------"
     print ("-"*80)
     #some calculations/metrics that work that work
-    print "creating the MCC userfile ", metrics.createTextFile(MCCList,1, DIRS['mainDirStr'], 80000.0, 1)
-    print "creating the MCS userfile ", metrics.createTextFile(MCSList,2, DIRS['mainDirStr'], 80000.0, 1)
-    plotMenu(MCCList, MCSList, DIRS)
+    print "creating the MCC userfile ", metrics.create_text_file(MCCList,1, DIRS['mainDirStr'], 80000.0, 1)
+    print "creating the MCS userfile ", metrics.create_text_file(MCSList,2, DIRS['mainDirStr'], 80000.0, 1)
+    plot_menu(MCCList, MCSList, DIRS)
 
     #Let's get outta here! Engage!
     print ("-"*80)
 #*********************************************************************************************************************
-def plotMenu(MCCList, MCSList, DIRS):
+def plot_menu(MCCList, MCSList, DIRS):
     '''
     Purpose:: The flow of plots for the user to choose
 
@@ -153,36 +153,36 @@ def plotMenu(MCCList, MCSList, DIRS):
 
     Output:: None
     '''
-    option = displayPlotMenu()
+    option = display_plot_menu()
     while option != 0:
         #try:
         if option == 1:
             print "Generating Accumulated Rainfall from TRMM for the entire period ...\n"
-            plotting.plotAccTRMM(MCSList, DIRS['mainDirStr'])
+            plotting.plot_accu_TRMM(MCSList, DIRS['mainDirStr'])
         if option == 2:
             startDateTime = raw_input("> Please enter the start date and time yyyy-mm-dd_hr:mm:ss format: \n")
             endDateTime = raw_input("> Please enter the end date and time yyyy-mm-dd_hr:mm:ss format: \n")
             print "Generating acccumulated rainfall between ", startDateTime," and ", endDateTime, " ... \n"
-            plotting.plotAccuInTimeRange(startDateTime, endDateTime, DIRS['mainDirStr'],1.0)
+            plotting.plot_accu_in_time_range(startDateTime, endDateTime, DIRS['mainDirStr'], 1.0)
         if option == 3:
             print "Generating area distribution plot ... \n"
-            plotting.displaySize(MCSList, DIRS['mainDirStr'])
+            plotting.display_size(MCSList, DIRS['mainDirStr'])
         if option == 4:
             print "Generating precipitation and area distribution plot ... \n"
-            plotting.displayPrecip(MCSList, DIRS['mainDirStr'])
+            plotting.display_precip(MCSList, DIRS['mainDirStr'])
         if option == 5:
             try:
                 print "Generating histogram of precipitation for each time ... \n"
-                plotting.plotPrecipHistograms(MCSList, DIRS['mainDirStr'])
+                plotting.plot_precip_histograms(MCSList, DIRS['mainDirStr'])
             except:
                 pass
         # except:
         #     print "Invalid option. Please try again, enter 0 to exit \n"
 
-        option = displayPlotMenu()
+        option = display_plot_menu()
     return
 #*********************************************************************************************************************
-def displayPlotMenu():
+def display_plot_menu():
     '''
     Purpose:: Display the plot Menu Options
 
@@ -200,7 +200,7 @@ def displayPlotMenu():
     option = int(raw_input("> Please enter your option for plots: \n"))
     return option
 #*********************************************************************************************************************
-def displayPostprocessingPlotMenu():
+def display_postprocessing_plot_menu():
     '''
     Purpose:: Display the plot Menu Options
 
@@ -219,7 +219,7 @@ def displayPostprocessingPlotMenu():
     option = int(raw_input("> Please enter your option for plots: \n"))
     return option
 #*********************************************************************************************************************
-def postProcessingplotMenu(DIRS):
+def postprocessing_plot_menu(DIRS):
     '''
     Purpose:: The flow of plots for the user to choose
 
@@ -235,7 +235,7 @@ def postProcessingplotMenu(DIRS):
     TRMMCEdirName = DIRS['mainDirStr']+'/TRMMnetcdfCEs'
     CEdirName = DIRS['mainDirStr']+'/MERGnetcdfCEs'
 
-    option = displayPostprocessingPlotMenu()
+    option = display_postprocessing_plot_menu()
     while option != 0:
         try:
             if option == 1:
@@ -260,7 +260,7 @@ def postProcessingplotMenu(DIRS):
             #     mccSearch.plotAccuInTimeRange()
         except:
             print "Invalid option, please try again"
-        option = displayPostprocessingPlotMenu()
+        option = display_postprocessing_plot_menu()
     return
 #*********************************************************************************************************************
 

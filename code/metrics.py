@@ -45,7 +45,7 @@ def average_feature_size(finalMCCList):
     #in the graph and calculate the area
     for eachPath in finalMCCList:
         for eachNode in eachPath:
-            thisMCC += mccSearch.thisDict(eachNode)['cloudElementArea']
+            thisMCC += mccSearch.this_dict(eachNode)['cloudElementArea']
 
         thisMCCAvg += (thisMCC/len(eachPath))
         thisMCC = 0.0
@@ -188,8 +188,8 @@ def create_text_file(finalMCCList, identifier, MAIN_DIRECTORY, OUTER_CLOUD_SHIEL
         eachPath.sort(key=lambda nodeID: (len(nodeID.split('C')[0]), nodeID.split('C')[0], nodeID.split('CE')[1]))
         mcsPostFile.write('\n %s' % eachPath)
 
-        startTime = mccSearch.thisDict(eachPath[0])['cloudElementTime']
-        endTime = mccSearch.thisDict(eachPath[-1])['cloudElementTime']
+        startTime = mccSearch.this_dict(eachPath[0])['cloudElementTime']
+        endTime = mccSearch.this_dict(eachPath[-1])['cloudElementTime']
         duration = (endTime - startTime) + timedelta(hours=TRES)
 
         # convert datatime duration to seconds and add to the total for the average duration of all MCS in finalMCCList
@@ -201,7 +201,7 @@ def create_text_file(finalMCCList, identifier, MAIN_DIRECTORY, OUTER_CLOUD_SHIEL
 
         #get the precip info
         for eachNode in eachPath:
-            thisNode = mccSearch.thisDict(eachNode)
+            thisNode = mccSearch.this_dict(eachNode)
             #set first time min 'fake' values
             if firstTime == True:
                 minCEprecipRate = thisNode['CETRMMmin']
@@ -485,24 +485,24 @@ def find_cloud_element_speed(node, mcsList, theList):
     cloudElementSpeed = []
     theSpeed = 0.0
 
-    nodeLatLon = mccSearch.thisDict(node)['cloudElementCenter']
+    nodeLatLon = mccSearch.this_dict(node)['cloudElementCenter']
 
     for aNode in theList:
         if aNode in mcsList:
             #if aNode is part of the mcsList then determine distance
-            aNodeLatLon = mccSearch.thisDict(aNode)['cloudElementCenter']
+            aNodeLatLon = mccSearch.this_dict(aNode)['cloudElementCenter']
             #calculate CE speed
             #checking the lats
             # nodeLatLon[0] += 90.0
             # aNodeLatLon[0] += 90.0
             # deltaLat = (nodeLatLon[0] - aNodeLatLon[0])
-            deltaLat = ((mccSearch.thisDict(node)['cloudElementCenter'][0] +90.0) - \
-                (mccSearch.thisDict(aNode)['cloudElementCenter'][0]+90.0))
+            deltaLat = ((mccSearch.this_dict(node)['cloudElementCenter'][0] +90.0) - \
+                (mccSearch.this_dict(aNode)['cloudElementCenter'][0]+90.0))
             # nodeLatLon[1] += 360.0
             # aNodeLatLon[1] += 360.0
             # deltaLon = (nodeLatLon[1] - aNodeLatLon[1])
-            deltaLon = ((mccSearch.thisDict(node)['cloudElementCenter'][1]+360.0) - \
-                (mccSearch.thisDict(aNode)['cloudElementCenter'][1]+360.0))
+            deltaLon = ((mccSearch.this_dict(node)['cloudElementCenter'][1]+360.0) - \
+                (mccSearch.this_dict(aNode)['cloudElementCenter'][1]+360.0))
             #failsafe for movement only in one dir
             if deltaLat == 0.0:
                 deltaLat = 1.0
@@ -568,7 +568,7 @@ def precip_max_min(finalMCCList):
     if finalMCCList:
         if type(finalMCCList[0]) is str: # len(finalMCCList) == 1:
             for node in finalMCCList:
-                eachNode = mccSearch.thisDict(node)
+                eachNode = mccSearch.this_dict(node)
                 #cloudElementTRMM = eachNode['cloudElementLatLonTRMM']
                 maxCEprecip = np.max(eachNode['cloudElementLatLonTRMM'][np.nonzero(eachNode['cloudElementLatLonTRMM'])])
                 minCEprecip = np.min(eachNode['cloudElementLatLonTRMM'][np.nonzero(eachNode['cloudElementLatLonTRMM'])])
@@ -577,7 +577,7 @@ def precip_max_min(finalMCCList):
             for eachMCC in finalMCCList:
                 #get the info from the node
                 for node in eachMCC:
-                    eachNode = mccSearch.thisDict(node)
+                    eachNode = mccSearch.this_dict(node)
                     #find min and max precip
                     maxCEprecip = np.max(eachNode['cloudElementLatLonTRMM'][np.nonzero(eachNode['cloudElementLatLonTRMM'])])
                     minCEprecip = np.min(eachNode['cloudElementLatLonTRMM'][np.nonzero(eachNode['cloudElementLatLonTRMM'])])
@@ -608,7 +608,7 @@ def precip_totals(finalMCCList):
         for eachMCC in finalMCCList:
             #get the info from the node
             for node in eachMCC:
-                eachNode = mccSearch.thisDict(node)
+                eachNode = mccSearch.this_dict(node)
                 count += 1
                 if count == 1:
                     prevHr = int(str(eachNode['cloudElementTime']).replace(' ', '')[-8:-6])
@@ -674,8 +674,8 @@ def temporal_and_area_info_metric(finalMCCList):
         for eachMCC in finalMCCList:
             #get the info from the node
             for eachNode in eachMCC:
-                mccTimes.append(mccSearch.thisDict(eachNode)['cloudElementTime'])
-                mcsArea.append(mccSearch.thisDict(eachNode)['cloudElementArea'])
+                mccTimes.append(mccSearch.this_dict(eachNode)['cloudElementTime'])
+                mcsArea.append(mccSearch.this_dict(eachNode)['cloudElementArea'])
 
             #sort and remove duplicates
             mccTimes = list(set(mccTimes))
