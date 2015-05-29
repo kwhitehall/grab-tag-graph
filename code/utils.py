@@ -121,57 +121,6 @@ def find_nearest(thisArray, value):
     idx = (np.abs(thisArray-value)).argmin()
     return thisArray[idx]
 #******************************************************************
-def find_time(curryr, currmm, currdd, currhr):
-    '''
-    Purpose:: To determine the new yr, mm, dd, hr
-
-    Input:: curryr, an integer representing the year
-            currmm, an integer representing the month
-            currdd, an integer representing the day
-            currhr, an integer representing the hour
-
-    Output::curryr, an integer representing the year
-            currmm, an integer representing the month
-            currdd, an integer representing the day
-            currhr, an integer representing the hour
-    '''
-    if currhr > 23:
-        currhr = 0
-        currdd += 1
-        if currdd > 30 and (currmm == 4 or currmm == 6 or currmm == 9 or currmm == 11):
-            currmm += 1
-            currdd = 1
-        elif currdd > 31 and (currmm == 1 or currmm == 3 or currmm == 5 or currmm == 7 or currmm == 8 or currmm == 10):
-            currmm += 1
-            currdd = 1
-        elif currdd > 31 and currmm == 12:
-            currmm = 1
-            currdd = 1
-            curryr += 1
-        elif currdd > 28 and currmm == 2 and (curryr%4) != 0:
-            currmm = 3
-            currdd = 1
-        elif (curryr%4) == 0 and currmm == 2 and currdd > 29:
-            currmm = 3
-            currdd = 1
-
-    if currmm < 10:
-        currmmStr = "0"+str(currmm)
-    else:
-        currmmStr = str(currmm)
-
-    if currdd < 10:
-        currddStr = "0"+str(currdd)
-    else:
-        currddStr = str(currdd)
-
-    if currhr < 10:
-        currhrStr = "0"+str(currhr)
-    else:
-        currhrStr = str(currhr)
-
-    return curryr, currmmStr, currddStr, currhrStr, currmm, currdd, currhr
-#******************************************************************
 def maenumerate(mArray):
     '''
     Purpose::
@@ -668,3 +617,56 @@ def write_c1_grad_script(origsFile):
 #*********************************************************************************************************************
 
 
+#******************************************************************
+# DEPRICATED FUNCTIONS
+#******************************************************************
+# def find_time(curryr, currmm, currdd, currhr):
+#     '''
+#     Purpose:: To determine the new yr, mm, dd, hr
+
+#     Input:: curryr, an integer representing the year
+#             currmm, an integer representing the month
+#             currdd, an integer representing the day
+#             currhr, an integer representing the hour
+
+#     Output::curryr, an integer representing the year
+#             currmm, an integer representing the month
+#             currdd, an integer representing the day
+#             currhr, an integer representing the hour
+#     '''
+#     if currhr > 23:
+#         currhr = 0
+#         currdd += 1
+#         if currdd > 30 and (currmm == 4 or currmm == 6 or currmm == 9 or currmm == 11):
+#             currmm += 1
+#             currdd = 1
+#         elif currdd > 31 and (currmm == 1 or currmm == 3 or currmm == 5 or currmm == 7 or currmm == 8 or currmm == 10):
+#             currmm += 1
+#             currdd = 1
+#         elif currdd > 31 and currmm == 12:
+#             currmm = 1
+#             currdd = 1
+#             curryr += 1
+#         elif currdd > 28 and currmm == 2 and (curryr%4) != 0:
+#             currmm = 3
+#             currdd = 1
+#         elif (curryr%4) == 0 and currmm == 2 and currdd > 29:
+#             currmm = 3
+#             currdd = 1
+
+#     if currmm < 10:
+#         currmmStr = "0"+str(currmm)
+#     else:
+#         currmmStr = str(currmm)
+
+#     if currdd < 10:
+#         currddStr = "0"+str(currdd)
+#     else:
+#         currddStr = str(currdd)
+
+#     if currhr < 10:
+#         currhrStr = "0"+str(currhr)
+#     else:
+#         currhrStr = str(currhr)
+
+#     return curryr, currmmStr, currddStr, currhrStr, currmm, currdd, currhr
