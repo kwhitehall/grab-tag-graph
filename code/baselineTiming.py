@@ -129,7 +129,7 @@ def main():
     unittestFile.write("\n Total time to complete finding cloud elements in TRMM only is %g seconds"%(findCEsEnd - findCEsStart))
     print "\n Number of cloud elements found is: ", CEGraph.number_of_nodes()
     print "\n Total time to complete finding cloud elements is %g seconds"%(findCETRMMEnd - findCEsStart)
-    unittestFile.write("\n Total time to complete finding cloud elements is %g seconds"%(findCETRMMEndEnd - findCEsStart))
+    unittestFile.write("\n Total time to complete finding cloud elements is %g seconds"%(findCETRMMEnd - findCEsStart))
     print ("-"*80)
 
     print "\n -------------- TESTING findCloudClusters ----------"
