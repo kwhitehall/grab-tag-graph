@@ -488,8 +488,8 @@ def find_cloud_elements(mergImgs, timelist, mainStrDir, lat, lon, TRMMdirName=No
     print ('*'*80)
 
     #hierachial graph output
-    graphTitle = 'Cloud Elements observed over somewhere from 0000Z to 0000Z'
-    plotting.draw_graph(CLOUD_ELEMENT_GRAPH, graphTitle, MAIN_DIRECTORY, edgeWeight)
+    # graphTitle = 'Cloud Elements observed over somewhere from 0000Z to 0000Z'
+    # plotting.draw_graph(CLOUD_ELEMENT_GRAPH, graphTitle, MAIN_DIRECTORY, edgeWeight)
 
     return CLOUD_ELEMENT_GRAPH
 #**********************************************************************************************************************
@@ -695,8 +695,8 @@ def find_cloud_clusters(CEGraph):
     print 'number of edges are: ', PRUNED_GRAPH.number_of_edges()
     print ('*'*80)
 
-    graphTitle = 'Cloud Clusters observed over somewhere during sometime'
-    plotting.draw_graph(PRUNED_GRAPH, graphTitle, MAIN_DIRECTORY, edgeWeight)
+    # graphTitle = 'Cloud Clusters observed over somewhere during sometime'
+    # plotting.draw_graph(PRUNED_GRAPH, graphTitle, MAIN_DIRECTORY, edgeWeight)
     cloudClustersFile.close()
 
     return PRUNED_GRAPH
@@ -759,7 +759,7 @@ def find_MCC(prunedGraph):
                     for node in prunedGraph.successors(eachNode):
                         aSubGraph.add_edge(eachNode, node, weight=edgeWeight[0])
             imgTitle = 'CC'+str(imgCount+1)
-            plotting.draw_graph(aSubGraph, imgTitle, MAIN_DIRECTORY, edgeWeight) #for eachNode in path:
+            # plotting.draw_graph(aSubGraph, imgTitle, MAIN_DIRECTORY, edgeWeight) #for eachNode in path:
             imgCount += 1
             #----------end build back ---------------------------------------------
             mergeList, splitList = has_merges_or_splits(path)
