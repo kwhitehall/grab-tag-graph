@@ -30,9 +30,9 @@ def main():
     # utils.preprocessing_merg(rawMERG)
     # ---------------------------------------------------------------------------------
     # ---------------------------------- user inputs --------------------------------------
-    DIRS['mainDirStr'] = "/Users/kwhitehall/Documents/capstones/usc2015/baselineTimings/testSeparate"#"/directory/to/where/to/store/outputs"
-    DIRS['TRMMdirName'] = "/Users/kwhitehall/Documents/capstones/usc2015/baselineTimings/datadir/TRMM"#"/directory/to/the/TRMM/netCDF/files"
-    DIRS['CEoriDirName'] = "/Users/kwhitehall/Documents/capstones/usc2015/baselineTimings/datadir/MERG"#"/directory/to/the/MERG/netCDF/files"
+    DIRS['mainDirStr'] = "/Users/haignalbandian/grab-tag-graph/baselineTimings/testSeparate"#"/directory/to/where/to/store/outputs"
+    DIRS['TRMMdirName'] = "/Users/haignalbandian/grab-tag-graph/datadir/TRMM"#"/directory/to/the/TRMM/netCDF/files"
+    DIRS['CEoriDirName'] = "/Users/haignalbandian/grab-tag-graph/datadir/MERG"#"/directory/to/the/MERG/netCDF/files"
     #get the dates for analysis
     startDateTime = "200908310000" #"yyyymmddhrmm"
     endDateTime = "200908312100"
