@@ -3,6 +3,4 @@
 __MACOSX
 *~
 datadir
-*/MERGnetcdfCEs/*
-*/TRMMnetcdfCEs/*
-*/images/*
+*.nc
