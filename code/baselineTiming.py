@@ -11,7 +11,6 @@ import iomethods
 import mccSearch
 import utils
 
-
 def main():
     CEGraph = nx.DiGraph()
     prunedGraph = nx.DiGraph()
@@ -30,12 +29,26 @@ def main():
     # utils.preprocessing_merg(rawMERG)
     # ---------------------------------------------------------------------------------
     # ---------------------------------- user inputs --------------------------------------
-    DIRS['mainDirStr'] = "/Users/kwhitehall/Documents/capstones/usc2015/baselineTimings/testSeparate"#"/directory/to/where/to/store/outputs"
-    DIRS['TRMMdirName'] = "/Users/kwhitehall/Documents/capstones/usc2015/baselineTimings/datadir/TRMM"#"/directory/to/the/TRMM/netCDF/files"
-    DIRS['CEoriDirName'] = "/Users/kwhitehall/Documents/capstones/usc2015/baselineTimings/datadir/MERG"#"/directory/to/the/MERG/netCDF/files"
+    DIRS['mainDirStr'] = "/home/meldefon/Studies/JPLGraphs/testSeparate"#"/directory/to/where/to/store/outputs"
+    
+	#    BASELINE DATA + DATES
+    #DIRS['TRMMdirName'] = "/home/meldefon/Studies/JPLGraphs/grab-tag-graph/baselinDataDir/datadir/TRMM"#"/directory/to/the/TRMM/netCDF/files"
+    #DIRS['CEoriDirName'] = "/home/meldefon/Studies/JPLGraphs/grab-tag-graph/baselinDataDir/datadir/MERG"#"/directory/to/the/MERG/netCDF/files"
+
     #get the dates for analysis
-    startDateTime = "200908310000" #"yyyymmddhrmm"
-    endDateTime = "200908312100"
+    #startDateTime = "200908310000" #"yyyymmddhrmm"
+    #endDateTime = "200908312100"
+
+	#    PAPER DATA + DATES
+    DIRS['TRMMdirName'] = "/home/meldefon/Studies/JPLGraphs/grab-tag-graph/paperData/paperData/TRMM"#"/directory/to/the/TRMM/netCDF/files"
+    DIRS['CEoriDirName'] = "/home/meldefon/Studies/JPLGraphs/grab-tag-graph/paperData/paperData/MERG"#"/directory/to/the/MERG/netCDF/files"
+
+    #get the dates for analysis
+    startDateTime = "200609110000" #"yyyymmddhrmm"
+    endDateTime = "200609121200"
+
+
+    
     # ---------------------------------- end user inputs --------------------------------------
     # Checks that inputs are ok
     try:
@@ -115,17 +128,24 @@ def main():
     # print ("-"*80)
     # #********* OR *******
     # #timing each separately
+
+    #DEBUGGING LINE
+    #return [mergImgs,timeList,DIRS['mainDirStr'], LAT,LON]
     CEGraph = mccSearch.find_cloud_elements(mergImgs,timeList,DIRS['mainDirStr'], LAT,LON)
     findCEsEnd = time.time()
     print "\n End the timer for findCloudElements process using MERG only"
     print "\n Total time to complete finding cloud elements in MERG only is %g seconds"%(findCEsEnd - findCEsStart)
-    unittestFile.write("\n Total time to complete finding cloud elements in MERG only is %g seconds"%(findCEsEnd - findCEsStart))
+    #unittestFile.write("\n Total time to complete finding cloud elements in MERG only is %g seconds"%(findCEsEnd - findCEsStart))
     print "\n Start the timer for findCloudElements process using TRMM only"
     findCETRMMStart = time.time()
+    #return [DIRS['TRMMdirName'],timeList]
+    #mccSearch.find_precip_rate(DIRS['TRMMdirName'],timeList)
+    #return
     allCETRMMList = mccSearch.find_precip_rate(DIRS['TRMMdirName'],timeList)
     findCETRMMEnd = time.time()
+    #return
     print "\n End the timer for findCloudElements process using TRMM only"
-    print "\n Total time to complete finding cloud elements in TRMM only is %g seconds"%(findCEsEnd - findCEsStart)
+    print "\n Total time to complete finding cloud elements in TRMM only is %g seconds"%(findCETRMMEnd - findCETRMMStart)
     unittestFile.write("\n Total time to complete finding cloud elements in TRMM only is %g seconds"%(findCEsEnd - findCEsStart))
     print "\n Number of cloud elements found is: ", CEGraph.number_of_nodes()
     print "\n Total time to complete finding cloud elements is %g seconds"%(findCETRMMEnd - findCEsStart)

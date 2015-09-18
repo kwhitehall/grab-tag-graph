@@ -108,8 +108,8 @@ def check_for_files(dirPath, startTime, endTime, tdelta, tRes):
     filelist = filter(path.isfile, glob.glob((dirPath+'/*.nc')))
     filelist.sort()
 
-    #check for the filename pattern
 
+    #check for the filename pattern
     for eachPart in re.split(r'[_,-,.,/]', re.split(r'.nc', path.basename(filelist[0]))[0]):
         tokenCounter += 1
         if tokenCounter == 1:
@@ -127,6 +127,9 @@ def check_for_files(dirPath, startTime, endTime, tdelta, tRes):
 
     startFile = glob.glob(dirPath+'/'+filenamePattern +'*'+startTimeInFile)[0]
     endTimeInFile = find_time_in_file(endTime, startTimeInFile)
+    #print("filenamePattern: "+filenamePattern)
+    #print("endTimeInFile: "+endTimeInFile)
+    #print(dirPath+'/'+filenamePattern + '*'+endTimeInFile+'*')
     endFile = glob.glob(dirPath+'/'+filenamePattern + '*'+endTimeInFile+'*')[0]
 
     currFile = startFile

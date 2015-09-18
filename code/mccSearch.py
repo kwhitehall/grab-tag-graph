@@ -12,6 +12,7 @@ import networkx as nx
 #GTG modules
 import utils
 import plotting
+import time
 
 
 #----------------------- GLOBAL VARIABLES --------------------------
@@ -494,6 +495,7 @@ def find_cloud_elements(mergImgs, timelist, mainStrDir, lat, lon, TRMMdirName=No
     return CLOUD_ELEMENT_GRAPH
 #**********************************************************************************************************************
 def find_precip_rate(TRMMdirName, timelist):
+    counter = 0
     '''
     Purpose:: Determines the precipitation rates for MCSs found if TRMMdirName was not entered in
         find_cloud_elements this can be used
@@ -517,8 +519,10 @@ def find_precip_rate(TRMMdirName, timelist):
     #sort files
     files = filter(os.path.isfile, glob.glob('*.nc'))
     files.sort(key=lambda x: os.path.getmtime(x))
+    
 
     for afile in files:
+        time1 = time.time()
         fullFname = os.path.splitext(afile)[0]
         noFrameExtension = (fullFname.replace('_', '')).split('F')[0]
         ceUniqueID = 'F' +(fullFname.replace('_', '')).split('F')[1]
@@ -543,8 +547,11 @@ def find_precip_rate(TRMMdirName, timelist):
             fileHr = '0' + str(fileHr)
         else:
             str(fileHr)
+        
+        time2 = time.time()
 
         TRMMfileName = TRMMdirName + '/3B42.' + str(fileDate) + '.'+str(fileHr) + '.7A.nc'
+        #print(TRMMfileName)
         TRMMData = Dataset(TRMMfileName, 'r', format='NETCDF4')
         precipRate = TRMMData.variables['pcp'][:,:,:]
         latsrawTRMMData = TRMMData.variables['latitude'][:]
@@ -565,6 +572,7 @@ def find_precip_rate(TRMMdirName, timelist):
         #----------------------------------------------------------------------------------
 
         TRMMData.close()
+        time3 = time.time()
 
 
         # ------ NETCDF File stuff ------------------------------------
@@ -595,13 +603,23 @@ def find_precip_rate(TRMMdirName, timelist):
         latitude.long_name = 'Latitude'
 
         finalCETRMMvalues = ma.zeros((brightnesstemp1.shape))
-        #-----------End most of NETCDF file stuff ------------------------------------
-        for index, value in np.ndenumerate(brightnesstemp):
-            latIndex, lonIndex = index
-            if value > 0:
-               finalCETRMMvalues[0,latIndex,lonIndex] = regriddedTRMM[int(np.where(LAT[:,0]==LAT[latIndex,0])[0]),\
-                   int(np.where(LON[0,:]==LON[0,lonIndex])[0])]
 
+        time4 = time.time()
+        #-----------End most of NETCDF file stuff ------------------------------------
+        #     THIS LOOP MIGHT NOT HAVE BEEN NECESSARY
+        #for index, value in np.ndenumerate(brightnesstemp):
+            #latIndex, lonIndex = index
+            #if value > 0:
+               #     SPEEDUP
+               #finalCETRMMvalues[0,latIndex,lonIndex] = regriddedTRMM[int(np.where(LAT[:,0]==LAT[latIndex,0])[0]),\
+                   #int(np.where(LON[0,:]==LON[0,lonIndex])[0])]
+               #stupid_val = regriddedTRMM[latIndex,lonIndex]
+               #assert(stupid_val == finalCETRMMvalues[0,latIndex,lonIndex])
+               #finalCETRMMvalues[0,latIndex,lonIndex] = regriddedTRMM[latIndex,lonIndex]
+
+        finalCETRMMvalues[0,:,:] = regriddedTRMM
+        finalCETRMMvalues[0,brightnesstemp<=0] = 0
+        time5 = time.time()
         rainFallacc[:] = finalCETRMMvalues
         currNetCDFTRMMData.close()
 
@@ -624,6 +642,7 @@ def find_precip_rate(TRMMdirName, timelist):
         #add info to CLOUDELEMENTSGRAPH
         #TODO try block
         for eachdict in CLOUD_ELEMENT_GRAPH.nodes(ceUniqueID):
+            counter+=1
             if eachdict[1]['uniqueID'] == ceUniqueID:
                 if not 'cloudElementPrecipTotal' in eachdict[1].keys():
                     eachdict[1]['cloudElementPrecipTotal'] = precipTotal
@@ -645,7 +664,8 @@ def find_precip_rate(TRMMdirName, timelist):
         finalCETRMMvalues = []
         #CEprecipRate =[]
         brightnesstemp = []
-
+        time6 = time.time()
+    print(str(time1)+"\t"+str(time2)+"\t"+str(time3)+"\t"+str(time4)+"\t"+str(time5)+"\t"+str(time6))
     return allCEnodesTRMMdata
 #**********************************************************************************************************************
 def find_cloud_clusters(CEGraph):
@@ -1585,20 +1605,42 @@ def eccentricity(cloudElementLatLon):
 
     epsilon = 0.0
 
+    #nonEmptyLons = sum(sum(cloudElementLatLon) > 0)
+    #nonEmptyLats = sum(sum(cloudElementLatLon.transpose()) > 0)
+    
+    #I think this is what's wanted
+    sh = cloudElementLatLon.shape
+    nonEmptyLons = sh[1]
+    nonEmptyLats = sh[0]
+    
+
+    lonEigenvalues = 1.0 * nonEmptyLats / (nonEmptyLons + 0.001) #for long oval on y axis
+    latEigenvalues = 1.0 * nonEmptyLons / (nonEmptyLats + 0.001) #for long oval on x-axs
+    epsilon = min(latEigenvalues, lonEigenvalues)
+
     #loop over all lons and determine longest (non-zero) col
     #loop over all lats and determine longest (non-zero) row
+    #sh = cloudElementLatLon.shape
 
-    for _ in cloudElementLatLon:
-        #assign a matrix to determine the legit values
+#    for _ in cloudElementLatLon:
+#        assign a matrix to determine the legit values
+#
+#        nonEmptyLons = sum(sum(cloudElementLatLon) > 0)
+#        nonEmptyLats = sum(sum(cloudElementLatLon.transpose()) > 0)
+        #assert_sameval(nonEmptyLons,sh[1],nonEmptyLats,sh[0])
 
-        nonEmptyLons = sum(sum(cloudElementLatLon) > 0)
-        nonEmptyLats = sum(sum(cloudElementLatLon.transpose()) > 0)
+#        lonEigenvalues = 1.0 * nonEmptyLats / (nonEmptyLons + 0.001) #for long oval on y axis
+#        latEigenvalues = 1.0 * nonEmptyLons / (nonEmptyLats + 0.001) #for long oval on x-axs
+#        epsilon = min(latEigenvalues, lonEigenvalues)
 
-        lonEigenvalues = 1.0 * nonEmptyLats / (nonEmptyLons + 0.001) #for long oval on y axis
-        latEigenvalues = 1.0 * nonEmptyLons / (nonEmptyLats + 0.001) #for long oval on x-axs
-        epsilon = min(latEigenvalues, lonEigenvalues)
-
+    #assert(epsilon_0==epsilon)
     return epsilon
+
+def assert_sameval(n1,n2,n3,n4):
+    if(n1!=n2 or n3!=n4):
+        bad = 1
+    return
+
 #**********************************************************************************************************************
 def cloud_element_overlap(currentCELatLons, previousCELatLons):
     '''
