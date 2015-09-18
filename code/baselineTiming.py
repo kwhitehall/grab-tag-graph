@@ -30,7 +30,7 @@ def main():
     # utils.preprocessing_merg(rawMERG)
     # ---------------------------------------------------------------------------------
     # ---------------------------------- user inputs --------------------------------------
-    DIRS['mainDirStr'] = "/Users/youssefbiaz/Documents/USC/,2015-3Fall'15/5CSCI401/grab-tag-graph/baselineTimings/testSeparate"#"/directory/to/where/to/store/outputs"
+    DIRS['mainDirStr'] = "/Users/youssefbiaz/Documents/USC/,2015-3Fall'15/5CSCI401/baselineTimings/testSeparate"#"/directory/to/where/to/store/outputs"
     DIRS['TRMMdirName'] = "/Users/youssefbiaz/Documents/USC/,2015-3Fall'15/5CSCI401/grab-tag-graph/datadir/TRMM"#"/directory/to/the/TRMM/netCDF/files"
     DIRS['CEoriDirName'] = "/Users/youssefbiaz/Documents/USC/,2015-3Fall'15/5SCI401/grab-tag-graph/datadir/MERG"#"/directory/to/the/MERG/netCDF/files"
     #get the dates for analysis
