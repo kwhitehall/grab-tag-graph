@@ -1,0 +1,16 @@
+
+ Timing results for 200908310000 to 200908312100
+ 1. Total time to complete data ingest is 7.49475 seconds
+ Total time to complete finding cloud elements in MERG only is 247.023 seconds
+ Total time to complete finding cloud elements in TRMM only is 247.023 seconds
+ Total time to complete finding cloud elements is 358.76 seconds
+ 3. Total time to complete finding the cloud clusters is 0.0578198 seconds
+ 4. Total time to complete finding the MCCs is 25.505 seconds
+ The entire evaluation took 391.823 seconds to complete
+ ----------------------------------------------------------------
+ Number of cloud elements found is: 48
+ Number of edges (with the cloud elements) found is: 44
+ The number of nodes in the prunedGraph is: 42
+ The number of edges (with nodes) in the prunedGraph is: 39
+ MCC List has been acquired 0
+ MCS List has been acquired 2
