@@ -311,34 +311,83 @@ def find_cloud_elements(mergImgs, timelist, mainStrDir, lat, lon, TRMMdirName=No
                 #populate cloudElementLatLons by unpacking the original values from loc to get the actual value for lat and lon
                 #TODO: KDW - too dirty... play with itertools.izip or zip and the enumerate with this
                 #           as cloudElement is masked
-                for index, value in np.ndenumerate(cloudElement):
-                    if value != 0:
-                        latIndex, lonIndex = index
-                        latLonTuple = (cloudElementLat[latIndex], cloudElementLon[lonIndex], value)
+                #trialVar = ma.zeros((brightnesstemp1.shape))
+                #for index, value in np.ndenumerate(cloudElement):
+                    #if value != 0:
+                        #latIndex, lonIndex = index
+                        #latLonTuple = (cloudElementLat[latIndex], cloudElementLon[lonIndex], value)
 
                         #generate the comma separated file for GIS
-                        cloudElementLatLons.append(latLonTuple)
+                        #cloudElementLatLons.append(latLonTuple)
 
                         #temp data for CE NETCDF file
-                        brightnesstemp1[0, int(np.where(LAT[:,0] == cloudElementLat[latIndex])[0]), \
-                                int(np.where(LON[0,:] == cloudElementLon[lonIndex])[0])] = value
+                        #brightnesstemp1[0, int(np.where(LAT[:,0] == cloudElementLat[latIndex])[0]), \
+                        #        int(np.where(LON[0,:] == cloudElementLon[lonIndex])[0])] = value
+                        #trialVar[0,int(loc[0].start)+latIndex,int(loc[1].start)+lonIndex] = value
 
-                        if TRMMdirName:
-                            finalCETRMMvalues[0, int(np.where(LAT[:,0] == cloudElementLat[latIndex])[0]), \
-                                int(np.where(LON[0,:] == cloudElementLon[lonIndex])[0])] = \
-                                regriddedTRMM[int(np.where(LAT[:,0] == cloudElementLat[latIndex])[0]), \
-                                int(np.where(LON[0,:] == cloudElementLon[lonIndex])[0])]
-                            ceTRMMList.append((cloudElementLat[latIndex], cloudElementLon[lonIndex], \
-                                finalCETRMMvalues[0,cloudElementLat[latIndex], cloudElementLon[lonIndex]]))
+                        #if TRMMdirName:
+                            #finalCETRMMvalues[0, int(np.where(LAT[:,0] == cloudElementLat[latIndex])[0]), \
+                            #    int(np.where(LON[0,:] == cloudElementLon[lonIndex])[0])] = \
+                            #    regriddedTRMM[int(np.where(LAT[:,0] == cloudElementLat[latIndex])[0]), \
+                            #    int(np.where(LON[0,:] == cloudElementLon[lonIndex])[0])]
+                            #ceTRMMList.append((cloudElementLat[latIndex], cloudElementLon[lonIndex], \
+                            #    finalCETRMMvalues[0,cloudElementLat[latIndex], cloudElementLon[lonIndex]]))
+                
+                #***GABE'S ADDITIONS***
+                #This replaces the loop computation of cloudElementLatLons - doesn't match exactly, but when I looked in the
+                #orignal variable it had two entries at the end which had values of 0, which is not supposed to happen
+                cloudElementNonZeros = cloudElement.nonzero()
+                passingSpots = np.transpose(cloudElementNonZeros)
+                cloudElementLatLons = np.zeros((passingSpots.shape[0],3))
+                cloudElementLatLons[:,0] = cloudElementLat[passingSpots[:,0]]
+                cloudElementLatLons[:,1] = cloudElementLon[passingSpots[:,1]]
+                cloudElementLatLons[:,2] = cloudElement[cloudElementNonZeros]
+                cloudElementLatLons = cloudElementLatLons.tolist()
+                #assert(np.array_equal(trialVar,brightnesstemp1))
+
+                #This replaces the loop computation of brightnesstemp1, commented lines are a test
+                #trialBrightnessTemp1 = ma.zeros((brightnesstemp1.shape))
+                #trialBrightnessTemp1[0,loc[0],loc[1]] = cloudElement
+                #assert(np.array_equal(trialBrightnessTemp1,brightnesstemp1))
+                brightnesstemp1[0,loc[0],loc[1]] = cloudElement
+
+                
+                #This replaces the loop computation of finalCETRMMvalues, commented lines are a test
+                if TRMMdirName:
+                    chunkToInsert = regriddedTRMM[loc[0],loc[1]]
+                    chunkToInsert[cloudElement==0] = 0
+                    #trialFinal = ma.zeros(finalCETRMMvalues.shape)
+                    #trialFinal[0,loc[0],loc[1]] = chunkToInsert
+                    #assert(np.array_equal(trialFinal,finalCETRMMvalues))
+                    finalCETRMMvalues[0,loc[0],loc[1]] = chunkToInsert
+
+                #This replaces the loop computation of ceTRMMList, commented lines are a test
+                #trialCeTRMMList = [(cloudElementLat[index[0]], cloudElementLon[index[1]], \
+                #                finalCETRMMvalues[0,cloudElementLat[latIndex], cloudElementLon[lonIndex]]) \
+                #                    for index, value in np.ndenumerate(cloudElement) if value!=0]
+                #assert(trialCeTRMMList==ceTRMMList)
+                ceTRMMList = [(cloudElementLat[index[0]], cloudElementLon[index[1]], \
+                                finalCETRMMvalues[0,cloudElementLat[index[0]], cloudElementLon[index[1]]]) \
+                                    for index, value in np.ndenumerate(cloudElement) if value!=0]
+                #***END GABE'S ADDITIONS***
+                
 
                 brightnesstemp[:] = brightnesstemp1[:]
                 currNetCDFCEData.close()
 
                 if TRMMdirName:
                     #calculate the total precip associated with the feature
-                    for index, value in np.ndenumerate(finalCETRMMvalues):
-                        precipTotal += value
-                        precip.append(value)
+                    #for index, value in np.ndenumerate(finalCETRMMvalues):
+                        #precipTotal += value
+                        #precip.append(value)
+                    #trialSum = sum(sum(sum(finalCETRMMvalues)))
+                    #assert((trialSum-precipTotal)/precipTotal < 0.0001)
+                    #trialPrecip = np.ravel(finalCETRMMvalues).tolist()
+                    #assert(precip==trialPrecip)
+  
+
+                    precip = np.ravel(finalCETRMMvalues).tolist()
+                    precipTotal = sum(sum(sum(finalCETRMMvalues)))
 
                     rainFallacc[:] = finalCETRMMvalues[:]
                     currNetCDFTRMMData.close()
@@ -616,7 +665,7 @@ def find_precip_rate(TRMMdirName, timelist):
         #This block replaces the above commented loop
         finalCETRMMvalues[0,:,:] = regriddedTRMM
         finalCETRMMvalues[0,brightnesstemp<=0] = 0
-        time5 = time.time()
+
         rainFallacc[:] = finalCETRMMvalues
         currNetCDFTRMMData.close()
 
