@@ -522,7 +522,6 @@ def find_precip_rate(TRMMdirName, timelist):
     
 
     for afile in files:
-        time1 = time.time()
         fullFname = os.path.splitext(afile)[0]
         noFrameExtension = (fullFname.replace('_', '')).split('F')[0]
         ceUniqueID = 'F' +(fullFname.replace('_', '')).split('F')[1]
@@ -548,10 +547,8 @@ def find_precip_rate(TRMMdirName, timelist):
         else:
             str(fileHr)
         
-        time2 = time.time()
 
         TRMMfileName = TRMMdirName + '/3B42.' + str(fileDate) + '.'+str(fileHr) + '.7A.nc'
-        #print(TRMMfileName)
         TRMMData = Dataset(TRMMfileName, 'r', format='NETCDF4')
         precipRate = TRMMData.variables['pcp'][:,:,:]
         latsrawTRMMData = TRMMData.variables['latitude'][:]
@@ -572,7 +569,6 @@ def find_precip_rate(TRMMdirName, timelist):
         #----------------------------------------------------------------------------------
 
         TRMMData.close()
-        time3 = time.time()
 
 
         # ------ NETCDF File stuff ------------------------------------
@@ -604,9 +600,9 @@ def find_precip_rate(TRMMdirName, timelist):
 
         finalCETRMMvalues = ma.zeros((brightnesstemp1.shape))
 
-        time4 = time.time()
         #-----------End most of NETCDF file stuff ------------------------------------
-        #     THIS LOOP MIGHT NOT HAVE BEEN NECESSARY
+
+        #        THIS LOOP MIGHT NOT HAVE BEEN NECESSARY
         #for index, value in np.ndenumerate(brightnesstemp):
             #latIndex, lonIndex = index
             #if value > 0:
@@ -617,15 +613,22 @@ def find_precip_rate(TRMMdirName, timelist):
                #assert(stupid_val == finalCETRMMvalues[0,latIndex,lonIndex])
                #finalCETRMMvalues[0,latIndex,lonIndex] = regriddedTRMM[latIndex,lonIndex]
 
+        #This block replaces the above commented loop
         finalCETRMMvalues[0,:,:] = regriddedTRMM
         finalCETRMMvalues[0,brightnesstemp<=0] = 0
         time5 = time.time()
         rainFallacc[:] = finalCETRMMvalues
         currNetCDFTRMMData.close()
 
-        for index, value in np.ndenumerate(finalCETRMMvalues):
-            precipTotal += value
+        #      SPEEDUP
+        #for index, value in np.ndenumerate(finalCETRMMvalues):
+        #    precipTotal += value
 
+        #trialSum = sum(sum(sum(finalCETRMMvalues)))
+        #assert(precipTotal==trialSum)
+
+        #This block replaces the above commented loop
+        trialSum = sum(sum(sum(finalCETRMMvalues)))
         TRMMnumOfBoxes = np.count_nonzero(finalCETRMMvalues)
         TRMMArea = TRMMnumOfBoxes * XRES * YRES
 
@@ -664,8 +667,6 @@ def find_precip_rate(TRMMdirName, timelist):
         finalCETRMMvalues = []
         #CEprecipRate =[]
         brightnesstemp = []
-        time6 = time.time()
-    print(str(time1)+"\t"+str(time2)+"\t"+str(time3)+"\t"+str(time4)+"\t"+str(time5)+"\t"+str(time6))
     return allCEnodesTRMMdata
 #**********************************************************************************************************************
 def find_cloud_clusters(CEGraph):
@@ -1618,6 +1619,7 @@ def eccentricity(cloudElementLatLon):
     latEigenvalues = 1.0 * nonEmptyLons / (nonEmptyLats + 0.001) #for long oval on x-axs
     epsilon = min(latEigenvalues, lonEigenvalues)
 
+    #     THIS LOOP APPEARS TO BE UNNECESSARY
     #loop over all lons and determine longest (non-zero) col
     #loop over all lats and determine longest (non-zero) row
     #sh = cloudElementLatLon.shape
@@ -1640,7 +1642,6 @@ def assert_sameval(n1,n2,n3,n4):
     if(n1!=n2 or n3!=n4):
         bad = 1
     return
-
 #**********************************************************************************************************************
 def cloud_element_overlap(currentCELatLons, previousCELatLons):
     '''
