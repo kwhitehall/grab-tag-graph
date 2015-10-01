@@ -30,7 +30,7 @@ def main():
     # utils.preprocessing_merg(rawMERG)
     # ---------------------------------------------------------------------------------
     # ---------------------------------- user inputs --------------------------------------
-    DIRS['mainDirStr'] = "/Users/youssefbiaz/Documents/USC/,2015-3Fall'15/5CSCI401/grab-tag-graph/baselineTimings/testSeparate"#"/directory/to/where/to/store/outputs"
+#    DIRS['mainDirStr'] = "/Users/youssefbiaz/Documents/USC/,2015-3Fall'15/5CSCI401/grab-tag-graph/baselineTimings/output/baselineTimings"#"/directory/to/where/to/store/outputs"
     #DIRS['TRMMdirName'] = "/Users/youssefbiaz/Documents/USC/,2015-3Fall'15/5CSCI401/grab-tag-graph/baselineTimings/datadir/TRMM"#"/directory/to/the/TRMM/netCDF/files"
     #DIRS['CEoriDirName'] = "/Users/youssefbiaz/Documents/USC/,2015-3Fall'15/5CSCI401/grab-tag-graph/baselineTimings/datadir/MERG"#"/directory/to/the/MERG/netCDF/files"
     #get the dates for analysis
@@ -38,10 +38,13 @@ def main():
     #endDateTime = "200908312100"
 
     # for testing paperData
+    DIRS['mainDirStr'] = "/Users/youssefbiaz/Documents/USC/,2015-3Fall'15/5CSCI401/grab-tag-graph/baselineTimings/output/paperData"
     DIRS['TRMMdirName'] = "/Users/youssefbiaz/Documents/USC/,2015-3Fall'15/5CSCI401/grab-tag-graph/baselineTimings/paperData/TRMM"
     DIRS['CEoriDirName'] = "/Users/youssefbiaz/Documents/USC/,2015-3Fall'15/5CSCI401/grab-tag-graph/baselineTimings/paperData/MERG"
     startDateTime = "200609110000"
     endDateTime = "200609121200"
+
+    mccSearch.user_define_variables()
 
     # ---------------------------------- end user inputs --------------------------------------
     # Checks that inputs are ok
