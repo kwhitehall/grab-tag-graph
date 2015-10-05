@@ -1,0 +1,15 @@
+What I've Worked On:
+
+1. Converting the cloud element information into a Pandas DataFrame to easily select relevant information when translating the data into a visualization.
+
+2. Setting up a multi-user enabled Bokeh server to handle high-level charts (only Histograms thus far.)
+
+3. (Now abandoned) I spent some time exploring the seaborn platform and the matplotlib library to see if any part of their utility could be advantageous.
+
+What I'll Continue Working On:
+
+1. Expanding the DataFrame representation to enable the visualization of individual cloud elements.
+
+2. Exploring displaying cloud elements on a map via Bokeh.
+
+3. Incorporating the visualizations into a Jupyter notebook so they can be run without a web browser. Integrating this work with Youssef's.
