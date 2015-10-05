@@ -10,7 +10,7 @@ import subprocess
 import iomethods
 import mccSearch
 import utils
-
+import variables
 
 def main():
     CEGraph = nx.DiGraph()
@@ -44,8 +44,8 @@ def main():
     startDateTime = "200609110000"
     endDateTime = "200609121200"
 
-    userVariables = iomethods.define_user_variables()
-    graphVariables = iomethods.define_graph_variables()
+    userVariables = variables.define_user_variables()
+    graphVariables = variables.define_graph_variables()
     # ---------------------------------- end user inputs --------------------------------------
     # Checks that inputs are ok
     try:
