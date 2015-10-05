@@ -5,6 +5,8 @@ from netCDF4 import Dataset, date2num
 import numpy as np
 import numpy.ma as ma
 import os
+from multiprocessing import Pool
+#import cProfile
 from scipy import ndimage
 
 import networkx as nx
@@ -529,6 +531,7 @@ def find_cloud_elements(mergImgs, timelist, mainStrDir, lat, lon, TRMMdirName=No
     #cloudElementsTextFile.close
 
     #clean up graph - remove parent and childless nodes
+    print("Number of nodes before cleanup: "+str(CLOUD_ELEMENT_GRAPH.number_of_nodes()) + "\n")
     outAndInDeg = CLOUD_ELEMENT_GRAPH.degree_iter()
     toRemove = [node[0] for node in outAndInDeg if node[1] < 1]
     CLOUD_ELEMENT_GRAPH.remove_nodes_from(toRemove)
@@ -543,6 +546,569 @@ def find_cloud_elements(mergImgs, timelist, mainStrDir, lat, lon, TRMMdirName=No
 
     return CLOUD_ELEMENT_GRAPH
 #**********************************************************************************************************************
+from multiprocessing import Manager
+manager = Manager()
+varsDict = manager.dict()
+
+#Callable object that is passed to the Pool map (so that the find_cloud_elements function can be 
+#called many times in parallel)
+class CeFinder(object):
+    def __init__(self,timelist, mainStrDir, TRMMdirName=None):
+        self.timelist = timelist
+        self.mainStrDir = mainStrDir
+        self.TRMMdirName = TRMMdirName
+    def __call__(self,t):
+        #cProfile.runctx('find_single_frame_cloud_elements(t,self.mergImgs,self.timelist,self.mainStrDir,\
+        #    self.lat,self.lon,self.TRMMdirName)',globals(),locals(),'poolProf')
+        return find_single_frame_cloud_elements(t,varsDict['images'],self.timelist,self.mainStrDir,\
+            varsDict['lat'],varsDict['lon'],self.TRMMdirName)
+
+#Parellel version of find_cloud_elements which calls the find on single frames in parallel
+def par_find_cloud_elements(mergImgs, timelist, mainStrDir, lat, lon, TRMMdirName=None):
+    varsDict['images'] = mergImgs
+    varsDict['lat'] = lat
+    varsDict['lon'] = lon
+    
+    global MAIN_DIRECTORY
+    MAIN_DIRECTORY = mainStrDir
+    global LAT
+    LAT = lat
+    global LON
+    LON = lon
+    
+    p = Pool(6)
+    results = p.map(CeFinder(timelist, mainStrDir, TRMMdirName), \
+        xrange(mergImgs.shape[0]))
+    return serial_assemble_graph(results)
+
+#Once the images have been processed, the results are put together into the larger graph
+def serial_assemble_graph(results):
+    totals = 0
+    edgeWeight = [1, 2, 3] #weights for the graph edges
+
+    #openfile for storing ALL cloudElement information
+    cloudElementsFile = open((MAIN_DIRECTORY + '/textFiles/cloudElements.txt'), 'wb')
+    #openfile for storing cloudElement information meeting user criteria i.e. MCCs in this case
+    cloudElementsUserFile = open((MAIN_DIRECTORY + '/textFiles/cloudElementsUserFile.txt'), 'w')
+
+    for ce in results[0][0]:
+        CLOUD_ELEMENT_GRAPH.add_node(ce['uniqueID'],ce)
+        #totals +=1
+        cloudElementsFile.write(results[0][1])
+        cloudElementsUserFile.write(results[0][2])    
+    
+    for t in xrange(1,len(results)):
+        currFrameCEs = results[t][0]
+        prevFrameCEs = results[t-1][0]
+        for ce in currFrameCEs:
+            #totals +=1
+            cloudElementsFile.write(results[t][1])
+            cloudElementsUserFile.write(results[t][2])
+            CLOUD_ELEMENT_GRAPH.add_node(ce['uniqueID'], ce)
+            for cloudElementDict in prevFrameCEs:
+                percentageOverlap, areaOverlap = cloud_element_overlap(ce['cloudElementLatLon'], \
+                    cloudElementDict['cloudElementLatLon'])
+
+                #change weights to int as the built in shortest path chokes on floating pts according to Networkx doc
+                #according to Goyens et al, two CEs are considered related if there is atleast 95% overlap between 
+                #them for consecutive imgs a max of 2 hrs apart
+                if percentageOverlap >= 0.95:
+                    CLOUD_ELEMENT_GRAPH.add_edge(cloudElementDict['uniqueID'], ce['uniqueID'], weight=edgeWeight[0])
+
+                elif percentageOverlap >= 0.90 and percentageOverlap < 0.95 :
+                    CLOUD_ELEMENT_GRAPH.add_edge(cloudElementDict['uniqueID'], ce['uniqueID'], weight=edgeWeight[1])
+
+                elif areaOverlap >= MIN_OVERLAP:
+                    CLOUD_ELEMENT_GRAPH.add_edge(cloudElementDict['uniqueID'], ce['uniqueID'], weight=edgeWeight[2])
+
+
+    #Close info files
+    cloudElementsFile.close()
+    cloudElementsUserFile.close()
+
+    #clean up graph - remove parent and childless nodes
+    #print("Number of nodes before cleanup: "+str(CLOUD_ELEMENT_GRAPH.number_of_nodes()) + "\n")
+    #print("TOTALS: "+str(totals)+"\n")
+    outAndInDeg = CLOUD_ELEMENT_GRAPH.degree_iter()
+    toRemove = [node[0] for node in outAndInDeg if node[1] < 1]
+    CLOUD_ELEMENT_GRAPH.remove_nodes_from(toRemove)
+    
+    return CLOUD_ELEMENT_GRAPH
+
+#A version of find_cloud_elements which performs analysis on single frames only. The graph building
+#has been taken out to allow parallelization. This function is called by many workers. 
+def find_single_frame_cloud_elements(t,mergImgs,timelist, mainStrDir, lat, lon, TRMMdirName=None):
+    '''
+    Purpose:: Determines the contiguous boxes for a given time of the satellite images i.e. each frame
+        using scipy ndimage package
+
+    Inputs:: mergImgs: masked numpy array in (time,lat,lon),T_bb representing the satellite data. This is masked based 
+        on the maximum acceptable temperature, T_BB_MAX
+        timelist: a list of python datatimes
+        mainStrDir: a string representing the path to main directory where data will be written
+        lat: a 2D array of the set of latitudes from the files opened
+        lon: a 2D array of the set of longitudes from the files opened
+        TRMMdirName (optional): string representing the path where to find the TRMM datafiles
+
+    Returns::
+        CLOUD_ELEMENT_GRAPH: a Networkx directed graph where each node contains the information in cloudElementDict
+        The nodes are determined according to the area of contiguous squares. The nodes are linked through weighted
+        edges.
+
+        cloudElementDict = {'uniqueID': unique tag for this CE,
+                            'cloudElementTime': time of the CE,
+                            'cloudElementLatLon': (lat,lon,value) of MERG data of CE,
+                            'cloudElementCenter':list of floating-point [lat,lon] representing the CE's center
+                            'cloudElementArea':floating-point representing the area of the CE,
+                            'cloudElementEccentricity': floating-point representing the shape of the CE,
+                            'cloudElementTmax':integer representing the maximum Tb in CE,
+                            'cloudElementTmin': integer representing the minimum Tb in CE,
+                            'cloudElementPrecipTotal':floating-point representing the sum of all rainfall in CE if
+                                                      TRMMdirName entered,
+                            'cloudElementLatLonTRMM':(lat,lon,value) of TRMM data in CE if TRMMdirName entered,
+                            'TRMMArea': floating-point representing the CE if TRMMdirName entered,
+                            'CETRMMmax':floating-point representing the max rate in the CE if TRMMdirName entered,
+                            'CETRMMmin':floating-point representing the min rate in the CE if TRMMdirName entered}
+    Assumptions::
+        Assumes we are dealing with MERG data which is 4kmx4km resolved, thus the smallest value
+        required according to Vila et al. (2008) is 2400km^2
+        therefore, 2400/16 = 150 contiguous squares
+    '''
+
+    #os.system('taskset -p 0x%x %d' % (t%8 + 1,os.getpid()))
+    #os.system('taskset -p -c %i %d' % (t%8 + 1,os.getpid()))
+    global MAIN_DIRECTORY
+    MAIN_DIRECTORY = mainStrDir
+    global LAT
+    LAT = lat
+    global LON
+    LON = lon
+    #global mergImgs
+
+    frame = ma.empty((1, mergImgs.shape[1], mergImgs.shape[2]))
+    ceCounter = 0
+    frameceCounter = 0
+    frameNum = 0
+    cloudElementEpsilon = 0.0
+    cloudElementDict = {}
+    cloudElementCenter = []     #list with two elements [lat,lon] for the center of a CE
+    prevFrameCEs = []           #list for CEs in previous frame
+    currFrameCEs = []           #list for CEs in current frame
+    cloudElementLat = []        #list for a particular CE's lat values
+    cloudElementLon = []        #list for a particular CE's lon values
+    cloudElementLatLons = []    #list for a particular CE's (lat,lon) values
+    allCloudElementDicts = []
+
+    TIR_min = 0.0
+    TIR_max = 0.0
+    temporalRes = 3 # TRMM data is 3 hourly
+    precipTotal = 0.0
+    ceTRMMList = []
+    precip = []
+
+    nygrd = len(LAT[:, 0])
+    nxgrd = len(LON[0, :])
+
+    #openfile for storing ALL cloudElement information
+    #cloudElementsFile = open((MAIN_DIRECTORY + '/textFiles/cloudElements.txt'), 'wb')
+    cloudElementsFileString = ''
+    #openfile for storing cloudElement information meeting user criteria i.e. MCCs in this case
+    #cloudElementsUserFile = open((MAIN_DIRECTORY + '/textFiles/cloudElementsUserFile.txt'), 'w')
+    cloudElementsUserFileString = ''
+
+    #NB in the TRMM files the info is hours since the time thus 00Z file has in 01, 02 and 03 times
+    
+    #INSTEAD OF ITERATING OVER t, WE FREEZE IT AND CALL THE FUNCTION IN PARALLEL
+    
+    #for t in xrange(mergImgs.shape[0]):
+    #-------------------------------------------------
+    # #textfile name for saving the data for arcgis
+    # thisFileName = MAIN_DIRECTORY+'/' + (str(timelist[t])).replace(' ', '_') + '.txt'
+    # cloudElementsTextFile = open(thisFileName,'w')
+    #-------------------------------------------------
+
+    #determine contiguous locations with temeperature below the warmest temp i.e. cloudElements in each frame
+    frame, ceCounter = ndimage.measurements.label(mergImgs[t,:,:], structure=STRUCTURING_ELEMENT)
+    frameceCounter = 0
+    frameNum = t + 1
+
+    #for each of the areas identified, check to determine if it a valid CE via an area and T requirement
+    for count in xrange(ceCounter):
+        #[0] is time dimension. Determine the actual values from the data
+        #loc is a masked array
+        try:
+            loc = ndimage.find_objects(frame == (count + 1))[0]
+        except Exception, e:
+            print 'Error is ', e
+            continue
+
+
+        cloudElement = mergImgs[t,:,:][loc]
+        labels, _ = ndimage.label(cloudElement)
+
+        #determine the true lats and lons for this particular CE
+        cloudElementLat = LAT[loc[0], 0]
+        cloudElementLon = LON[0, loc[1]]
+
+        #determine number of boxes in this cloudelement
+        numOfBoxes = np.count_nonzero(cloudElement)
+        cloudElementArea = numOfBoxes * XRES * YRES
+
+        #If the area is greater than the area required, or if the area is smaller than the suggested area,
+        #check if it meets a convective fraction requirement consider as CE
+
+        if cloudElementArea >= AREA_MIN or (cloudElementArea < AREA_MIN and \
+                ((ndimage.minimum(cloudElement, labels=labels)) / \
+                    float((ndimage.maximum(cloudElement, labels=labels)))) < CONVECTIVE_FRACTION):
+            #get some time information and labeling info
+            frameceCounter += 1
+            ceUniqueID = 'F' + str(frameNum) + 'CE' + str(frameceCounter)
+            #-------------------------------------------------
+            #textfile name for accesing CE data using MATLAB code
+            # thisFileName = MAIN_DIRECTORY+'/' + (str(timelist[t])).replace(' ', '_') + ceUniqueID +'.txt'
+            # cloudElementsTextFile = open(thisFileName,'w')
+            #-------------------------------------------------
+            # ------ NETCDF File stuff for brightness temp stuff ------------------------------------
+            thisFileName = MAIN_DIRECTORY + '/MERGnetcdfCEs/cloudElements' + \
+                            (str(timelist[t])).replace(' ', '_') + ceUniqueID + '.nc'
+            currNetCDFCEData = Dataset(thisFileName, 'w', format='NETCDF4')
+            currNetCDFCEData.description = 'Cloud Element '+ ceUniqueID + ' temperature data'
+            currNetCDFCEData.calendar = 'standard'
+            currNetCDFCEData.conventions = 'COARDS'
+            # dimensions
+            currNetCDFCEData.createDimension('time', None)
+            currNetCDFCEData.createDimension('lat', len(LAT[:, 0]))
+            currNetCDFCEData.createDimension('lon', len(LON[0, :]))
+            # variables
+            tempDims = ('time', 'lat', 'lon',)
+            times = currNetCDFCEData.createVariable('time', 'f8', ('time',))
+            times.units = 'hours since '+ str(timelist[t])[:-6]
+            latitudes = currNetCDFCEData.createVariable('latitude', 'f8', ('lat',))
+            longitudes = currNetCDFCEData.createVariable('longitude', 'f8', ('lon',))
+            brightnesstemp = currNetCDFCEData.createVariable('brightnesstemp', 'i16', tempDims)
+            brightnesstemp.units = 'Kelvin'
+            # NETCDF data
+            dates = [timelist[t] + timedelta(hours=0)]
+            times[:] = date2num(dates, units=times.units)
+            longitudes[:] = LON[0, :]
+            longitudes.units = 'degrees_east'
+            longitudes.long_name = 'Longitude'
+
+            latitudes[:] = LAT[:, 0]
+            latitudes.units = 'degrees_north'
+            latitudes.long_name = 'Latitude'
+
+            #generate array of zeros for brightness temperature
+            brightnesstemp1 = ma.zeros((1, len(latitudes), len(longitudes))).astype('int16')
+            #-----------End most of NETCDF file stuff ------------------------------------
+
+            #if other dataset (TRMM) assumed to be a precipitation dataset was entered
+            if TRMMdirName:
+                #------------------TRMM stuff -------------------------------------------------
+                fileDate = ((str(timelist[t])).replace(' ', '')[:-8]).replace('-', '')
+                fileHr1 = (str(timelist[t])).replace(' ', '')[-8:-6]
+
+                if int(fileHr1) % temporalRes == 0:
+                    fileHr = fileHr1
+                else:
+                    fileHr = (int(fileHr1) / temporalRes) * temporalRes
+                if fileHr < 10:
+                    fileHr = '0'+str(fileHr)
+                else:
+                    str(fileHr)
+
+                #open TRMM file for the resolution info and to create the appropriate sized grid
+                TRMMfileName = TRMMdirName + '/3B42.' + fileDate + '.' + str(fileHr) + '.7A.nc'
+
+                TRMMData = Dataset(TRMMfileName, 'r', format='NETCDF4')
+                precipRate = TRMMData.variables['pcp'][:, :, :]
+                latsrawTRMMData = TRMMData.variables['latitude'][:]
+                lonsrawTRMMData = TRMMData.variables['longitude'][:]
+                lonsrawTRMMData[lonsrawTRMMData > 180] = lonsrawTRMMData[lonsrawTRMMData > 180] - 360.
+                LONTRMM, LATTRMM = np.meshgrid(lonsrawTRMMData, latsrawTRMMData)
+
+                # nygrdTRMM = len(LATTRMM[:, 0])
+                # nxgrdTRMM = len(LONTRMM[0, :])
+                precipRateMasked = ma.masked_array(precipRate, mask=(precipRate < 0.0))
+                #---------regrid the TRMM data to the MERG dataset ----------------------------------
+                #regrid using the do_regrid stuff from the Apache OCW
+                regriddedTRMM = ma.zeros((0, nygrd, nxgrd))
+                regriddedTRMM = utils.do_regrid(precipRateMasked[0, :, :], LATTRMM, LONTRMM, LAT, LON, order=1,\
+                                mdi=-999999999)
+                #----------------------------------------------------------------------------------
+
+                # #get the lat/lon info from cloudElement
+                #get the lat/lon info from the file
+                #latCEStart = LAT[0][0]
+                #latCEEnd = LAT[-1][0]
+                #lonCEStart = LON[0][0]
+                #lonCEEnd = LON[0][-1]
+
+                #get the lat/lon info for TRMM data (different resolution)
+                # latStartT = utils.find_nearest(latsrawTRMMData, latCEStart)
+                # latEndT = utils.find_nearest(latsrawTRMMData, latCEEnd)
+                # lonStartT = utils.find_nearest(lonsrawTRMMData, lonCEStart)
+                # lonEndT = utils.find_nearest(lonsrawTRMMData, lonCEEnd)
+                # Unused since CEPrecipRate isn't used and these are just inputs
+                # latStartIndex = np.where(latsrawTRMMData == latStartT)
+                # latEndIndex = np.where(latsrawTRMMData == latEndT)
+                # lonStartIndex = np.where(lonsrawTRMMData == lonStartT)
+                # lonEndIndex = np.where(lonsrawTRMMData == lonEndT)
+
+                #get the relevant TRMM info
+                # Unused Variable
+                # CEprecipRate = precipRate[:, (latStartIndex[0][0]-1):latEndIndex[0][0], \
+                #        (lonStartIndex[0][0]-1):lonEndIndex[0][0]]
+                TRMMData.close()
+
+                # ------ NETCDF File info for writing TRMM CE rainfall ------------------------------------
+                thisFileName = MAIN_DIRECTORY+'/TRMMnetcdfCEs/TRMM' + (str(timelist[t])).replace(' ', '_') + ceUniqueID +'.nc'
+                currNetCDFTRMMData = Dataset(thisFileName, 'w', format='NETCDF4')
+                currNetCDFTRMMData.description = 'Cloud Element ' + ceUniqueID + ' precipitation data'
+                currNetCDFTRMMData.calendar = 'standard'
+                currNetCDFTRMMData.conventions = 'COARDS'
+                # dimensions
+                currNetCDFTRMMData.createDimension('time', None)
+                currNetCDFTRMMData.createDimension('lat', len(LAT[:,0]))
+                currNetCDFTRMMData.createDimension('lon', len(LON[0,:]))
+
+                # variables
+                TRMMprecip = ('time', 'lat', 'lon',)
+                times = currNetCDFTRMMData.createVariable('time', 'f8', ('time',))
+                times.units = 'hours since '+ str(timelist[t])[:-6]
+                latitude = currNetCDFTRMMData.createVariable('latitude', 'f8', ('lat',))
+                longitude = currNetCDFTRMMData.createVariable('longitude', 'f8', ('lon',))
+                rainFallacc = currNetCDFTRMMData.createVariable('precipitation_Accumulation', 'f8', TRMMprecip)
+                rainFallacc.units = 'mm'
+
+                longitude[:] = LON[0,:]
+                longitude.units = 'degrees_east'
+                longitude.long_name = 'Longitude'
+
+                latitude[:] = LAT[:,0]
+                latitude.units = 'degrees_north'
+                latitude.long_name = 'Latitude'
+
+                finalCETRMMvalues = ma.zeros((brightnesstemp.shape))
+                #-----------End most of NETCDF file stuff ------------------------------------
+
+            #populate cloudElementLatLons by unpacking the original values from loc to get the actual value for lat and lon
+            #TODO: KDW - too dirty... play with itertools.izip or zip and the enumerate with this
+            #           as cloudElement is masked
+            #trialVar = ma.zeros((brightnesstemp1.shape))
+            for index, value in np.ndenumerate(cloudElement):
+                if value != 0:
+                    latIndex, lonIndex = index
+                    latLonTuple = (cloudElementLat[latIndex], cloudElementLon[lonIndex], value)
+
+                    #generate the comma separated file for GIS
+                    cloudElementLatLons.append(latLonTuple)
+
+                    #temp data for CE NETCDF file
+                    #brightnesstemp1[0, int(np.where(LAT[:,0] == cloudElementLat[latIndex])[0]), \
+                    #        int(np.where(LON[0,:] == cloudElementLon[lonIndex])[0])] = value
+                    #trialVar[0,int(loc[0].start)+latIndex,int(loc[1].start)+lonIndex] = value
+
+                    #if TRMMdirName:
+                        #finalCETRMMvalues[0, int(np.where(LAT[:,0] == cloudElementLat[latIndex])[0]), \
+                        #    int(np.where(LON[0,:] == cloudElementLon[lonIndex])[0])] = \
+                        #    regriddedTRMM[int(np.where(LAT[:,0] == cloudElementLat[latIndex])[0]), \
+                        #    int(np.where(LON[0,:] == cloudElementLon[lonIndex])[0])]
+                        #ceTRMMList.append((cloudElementLat[latIndex], cloudElementLon[lonIndex], \
+                        #    finalCETRMMvalues[0,cloudElementLat[latIndex], cloudElementLon[lonIndex]]))
+            
+            #***GABE'S ADDITIONS***
+            #This replaces the loop computation of cloudElementLatLons - doesn't match exactly, but when I looked in the
+            #orignal variable it had two entries at the end which had values of 0, which is not supposed to happen
+            cloudElementNonZeros = cloudElement.nonzero()
+            passingSpots = np.transpose(cloudElementNonZeros)
+            #nonZeroVals = cloudElement[cloudElementNonZeros]
+            #cloudElementLatLonsTrial = [(cloudElementLat[passingSpots[i,0]],cloudElementLon[passingSpots[i,1]],\
+            #    nonZeroVals[i]) for i in xrange(passingSpots.shape[0])]
+            cloudElementLatLons = np.zeros((passingSpots.shape[0],3))
+            cloudElementLatLons[:,0] = cloudElementLat[passingSpots[:,0]]
+            cloudElementLatLons[:,1] = cloudElementLon[passingSpots[:,1]]
+            cloudElementLatLons[:,2] = cloudElement[cloudElementNonZeros]
+            cloudElementLatLons = cloudElementLatLons.tolist()
+            #assert(np.array_equal(trialVar,brightnesstemp1))
+            #assert(cloudElementLatLons==cloudElementLatLons)
+
+            #This replaces the loop computation of brightnesstemp1, commented lines are a test
+            #trialBrightnessTemp1 = ma.zeros((brightnesstemp1.shape))
+            #trialBrightnessTemp1[0,loc[0],loc[1]] = cloudElement
+            #assert(np.array_equal(trialBrightnessTemp1,brightnesstemp1))
+            brightnesstemp1[0,loc[0],loc[1]] = cloudElement
+
+            
+            #This replaces the loop computation of finalCETRMMvalues, commented lines are a test
+            if TRMMdirName:
+                chunkToInsert = regriddedTRMM[loc[0],loc[1]]
+                chunkToInsert[cloudElement==0] = 0
+                #trialFinal = ma.zeros(finalCETRMMvalues.shape)
+                #trialFinal[0,loc[0],loc[1]] = chunkToInsert
+                #assert(np.array_equal(trialFinal,finalCETRMMvalues))
+                finalCETRMMvalues[0,loc[0],loc[1]] = chunkToInsert
+
+            #This replaces the loop computation of ceTRMMList, commented lines are a test
+            #trialCeTRMMList = [(cloudElementLat[index[0]], cloudElementLon[index[1]], \
+            #                finalCETRMMvalues[0,cloudElementLat[latIndex], cloudElementLon[lonIndex]]) \
+            #                    for index, value in np.ndenumerate(cloudElement) if value!=0]
+            #assert(trialCeTRMMList==ceTRMMList)
+            ceTRMMList = [(cloudElementLat[index[0]], cloudElementLon[index[1]], \
+                            finalCETRMMvalues[0,cloudElementLat[index[0]], cloudElementLon[index[1]]]) \
+                                for index, value in np.ndenumerate(cloudElement) if value!=0]
+            #***END GABE'S ADDITIONS***
+            
+
+            brightnesstemp[:] = brightnesstemp1[:]
+            currNetCDFCEData.close()
+
+            if TRMMdirName:
+                #calculate the total precip associated with the feature
+                #for index, value in np.ndenumerate(finalCETRMMvalues):
+                    #precipTotal += value
+                    #precip.append(value)
+                #trialSum = sum(sum(sum(finalCETRMMvalues)))
+                #assert((trialSum-precipTotal)/precipTotal < 0.0001)
+                #trialPrecip = np.ravel(finalCETRMMvalues).tolist()
+                #assert(precip==trialPrecip)
+
+
+                precip = np.ravel(finalCETRMMvalues).tolist()
+                precipTotal = sum(sum(sum(finalCETRMMvalues)))
+
+                rainFallacc[:] = finalCETRMMvalues[:]
+                currNetCDFTRMMData.close()
+                TRMMnumOfBoxes = np.count_nonzero(finalCETRMMvalues)
+                TRMMArea = TRMMnumOfBoxes * XRES * YRES
+                try:
+                    maxCEprecipRate = np.max(finalCETRMMvalues[np.nonzero(finalCETRMMvalues)])
+                    minCEprecipRate = np.min(finalCETRMMvalues[np.nonzero(finalCETRMMvalues)])
+                except:
+                    pass
+
+            #sort cloudElementLatLons by lats
+            cloudElementLatLons.sort(key=lambda tup: tup[0])
+
+            #determine if the cloud element the shape
+            cloudElementEpsilon = eccentricity(cloudElement)
+            cloudElementsUserFileString+=('\n\nTime is: %s' %(str(timelist[t])))
+            cloudElementsUserFileString+=('\nceUniqueID is: %s' %ceUniqueID)
+            latCenter, lonCenter = ndimage.measurements.center_of_mass(cloudElement, labels=labels)
+            #latCenter and lonCenter are given according to the particular array defining this CE
+            #so you need to convert this value to the overall domain truth
+            latCenter = cloudElementLat[round(latCenter)]
+            lonCenter = cloudElementLon[round(lonCenter)]
+            cloudElementsUserFileString+=('\nCenter (lat,lon) is: %.2f\t%.2f' %(latCenter, lonCenter))
+            cloudElementCenter.append(latCenter)
+            cloudElementCenter.append(lonCenter)
+            cloudElementsUserFileString+=('\nNumber of boxes are: %d' %numOfBoxes)
+            cloudElementsUserFileString+=('\nArea is: %.4f km^2' %(cloudElementArea))
+            cloudElementsUserFileString+=('\nAverage brightness temperature is: %.4f K' %ndimage.mean(cloudElement, \
+                labels=labels))
+            cloudElementsUserFileString+=('\nMin brightness temperature is: %.4f K' %ndimage.minimum(cloudElement, \
+                labels=labels))
+            cloudElementsUserFileString+=('\nMax brightness temperature is: %.4f K' %ndimage.maximum(cloudElement, \
+                labels=labels))
+            cloudElementsUserFileString+=('\nBrightness temperature variance is: %.4f K' \
+                %ndimage.variance(cloudElement, labels=labels))
+            cloudElementsUserFileString+=('\nConvective fraction is: %.4f ' %(((ndimage.minimum(cloudElement, \
+                labels=labels)) / float((ndimage.maximum(cloudElement, labels=labels)))) * 100.0))
+            cloudElementsUserFileString+=('\nEccentricity is: %.4f ' %(cloudElementEpsilon))
+            #populate the dictionary
+            if TRMMdirName:
+                cloudElementDict = {'uniqueID': ceUniqueID, 'cloudElementTime': timelist[t],\
+                    'cloudElementLatLon': cloudElementLatLons, 'cloudElementCenter':cloudElementCenter, \
+                    'cloudElementArea':cloudElementArea, 'cloudElementEccentricity':cloudElementEpsilon, \
+                    'cloudElementTmax':TIR_max, 'cloudElementTmin': TIR_min, 'cloudElementPrecipTotal':precipTotal,\
+                    'cloudElementLatLonTRMM':ceTRMMList, 'TRMMArea': TRMMArea, 'CETRMMmax':maxCEprecipRate, \
+                    'CETRMMmin':minCEprecipRate}
+            else:
+                cloudElementDict = {'uniqueID': ceUniqueID, 'cloudElementTime': timelist[t],\
+                    'cloudElementLatLon': cloudElementLatLons, 'cloudElementCenter':cloudElementCenter, \
+                    'cloudElementArea':cloudElementArea, 'cloudElementEccentricity':cloudElementEpsilon, \
+                    'cloudElementTmax':TIR_max, 'cloudElementTmin': TIR_min,}
+   
+            #Store the new cloudElementDict so that it can be returned to parent function
+            allCloudElementDicts.append(cloudElementDict)
+
+            if frameNum==1:
+                #TODO: remove this else as we only wish for the CE details
+                #ensure only the non-zero elements are considered
+                #store intel in allCE file
+                labels, _ = ndimage.label(cloudElement)
+                cloudElementsFileString+=('\n-----------------------------------------------')
+                cloudElementsFileString+=('\n\nTime is: %s' %(str(timelist[t])))
+                # cloudElementLat = LAT[loc[0],0]
+                # cloudElementLon = LON[0,loc[1]]
+
+                #populate cloudElementLatLons by unpacking the original values from loc
+                #TODO: KDW - too dirty... play with itertools.izip or zip and the enumerate with this
+                #           as cloudElement is masked
+                for index, value in np.ndenumerate(cloudElement):
+                    if value != 0 :
+                        latIndex, lonIndex = index
+                        latLonTuple = (cloudElementLat[latIndex], cloudElementLon[lonIndex])
+                        cloudElementLatLons.append(latLonTuple)
+
+                cloudElementsFileString+=('\nLocation of rejected CE (lat,lon) points are: %s' % cloudElementLatLons)
+                #latCenter and lonCenter are given according to the particular array defining this CE
+                #so you need to convert this value to the overall domain truth
+                latCenter, lonCenter = ndimage.measurements.center_of_mass(cloudElement, labels=labels)
+                latCenter = cloudElementLat[round(latCenter)]
+                lonCenter = cloudElementLon[round(lonCenter)]
+                cloudElementsFileString+=('\nCenter (lat,lon) is: %.2f\t%.2f' % (latCenter, lonCenter))
+                cloudElementsFileString+=('\nNumber of boxes are: %d' % numOfBoxes)
+                cloudElementsFileString+=('\nArea is: %.4f km^2' % (cloudElementArea, ))
+                cloudElementsFileString+=('\nAverage brightness temperature is: %.4f K' % ndimage.mean(cloudElement, \
+                    labels=labels))
+                cloudElementsFileString+=('\nMin brightness temperature is: %.4f K' % ndimage.minimum(cloudElement, \
+                    labels=labels))
+                cloudElementsFileString+=('\nMax brightness temperature is: %.4f K' % ndimage.maximum(cloudElement, \
+                    labels=labels))
+                cloudElementsFileString+=('\nBrightness temperature variance is: %.4f K' \
+                    % ndimage.variance(cloudElement, labels=labels))
+                cloudElementsFileString+=('\nConvective fraction is: %.4f ' % (((ndimage.minimum(cloudElement, \
+                    labels=labels))/float((ndimage.maximum(cloudElement, labels=labels))))*100.0))
+                cloudElementsFileString+=('\nEccentricity is: %.4f ' % (cloudElementEpsilon))
+                cloudElementsFileString+=('\n-----------------------------------------------')
+
+        #reset list for the next CE
+        cloudElementCenter = []
+        cloudElement = []
+        cloudElementLat = []
+        cloudElementLon = []
+        cloudElementLatLons = []
+        brightnesstemp1 = []
+        brightnesstemp = []
+        finalCETRMMvalues = []
+        #CEprecipRate =[]
+        ceTRMMList = []
+        precipTotal = 0.0
+        precip = []
+
+
+    #cloudElementsFile.close()
+    #cloudElementsUserFile.close()
+    #if using ARCGIS data store code, uncomment this file close line
+    #cloudElementsTextFile.close
+
+    #clean up graph - remove parent and childless nodes
+    #outAndInDeg = CLOUD_ELEMENT_GRAPH.degree_iter()
+    #toRemove = [node[0] for node in outAndInDeg if node[1] < 1]
+    #CLOUD_ELEMENT_GRAPH.remove_nodes_from(toRemove)
+
+    #print 'number of nodes are: ', CLOUD_ELEMENT_GRAPH.number_of_nodes()
+    #print 'number of edges are: ', CLOUD_ELEMENT_GRAPH.number_of_edges()
+    #print ('*'*80)
+
+    #hierachial graph output
+    # graphTitle = 'Cloud Elements observed over somewhere from 0000Z to 0000Z'
+    # plotting.draw_graph(CLOUD_ELEMENT_GRAPH, graphTitle, MAIN_DIRECTORY, edgeWeight)
+
+    return [allCloudElementDicts, cloudElementsFileString, cloudElementsUserFileString]
+#**********************************************************************************************************************
+
 def find_precip_rate(TRMMdirName, timelist):
     counter = 0
     '''
