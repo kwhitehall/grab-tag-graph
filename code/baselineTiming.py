@@ -4,6 +4,8 @@
 import unittest
 import time
 
+import profile
+
 import networkx as nx
 import subprocess
 
@@ -146,7 +148,8 @@ def main():
     print "\n -------------- TESTING findMCCs ----------"
     print "\n Start the timer for the findMCCs process"
     findMCCStart = time.time()
-    MCCList,MCSList = mccSearch.find_MCC(prunedGraph)
+    MCCList,MCSList =  mccSearch.find_MCC(prunedGraph)
+    #MCCList,MCSList = profile.runctx('mccSearch.find_MCC(prunedGraph)', globals(), {'mccSearch' : mccSearch, 'prunedGraph' : prunedGraph})
     print "\n MCC List has been acquired ", len(MCCList)
     print "\n MCS List has been acquired ", len(MCSList)
     findMCCEnd = time.time()
