@@ -44,8 +44,8 @@ def main():
     startDateTime = "200609110000"
     endDateTime = "200609121200"
 
-    mccSearch.user_define_variables()
-
+    userVariables = iomethods.define_user_variables()
+    graphVariables = iomethods.define_graph_variables()
     # ---------------------------------- end user inputs --------------------------------------
     # Checks that inputs are ok
     try:
@@ -104,7 +104,7 @@ def main():
     print "\n -------------- Read MERG Data ----------"
     print "\n Start the timer for the data ingest process"
     readMergStart = time.time()
-    mergImgs, timeList, LAT, LON = iomethods.read_data(DIRS['CEoriDirName'],'ch4','latitude','longitude', filelist)
+    mergImgs, timeList, LAT, LON = iomethods.read_data(DIRS['CEoriDirName'],'ch4','latitude','longitude', userVariables,filelist)
     readMergEnd = time.time()
     print "\n End the timer for the data ingest process"
     print "\n Total time to complete data ingest is %g seconds"%(readMergEnd - readMergStart)
@@ -116,7 +116,7 @@ def main():
     findCEsStart = time.time()
     # ********* EITHER *********
     # print "\n Using both MERG and TRMM simultaneously "
-    # CEGraph = mccSearch.find_cloud_elements(mergImgs,timeList,DIRS['mainDirStr'], LAT,LON,DIRS['TRMMdirName'])
+    # CEGraph = mccSearch.find_cloud_elements(mergImgs,timeList,DIRS['mainDirStr'], LAT,LON,userVariables,graphVariables,DIRS['TRMMdirName'])
     # findCEsEnd = time.time()
     # print "\n Number of cloud elements found is: ", CEGraph.number_of_nodes()
     # print "\n End the timer for findCloudElements process"
@@ -125,14 +125,14 @@ def main():
     # print ("-"*80)
     # #********* OR *******
     # #timing each separately
-    CEGraph = mccSearch.find_cloud_elements(mergImgs,timeList,DIRS['mainDirStr'], LAT,LON)
+    CEGraph = mccSearch.find_cloud_elements(mergImgs,timeList,DIRS['mainDirStr'], LAT,LON,userVariables,graphVariables)
     findCEsEnd = time.time()
     print "\n End the timer for findCloudElements process using MERG only"
     print "\n Total time to complete finding cloud elements in MERG only is %g seconds"%(findCEsEnd - findCEsStart)
     unittestFile.write("\n Total time to complete finding cloud elements in MERG only is %g seconds"%(findCEsEnd - findCEsStart))
     print "\n Start the timer for findCloudElements process using TRMM only"
     findCETRMMStart = time.time()
-    allCETRMMList = mccSearch.find_precip_rate(DIRS['TRMMdirName'],timeList)
+    allCETRMMList = mccSearch.find_precip_rate(DIRS['TRMMdirName'],timeList,userVariables,graphVariables)
     findCETRMMEnd = time.time()
     print "\n End the timer for findCloudElements process using TRMM only"
     print "\n Total time to complete finding cloud elements in TRMM only is %g seconds"%(findCEsEnd - findCEsStart)
@@ -145,7 +145,7 @@ def main():
     print "\n -------------- TESTING findCloudClusters ----------"
     print "\n Start the timer for findCloudClusters process"
     findCloudClustersStart = time.time()
-    prunedGraph = mccSearch.find_cloud_clusters(CEGraph)
+    prunedGraph = mccSearch.find_cloud_clusters(CEGraph,userVariables,graphVariables)
     print "The number of nodes in the prunedGraph is: ", prunedGraph.number_of_nodes()
     findCloudClustersEnd = time.time()
     print "\n End the timer for the findCloudClusters process"
@@ -156,7 +156,7 @@ def main():
     print "\n -------------- TESTING findMCCs ----------"
     print "\n Start the timer for the findMCCs process"
     findMCCStart = time.time()
-    MCCList,MCSList = mccSearch.find_MCC(prunedGraph)
+    MCCList,MCSList = mccSearch.find_MCC(prunedGraph,userVariables,graphVariables)
     print "\n MCC List has been acquired ", len(MCCList)
     print "\n MCS List has been acquired ", len(MCSList)
     findMCCEnd = time.time()
