@@ -6,6 +6,7 @@ import numpy as np
 import numpy.ma as ma
 import os
 from scipy import ndimage
+import json
 
 import networkx as nx
 
@@ -106,6 +107,14 @@ def find_cloud_elements(mergImgs, timelist, mainStrDir, lat, lon, TRMMdirName=No
     global LON
     LON = lon
 
+    cloudElementsJSON = []  #list of the key, value objects associated with a CE in the graph
+    edges = []     #list of the nodes connected to a given CE
+    latLonBox = [] #list of extreme points for the min fitting box around a CE [lon_min, lat_min, lon_max, lat_max]
+    shape = 0      #max(num of non-zero boxes in lat, num of non-zero boxes in lon) for the CE
+    cf = 0.0       #convective fraction 
+    tmin = 0.0     #IR Tmin for the CE
+    tmax = 0.0     #IR Tmax for the CE
+
     frame = ma.empty((1, mergImgs.shape[1], mergImgs.shape[2]))
     ceCounter = 0
     frameceCounter = 0
@@ -134,6 +143,7 @@ def find_cloud_elements(mergImgs, timelist, mainStrDir, lat, lon, TRMMdirName=No
     #openfile for storing cloudElement information meeting user criteria i.e. MCCs in this case
     cloudElementsUserFile = open((MAIN_DIRECTORY + '/textFiles/cloudElementsUserFile.txt'), 'w')
 
+    filenameJSON = MAIN_DIRECTORY + '/textFiles/graphJSON.txt'
     #NB in the TRMM files the info is hours since the time thus 00Z file has in 01, 02 and 03 times
     for t in xrange(mergImgs.shape[0]):
         #-------------------------------------------------
@@ -357,10 +367,25 @@ def find_cloud_elements(mergImgs, timelist, mainStrDir, lat, lon, TRMMdirName=No
                 cloudElementsUserFile.write('\n\nTime is: %s' %(str(timelist[t])))
                 cloudElementsUserFile.write('\nceUniqueID is: %s' %ceUniqueID)
                 latCenter, lonCenter = ndimage.measurements.center_of_mass(cloudElement, labels=labels)
+
                 #latCenter and lonCenter are given according to the particular array defining this CE
                 #so you need to convert this value to the overall domain truth
                 latCenter = cloudElementLat[round(latCenter)]
                 lonCenter = cloudElementLon[round(lonCenter)]
+
+                #create the latLonBox
+                latLonBox.append(min(cloudElementLon))
+                latLonBox.append(min(cloudElementLat))
+                latLonBox.append(max(cloudElementLon))
+                latLonBox.append(max(cloudElementLat))
+
+                for _ in cloudElement:
+                    #assign a matrix to determine the legit values
+                    nonEmptyLons = sum(sum(cloudElement) > 0)
+                    nonEmptyLats = sum(sum(cloudElement.transpose()) > 0)
+
+                shape = max(nonEmptyLats, nonEmptyLons)
+
                 cloudElementsUserFile.write('\nCenter (lat,lon) is: %.2f\t%.2f' %(latCenter, lonCenter))
                 cloudElementCenter.append(latCenter)
                 cloudElementCenter.append(lonCenter)
@@ -385,6 +410,7 @@ def find_cloud_elements(mergImgs, timelist, mainStrDir, lat, lon, TRMMdirName=No
                         'cloudElementTmax':TIR_max, 'cloudElementTmin': TIR_min, 'cloudElementPrecipTotal':precipTotal,\
                         'cloudElementLatLonTRMM':ceTRMMList, 'TRMMArea': TRMMArea, 'CETRMMmax':maxCEprecipRate, \
                         'CETRMMmin':minCEprecipRate}
+
                 else:
                     cloudElementDict = {'uniqueID': ceUniqueID, 'cloudElementTime': timelist[t],\
                         'cloudElementLatLon': cloudElementLatLons, 'cloudElementCenter':cloudElementCenter, \
@@ -406,12 +432,25 @@ def find_cloud_elements(mergImgs, timelist, mainStrDir, lat, lon, TRMMdirName=No
                         #them for consecutive imgs a max of 2 hrs apart
                         if percentageOverlap >= 0.95:
                             CLOUD_ELEMENT_GRAPH.add_edge(cloudElementDict['uniqueID'], ceUniqueID, weight=edgeWeight[0])
+                            edges.append(cloudElementDict['uniqueID'])
 
                         elif percentageOverlap >= 0.90 and percentageOverlap < 0.95 :
                             CLOUD_ELEMENT_GRAPH.add_edge(cloudElementDict['uniqueID'], ceUniqueID, weight=edgeWeight[1])
+                            edges.append(cloudElementDict['uniqueID'])
 
                         elif areaOverlap >= MIN_OVERLAP:
                             CLOUD_ELEMENT_GRAPH.add_edge(cloudElementDict['uniqueID'], ceUniqueID, weight=edgeWeight[2])
+                            edges.append(cloudElementDict['uniqueID'])
+
+                # get some data for the JSON object which will only store the graph CEs and connected edges 
+                cf = (((ndimage.minimum(cloudElement, \
+                    labels=labels)) / float((ndimage.maximum(cloudElement, labels=labels)))) * 100.0)
+                tmin = ndimage.minimum(cloudElement, labels=labels)*1.
+                tmax = ndimage.maximum(cloudElement, labels=labels)*1.
+                if edges:
+                    cloudElementsJSON.append({'cloudElement': ceUniqueID, 'time': str(timelist[t]),\
+                        'area':cloudElementArea, 'Tmax': tmax, 'Tmin': tmin,'center':cloudElementCenter,\
+                        'convective_fraction': cf, 'lat_lon_box': latLonBox, 'shape': shape, 'edges':edges, 'eccentricity':cloudElementEpsilon})
 
             else:
                 #TODO: remove this else as we only wish for the CE details
@@ -467,16 +506,24 @@ def find_cloud_elements(mergImgs, timelist, mainStrDir, lat, lon, TRMMdirName=No
             ceTRMMList = []
             precipTotal = 0.0
             precip = []
+            edges = []
+            latLonBox = []
+
 
         #reset for the next time
         prevFrameCEs = []
         prevFrameCEs = currFrameCEs
         currFrameCEs = []
 
+
     cloudElementsFile.close()
     cloudElementsUserFile.close()
     #if using ARCGIS data store code, uncomment this file close line
     #cloudElementsTextFile.close
+
+    #write JSON file
+    with open(filenameJSON, 'w+') as f:
+        json.dump(cloudElementsTextJSON,f)
 
     #clean up graph - remove parent and childless nodes
     outAndInDeg = CLOUD_ELEMENT_GRAPH.degree_iter()
