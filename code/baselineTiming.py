@@ -32,12 +32,12 @@ def main():
     # utils.preprocessing_merg(rawMERG)
     # ---------------------------------------------------------------------------------
     # ---------------------------------- user inputs --------------------------------------
-    DIRS['mainDirStr'] = "/home/student/grab-tag-graph/paperData/OUTPUTS"#"/directory/to/where/to/store/outputs"
-    DIRS['TRMMdirName'] = "/home/student/grab-tag-graph/paperData/TRMM"#"/directory/to/the/TRMM/netCDF/files"
-    DIRS['CEoriDirName'] = "/home/student/grab-tag-graph/paperData/MERG"#"/directory/to/the/MERG/netCDF/files"
+    DIRS['mainDirStr'] = "/home/student/grab-tag-graph/datadir/OUTPUTS"#"/directory/to/where/to/store/outputs"
+    DIRS['TRMMdirName'] = "/home/student/grab-tag-graph/datadir/TRMM"#"/directory/to/the/TRMM/netCDF/files"
+    DIRS['CEoriDirName'] = "/home/student/grab-tag-graph/datadir/MERG"#"/directory/to/the/MERG/netCDF/files"
     #get the dates for analysis
-    startDateTime = "200609110000" #"yyyymmddhrmm"
-    endDateTime = "200609121200"
+    startDateTime = "200908310000" #"yyyymmddhrmm"
+    endDateTime = "200908312100"
     # ---------------------------------- end user inputs --------------------------------------
     # Checks that inputs are ok
     try:
