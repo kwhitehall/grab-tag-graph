@@ -12,7 +12,7 @@ import mccSearch
 import utils
 import variables
 
-def main():
+def runTiming(userVariables):
     CEGraph = nx.DiGraph()
     prunedGraph = nx.DiGraph()
     MCCList =[]
@@ -37,7 +37,6 @@ def main():
     #startDateTime = "200908310000" #"yyyymmddhrmm"
     #endDateTime = "200908312100"
 
-    userVariables = variables.define_user_variables()
     graphVariables = variables.define_graph_variables()
     # ---------------------------------- end user inputs --------------------------------------
     # Checks that inputs are ok
@@ -172,5 +171,3 @@ def main():
     # TODO: report the domain
 
     unittestFile.close()
-
-main()
