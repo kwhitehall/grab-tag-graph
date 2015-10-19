@@ -956,8 +956,58 @@ def checked_nodes_MCC(prunedGraph, nodeList):
             initiationFlag = True
             maturityFlag = False
 
-            potentialMCCList = bothCriteriaCheck(prunedGraph, nodeList)
+            #check if criteriaA is met
+            cloudElementAreaA, _ = check_criteria(thisdict['cloudElementLatLon'], OUTER_CLOUD_SHIELD_TEMPERATURE, False)
+            #cloudElementAreaA, criteriaA = check_criteria(thisdict['cloudElementLatLon'], OUTER_CLOUD_SHIELD_TEMPERATURE)
+            #TODO: calcuate the eccentricity at this point and read over????or create a new field in the dict
 
+            if cloudElementAreaA >= OUTER_CLOUD_SHIELD_AREA:
+                #check if criteriaB is met
+                cloudElementAreaB, criteriaB = check_criteria(thisdict['cloudElementLatLon'], INNER_CLOUD_SHIELD_TEMPERATURE, True)
+
+                #if Criteria A and B have been met, then the MCC is initiated, i.e. store node as potentialMCC
+                if cloudElementAreaB >= INNER_CLOUD_SHIELD_AREA:
+                    #TODO: add another field to the dictionary for the OUTER_AREA_SHIELD area
+                    counterCriteriaBFlag = True
+                    #append this information on to the dictionary
+                    add_info_this_dict(node, cloudElementAreaB, criteriaB)
+                    initiationFlag = False
+                    maturityFlag = True
+                    stage = 'M'
+                    potentialMCCList = update_MCC_list(prunedGraph, potentialMCCList, node, stage,\
+                                         counterCriteriaAFlag, counterCriteriaBFlag)
+                else:
+                    #criteria B failed
+                    counterCriteriaBFlag = False
+                    if initiationFlag == True:
+                        stage = 'I'
+                        potentialMCCList = update_MCC_list(prunedGraph, potentialMCCList, node, stage,\
+                                             counterCriteriaAFlag, counterCriteriaBFlag)
+
+                    elif (initiationFlag == False and maturityFlag == True) or decayFlag == True:
+                        decayFlag = True
+                        maturityFlag = False
+                        stage = 'D'
+                        potentialMCCList = update_MCC_list(prunedGraph, potentialMCCList, node, stage,\
+                                             counterCriteriaAFlag, counterCriteriaBFlag)
+            else:
+                #criteria A failed
+                counterCriteriaAFlag = False
+                counterCriteriaBFlag = False
+                #add as a CE before or after the main feature
+                if initiationFlag == True or (initiationFlag == False and maturityFlag == True):
+                    stage = 'I'
+                    potentialMCCList = update_MCC_list(prunedGraph, potentialMCCList, node, stage,\
+                                         counterCriteriaAFlag, counterCriteriaBFlag)
+                elif (initiationFlag == False and maturityFlag == False) or decayFlag == True:
+                    stage = 'D'
+                    decayFlag = True
+                    potentialMCCList = update_MCC_list(prunedGraph, potentialMCCList, node, stage,\
+                                         counterCriteriaAFlag, counterCriteriaBFlag)
+                elif (initiationFlag == False and maturityFlag == False and decayFlag == False):
+                    stage = 'I'
+                    potentialMCCList = update_MCC_list(prunedGraph, potentialMCCList, node, stage,\
+                                         counterCriteriaAFlag, counterCriteriaBFlag)
         else:
             #criteria A failed
             counterCriteriaAFlag = False
@@ -1303,12 +1353,13 @@ def this_dict(thisNode):
         if eachdict[1]['uniqueID'] == thisNode:
             return eachdict[1]
 #**********************************************************************************************************************
-def check_criteria(thisCloudElementLatLon, aTemperature):
+def check_criteria(thisCloudElementLatLon, aTemperature, bFlag):
     '''
     Purpose:: Determine if criteria B is met for a CEGraph
 
     Inputs:: thisCloudElementLatLon: 2D array of (lat,lon) variable from the node dictionary being currently considered
         aTemperature:a integer representing the temperature maximum for masking
+        bFlag: a boolean indicating if we need to care about cloudElementCriteriaBLatLon
 
     Returns:: cloudElementArea: a floating-point number representing the area in the array that meet the criteria 
 
@@ -1367,13 +1418,14 @@ def check_criteria(thisCloudElementLatLon, aTemperature):
             print 'ceCounter ', ceCounter, criteriaB.shape
             print 'criteriaB ', criteriaB
 
-        for index, value in np.ndenumerate(cloudElementCriteriaB):
-            if value != 0:
-                _, lat, lon = index
-                #t,lat,lon = index
-                #add back on the minLatIndex and minLonIndex to find the true lat, lon values
-                latLonTuple = (LAT[(lat),0], LON[0,(lon)], value)
-                cloudElementCriteriaBLatLon.append(latLonTuple)
+        if bFlag == True:
+            for index, value in np.ndenumerate(cloudElementCriteriaB):
+                if value != 0:
+                    _, lat, lon = index
+                    #t,lat,lon = index
+                    #add back on the minLatIndex and minLonIndex to find the true lat, lon values
+                    latLonTuple = (LAT[(lat),0], LON[0,(lon)], value)
+                    cloudElementCriteriaBLatLon.append(latLonTuple)
 
         cloudElementArea = np.count_nonzero(cloudElementCriteriaB) * XRES * YRES
         #do some cleaning up
@@ -1586,82 +1638,3 @@ def cloud_element_overlap(currentCELatLons, previousCELatLons):
 
     return percentageOverlap, areaOverlap
 #**********************************************************************************************************************
-def bothCriteriaCheck(prunedGraph, nodeList):
-    '''
-    Purpose:: for clearer results during profiling, confirm or deny check_criteria is expensive
-    
-    Input:: prunedGraph: a Networkx Graph representing all the cloud clusters
-        nodeList: list of strings (CE ID) from the traversal
-    
-    Returns:: potentialMCCList: list of dictionaries representing all possible MCC within the path
-             dictionary = {'possMCCList':[(node,'I')], 'fullMCSMCC':[(node,'I')], 'CounterCriteriaA': CounterCriteriaA, 'durationAandB': durationAandB}
-    '''
-
-    counterCriteriaAFlag = False
-    counterCriteriaBFlag = False
-    initiationFlag = False
-    maturityFlag = False
-    decayFlag = False
-    thisdict = {} #will have the same items as the cloudElementDict
-    cloudElementAreaB = 0.0
-    potentialMCCList = []
-
-
-    for node in nodeList:
-        thisdict = this_dict(node)
-
-    #check if criteriaA is met
-    cloudElementAreaA, _ = check_criteria(thisdict['cloudElementLatLon'], OUTER_CLOUD_SHIELD_TEMPERATURE)
-    #cloudElementAreaA, criteriaA = check_criteria(thisdict['cloudElementLatLon'], OUTER_CLOUD_SHIELD_TEMPERATURE)
-    #TODO: calcuate the eccentricity at this point and read over????or create a new field in the dict
-
-    if cloudElementAreaA >= OUTER_CLOUD_SHIELD_AREA:
-        #check if criteriaB is met
-        cloudElementAreaB, criteriaB = check_criteria(thisdict['cloudElementLatLon'], INNER_CLOUD_SHIELD_TEMPERATURE)
-
-        #if Criteria A and B have been met, then the MCC is initiated, i.e. store node as potentialMCC
-        if cloudElementAreaB >= INNER_CLOUD_SHIELD_AREA:
-            #TODO: add another field to the dictionary for the OUTER_AREA_SHIELD area
-            counterCriteriaBFlag = True
-            #append this information on to the dictionary
-            add_info_this_dict(node, cloudElementAreaB, criteriaB)
-            initiationFlag = False
-            maturityFlag = True
-            stage = 'M'
-            potentialMCCList = update_MCC_list(prunedGraph, potentialMCCList, node, stage,\
-                                 counterCriteriaAFlag, counterCriteriaBFlag)
-        else:
-            #criteria B failed
-            counterCriteriaBFlag = False
-            if initiationFlag == True:
-                stage = 'I'
-                potentialMCCList = update_MCC_list(prunedGraph, potentialMCCList, node, stage,\
-                                     counterCriteriaAFlag, counterCriteriaBFlag)
-
-            elif (initiationFlag == False and maturityFlag == True) or decayFlag == True:
-                decayFlag = True
-                maturityFlag = False
-                stage = 'D'
-                potentialMCCList = update_MCC_list(prunedGraph, potentialMCCList, node, stage,\
-                                     counterCriteriaAFlag, counterCriteriaBFlag)
-
-    else:
-        #criteria A failed
-        counterCriteriaAFlag = False
-        counterCriteriaBFlag = False
-        #add as a CE before or after the main feature
-        if initiationFlag == True or (initiationFlag == False and maturityFlag == True):
-            stage = 'I'
-            potentialMCCList = update_MCC_list(prunedGraph, potentialMCCList, node, stage,\
-                                 counterCriteriaAFlag, counterCriteriaBFlag)
-        elif (initiationFlag == False and maturityFlag == False) or decayFlag == True:
-            stage = 'D'
-            decayFlag = True
-            potentialMCCList = update_MCC_list(prunedGraph, potentialMCCList, node, stage,\
-                                 counterCriteriaAFlag, counterCriteriaBFlag)
-        elif (initiationFlag == False and maturityFlag == False and decayFlag == False):
-            stage = 'I'
-            potentialMCCList = update_MCC_list(prunedGraph, potentialMCCList, node, stage,\
-                                 counterCriteriaAFlag, counterCriteriaBFlag)
-
-    return potentialMCCList
