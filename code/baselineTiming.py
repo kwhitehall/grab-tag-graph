@@ -3,9 +3,11 @@
 '''
 import unittest
 import time
+import sys
+import subprocess
 
 import networkx as nx
-import subprocess
+
 
 import iomethods
 import mccSearch
@@ -13,6 +15,8 @@ import utils
 import variables
 
 def main():
+    sys.setrecursionlimit(5000)
+
     CEGraph = nx.DiGraph()
     prunedGraph = nx.DiGraph()
     MCCList =[]

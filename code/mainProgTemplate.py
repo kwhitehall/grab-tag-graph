@@ -1,9 +1,10 @@
 '''
 # running the program
 '''
+import sys
+import subprocess
 
 import networkx as nx
-import subprocess
 
 import iomethods
 import mccSearch
@@ -11,6 +12,8 @@ import utils
 
 
 def main():
+    sys.setrecursionlimit(5000)
+
     CEGraph = nx.DiGraph()
     prunedGraph = nx.DiGraph()
     MCCList =[]
