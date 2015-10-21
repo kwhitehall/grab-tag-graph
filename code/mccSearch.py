@@ -1006,13 +1006,13 @@ def checked_nodes_MCC(prunedGraph, nodeList):
             maturityFlag = False
 
             #check if criteriaA is met
-            cloudElementAreaA, _ = check_criteria(thisdict['cloudElementLatLon'], OUTER_CLOUD_SHIELD_TEMPERATURE)
+            cloudElementAreaA, _ = check_criteria(thisdict['cloudElementLatLon'], OUTER_CLOUD_SHIELD_TEMPERATURE, False)
             #cloudElementAreaA, criteriaA = check_criteria(thisdict['cloudElementLatLon'], OUTER_CLOUD_SHIELD_TEMPERATURE)
             #TODO: calcuate the eccentricity at this point and read over????or create a new field in the dict
 
             if cloudElementAreaA >= OUTER_CLOUD_SHIELD_AREA:
                 #check if criteriaB is met
-                cloudElementAreaB, criteriaB = check_criteria(thisdict['cloudElementLatLon'], INNER_CLOUD_SHIELD_TEMPERATURE)
+                cloudElementAreaB, criteriaB = check_criteria(thisdict['cloudElementLatLon'], INNER_CLOUD_SHIELD_TEMPERATURE, True)
 
                 #if Criteria A and B have been met, then the MCC is initiated, i.e. store node as potentialMCC
                 if cloudElementAreaB >= INNER_CLOUD_SHIELD_AREA:
@@ -1402,12 +1402,13 @@ def this_dict(thisNode):
         if eachdict[1]['uniqueID'] == thisNode:
             return eachdict[1]
 #**********************************************************************************************************************
-def check_criteria(thisCloudElementLatLon, aTemperature):
+def check_criteria(thisCloudElementLatLon, aTemperature, bFlag):
     '''
     Purpose:: Determine if criteria B is met for a CEGraph
 
     Inputs:: thisCloudElementLatLon: 2D array of (lat,lon) variable from the node dictionary being currently considered
         aTemperature:a integer representing the temperature maximum for masking
+        bFlag: a boolean indicating if we need to care about cloudElementCriteriaBLatLon
 
     Returns:: cloudElementArea: a floating-point number representing the area in the array that meet the criteria 
 
@@ -1466,13 +1467,14 @@ def check_criteria(thisCloudElementLatLon, aTemperature):
             print 'ceCounter ', ceCounter, criteriaB.shape
             print 'criteriaB ', criteriaB
 
-        for index, value in np.ndenumerate(cloudElementCriteriaB):
-            if value != 0:
-                _, lat, lon = index
-                #t,lat,lon = index
-                #add back on the minLatIndex and minLonIndex to find the true lat, lon values
-                latLonTuple = (LAT[(lat),0], LON[0,(lon)], value)
-                cloudElementCriteriaBLatLon.append(latLonTuple)
+        if bFlag == True:
+            for index, value in np.ndenumerate(cloudElementCriteriaB):
+                if value != 0:
+                    _, lat, lon = index
+                    #t,lat,lon = index
+                    #add back on the minLatIndex and minLonIndex to find the true lat, lon values
+                    latLonTuple = (LAT[(lat),0], LON[0,(lon)], value)
+                    cloudElementCriteriaBLatLon.append(latLonTuple)
 
         cloudElementArea = np.count_nonzero(cloudElementCriteriaB) * XRES * YRES
         #do some cleaning up
