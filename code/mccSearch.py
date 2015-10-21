@@ -460,6 +460,7 @@ def find_cloud_elements(mergImgs, timelist, mainStrDir, lat, lon, TRMMdirName=No
                 labels, _ = ndimage.label(cloudElement)
                 cloudElementsFile.write('\n-----------------------------------------------')
                 cloudElementsFile.write('\n\nTime is: %s' %(str(timelist[t])))
+                cloudElementsFile.write('\n\nceUniqueID is: %s' %('F' + str(frameNum) + 'CE' + str(00)))
                 # cloudElementLat = LAT[loc[0],0]
                 # cloudElementLon = LON[0,loc[1]]
 
