@@ -898,11 +898,12 @@ def find_single_frame_cloud_elements(t,mergImgs,timelist, mainStrDir, lat, lon, 
             #trialVar = ma.zeros((brightnesstemp1.shape))
             for index, value in np.ndenumerate(cloudElement):
                 if value != 0:
-                    latIndex, lonIndex = index
-                    latLonTuple = (cloudElementLat[latIndex], cloudElementLon[lonIndex], value)
+                    pass
+                    #latIndex, lonIndex = index
+                    #latLonTuple = (cloudElementLat[latIndex], cloudElementLon[lonIndex], value)
 
                     #generate the comma separated file for GIS
-                    cloudElementLatLons.append(latLonTuple)
+                    #cloudElementLatLons.append(latLonTuple)
 
                     #temp data for CE NETCDF file
                     #brightnesstemp1[0, int(np.where(LAT[:,0] == cloudElementLat[latIndex])[0]), \
