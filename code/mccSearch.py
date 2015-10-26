@@ -54,6 +54,9 @@ OUTER_CLOUD_SHIELD_TEMPERATURE = 233 #in K
 INNER_CLOUD_SHIELD_TEMPERATURE = 213 #in K
 MINIMUM_DURATION = 6  #min number of frames the MCC must exist for (assuming hrly frames, MCCs is 6hrs)
 MAXIMUM_DURATION = 24 #max number of framce the MCC can last for
+
+NUM_IMAGE_WORKERS = 6 #Number of workers to send off for extracting CE in the independent image frames
+
 #------------------- End user defined Variables -------------------
 edgeWeight = [1, 2, 3] #weights for the graph edges
 #graph object fo the CEs meeting the criteria
@@ -550,8 +553,8 @@ def find_cloud_elements(mergImgs, timelist, mainStrDir, lat, lon, TRMMdirName=No
 manager = Manager()
 varsDict = manager.dict()
 
-#Callable object that is passed to the Pool map (so that the find_cloud_elements function can be 
-#called many times in parallel)
+
+#Callable object that is passed to the Pool map (so that the find_cloud_elements function can be called many times in parallel) - Added by Gabriel Mel
 class CeFinder(object):
     def __init__(self,timelist, mainStrDir, TRMMdirName=None):
         self.timelist = timelist
@@ -562,6 +565,7 @@ class CeFinder(object):
         #    self.lat,self.lon,self.TRMMdirName)',globals(),locals(),'poolProf')
         return find_single_frame_cloud_elements(t,varsDict['images'],self.timelist,self.mainStrDir,\
             varsDict['lat'],varsDict['lon'],self.TRMMdirName)
+
 
 #Parellel version of find_cloud_elements which calls the find on single frames in parallel
 def par_find_cloud_elements(mergImgs, timelist, mainStrDir, lat, lon, TRMMdirName=None):
@@ -576,7 +580,7 @@ def par_find_cloud_elements(mergImgs, timelist, mainStrDir, lat, lon, TRMMdirNam
     global LON
     LON = lon
     
-    p = Pool(6)
+    p = Pool(NUM_IMAGE_WORKERS)
     results = p.map(CeFinder(timelist, mainStrDir, TRMMdirName), \
         xrange(mergImgs.shape[0]))
     return serial_assemble_graph(results)
