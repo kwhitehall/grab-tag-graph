@@ -6,6 +6,8 @@ import time
 import sys
 import subprocess
 
+import profile
+
 import networkx as nx
 
 
@@ -13,6 +15,7 @@ import iomethods
 import mccSearch
 import utils
 
+HOME = "/Users/cgoodale/grab-tag-graph"
 
 def main():
     sys.setrecursionlimit(5000)
@@ -34,12 +37,12 @@ def main():
     # utils.preprocessing_merg(rawMERG)
     # ---------------------------------------------------------------------------------
     # ---------------------------------- user inputs --------------------------------------
-    DIRS['mainDirStr'] = "/tmp/datadir/outputs"#"/directory/to/where/to/store/outputs"
-    DIRS['TRMMdirName'] = "/tmp/datadir/TRMM"#"/directory/to/the/TRMM/netCDF/files"
-    DIRS['CEoriDirName'] = "/tmp/datadir/MERG"#"/directory/to/the/MERG/netCDF/files"
+    DIRS['mainDirStr'] = HOME+"/paperData/OUTPUTS"#"/directory/to/where/to/store/outputs"
+    DIRS['TRMMdirName'] = HOME+"/paperData/TRMM"#"/directory/to/the/TRMM/netCDF/files"
+    DIRS['CEoriDirName'] = HOME+"/paperData/MERG"#"/directory/to/the/MERG/netCDF/files"
     #get the dates for analysis
-    startDateTime = "200609110000" #"yyyymmddhrmm"
-    endDateTime = "200609121200"
+    startDateTime = "200908310000" #"yyyymmddhrmm"
+    endDateTime = "200908312100"
     # ---------------------------------- end user inputs --------------------------------------
     # Checks that inputs are ok
     try:
@@ -150,7 +153,8 @@ def main():
     print "\n -------------- TESTING findMCCs ----------"
     print "\n Start the timer for the findMCCs process"
     findMCCStart = time.time()
-    MCCList,MCSList = mccSearch.find_MCC(prunedGraph)
+    MCCList,MCSList =  mccSearch.find_MCC(prunedGraph)
+    #MCCList,MCSList = profile.runctx('mccSearch.find_MCC(prunedGraph)', globals(), {'mccSearch' : mccSearch, 'prunedGraph' : prunedGraph})
     print "\n MCC List has been acquired ", len(MCCList)
     print "\n MCS List has been acquired ", len(MCSList)
     findMCCEnd = time.time()
