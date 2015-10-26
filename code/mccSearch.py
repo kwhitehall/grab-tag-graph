@@ -523,7 +523,7 @@ def find_cloud_elements(mergImgs, timelist, mainStrDir, lat, lon, TRMMdirName=No
 
     #write JSON file
     with open(filenameJSON, 'w+') as f:
-        json.dump(cloudElementsTextJSON,f)
+        json.dump(cloudElementsJSON,f)
 
     #clean up graph - remove parent and childless nodes
     outAndInDeg = CLOUD_ELEMENT_GRAPH.degree_iter()
