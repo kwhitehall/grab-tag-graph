@@ -6,6 +6,7 @@ import numpy as np
 import numpy.ma as ma
 import os
 from multiprocessing import Pool
+from multiprocessing import Manager
 #import cProfile
 from scipy import ndimage
 
@@ -546,7 +547,6 @@ def find_cloud_elements(mergImgs, timelist, mainStrDir, lat, lon, TRMMdirName=No
 
     return CLOUD_ELEMENT_GRAPH
 #**********************************************************************************************************************
-from multiprocessing import Manager
 manager = Manager()
 varsDict = manager.dict()
 
