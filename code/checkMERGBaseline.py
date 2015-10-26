@@ -8,10 +8,10 @@ from datetime import datetime
 
 
 def main():
-    maxw = "MPW_MERGnetcdfs"
-    kim = "KWHITE_MERGnetcdfs"
-    diff = "diff"
-    check_merg_file_differences(kim, maxw, diff)
+    inputs_one = "/path/to/input/01"
+    inputs_two = "/path/to/input/02"
+    output_diff = "/path/to/diff_folder"
+    check_merg_file_differences(inputs_one, inputs_two, output_diff)
 
 #*********************************************************************************************************************
 def check_merg_file_differences(baselinePath1, baselinePath2,  outputDir):
@@ -127,5 +127,7 @@ def check_merg_file_differences(baselinePath1, baselinePath2,  outputDir):
             diff.close
 
     diffLog.close()
-    return
-main()
+
+
+if __name__ == '__main__':
+    main()
