@@ -96,6 +96,7 @@ def find_cloud_elements(mergImgs, timelist, mainStrDir, lat, lon, userVariables,
     #openfile for storing cloudElement information meeting user criteria i.e. MCCs in this case
     cloudElementsUserFile = open((MAIN_DIRECTORY + '/textFiles/cloudElementsUserFile.txt'), 'w')
 
+
     filenameJSON = MAIN_DIRECTORY + '/textFiles/graphJSON.txt'
     #NB in the TRMM files the info is hours since the time thus 00Z file has in 01, 02 and 03 times
     for t in xrange(mergImgs.shape[0]):
@@ -375,36 +376,33 @@ def find_cloud_elements(mergImgs, timelist, mainStrDir, lat, lon, userVariables,
 
                 #draw the graph node
                 graphVariables.CLOUD_ELEMENT_GRAPH.add_node(ceUniqueID, cloudElementDict)
-
+                
                 if frameNum != 1:
                     for cloudElementDict in prevFrameCEs:
                         percentageOverlap, areaOverlap = cloud_element_overlap(cloudElementLatLons, cloudElementDict['cloudElementLatLon'], userVariables)
-
+                        
                         #change weights to int as the built in shortest path chokes on floating pts according to Networkx doc
                         #according to Goyens et al, two CEs are considered related if there is atleast 95% overlap between 
                         #them for consecutive imgs a max of 2 hrs apart
                         if percentageOverlap >= 0.95:
                             graphVariables.CLOUD_ELEMENT_GRAPH.add_edge(cloudElementDict['uniqueID'], ceUniqueID, weight=graphVariables.edgeWeight[0])
                             edges.append(cloudElementDict['uniqueID'])
-
                         elif percentageOverlap >= 0.90 and percentageOverlap < 0.95 :
                             graphVariables.CLOUD_ELEMENT_GRAPH.add_edge(cloudElementDict['uniqueID'], ceUniqueID, weight=graphVariables.edgeWeight[1])
                             edges.append(cloudElementDict['uniqueID'])
-
                         elif areaOverlap >= userVariables.MIN_OVERLAP:
                             graphVariables.CLOUD_ELEMENT_GRAPH.add_edge(cloudElementDict['uniqueID'], ceUniqueID, weight=graphVariables.edgeWeight[2])
                             edges.append(cloudElementDict['uniqueID'])
-
+                            
                 # get some data for the JSON object which will only store the graph CEs and connected edges 
-                cf = (((ndimage.minimum(cloudElement, \
-                    labels=labels)) / float((ndimage.maximum(cloudElement, labels=labels)))) * 100.0)
+                cf = (((ndimage.minimum(cloudElement, labels=labels)) / float((ndimage.maximum(cloudElement, labels=labels)))) * 100.0)
                 tmin = ndimage.minimum(cloudElement, labels=labels)*1.
                 tmax = ndimage.maximum(cloudElement, labels=labels)*1.
                 if edges:
                     cloudElementsJSON.append({'cloudElement': ceUniqueID, 'time': str(timelist[t]),\
-                        'area':cloudElementArea, 'Tmax': tmax, 'Tmin': tmin,'center':cloudElementCenter,\
-                        'convective_fraction': cf, 'lat_lon_box': latLonBox, 'shape': shape, 'edges':edges, 'eccentricity':cloudElementEpsilon})
-
+                                                  'area':cloudElementArea, 'Tmax': tmax, 'Tmin': tmin,'center':cloudElementCenter,\
+                                                  'convective_fraction': cf, 'lat_lon_box': latLonBox, 'shape': shape, 'edges':edges, 'eccentricity':cloudElementEpsilon})
+                    
             else:
                 #TODO: remove this else as we only wish for the CE details
                 #ensure only the non-zero elements are considered
@@ -412,6 +410,7 @@ def find_cloud_elements(mergImgs, timelist, mainStrDir, lat, lon, userVariables,
                 labels, _ = ndimage.label(cloudElement)
                 cloudElementsFile.write('\n-----------------------------------------------')
                 cloudElementsFile.write('\n\nTime is: %s' %(str(timelist[t])))
+                cloudElementsFile.write('\n\nceUniqueID is: %s' %('F' + str(frameNum) + 'CE' + str(00)))
                 # cloudElementLat = LAT[loc[0],0]
                 # cloudElementLon = LON[0,loc[1]]
 

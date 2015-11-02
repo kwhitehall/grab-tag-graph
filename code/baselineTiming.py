@@ -97,33 +97,39 @@ def main():
     print "\n -------------- TESTING findCloudElements ----------"
     print "\n Start the timer for findCloudElements process"
     findCEsStart = time.time()
-    # ********* EITHER *********
-    # print "\n Using both MERG and TRMM simultaneously "
-    # CEGraph = mccSearch.find_cloud_elements(mergImgs,timeList,DIRS['mainDirStr'], LAT,LON,userVariables,graphVariables,DIRS['TRMMdirName'])
-    # findCEsEnd = time.time()
-    # print "\n Number of cloud elements found is: ", CEGraph.number_of_nodes()
-    # print "\n End the timer for findCloudElements process"
-    # print "\n Total time to complete finding cloud elements is %g seconds"%(findCEsEnd - findCEsStart)
-    # unittestFile.write("\n 2. Total time to complete finding cloud elements is %g seconds"%(findCEsEnd - findCEsStart))
-    # print ("-"*80)
-    # #********* OR *******
-    # #timing each separately
-    CEGraph = mccSearch.find_cloud_elements(mergImgs,timeList,userVariables.DIRS['mainDirStr'], LAT,LON,userVariables,graphVariables)
+    print "\n Using both MERG and TRMM simultaneously "
+    CEGraph = mccSearch.find_cloud_elements(mergImgs,timeList,DIRS['mainDirStr'], LAT,LON,DIRS['TRMMdirName'])
     findCEsEnd = time.time()
     print "\n End the timer for findCloudElements process using MERG only"
     print "\n Total time to complete finding cloud elements in MERG only is %g seconds"%(findCEsEnd - findCEsStart)
     unittestFile.write("\n Total time to complete finding cloud elements in MERG only is %g seconds"%(findCEsEnd - findCEsStart))
-    print "\n Start the timer for findCloudElements process using TRMM only"
-    findCETRMMStart = time.time()
-    allCETRMMList = mccSearch.find_precip_rate(userVariables.DIRS['TRMMdirName'],timeList,userVariables,graphVariables)
-    findCETRMMEnd = time.time()
-    print "\n End the timer for findCloudElements process using TRMM only"
-    print "\n Total time to complete finding cloud elements in TRMM only is %g seconds"%(findCEsEnd - findCEsStart)
-    unittestFile.write("\n Total time to complete finding cloud elements in TRMM only is %g seconds"%(findCEsEnd - findCEsStart))
     print "\n Number of cloud elements found is: ", CEGraph.number_of_nodes()
-    print "\n Total time to complete finding cloud elements is %g seconds"%(findCETRMMEnd - findCEsStart)
-    unittestFile.write("\n Total time to complete finding cloud elements is %g seconds"%(findCETRMMEnd - findCEsStart))
+    print "\n End the timer for findCloudElements process"
+    print "\n Total time to complete finding cloud elements is %g seconds"%(findCEsEnd - findCEsStart)
+    unittestFile.write("\n 2. Total time to complete finding cloud elements is %g seconds"%(findCEsEnd - findCEsStart))
+    print "\n The CEGraph nodes are: %s "%CEGraph.nodes()
+    unittestFile.write("\n The CEGraph nodes are: %s "%CEGraph.nodes())
     print ("-"*80)
+    # #********* OR *******
+    # #timing each separately
+    # CEGraph = mccSearch.find_cloud_elements(mergImgs,timeList,DIRS['mainDirStr'], LAT,LON)
+    # findCEsEnd = time.time()
+    # print "\n End the timer for findCloudElements process using MERG only"
+    # print "\n Total time to complete finding cloud elements in MERG only is %g seconds"%(findCEsEnd - findCEsStart)
+    # unittestFile.write("\n Total time to complete finding cloud elements in MERG only is %g seconds"%(findCEsEnd - findCEsStart))
+    # print "\n Start the timer for findCloudElements process using TRMM only"
+    # findCETRMMStart = time.time()
+    # allCETRMMList = mccSearch.find_precip_rate(DIRS['TRMMdirName'],timeList)
+    # findCETRMMEnd = time.time()
+    # print "\n End the timer for findCloudElements process using TRMM only"
+    # print "\n Total time to complete finding cloud elements in TRMM only is %g seconds"%(findCEsEnd - findCEsStart)
+    # unittestFile.write("\n Total time to complete finding cloud elements in TRMM only is %g seconds"%(findCEsEnd - findCEsStart))
+    # print "\n Number of cloud elements found is: ", CEGraph.number_of_nodes()
+    # print "\n Total time to complete finding cloud elements is %g seconds"%(findCETRMMEnd - findCEsStart)
+    # unittestFile.write("\n Total time to complete finding cloud elements is %g seconds"%(findCETRMMEnd - findCEsStart))
+    # print "\n The CEGraph nodes are: %s "%CEGraph.nodes()
+    # unittestFile.write("\n The CEGraph nodes are: %s "%CEGraph.nodes())
+    # print ("-"*80)
 
     print "\n -------------- TESTING findCloudClusters ----------"
     print "\n Start the timer for findCloudClusters process"
@@ -134,6 +140,8 @@ def main():
     print "\n End the timer for the findCloudClusters process"
     print "\n Total time to complete finding the cloud clusters is %g seconds"%(findCloudClustersEnd - findCloudClustersStart)
     unittestFile.write("\n 3. Total time to complete finding the cloud clusters is %g seconds"%(findCloudClustersEnd - findCloudClustersStart))
+    unittestFile.write("\n The prunedGraph nodes are: %s "%prunedGraph.nodes())
+    print "\n The prunedGraph nodes are: %s "%prunedGraph.nodes()
     print ("-"*80)
     
     print "\n -------------- TESTING findMCCs ----------"
@@ -164,3 +172,4 @@ def main():
     unittestFile.close()
 
 main()
+
