@@ -1,3 +1,4 @@
+import os
 import networkx as nx
 import json
 
@@ -42,35 +43,84 @@ class UserVariables(object):
 
     def setupJSON(self):
         data = None;
-        with open('../config.txt') as f:
-            data = json.load(f)
-        self.LATMIN = data['LATMIN']
-        self.LATMAX = data['LATMAX']
-        self.LONMIN = data['LONMIN']
-        self.LONMAX = data['LONMAX']
-        self.XRES = data['XRES']
-        self.YRES = data['YRES']
-        self.TRES = data['TRES']
-        self.LAT_DISTANCE = data['LAT_DISTANCE']
-        self.LON_DISTANCE = data['LON_DISTANCE']
-        self.STRUCTURING_ELEMENT = data['STRUCTURING_ELEMENT']
-        self.T_BB_MAX = data['T_BB_MAX']
-        self.T_BB_MIN = data['T_BB_MIN']
-        self.CONVECTIVE_FRACTION = data['CONVECTIVE_FRACTION']
-        self.MIN_MCS_DURATION = data['MIN_MCS_DURATION']
-        self.AREA_MIN = data['AREA_MIN']
-        self.MIN_OVERLAP = data['MIN_OVERLAP']
-        self.ECCENTRICITY_THRESHOLD_MAX = data['ECCENTRICITY_THRESHOLD_MAX']
-        self.ECCENTRICITY_THRESHOLD_MIN = data['ECCENTRICITY_THRESHOLD_MIN']
-        self.OUTER_CLOUD_SHIELD_AREA = data['OUTER_CLOUD_SHIELD_AREA']
-        self.INNER_CLOUD_SHIELD_AREA = data['INNER_CLOUD_SHIELD_AREA']
-        self.OUTER_CLOUD_SHIELD_TEMPERATURE = data['OUTER_CLOUD_SHIELD_TEMPERATURE']
-        self.INNER_CLOUD_SHIELD_TEMPERATURE = data['INNER_CLOUD_SHIELD_TEMPERATURE']
-        self.MINIMUM_DURATION = data['MINIMUM_DURATION']
-        self.MAXIMUM_DURATION = data['MAXIMUM_DURATION']
-        self.DIRS = data['DIRS']
-        self.startDateTime = data['startDateTime']
-        self.endDateTime = data['endDateTime']
+        try:
+            with open('../config.txt') as f:
+                data = json.load(f)
+        except IOError, e:
+            print "Config file not found! Using default variables..."
+            return False
+        try:
+            self.LATMIN = float(data['LATMIN'])
+            if (self.LATMIN < -90 or self.LATMIN > 90):
+                print "Bad latmin input! Check the config file. Now using default variables..."
+                return False;
+            self.LATMAX = float(data['LATMAX'])
+            if (self.LATMMAX < -90 or self.LATMAX > 90 or self.LATMAX < self.LATMIN):
+                print "Bad latmax input! Check the config file. Now using default variables..."
+                return False;
+            self.LONMIN = float(data['LONMIN'])
+            if (self.LONMIN < -180 or self.LONMIN > 180):
+                print "Bad lonmin input! Check the config file. Now using default variables..."
+                return False;
+            self.LONMAX = float(data['LONMAX'])
+            if (self.LONMAX < -180 or self.LONMAX > 180 or self.LONMAX < self.LONMIN):
+                print "Bad lonmax input! Check the config file. Now using default variables..."
+                return False;
+            self.XRES = float(data['XRES'])
+            if (self.XRES <= 0):
+                print "Bad XRES input! Check the config file. Now using default variables..."
+                return False;
+            self.YRES = float(data['YRES'])
+            if (self.YRES <= 0):
+                print "Bad YRES input! Check the config file. Now using default variables..."
+                return False;
+            self.TRES = float(data['TRES'])
+            if (self.TRES <= 0):
+                print "Bad TRES input! Check the config file. Now using default variables..."
+                return False;
+            self.LAT_DISTANCE = float(data['LAT_DISTANCE'])
+            if (self.LAT_DISTANCE > 180):
+                print "Bad LAT_DISTANCE input! Check the config file. Now using default variables..."
+                return False;
+            self.LON_DISTANCE = float(data['LON_DISTANCE'])
+            if (self.LON_DISTANCE > 360):
+                print "Bad LON_DISTANCE input! Check the config file. Now using default variables..."
+                return False;            
+            # not sure how to check most of the rest of these
+            self.STRUCTURING_ELEMENT = data['STRUCTURING_ELEMENT'] 
+            self.T_BB_MAX = float(data['T_BB_MAX'])
+            self.T_BB_MIN = float(data['T_BB_MIN'])
+            if (self.T_BB_MIN > self.T_BB_MAX):
+                print "Bad TBBMIN and MAX input! Check the config file. Now using default variables..."
+                return False;                            
+            self.CONVECTIVE_FRACTION = float(data['CONVECTIVE_FRACTION'])
+            self.MIN_MCS_DURATION = float(data['MIN_MCS_DURATION'])
+            self.AREA_MIN = float(data['AREA_MIN'])
+            self.MIN_OVERLAP = float(data['MIN_OVERLAP'])
+            self.ECCENTRICITY_THRESHOLD_MAX = float(data['ECCENTRICITY_THRESHOLD_MAX'])
+            self.ECCENTRICITY_THRESHOLD_MIN = float(data['ECCENTRICITY_THRESHOLD_MIN'])
+            if (self.ECCENTRICITY_THRESHOLD_MIN > self.ECCENTRICITY_THRESHOLD_MAX):
+                print "Bad ECCENTRICITY THRESHOLD MIN and MAX input! Check the config file. Now using default variables..."
+                return False;            
+            self.OUTER_CLOUD_SHIELD_AREA = float(data['OUTER_CLOUD_SHIELD_AREA'])
+            self.INNER_CLOUD_SHIELD_AREA = float(data['INNER_CLOUD_SHIELD_AREA'])
+            self.OUTER_CLOUD_SHIELD_TEMPERATURE = float(data['OUTER_CLOUD_SHIELD_TEMPERATURE'])
+            self.INNER_CLOUD_SHIELD_TEMPERATURE = float(data['INNER_CLOUD_SHIELD_TEMPERATURE'])
+            self.MINIMUM_DURATION = float(data['MINIMUM_DURATION'])
+            self.MAXIMUM_DURATION = float(data['MAXIMUM_DURATION'])
+            if (self.MINIMUM_DURATION > self.MAXIMUM_DURATION):
+                print "Bad MIN and MAX DURATION inputs! Check the config file. Now using default variables..."
+                return False;            
+            self.DIRS = data['DIRS']
+            self.startDateTime = data['startDateTime']
+            self.endDateTime = data['endDateTime']
+            if (float(self.startDateTime) > float(self.endDateTime)):
+                print "Bad start and end times input! Check the config file. Now using default variables..."
+                return False;            
+        except ValueError:
+            print "Bad config file, please check that inputs are float values. Now using default variables..."
+
+        return True
         
 class GraphVariables(object):
     def __init__(self):
@@ -78,14 +128,17 @@ class GraphVariables(object):
         self.CLOUD_ELEMENT_GRAPH = nx.DiGraph() # graph obj for the CEs meeting criteria
         self.PRUNED_GRAPH = nx.DiGraph() # graph meeting the CC criteria
         
-def define_user_variables():
+def define_user_variables(useJson=False):
     # this is where users will determine the variables the want
     userVars = UserVariables()
-    userVars.setupJSON()
+    if useJson: # want to use the config file
+        if userVars.setupJSON(): # safely set up JSON
+            return userVars
+        else:
+            userVars2 = UserVariables() # bad JSON setup -- we need a new user variables instance
+            return userVars2
 
-    # users can reassign the variables based on prompts given to them
-    
-    # return the new userVars
+    # we didn't want to use the config file, just return
     return userVars
 
 def define_graph_variables():

@@ -305,7 +305,7 @@ def find_cloud_elements(mergImgs, timelist, mainStrDir, lat, lon, userVariables,
                     rainFallacc[:] = finalCETRMMvalues[:]
                     currNetCDFTRMMData.close()
                     TRMMnumOfBoxes = np.count_nonzero(finalCETRMMvalues)
-                    TRMMArea = TRMMnumOfBoxes * XRES * YRES
+                    TRMMArea = TRMMnumOfBoxes * userVariables.XRES * userVariables.YRES
                     try:
                         maxCEprecipRate = np.max(finalCETRMMvalues[np.nonzero(finalCETRMMvalues)])
                         minCEprecipRate = np.min(finalCETRMMvalues[np.nonzero(finalCETRMMvalues)])
@@ -476,7 +476,7 @@ def find_cloud_elements(mergImgs, timelist, mainStrDir, lat, lon, userVariables,
 
     #write JSON file
     with open(filenameJSON, 'w+') as f:
-        json.dump(cloudElementsTextJSON,f)
+        json.dump(cloudElementsJSON,f)
 
     #clean up graph - remove parent and childless nodes
     outAndInDeg = graphVariables.CLOUD_ELEMENT_GRAPH.degree_iter()
