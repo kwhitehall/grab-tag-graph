@@ -34,9 +34,9 @@ def main():
     # utils.preprocessing_merg(rawMERG)
     # ---------------------------------------------------------------------------------
     # ---------------------------------- user inputs --------------------------------------
-    DIRS['mainDirStr'] = "/Users/whitehal/Documents/MCCSearch/paperData/testSeparate"#"/directory/to/where/to/store/outputs"
-    DIRS['TRMMdirName'] = "/Users/whitehal/Documents/MCCSearch/paperData/TRMM"#"/directory/to/the/TRMM/netCDF/files"
-    DIRS['CEoriDirName'] = "/Users/whitehal/Documents/MCCSearch/paperData/MERG"#"/directory/to/the/MERG/netCDF/files"
+    DIRS['mainDirStr'] = "/directory/to/where/to/store/outputs"
+    DIRS['TRMMdirName'] = "/directory/to/the/TRMM/netCDF/files"
+    DIRS['CEoriDirName'] = "/directory/to/the/MERG/netCDF/files"
     #get the dates for analysis
     startDateTime = "2006091100" #"yyyymmddhrmm"
     endDateTime = "200609121200"
