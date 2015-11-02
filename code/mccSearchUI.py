@@ -4,6 +4,7 @@
 
 import os
 import subprocess
+import sys
 
 import networkx as nx
 
@@ -14,7 +15,10 @@ import plotting
 import metrics
 import iomethods
 
+
 def main():
+    sys.setrecursionlimit(5000)
+
     CEGraph = nx.DiGraph()
     prunedGraph = nx.DiGraph()
     MCCList =[]
