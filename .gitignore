@@ -1,2 +1,8 @@
 *.pyc
+.DS_Store
+__MACOSX
+*~
+datadir
+*.nc
+paperData
 *.nc

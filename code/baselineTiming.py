@@ -12,7 +12,7 @@ import networkx as nx
 import iomethods
 import mccSearch
 import utils
-
+import variables
 
 def main():
     sys.setrecursionlimit(5000)
@@ -34,49 +34,38 @@ def main():
     # utils.preprocessing_merg(rawMERG)
     # ---------------------------------------------------------------------------------
     # ---------------------------------- user inputs --------------------------------------
-    DIRS['mainDirStr'] = "/directory/to/where/to/store/outputs"
-    DIRS['TRMMdirName'] = "/directory/to/the/TRMM/netCDF/files"
-    DIRS['CEoriDirName'] = "/directory/to/the/MERG/netCDF/files"
-    #get the dates for analysis
-    startDateTime = "200609110000" #"yyyymmddhrmm"
-    endDateTime = "200609121200"
+    userVariables = variables.define_user_variables()
+    graphVariables = variables.define_graph_variables()
     # ---------------------------------- end user inputs --------------------------------------
     # Checks that inputs are ok
     try:
-        if not os.path.exists(DIRS['CEoriDirName']):
-            print "Error! MERG invalid path!"
-            DIRS['CEoriDirName'] = raw_input("> Please enter the directory to the MERG netCDF files: \n")
-    except:
-        print "..."
-
-    try:
-        if not os.path.exists(DIRS['TRMMdirName']):
+        if not os.path.exists(userVariables.DIRS['TRMMdirName']):
             print "Error: TRMM invalid path!"
-            DIRS['TRMMdirName'] = raw_input("> Please enter the location to the raw TRMM netCDF files: \n")
+            userVariables.DIRS['TRMMdirName'] = raw_input("> Please enter the location to the raw TRMM netCDF files: \n")
     except:
         pass
 
     try:
-        if not os.path.exists(DIRS['CEoriDirName']):
+        if not os.path.exists(userVariables.DIRS['CEoriDirName']):
             print "Error! MERG invalid path!"
-            DIRS['CEoriDirName'] = raw_input("> Please enter the directory to the MERG netCDF files: \n")
+            userVariables.DIRS['CEoriDirName'] = raw_input("> Please enter the directory to the MERG netCDF files: \n")
     except:
         print "..."   
 
     #check validity of time
-    while utils.valid_date(startDateTime) != True:
+    while utils.valid_date(userVariables.startDateTime) != True:
         print "Invalid time entered for startDateTime!"
 
-    while utils.valid_date(endDateTime) != True:
+    while utils.valid_date(userVariables.endDateTime) != True:
         print "Invalid time entered for endDateTime!"
         
     #check if all the files exisits in the MERG and TRMM directories entered
-    test,_ = iomethods.check_for_files(DIRS['TRMMdirName'], startDateTime, endDateTime, 3, 'hour')
+    test,_ = iomethods.check_for_files(userVariables.DIRS['TRMMdirName'], userVariables.startDateTime, userVariables.endDateTime, 3, 'hour')
     if test == False:
         print "Error with files in the TRMM directory entered. Please check your files before restarting. "
         return
     #test,filelist = iomethods.check_for_files(startDateTime, endDateTime, DIRS['CEoriDirName'],1)
-    test,filelist = iomethods.check_for_files(DIRS['CEoriDirName'], startDateTime, endDateTime, 1, 'hour')
+    test,filelist = iomethods.check_for_files(userVariables.DIRS['CEoriDirName'], userVariables.startDateTime, userVariables.endDateTime, 1, 'hour')
 
     if test == False:
         print "Error with files in the original MERG directory entered. Please check your files before restarting. "
@@ -84,12 +73,12 @@ def main():
     # end checks 
 
     # create main directory and file structure for storing intel
-    DIRS['mainDirStr'] = iomethods.create_main_directory(DIRS['mainDirStr'])
-    TRMMCEdirName = DIRS['mainDirStr']+'/TRMMnetcdfCEs'
-    CEdirName = DIRS['mainDirStr']+'/MERGnetcdfCEs'
+    userVariables.DIRS['mainDirStr'] = iomethods.create_main_directory(userVariables.DIRS['mainDirStr'])
+    TRMMCEdirName = userVariables.DIRS['mainDirStr']+'/TRMMnetcdfCEs'
+    CEdirName = userVariables.DIRS['mainDirStr']+'/MERGnetcdfCEs'
 
-    unittestFile = open(DIRS['mainDirStr']+'/unittestResults.txt','wb')
-    unittestFile.write("\n Timing results for "+startDateTime+" to "+endDateTime)
+    unittestFile = open(userVariables.DIRS['mainDirStr']+'/unittestResults.txt','wb')
+    unittestFile.write("\n Timing results for "+userVariables.startDateTime+" to "+userVariables.endDateTime)
 
     #let's go!
     # time how long it takes to complete reading in the data
@@ -98,7 +87,7 @@ def main():
     print "\n -------------- Read MERG Data ----------"
     print "\n Start the timer for the data ingest process"
     readMergStart = time.time()
-    mergImgs, timeList, LAT, LON = iomethods.read_data(DIRS['CEoriDirName'],'ch4','latitude','longitude', filelist)
+    mergImgs, timeList, LAT, LON = iomethods.read_data(userVariables.DIRS['CEoriDirName'],'ch4','latitude','longitude', userVariables,filelist)
     readMergEnd = time.time()
     print "\n End the timer for the data ingest process"
     print "\n Total time to complete data ingest is %g seconds"%(readMergEnd - readMergStart)
@@ -108,7 +97,6 @@ def main():
     print "\n -------------- TESTING findCloudElements ----------"
     print "\n Start the timer for findCloudElements process"
     findCEsStart = time.time()
-    # ********* EITHER *********
     print "\n Using both MERG and TRMM simultaneously "
     CEGraph = mccSearch.find_cloud_elements(mergImgs,timeList,DIRS['mainDirStr'], LAT,LON,DIRS['TRMMdirName'])
     findCEsEnd = time.time()
@@ -146,7 +134,7 @@ def main():
     print "\n -------------- TESTING findCloudClusters ----------"
     print "\n Start the timer for findCloudClusters process"
     findCloudClustersStart = time.time()
-    prunedGraph = mccSearch.find_cloud_clusters(CEGraph)
+    prunedGraph = mccSearch.find_cloud_clusters(CEGraph,userVariables,graphVariables)
     print "The number of nodes in the prunedGraph is: ", prunedGraph.number_of_nodes()
     findCloudClustersEnd = time.time()
     print "\n End the timer for the findCloudClusters process"
@@ -159,7 +147,7 @@ def main():
     print "\n -------------- TESTING findMCCs ----------"
     print "\n Start the timer for the findMCCs process"
     findMCCStart = time.time()
-    MCCList,MCSList = mccSearch.find_MCC(prunedGraph)
+    MCCList,MCSList = mccSearch.find_MCC(prunedGraph,userVariables,graphVariables)
     print "\n MCC List has been acquired ", len(MCCList)
     print "\n MCS List has been acquired ", len(MCSList)
     findMCCEnd = time.time()

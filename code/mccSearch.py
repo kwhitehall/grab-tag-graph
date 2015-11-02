@@ -13,56 +13,9 @@ import networkx as nx
 #GTG modules
 import utils
 import plotting
+import variables
 
-
-#----------------------- GLOBAL VARIABLES --------------------------
-# --------------------- User defined variables ---------------------
-#FYI the lat lon values are not necessarily inclusive of the points given. These are the limits
-#the first point closest the the value (for the min) from the MERG data is used, etc.
-LATMIN = '5.0' #min latitude; -ve values in the SH e.g. 5S = -5
-LATMAX = '19.0' #max latitude; -ve values in the SH e.g. 5S = -5 20.0
-LONMIN = '-5.0' #min longitude; -ve values in the WH e.g. 59.8W = -59.8 -30
-LONMAX = '9.0' #min longitude; -ve values in the WH e.g. 59.8W = -59.8  30
-XRES = 4.0              #x direction spatial resolution in km
-YRES = 4.0              #y direction spatial resolution in km
-TRES = 1                #temporal resolution in hrs
-LAT_DISTANCE = 111.0    #the avg distance in km for 1deg lat for the region being considered
-LON_DISTANCE = 111.0    #the avg distance in km for 1deg lon for the region being considered
-STRUCTURING_ELEMENT = [[0, 1, 0],
-                       [1, 1, 1],
-                       [0, 1, 0]
-                      ] #the matrix for determining the pattern for the contiguous boxes and must
-                        #have same rank of the matrix it is being compared against
-                        #criteria for determining cloud elements and edges
-T_BB_MAX = 243  #warmest temp to allow (-30C to -55C according to Morel and Sensi 2002)
-T_BB_MIN = 218  #cooler temp for the center of the system
-CONVECTIVE_FRACTION = 0.90 #the min temp/max temp that would be expected in a CE.. this is highly
-                           #conservative (only a 10K difference)
-MIN_MCS_DURATION = 3    #minimum time for a MCS to exist
-AREA_MIN = 2400.0       #minimum area for CE criteria in km^2 according to Vila et al. (2008) is 2400
-MIN_OVERLAP = 10000.00   #km^2  from Williams and Houze 1987, indir ref in Arnaud et al 1992
-
-#---the MCC criteria
-ECCENTRICITY_THRESHOLD_MAX = 1.0  #tending to 1 is a circle e.g. hurricane,
-ECCENTRICITY_THRESHOLD_MIN = 0.70 #tending to 0 is a linear e.g. squall line
-OUTER_CLOUD_SHIELD_AREA = 80000.0 #km^2
-INNER_CLOUD_SHIELD_AREA = 30000.0 #km^2
-OUTER_CLOUD_SHIELD_TEMPERATURE = 233 #in K
-INNER_CLOUD_SHIELD_TEMPERATURE = 213 #in K
-MINIMUM_DURATION = 6  #min number of frames the MCC must exist for (assuming hrly frames, MCCs is 6hrs)
-MAXIMUM_DURATION = 24 #max number of framce the MCC can last for
-#------------------- End user defined Variables -------------------
-edgeWeight = [1, 2, 3] #weights for the graph edges
-#graph object fo the CEs meeting the criteria
-CLOUD_ELEMENT_GRAPH = nx.DiGraph()
-#graph meeting the CC criteria
-PRUNED_GRAPH = nx.DiGraph()
-#get lat lons from iomethods.py
-
-#------------------------ End GLOBAL VARS -------------------------
-#************************ Begin Functions *************************
-#**********************************************************************************************************************
-def find_cloud_elements(mergImgs, timelist, mainStrDir, lat, lon, TRMMdirName=None):
+def find_cloud_elements(mergImgs, timelist, mainStrDir, lat, lon, userVariables, graphVariables, TRMMdirName=None):
     '''
     Purpose:: Determines the contiguous boxes for a given time of the satellite images i.e. each frame
         using scipy ndimage package
@@ -154,7 +107,7 @@ def find_cloud_elements(mergImgs, timelist, mainStrDir, lat, lon, TRMMdirName=No
         #-------------------------------------------------
 
         #determine contiguous locations with temeperature below the warmest temp i.e. cloudElements in each frame
-        frame, ceCounter = ndimage.measurements.label(mergImgs[t, :, :], structure=STRUCTURING_ELEMENT)
+        frame, ceCounter = ndimage.measurements.label(mergImgs[t, :, :], structure=userVariables.STRUCTURING_ELEMENT)
         frameceCounter = 0
         frameNum += 1
 
@@ -178,14 +131,14 @@ def find_cloud_elements(mergImgs, timelist, mainStrDir, lat, lon, TRMMdirName=No
 
             #determine number of boxes in this cloudelement
             numOfBoxes = np.count_nonzero(cloudElement)
-            cloudElementArea = numOfBoxes * XRES * YRES
+            cloudElementArea = numOfBoxes * userVariables.XRES * userVariables.YRES
 
             #If the area is greater than the area required, or if the area is smaller than the suggested area,
             #check if it meets a convective fraction requirement consider as CE
 
-            if cloudElementArea >= AREA_MIN or (cloudElementArea < AREA_MIN and \
+            if cloudElementArea >= userVariables.AREA_MIN or (cloudElementArea < userVariables.AREA_MIN and \
                     ((ndimage.minimum(cloudElement, labels=labels)) / \
-                        float((ndimage.maximum(cloudElement, labels=labels)))) < CONVECTIVE_FRACTION):
+                        float((ndimage.maximum(cloudElement, labels=labels)))) < userVariables.CONVECTIVE_FRACTION):
                 #get some time information and labeling info
                 frameceCounter += 1
                 ceUniqueID = 'F' + str(frameNum) + 'CE' + str(frameceCounter)
@@ -353,7 +306,7 @@ def find_cloud_elements(mergImgs, timelist, mainStrDir, lat, lon, TRMMdirName=No
                     rainFallacc[:] = finalCETRMMvalues[:]
                     currNetCDFTRMMData.close()
                     TRMMnumOfBoxes = np.count_nonzero(finalCETRMMvalues)
-                    TRMMArea = TRMMnumOfBoxes * XRES * YRES
+                    TRMMArea = TRMMnumOfBoxes * userVariables.XRES * userVariables.YRES
                     try:
                         maxCEprecipRate = np.max(finalCETRMMvalues[np.nonzero(finalCETRMMvalues)])
                         minCEprecipRate = np.min(finalCETRMMvalues[np.nonzero(finalCETRMMvalues)])
@@ -422,37 +375,34 @@ def find_cloud_elements(mergImgs, timelist, mainStrDir, lat, lon, TRMMdirName=No
                 currFrameCEs.append(cloudElementDict)
 
                 #draw the graph node
-                CLOUD_ELEMENT_GRAPH.add_node(ceUniqueID, cloudElementDict)
-
+                graphVariables.CLOUD_ELEMENT_GRAPH.add_node(ceUniqueID, cloudElementDict)
+                
                 if frameNum != 1:
                     for cloudElementDict in prevFrameCEs:
-                        percentageOverlap, areaOverlap = cloud_element_overlap(cloudElementLatLons, cloudElementDict['cloudElementLatLon'])
-
+                        percentageOverlap, areaOverlap = cloud_element_overlap(cloudElementLatLons, cloudElementDict['cloudElementLatLon'], userVariables)
+                        
                         #change weights to int as the built in shortest path chokes on floating pts according to Networkx doc
                         #according to Goyens et al, two CEs are considered related if there is atleast 95% overlap between 
                         #them for consecutive imgs a max of 2 hrs apart
                         if percentageOverlap >= 0.95:
-                            CLOUD_ELEMENT_GRAPH.add_edge(cloudElementDict['uniqueID'], ceUniqueID, weight=edgeWeight[0])
+                            graphVariables.CLOUD_ELEMENT_GRAPH.add_edge(cloudElementDict['uniqueID'], ceUniqueID, weight=graphVariables.edgeWeight[0])
                             edges.append(cloudElementDict['uniqueID'])
-
                         elif percentageOverlap >= 0.90 and percentageOverlap < 0.95 :
-                            CLOUD_ELEMENT_GRAPH.add_edge(cloudElementDict['uniqueID'], ceUniqueID, weight=edgeWeight[1])
+                            graphVariables.CLOUD_ELEMENT_GRAPH.add_edge(cloudElementDict['uniqueID'], ceUniqueID, weight=graphVariables.edgeWeight[1])
                             edges.append(cloudElementDict['uniqueID'])
-
-                        elif areaOverlap >= MIN_OVERLAP:
-                            CLOUD_ELEMENT_GRAPH.add_edge(cloudElementDict['uniqueID'], ceUniqueID, weight=edgeWeight[2])
+                        elif areaOverlap >= userVariables.MIN_OVERLAP:
+                            graphVariables.CLOUD_ELEMENT_GRAPH.add_edge(cloudElementDict['uniqueID'], ceUniqueID, weight=graphVariables.edgeWeight[2])
                             edges.append(cloudElementDict['uniqueID'])
-
+                            
                 # get some data for the JSON object which will only store the graph CEs and connected edges 
-                cf = (((ndimage.minimum(cloudElement, \
-                    labels=labels)) / float((ndimage.maximum(cloudElement, labels=labels)))) * 100.0)
+                cf = (((ndimage.minimum(cloudElement, labels=labels)) / float((ndimage.maximum(cloudElement, labels=labels)))) * 100.0)
                 tmin = ndimage.minimum(cloudElement, labels=labels)*1.
                 tmax = ndimage.maximum(cloudElement, labels=labels)*1.
                 if edges:
                     cloudElementsJSON.append({'cloudElement': ceUniqueID, 'time': str(timelist[t]),\
-                        'area':cloudElementArea, 'Tmax': tmax, 'Tmin': tmin,'center':cloudElementCenter,\
-                        'convective_fraction': cf, 'lat_lon_box': latLonBox, 'shape': shape, 'edges':edges, 'eccentricity':cloudElementEpsilon})
-
+                                                  'area':cloudElementArea, 'Tmax': tmax, 'Tmin': tmin,'center':cloudElementCenter,\
+                                                  'convective_fraction': cf, 'lat_lon_box': latLonBox, 'shape': shape, 'edges':edges, 'eccentricity':cloudElementEpsilon})
+                    
             else:
                 #TODO: remove this else as we only wish for the CE details
                 #ensure only the non-zero elements are considered
@@ -528,21 +478,21 @@ def find_cloud_elements(mergImgs, timelist, mainStrDir, lat, lon, TRMMdirName=No
         json.dump(cloudElementsJSON,f)
 
     #clean up graph - remove parent and childless nodes
-    outAndInDeg = CLOUD_ELEMENT_GRAPH.degree_iter()
+    outAndInDeg = graphVariables.CLOUD_ELEMENT_GRAPH.degree_iter()
     toRemove = [node[0] for node in outAndInDeg if node[1] < 1]
-    CLOUD_ELEMENT_GRAPH.remove_nodes_from(toRemove)
+    graphVariables.CLOUD_ELEMENT_GRAPH.remove_nodes_from(toRemove)
 
-    print 'number of nodes are: ', CLOUD_ELEMENT_GRAPH.number_of_nodes()
-    print 'number of edges are: ', CLOUD_ELEMENT_GRAPH.number_of_edges()
+    print 'number of nodes are: ', graphVariables.CLOUD_ELEMENT_GRAPH.number_of_nodes()
+    print 'number of edges are: ', graphVariables.CLOUD_ELEMENT_GRAPH.number_of_edges()
     print ('*'*80)
 
     #hierachial graph output
     # graphTitle = 'Cloud Elements observed over somewhere from 0000Z to 0000Z'
     # plotting.draw_graph(CLOUD_ELEMENT_GRAPH, graphTitle, MAIN_DIRECTORY, edgeWeight)
 
-    return CLOUD_ELEMENT_GRAPH
+    return graphVariables.CLOUD_ELEMENT_GRAPH
 #**********************************************************************************************************************
-def find_precip_rate(TRMMdirName, timelist):
+def find_precip_rate(TRMMdirName, timelist, userVariables, graphVariables):
     '''
     Purpose:: Determines the precipitation rates for MCSs found if TRMMdirName was not entered in
         find_cloud_elements this can be used
@@ -658,7 +608,7 @@ def find_precip_rate(TRMMdirName, timelist):
             precipTotal += value
 
         TRMMnumOfBoxes = np.count_nonzero(finalCETRMMvalues)
-        TRMMArea = TRMMnumOfBoxes * XRES * YRES
+        TRMMArea = TRMMnumOfBoxes * userVariables.XRES * userVariables.YRES
 
         try:
             minCEprecipRate = np.min(finalCETRMMvalues[np.nonzero(finalCETRMMvalues)])
@@ -672,7 +622,7 @@ def find_precip_rate(TRMMdirName, timelist):
 
         #add info to CLOUDELEMENTSGRAPH
         #TODO try block
-        for eachdict in CLOUD_ELEMENT_GRAPH.nodes(ceUniqueID):
+        for eachdict in graphVariables.CLOUD_ELEMENT_GRAPH.nodes(ceUniqueID):
             if eachdict[1]['uniqueID'] == ceUniqueID:
                 if not 'cloudElementPrecipTotal' in eachdict[1].keys():
                     eachdict[1]['cloudElementPrecipTotal'] = precipTotal
@@ -697,7 +647,7 @@ def find_precip_rate(TRMMdirName, timelist):
 
     return allCEnodesTRMMdata
 #**********************************************************************************************************************
-def find_cloud_clusters(CEGraph):
+def find_cloud_clusters(CEGraph,userVariables,graphVariables):
     '''
     Purpose:: Determines the cloud clusters properties from the subgraphs in
         the graph i.e. prunes the graph according to the minimum depth
@@ -719,20 +669,20 @@ def find_cloud_clusters(CEGraph):
             #look for all trees associated with node as the root
             thisPathDistanceAndLength = nx.single_source_dijkstra(CEGraph, eachNode)
             #determine the actual shortestPath and minimum depth/length
-            maxDepthAndMinPath = find_max_depth_and_min_path(thisPathDistanceAndLength)
+            maxDepthAndMinPath = find_max_depth_and_min_path(thisPathDistanceAndLength,userVariables)
             if maxDepthAndMinPath:
                 maxPathLength = maxDepthAndMinPath[0]
                 shortestPath = maxDepthAndMinPath[1]
 
                 #add nodes and paths to PRUNED_GRAPH
                 for i in xrange(len(shortestPath)):
-                    if PRUNED_GRAPH.has_node(shortestPath[i]) is False:
-                        PRUNED_GRAPH.add_node(shortestPath[i])
+                    if graphVariables.PRUNED_GRAPH.has_node(shortestPath[i]) is False:
+                        graphVariables.PRUNED_GRAPH.add_node(shortestPath[i])
 
                     #add edge if necessary
-                    if i < (len(shortestPath)-1) and PRUNED_GRAPH.has_edge(shortestPath[i], shortestPath[i+1]) is False:
+                    if i < (len(shortestPath)-1) and graphVariables.PRUNED_GRAPH.has_edge(shortestPath[i], shortestPath[i+1]) is False:
                         prunedGraphEdgeweight = CEGraph.get_edge_data(shortestPath[i], shortestPath[i+1])['weight']
-                        PRUNED_GRAPH.add_edge(shortestPath[i], shortestPath[i+1], weight=prunedGraphEdgeweight)
+                        graphVariables.PRUNED_GRAPH.add_edge(shortestPath[i], shortestPath[i+1], weight=prunedGraphEdgeweight)
 
                 #note information in a file for consideration later i.e. checking to see if it works
                 cloudClustersFile.write('\nSubtree pathlength is %d and path is %s' %(maxPathLength, shortestPath))
@@ -740,17 +690,17 @@ def find_cloud_clusters(CEGraph):
                 seenNode.append(shortestPath)
 
     print 'pruned graph'
-    print 'number of nodes are: ', PRUNED_GRAPH.number_of_nodes()
-    print 'number of edges are: ', PRUNED_GRAPH.number_of_edges()
+    print 'number of nodes are: ', graphVariables.PRUNED_GRAPH.number_of_nodes()
+    print 'number of edges are: ', graphVariables.PRUNED_GRAPH.number_of_edges()
     print ('*'*80)
 
     # graphTitle = 'Cloud Clusters observed over somewhere during sometime'
     # plotting.draw_graph(PRUNED_GRAPH, graphTitle, MAIN_DIRECTORY, edgeWeight)
     cloudClustersFile.close()
 
-    return PRUNED_GRAPH
+    return graphVariables.PRUNED_GRAPH
 #**********************************************************************************************************************
-def find_MCC(prunedGraph):
+def find_MCC(prunedGraph,userVariables,graphVariables):
     '''
     Purpose:: Determines if subtree is a MCC according to Laurent et al 1998 criteria
 
@@ -786,13 +736,13 @@ def find_MCC(prunedGraph):
 
 
     #connected_components is not available for DiGraph, so generate graph as undirected
-    unDirGraph = PRUNED_GRAPH.to_undirected()
+    unDirGraph = graphVariables.PRUNED_GRAPH.to_undirected()
     subGraph = nx.connected_component_subgraphs(unDirGraph)
 
     #for each path in the subgraphs determined
     for path in subGraph:
         #definite is a subTree provided the duration is longer than 3 hours
-        if len(path.nodes()) > MIN_MCS_DURATION:
+        if len(path.nodes()) > userVariables.MIN_MCS_DURATION:
             orderedPath = path.nodes()
             orderedPath.sort(key=lambda item: (len(item.split('C')[0]), item.split('C')[0]))
             #definiteMCS.append(orderedPath)
@@ -802,35 +752,35 @@ def find_MCC(prunedGraph):
             for eachNode in path.nodes():
                 if prunedGraph.predecessors(eachNode):
                     for node in prunedGraph.predecessors(eachNode):
-                        aSubGraph.add_edge(node, eachNode, weight=edgeWeight[0])
+                        aSubGraph.add_edge(node, eachNode, weight=graphVariables.edgeWeight[0])
 
                 if prunedGraph.successors(eachNode):
                     for node in prunedGraph.successors(eachNode):
-                        aSubGraph.add_edge(eachNode, node, weight=edgeWeight[0])
+                        aSubGraph.add_edge(eachNode, node, weight=graphVariables.edgeWeight[0])
             imgTitle = 'CC'+str(imgCount+1)
             # plotting.draw_graph(aSubGraph, imgTitle, MAIN_DIRECTORY, edgeWeight) #for eachNode in path:
             imgCount += 1
             #----------end build back ---------------------------------------------
-            mergeList, splitList = has_merges_or_splits(path)
+            mergeList, splitList = has_merges_or_splits(path,graphVariables)
             #add node behavior regarding neutral, merge, split or both
             for node in path:
                 if node in mergeList and node in splitList:
-                    add_node_behavior_identifier(node, 'B')
+                    add_node_behavior_identifier(node, 'B',graphVariables)
                 elif node in mergeList and not node in splitList:
-                    add_node_behavior_identifier(node, 'M')
+                    add_node_behavior_identifier(node, 'M', graphVariables)
                 elif node in splitList and not node in mergeList:
-                    add_node_behavior_identifier(node, 'S')
+                    add_node_behavior_identifier(node, 'S', graphVariables)
                 else:
-                    add_node_behavior_identifier(node, 'N')
+                    add_node_behavior_identifier(node, 'N', graphVariables)
             #Do the first part of checking for the MCC feature
             #find the path
             treeTraversalList = traverse_tree(aSubGraph, orderedPath[0], [], [])
             #print 'treeTraversalList is ', treeTraversalList
             #check the nodes to determine if a MCC on just the area criteria (consecutive nodes meeting the area and temp requirements)
-            MCCList = checked_nodes_MCC(prunedGraph, treeTraversalList)
+            MCCList = checked_nodes_MCC(prunedGraph, treeTraversalList, userVariables,graphVariables)
             for aDict in MCCList:
                 for eachNode in aDict['fullMCSMCC']:
-                    add_node_MCS_identifier(eachNode[0], eachNode[1])
+                    add_node_MCS_identifier(eachNode[0], eachNode[1], graphVariables)
 
             #do check for if MCCs overlap
             if MCCList:
@@ -848,12 +798,12 @@ def find_MCC(prunedGraph):
                                 eachList.sort(key=lambda nodeID: (len(nodeID.split('C')[0]), nodeID.split('C')[0]))
                                 if eachList:
                                     lNode = eachList[-1]
-                                    if lNode in CLOUD_ELEMENT_GRAPH.predecessors(fNode):
-                                        for aNode in CLOUD_ELEMENT_GRAPH.predecessors(fNode):
+                                    if lNode in graphVariables.CLOUD_ELEMENT_GRAPH.predecessors(fNode):
+                                        for aNode in graphVariables.CLOUD_ELEMENT_GRAPH.predecessors(fNode):
                                             if aNode in eachList and aNode == lNode:
                                             #if edge_data is equal or less than to the exisitng edge in the tree append one to the other
-                                                if CLOUD_ELEMENT_GRAPH.get_edge_data(aNode,fNode)['weight'] <= \
-                                                        CLOUD_ELEMENT_GRAPH.get_edge_data(lNode,fNode)['weight']:
+                                                if graphVariables.CLOUD_ELEMENT_GRAPH.get_edge_data(aNode,fNode)['weight'] <= \
+                                                        graphVariables.CLOUD_ELEMENT_GRAPH.get_edge_data(lNode,fNode)['weight']:
                                                     MCCList[count-1]['possMCCList'].extend(MCCList[count]['possMCCList'])
                                                     MCCList[count-1]['fullMCSMCC'].extend(MCCList[count]['fullMCSMCC'])
                                                     MCCList[count-1]['durationAandB'] += MCCList[count]['durationAandB']
@@ -871,8 +821,8 @@ def find_MCC(prunedGraph):
             #check if the nodes also meet the duration criteria and the shape crieria
             for eachDict in MCCList:
                 #order the fullMCSMCC list, then run maximum extent and eccentricity criteria
-                if (eachDict['durationAandB'] * TRES) >= MINIMUM_DURATION and \
-                        (eachDict['durationAandB'] * TRES) <= MAXIMUM_DURATION:
+                if (eachDict['durationAandB'] * userVariables.TRES) >= userVariables.MINIMUM_DURATION and \
+                        (eachDict['durationAandB'] * userVariables.TRES) <= userVariables.MAXIMUM_DURATION:
                     eachList = list(x[0] for x in eachDict['fullMCSMCC'])
                     eachList.sort(key=lambda nodeID: (len(nodeID.split('C')[0]), nodeID.split('C')[0]))
                     eachMCCList = list(x[0] for x in eachDict['possMCCList'])
@@ -883,19 +833,19 @@ def find_MCC(prunedGraph):
                     #find last element in eachMCCList in eachList and ensure everything after it is indicated as 'D'
                     #ensure that everything between is listed as 'M'
                     for eachNode in eachList[:(eachList.index(eachMCCList[0]))]:
-                        add_node_MCS_identifier(eachNode, 'I')
+                        add_node_MCS_identifier(eachNode, 'I', graphVariables)
 
-                    add_node_MCS_identifier(eachMCCList[0], 'M')
+                    add_node_MCS_identifier(eachMCCList[0], 'M', graphVariables)
 
                     for eachNode in eachList[(eachList.index(eachMCCList[-1])+1):]:
-                        add_node_MCS_identifier(eachNode, 'D')
+                        add_node_MCS_identifier(eachNode, 'D', graphVariables)
 
                     #update definiteMCS list
                     for eachNode in orderedPath[(orderedPath.index(eachMCCList[-1])+1):]:
-                        add_node_MCS_identifier(eachNode, 'D')
+                        add_node_MCS_identifier(eachNode, 'D', graphVariables)
 
                     #run maximum extent and eccentricity criteria
-                    _, definiteMCCFlag = max_extent_and_eccentricity(eachList)
+                    _, definiteMCCFlag = max_extent_and_eccentricity(eachList,userVariables,graphVariables)
                     #maxExtentNode, definiteMCCFlag = max_extent_and_eccentricity(eachList)
                     #print 'maxExtentNode, definiteMCCFlag ', maxExtentNode, definiteMCCFlag
                     if definiteMCCFlag == True:
@@ -961,7 +911,7 @@ def traverse_tree(subGraph, node, stack, checkedNodes=None):
 
     return checkedNodes
 #**********************************************************************************************************************
-def checked_nodes_MCC(prunedGraph, nodeList):
+def checked_nodes_MCC(prunedGraph, nodeList, userVariables, graphVariables):
     '''
     Purpose ::Determine if this path is (or is part of) a MCC and provides
         preliminary information regarding the stages of the feature
@@ -995,31 +945,31 @@ def checked_nodes_MCC(prunedGraph, nodeList):
         nodeList.append(oldNode)
 
     for node in nodeList:
-        thisdict = this_dict(node)
+        thisdict = this_dict(node,graphVariables)
         counterCriteriaAFlag = False
         counterCriteriaBFlag = False
         #existingFrameFlag = False
 
-        if thisdict['cloudElementArea'] >= OUTER_CLOUD_SHIELD_AREA:
+        if thisdict['cloudElementArea'] >= userVariables.OUTER_CLOUD_SHIELD_AREA:
             counterCriteriaAFlag = True
             initiationFlag = True
             maturityFlag = False
 
             #check if criteriaA is met
-            cloudElementAreaA, _ = check_criteria(thisdict['cloudElementLatLon'], OUTER_CLOUD_SHIELD_TEMPERATURE)
+            cloudElementAreaA, _ = check_criteria(thisdict['cloudElementLatLon'], userVariables.OUTER_CLOUD_SHIELD_TEMPERATURE, userVariables)
             #cloudElementAreaA, criteriaA = check_criteria(thisdict['cloudElementLatLon'], OUTER_CLOUD_SHIELD_TEMPERATURE)
             #TODO: calcuate the eccentricity at this point and read over????or create a new field in the dict
 
-            if cloudElementAreaA >= OUTER_CLOUD_SHIELD_AREA:
+            if cloudElementAreaA >= userVariables.OUTER_CLOUD_SHIELD_AREA:
                 #check if criteriaB is met
-                cloudElementAreaB, criteriaB = check_criteria(thisdict['cloudElementLatLon'], INNER_CLOUD_SHIELD_TEMPERATURE)
+                cloudElementAreaB, criteriaB = check_criteria(thisdict['cloudElementLatLon'], userVariables.INNER_CLOUD_SHIELD_TEMPERATURE,userVariables)
 
                 #if Criteria A and B have been met, then the MCC is initiated, i.e. store node as potentialMCC
-                if cloudElementAreaB >= INNER_CLOUD_SHIELD_AREA:
+                if cloudElementAreaB >= userVariables.INNER_CLOUD_SHIELD_AREA:
                     #TODO: add another field to the dictionary for the OUTER_AREA_SHIELD area
                     counterCriteriaBFlag = True
                     #append this information on to the dictionary
-                    add_info_this_dict(node, cloudElementAreaB, criteriaB)
+                    add_info_this_dict(node, cloudElementAreaB, criteriaB,graphVariables)
                     initiationFlag = False
                     maturityFlag = True
                     stage = 'M'
@@ -1312,7 +1262,7 @@ def is_there_a_link(prunedGraph, upOrDown, node, potentialMCCList, whichList):
 
     return thisFlag, index
 #**********************************************************************************************************************
-def max_extent_and_eccentricity(eachList):
+def max_extent_and_eccentricity(eachList,userVariables,graphVariables):
     '''
     Purpose::
         Perform the final check for MCC based on maximum extent and eccentricity criteria
@@ -1332,20 +1282,20 @@ def max_extent_and_eccentricity(eachList):
 
     if eachList:
         for eachNode in eachList:
-            if (this_dict(eachNode)['nodeMCSIdentifier'] == 'M' or this_dict(eachNode)['nodeMCSIdentifier'] == 'D') and\
-                    this_dict(eachNode)['cloudElementArea'] > maxShieldArea:
+            if (this_dict(eachNode,graphVariables)['nodeMCSIdentifier'] == 'M' or this_dict(eachNode,graphVariables)['nodeMCSIdentifier'] == 'D') and\
+                    this_dict(eachNode,graphVariables)['cloudElementArea'] > maxShieldArea:
                 maxShieldNode = eachNode
-                maxShieldArea = this_dict(eachNode)['cloudElementArea']
+                maxShieldArea = this_dict(eachNode,graphVariables)['cloudElementArea']
 
         #maxShieldEccentricity = this_dict(maxShieldNode)['cloudElementEccentricity']
-        if this_dict(maxShieldNode)['cloudElementEccentricity'] >= ECCENTRICITY_THRESHOLD_MIN and \
-                this_dict(maxShieldNode)['cloudElementEccentricity'] <= ECCENTRICITY_THRESHOLD_MAX:
+        if this_dict(maxShieldNode,graphVariables)['cloudElementEccentricity'] >= userVariables.ECCENTRICITY_THRESHOLD_MIN and \
+                this_dict(maxShieldNode,graphVariables)['cloudElementEccentricity'] <= userVariables.ECCENTRICITY_THRESHOLD_MAX:
             #criteria met
             definiteMCCFlag = True
 
     return maxShieldNode, definiteMCCFlag
 #**********************************************************************************************************************
-def find_max_depth_and_min_path(thisPathDistanceAndLength):
+def find_max_depth_and_min_path(thisPathDistanceAndLength,userVariables):
     '''
     Purpose::
         To determine the maximum depth and min path for the headnode
@@ -1367,7 +1317,7 @@ def find_max_depth_and_min_path(thisPathDistanceAndLength):
     maxPathLength = max(len (values) for values in thisPathDistanceAndLength[1].values())
 
     #if the duration is shorter then the min MCS length, then don't store!
-    if maxPathLength < MIN_MCS_DURATION: #MINIMUM_DURATION :
+    if maxPathLength < userVariables.MIN_MCS_DURATION: #MINIMUM_DURATION :
         minDistanceAndMaxPath = ()
 
     #else find the min path and max depth
@@ -1386,7 +1336,7 @@ def find_max_depth_and_min_path(thisPathDistanceAndLength):
                     minDistanceAndMaxPath = (pathDistance, path)
     return minDistanceAndMaxPath
 #**********************************************************************************************************************
-def this_dict(thisNode):
+def this_dict(thisNode,graphVariables):
     '''
     Purpose::
         Return dictionary from graph if node exist in tree
@@ -1398,11 +1348,11 @@ def this_dict(thisNode):
         eachdict[1]: a dictionary representing the info associated with thisNode from the graph
 
     '''
-    for eachdict in CLOUD_ELEMENT_GRAPH.nodes(thisNode):
+    for eachdict in graphVariables.CLOUD_ELEMENT_GRAPH.nodes(thisNode):
         if eachdict[1]['uniqueID'] == thisNode:
             return eachdict[1]
 #**********************************************************************************************************************
-def check_criteria(thisCloudElementLatLon, aTemperature):
+def check_criteria(thisCloudElementLatLon, aTemperature,userVariables):
     '''
     Purpose:: Determine if criteria B is met for a CEGraph
 
@@ -1414,7 +1364,7 @@ def check_criteria(thisCloudElementLatLon, aTemperature):
     '''
     cloudElementCriteriaBLatLon = []
 
-    _, ceCounter = ndimage.measurements.label(thisCloudElementLatLon, structure=STRUCTURING_ELEMENT)
+    _, ceCounter = ndimage.measurements.label(thisCloudElementLatLon, structure=userVariables.STRUCTURING_ELEMENT)
     #frame, ceCounter = ndimage.measurements.label(thisCloudElementLatLon, structure=STRUCTURING_ELEMENT)
     #frameceCounter = 0
     #determine min and max values in lat and lon, then use this to generate teh array from LAT,LON meshgrid
@@ -1474,7 +1424,7 @@ def check_criteria(thisCloudElementLatLon, aTemperature):
                 latLonTuple = (LAT[(lat),0], LON[0,(lon)], value)
                 cloudElementCriteriaBLatLon.append(latLonTuple)
 
-        cloudElementArea = np.count_nonzero(cloudElementCriteriaB) * XRES * YRES
+        cloudElementArea = np.count_nonzero(cloudElementCriteriaB) * userVariables.XRES * userVariables.YRES
         #do some cleaning up
         tempMask = []
         criteriaB = []
@@ -1482,7 +1432,7 @@ def check_criteria(thisCloudElementLatLon, aTemperature):
 
         return cloudElementArea, cloudElementCriteriaBLatLon
 #**********************************************************************************************************************
-def has_merges_or_splits(nodeList):
+def has_merges_or_splits(nodeList,graphVariables):
     '''
     Purpose:: Determine if nodes within a path defined from shortest_path splittingNodeDict
     Inputs:: nodeList: list of strings representing the nodes from a path
@@ -1492,11 +1442,11 @@ def has_merges_or_splits(nodeList):
     mergeList = []
     splitList = []
 
-    for node,numParents in PRUNED_GRAPH.in_degree(nodeList).items():
+    for node,numParents in graphVariables.PRUNED_GRAPH.in_degree(nodeList).items():
         if numParents > 1:
             mergeList.append(node)
 
-    for node, numChildren in PRUNED_GRAPH.out_degree(nodeList).items():
+    for node, numChildren in graphVariables.PRUNED_GRAPH.out_degree(nodeList).items():
         if numChildren > 1:
             splitList.append(node)
     #sort
@@ -1553,7 +1503,7 @@ def all_descendants(path, aNode):
         #i.e. PRUNED_GRAPH.predecessors(aNode) threw an exception
         return path, numOfChildren
 #**********************************************************************************************************************
-def add_info_this_dict(thisNode, cloudElementArea, criteriaB):
+def add_info_this_dict(thisNode, cloudElementArea, criteriaB, graphVariables):
     '''
     Purpose:: Update original dictionary node with information
 
@@ -1564,13 +1514,13 @@ def add_info_this_dict(thisNode, cloudElementArea, criteriaB):
     Returns:: None
 
     '''
-    for eachdict in CLOUD_ELEMENT_GRAPH.nodes(thisNode):
+    for eachdict in graphVariables.CLOUD_ELEMENT_GRAPH.nodes(thisNode):
         if eachdict[1]['uniqueID'] == thisNode:
             eachdict[1]['CriteriaBArea'] = cloudElementArea
             eachdict[1]['CriteriaBLatLon'] = criteriaB
     return
 #**********************************************************************************************************************
-def add_node_behavior_identifier(thisNode, nodeBehaviorIdentifier):
+def add_node_behavior_identifier(thisNode, nodeBehaviorIdentifier, graphVariables):
     '''
     Purpose:: add an identifier to the node dictionary to indicate splitting, merging or neither node
 
@@ -1581,13 +1531,13 @@ def add_node_behavior_identifier(thisNode, nodeBehaviorIdentifier):
     Returns:: None
 
     '''
-    for eachdict in CLOUD_ELEMENT_GRAPH.nodes(thisNode):
+    for eachdict in graphVariables.CLOUD_ELEMENT_GRAPH.nodes(thisNode):
         if eachdict[1]['uniqueID'] == thisNode:
             if not 'nodeBehaviorIdentifier' in eachdict[1].keys():
                 eachdict[1]['nodeBehaviorIdentifier'] = nodeBehaviorIdentifier
     return
 #**********************************************************************************************************************
-def add_node_MCS_identifier(thisNode, nodeMCSIdentifier):
+def add_node_MCS_identifier(thisNode, nodeMCSIdentifier, graphVariables):
     '''
     Purpose:: Add an identifier to the node dictionary to indicate splitting, merging or neither node
 
@@ -1598,13 +1548,13 @@ def add_node_MCS_identifier(thisNode, nodeMCSIdentifier):
     Returns:: None
 
     '''
-    for eachdict in CLOUD_ELEMENT_GRAPH.nodes(thisNode):
+    for eachdict in graphVariables.CLOUD_ELEMENT_GRAPH.nodes(thisNode):
         if eachdict[1]['uniqueID'] == thisNode:
             if not 'nodeMCSIdentifier' in eachdict[1].keys():
                 eachdict[1]['nodeMCSIdentifier'] = nodeMCSIdentifier
     return
 #**********************************************************************************************************************
-def update_node_MCS_identifier(thisNode, nodeMCSIdentifier):
+def update_node_MCS_identifier(thisNode, nodeMCSIdentifier, graphVariables):
     '''
     Purpose:: Update an identifier to the node dictionary to indicate splitting, merging or neither node
 
@@ -1614,7 +1564,7 @@ def update_node_MCS_identifier(thisNode, nodeMCSIdentifier):
     Returns:: None
 
     '''
-    for eachdict in CLOUD_ELEMENT_GRAPH.nodes(thisNode):
+    for eachdict in graphVariables.CLOUD_ELEMENT_GRAPH.nodes(thisNode):
         if eachdict[1]['uniqueID'] == thisNode:
             eachdict[1]['nodeMCSIdentifier'] = nodeMCSIdentifier
 
@@ -1649,7 +1599,7 @@ def eccentricity(cloudElementLatLon):
 
     return epsilon
 #**********************************************************************************************************************
-def cloud_element_overlap(currentCELatLons, previousCELatLons):
+def cloud_element_overlap(currentCELatLons, previousCELatLons, userVariables):
     '''
     Purpose::
         Determines the percentage overlap between two list of lat-lons passed
@@ -1678,7 +1628,7 @@ def cloud_element_overlap(currentCELatLons, previousCELatLons):
     count = len(list(set(latloncurr) & set(latlonprev)))
 
     #find area overlap
-    areaOverlap = count * XRES * YRES
+    areaOverlap = count * userVariables.XRES * userVariables.YRES
 
     #find percentage
     percentageOverlap = max(((count * 1.0) / (len(latloncurr) * 1.0)), ((count * 1.0) / (len(latlonprev) * 1.0)))

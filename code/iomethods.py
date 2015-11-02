@@ -13,50 +13,8 @@ from datetime import timedelta, datetime
 from os import path
 
 import utils
-#----------------------- GLOBAL VARIABLES --------------------------
-# --------------------- User defined variables ---------------------
-#FYI the lat lon values are not necessarily inclusive of the points given. These are the limits
-#the first point closest the the value (for the min) from the MERG data is used, etc.
-LATMIN = '5.0' #min latitude; -ve values in the SH e.g. 5S = -5
-LATMAX = '19.0' #max latitude; -ve values in the SH e.g. 5S = -5 20.0
-LONMIN = '-5.0' #min longitude; -ve values in the WH e.g. 59.8W = -59.8 -30
-LONMAX = '9.0' #min longitude; -ve values in the WH e.g. 59.8W = -59.8  30
-XRES = 4.0              #x direction spatial resolution in km
-YRES = 4.0              #y direction spatial resolution in km
-TRES = 1                #temporal resolution in hrs
-LAT_DISTANCE = 111.0    #the avg distance in km for 1deg lat for the region being considered
-LON_DISTANCE = 111.0    #the avg distance in km for 1deg lon for the region being considered
-STRUCTURING_ELEMENT = [[0, 1, 0],
-                       [1, 1, 1],
-                       [0, 1, 0]
-                      ] #the matrix for determining the pattern for the contiguous boxes and must
-                        #have same rank of the matrix it is being compared against
-#criteria for determining cloud elements and edges
-T_BB_MAX = 243  #warmest temp to allow (-30C to -55C according to Morel and Sensi 2002)
-T_BB_MIN = 218  #cooler temp for the center of the system
-CONVECTIVE_FRACTION = 0.90 #the min temp/max temp that would be expected in a CE
-                           #this is highly conservative (only a 10K difference)
-MIN_MCS_DURATION = 3    #minimum time for a MCS to exist
-AREA_MIN = 2400.0       #minimum area for CE criteria in km^2 according to Vila et al. (2008) is 2400
-MIN_OVERLAP = 10000.00   #km^2  from Williams and Houze 1987, indir ref in Arnaud et al 1992
+import variables
 
-#---the MCC criteria
-ECCENTRICITY_THRESHOLD_MAX = 1.0  #tending to 1 is a circle e.g. hurricane,
-ECCENTRICITY_THRESHOLD_MIN = 0.70 #tending to 0 is a linear e.g. squall line
-OUTER_CLOUD_SHIELD_AREA = 80000.0 #km^2
-INNER_CLOUD_SHIELD_AREA = 30000.0 #km^2
-OUTER_CLOUD_SHIELD_TEMPERATURE = 233 #in K
-INNER_CLOUD_SHIELD_TEMPERATURE = 213 #in K
-MINIMUM_DURATION = 6  #min number of frames the MCC must exist for (assuming hrly frames, MCCs is 6hrs)
-MAXIMUM_DURATION = 24 #max number of framce the MCC can last for
-#------------------- End user defined Variables -------------------
-edgeWeight = [1, 2, 3] #weights for the graph edges
-#graph object fo the CEs meeting the criteria
-CLOUD_ELEMENT_GRAPH = nx.DiGraph()
-#graph meeting the CC criteria
-PRUNED_GRAPH = nx.DiGraph()
-#get lat lons from iomethods.py
-#------------------- End user defined Variables -------------------
 def check_for_files(dirPath, startTime, endTime, tdelta, tRes):
     '''
         Purpose:: To ensure all the files between the starttime and endTime
@@ -220,7 +178,7 @@ def create_main_directory(mainDirStr):
 
     return MAIN_DIRECTORY
 #**********************************************************************************************************************
-def read_data(dirName, varName, latName, lonName, filelist=None):
+def read_data(dirName, varName, latName, lonName, userVariables, filelist=None):
     '''
         Purpose::
             Read gridded data into (t, lat, lon) arrays for processing
@@ -276,10 +234,10 @@ def read_data(dirName, varName, latName, lonName, filelist=None):
         alllonsraw[alllonsraw > 180] = alllonsraw[alllonsraw > 180] - 360.  # convert to -180,180 if necessary
 
         #get the lat/lon info data (different resolution)
-        latminNETCDF = utils.find_nearest(alllatsraw, float(LATMIN))
-        latmaxNETCDF = utils.find_nearest(alllatsraw, float(LATMAX))
-        lonminNETCDF = utils.find_nearest(alllonsraw, float(LONMIN))
-        lonmaxNETCDF = utils.find_nearest(alllonsraw, float(LONMAX))
+        latminNETCDF = utils.find_nearest(alllatsraw, float(userVariables.LATMIN))
+        latmaxNETCDF = utils.find_nearest(alllatsraw, float(userVariables.LATMAX))
+        lonminNETCDF = utils.find_nearest(alllonsraw, float(userVariables.LONMIN))
+        lonmaxNETCDF = utils.find_nearest(alllonsraw, float(userVariables.LONMAX))
         latminIndex = (np.where(alllatsraw == latminNETCDF))[0][0]
         latmaxIndex = (np.where(alllatsraw == latmaxNETCDF))[0][0]
         lonminIndex = (np.where(alllonsraw == lonminNETCDF))[0][0]
@@ -302,7 +260,7 @@ def read_data(dirName, varName, latName, lonName, filelist=None):
             #clip the dataset according to user lat,lon coordinates
             #mask the data and fill with zeros for later
             tempRaw = thisFile.variables[varName][:, latminIndex:latmaxIndex, lonminIndex:lonmaxIndex].astype('int16')
-            tempMask = ma.masked_array(tempRaw, mask=(tempRaw > T_BB_MAX), fill_value=0)
+            tempMask = ma.masked_array(tempRaw, mask=(tempRaw > userVariables.T_BB_MAX), fill_value=0)
             #get the actual values that the mask returned
             tempMaskedValue = ma.zeros((tempRaw.shape)).astype('int16')
 
