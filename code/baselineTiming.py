@@ -112,6 +112,9 @@ def main():
     print "\n Using both MERG and TRMM simultaneously "
     CEGraph = mccSearch.find_cloud_elements(mergImgs,timeList,DIRS['mainDirStr'], LAT,LON,DIRS['TRMMdirName'])
     findCEsEnd = time.time()
+    print "\n End the timer for findCloudElements process using MERG only"
+    print "\n Total time to complete finding cloud elements in MERG only is %g seconds"%(findCEsEnd - findCEsStart)
+    unittestFile.write("\n Total time to complete finding cloud elements in MERG only is %g seconds"%(findCEsEnd - findCEsStart))
     print "\n Number of cloud elements found is: ", CEGraph.number_of_nodes()
     print "\n End the timer for findCloudElements process"
     print "\n Total time to complete finding cloud elements is %g seconds"%(findCEsEnd - findCEsStart)
