@@ -3,9 +3,11 @@
 '''
 import unittest
 import time
+import sys
+import subprocess
 
 import networkx as nx
-import subprocess
+
 
 import iomethods
 import mccSearch
@@ -13,6 +15,8 @@ import utils
 
 
 def main():
+    sys.setrecursionlimit(5000)
+
     CEGraph = nx.DiGraph()
     prunedGraph = nx.DiGraph()
     MCCList =[]
@@ -120,13 +124,15 @@ def main():
     print "\n End the timer for findCloudElements process using MERG only"
     print "\n Total time to complete finding cloud elements in MERG only is %g seconds"%(findCEsEnd - findCEsStart)
     unittestFile.write("\n Total time to complete finding cloud elements in MERG only is %g seconds"%(findCEsEnd - findCEsStart))
+    
+    # *** TRMM DATA SET TIMINGS *** 
     print "\n Start the timer for findCloudElements process using TRMM only"
     findCETRMMStart = time.time()
     allCETRMMList = mccSearch.find_precip_rate(DIRS['TRMMdirName'],timeList)
     findCETRMMEnd = time.time()
     print "\n End the timer for findCloudElements process using TRMM only"
-    print "\n Total time to complete finding cloud elements in TRMM only is %g seconds"%(findCEsEnd - findCEsStart)
-    unittestFile.write("\n Total time to complete finding cloud elements in TRMM only is %g seconds"%(findCEsEnd - findCEsStart))
+    print "\n Total time to complete finding cloud elements in TRMM only is %g seconds"%(findCETRMMEnd - findCETRMMStart)
+    unittestFile.write("\n Total time to complete finding cloud elements in TRMM only is %g seconds"%(findCETRMMEnd - findCETRMMStart))
     print "\n Number of cloud elements found is: ", CEGraph.number_of_nodes()
     print "\n Total time to complete finding cloud elements is %g seconds"%(findCETRMMEnd - findCEsStart)
     unittestFile.write("\n Total time to complete finding cloud elements is %g seconds"%(findCETRMMEnd - findCEsStart))
@@ -171,3 +177,4 @@ def main():
     unittestFile.close()
 
 main()
+
