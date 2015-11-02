@@ -168,6 +168,8 @@ def check_merg_file_differences(baselinePath1, baselinePath2,  outputDir):
         diffLog.write(message)
         message = '\n Differences in prunedGraph nodes is %s'%(str((set(prunedGraph1)-set(prunedGraph2)).union(set(prunedGraph2)-set(prunedGraph1))))
         diffLog.write(message)
+    else:
+        print 'unittestResults.txt does not exist in one or both locations provided'
 
 
     diffLog.close()
