@@ -28,6 +28,7 @@ def check_merg_file_differences(baselinePath1, baselinePath2,  outputDir):
                 diffDirText: a text file with the differences logged. This is stored in diffDir
 
         Assumptions:: 
+                there exists unittestResults.txt file in each path (to check for the nodes in the graphs)
 
     '''
     dir1Filenames = []
@@ -126,8 +127,54 @@ def check_merg_file_differences(baselinePath1, baselinePath2,  outputDir):
 
             diff.close
 
+    #3. if baseline timings was run, check the difference in the nodelist from unittest.txt files
+    CEGraph1 = []
+    CEGraph2 = []
+    prunedGraph1 = []
+    prunedGraph2 = []
+
+    if os.path.exists(baselinePath1+"/unittestResults.txt") and os.path.exists(baselinePath2+"/unittestResults.txt"):
+        #open the file and graph the appropriate lines to compare
+        #in if statments, extract the data needed to list then perform list comprehencsion
+        with (open (baselinePath1+"/unittestResults.txt", "r")) as f:
+            a = f.readlines()
+            if 'CEGraph nodes' in a[6]:
+                baselinePath1CEnodes = a[6].split(': ')[1].replace('[','').replace(']','')
+                baselinePath1pruned = a[8].split(': ')[1].replace('[','').replace(']','')
+            else:
+                baselinePath1CEnodes = a[4].split(': ')[1].replace('[','').replace(']','')
+                baselinePath1pruned = a[6].split(': ')[1].replace('[','').replace(']','')
+            
+            CEGraph1 = baselinePath1CEnodes.strip().split(', ')
+            prunedGraph1 = baselinePath1pruned.strip().split(', ')
+            
+            
+        a = []
+        with (open (baselinePath2+"/unittestResults.txt", "r")) as f:
+            a = f.readlines()
+            if 'CEGraph nodes' in a[6]:
+                baselinePath2CEnodes = (a[6].split(': ')[1]).replace('[','').replace(']','')
+                baselinePath2pruned = a[8].split(': ')[1].replace('[','').replace(']','')
+            else:
+                baselinePath2CEnodes = a[4].split(': ')[1].replace('[','').replace(']','')
+                baselinePath2pruned = a[6].split(': ')[1].replace('[','').replace(']','')
+
+            CEGraph2 = baselinePath2CEnodes.strip().split(', ')
+            prunedGraph2 = baselinePath2pruned.strip().split(', ')
+            
+
+        #union between two sets here
+        message = '\n Differences in CEGraph nodes is %s'%(str((set(CEGraph1)-set(CEGraph2)).union(set(CEGraph2)-set(CEGraph1))))
+        diffLog.write(message)
+        message = '\n Differences in prunedGraph nodes is %s'%(str((set(prunedGraph1)-set(prunedGraph2)).union(set(prunedGraph2)-set(prunedGraph1))))
+        diffLog.write(message)
+    else:
+        print 'unittestResults.txt does not exist in one or both locations provided'
+
+
     diffLog.close()
 
 
 if __name__ == '__main__':
     main()
+

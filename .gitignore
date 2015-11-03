@@ -4,3 +4,4 @@ line_profile_script.*
 *.py~
 baselinDataDir/
 .gitignore~
+*.md~
