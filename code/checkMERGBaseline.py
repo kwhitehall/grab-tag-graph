@@ -8,7 +8,8 @@ from datetime import datetime
 
 
 def main():
-    inputs_one = "../../ORIG/grab-tag-graph/ORIG_results/MERGnetcdfCEs"
+    #inputs_one = "../../ORIG/grab-tag-graph/ORIG_results/MERGnetcdfCEs"
+    inputs_one = "../../testSeparate2/MERGnetcdfCEs"
     inputs_two = "../../testSeparate/MERGnetcdfCEs"
     output_diff = "../../outputDiffs"
     check_merg_file_differences(inputs_one, inputs_two, output_diff)
@@ -133,10 +134,10 @@ def check_merg_file_differences(baselinePath1, baselinePath2,  outputDir):
     prunedGraph1 = []
     prunedGraph2 = []
 
-    if os.path.exists(baselinePath1+"/unittestResults.txt") and os.path.exists(baselinePath2+"/unittestResults.txt"):
+    if os.path.exists(baselinePath1+"/../unittestResults.txt") and os.path.exists(baselinePath2+"/../unittestResults.txt"):
         #open the file and graph the appropriate lines to compare
         #in if statments, extract the data needed to list then perform list comprehencsion
-        with (open (baselinePath1+"/unittestResults.txt", "r")) as f:
+        with (open (baselinePath1+"/../unittestResults.txt", "r")) as f:
             a = f.readlines()
             if 'CEGraph nodes' in a[6]:
                 baselinePath1CEnodes = a[6].split(': ')[1].replace('[','').replace(']','')
@@ -150,7 +151,7 @@ def check_merg_file_differences(baselinePath1, baselinePath2,  outputDir):
             
             
         a = []
-        with (open (baselinePath2+"/unittestResults.txt", "r")) as f:
+        with (open (baselinePath2+"/../unittestResults.txt", "r")) as f:
             a = f.readlines()
             if 'CEGraph nodes' in a[6]:
                 baselinePath2CEnodes = (a[6].split(': ')[1]).replace('[','').replace(']','')

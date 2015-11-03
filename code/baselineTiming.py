@@ -29,7 +29,7 @@ def main():
     # utils.preprocessing_merg(rawMERG)
     # ---------------------------------------------------------------------------------
     # ---------------------------------- user inputs --------------------------------------
-    DIRS['mainDirStr'] = "/home/meldefon/Studies/JPLGraphs/testSeparate"#"/directory/to/where/to/store/outputs"
+    DIRS['mainDirStr'] = "/home/meldefon/Studies/JPLGraphs/testSeparate2"#"/directory/to/where/to/store/outputs"
     
 	#    BASELINE DATA + DATES
     DIRS['TRMMdirName'] = "/home/meldefon/Studies/JPLGraphs/grab-tag-graph/baselinDataDir/datadir/TRMM"#"/directory/to/the/TRMM/netCDF/files"
