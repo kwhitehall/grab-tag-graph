@@ -768,16 +768,21 @@ def find_single_frame_cloud_elements(t,mergImgs,timelist, mainStrDir, lat, lon, 
     frameceCounter = 0
     frameNum = t + 1
 
+    profTimes = np.zeros((10,))
+
     #for each of the areas identified, check to determine if it a valid CE via an area and T requirement
     for count in xrange(ceCounter):
         #[0] is time dimension. Determine the actual values from the data
         #loc is a masked array
+
+        pin = time.time() #First pin drop
         try:
             loc = ndimage.find_objects(frame == (count + 1))[0]
         except Exception, e:
             print 'Error is ', e
             continue
-
+        profTimes[0]+= time.time() - pin
+        pin = time.time() #second pin drop
 
         cloudElement = mergImgs[t,:,:][loc]
         labels, _ = ndimage.label(cloudElement)
@@ -789,6 +794,9 @@ def find_single_frame_cloud_elements(t,mergImgs,timelist, mainStrDir, lat, lon, 
         #determine number of boxes in this cloudelement
         numOfBoxes = np.count_nonzero(cloudElement)
         cloudElementArea = numOfBoxes * XRES * YRES
+
+        profTimes[1]+= time.time() - pin
+        pin = time.time() #third pin drop
 
         #If the area is greater than the area required, or if the area is smaller than the suggested area,
         #check if it meets a convective fraction requirement consider as CE
@@ -834,6 +842,9 @@ def find_single_frame_cloud_elements(t,mergImgs,timelist, mainStrDir, lat, lon, 
             latitudes.units = 'degrees_north'
             latitudes.long_name = 'Latitude'
 
+            profTimes[2]+= time.time() - pin
+            pin = time.time() #forth pin drop
+
             #generate array of zeros for brightness temperature
             brightnesstemp1 = ma.zeros((1, len(latitudes), len(longitudes))).astype('int16')
             #-----------End most of NETCDF file stuff ------------------------------------
@@ -862,6 +873,9 @@ def find_single_frame_cloud_elements(t,mergImgs,timelist, mainStrDir, lat, lon, 
                 lonsrawTRMMData = TRMMData.variables['longitude'][:]
                 lonsrawTRMMData[lonsrawTRMMData > 180] = lonsrawTRMMData[lonsrawTRMMData > 180] - 360.
                 LONTRMM, LATTRMM = np.meshgrid(lonsrawTRMMData, latsrawTRMMData)
+
+                profTimes[3]+= time.time() - pin
+                pin = time.time() #fifth pin drop
 
                 # nygrdTRMM = len(LATTRMM[:, 0])
                 # nxgrdTRMM = len(LONTRMM[0, :])
@@ -897,6 +911,9 @@ def find_single_frame_cloud_elements(t,mergImgs,timelist, mainStrDir, lat, lon, 
                 #        (lonStartIndex[0][0]-1):lonEndIndex[0][0]]
                 TRMMData.close()
 
+                profTimes[4]+= time.time() - pin
+                pin = time.time() #sixth pin drop
+
                 # ------ NETCDF File info for writing TRMM CE rainfall ------------------------------------
                 thisFileName = MAIN_DIRECTORY+'/TRMMnetcdfCEs/TRMM' + (str(timelist[t])).replace(' ', '_') + ceUniqueID +'.nc'
                 currNetCDFTRMMData = Dataset(thisFileName, 'w', format='NETCDF4')
@@ -924,6 +941,9 @@ def find_single_frame_cloud_elements(t,mergImgs,timelist, mainStrDir, lat, lon, 
                 latitude[:] = LAT[:,0]
                 latitude.units = 'degrees_north'
                 latitude.long_name = 'Latitude'
+
+                profTimes[5]+= time.time() - pin
+                pin = time.time() #seventh pin drop
 
                 finalCETRMMvalues = ma.zeros((brightnesstemp.shape))
                 #-----------End most of NETCDF file stuff ------------------------------------
@@ -1000,6 +1020,9 @@ def find_single_frame_cloud_elements(t,mergImgs,timelist, mainStrDir, lat, lon, 
             brightnesstemp[:] = brightnesstemp1[:]
             currNetCDFCEData.close()
 
+            profTimes[6]+= time.time() - pin
+            pin = time.time() #eigth pin drop
+
             if TRMMdirName:
                 #calculate the total precip associated with the feature
                 #for index, value in np.ndenumerate(finalCETRMMvalues):
@@ -1023,6 +1046,9 @@ def find_single_frame_cloud_elements(t,mergImgs,timelist, mainStrDir, lat, lon, 
                     minCEprecipRate = np.min(finalCETRMMvalues[np.nonzero(finalCETRMMvalues)])
                 except:
                     pass
+
+            profTimes[7]+= time.time() - pin
+            pin = time.time() #ninth pin drop
 
             #sort cloudElementLatLons by lats
             cloudElementLatLons.sort(key=lambda tup: tup[0])
@@ -1069,6 +1095,9 @@ def find_single_frame_cloud_elements(t,mergImgs,timelist, mainStrDir, lat, lon, 
             #Store the new cloudElementDict so that it can be returned to parent function
             allCloudElementDicts.append(cloudElementDict)
 
+            profTimes[8]+= time.time() - pin
+            pin = time.time() #tenth pin drop
+
             if frameNum==1:
                 #TODO: remove this else as we only wish for the CE details
                 #ensure only the non-zero elements are considered
@@ -1110,6 +1139,9 @@ def find_single_frame_cloud_elements(t,mergImgs,timelist, mainStrDir, lat, lon, 
                 cloudElementsFileString+=('\nEccentricity is: %.4f ' % (cloudElementEpsilon))
                 cloudElementsFileString+=('\n-----------------------------------------------')
 
+            profTimes[9]+= time.time() - pin
+            pin = time.time() #eleventh pin drop
+
         #reset list for the next CE
         cloudElementCenter = []
         cloudElement = []
@@ -1142,6 +1174,8 @@ def find_single_frame_cloud_elements(t,mergImgs,timelist, mainStrDir, lat, lon, 
     #hierachial graph output
     # graphTitle = 'Cloud Elements observed over somewhere from 0000Z to 0000Z'
     # plotting.draw_graph(CLOUD_ELEMENT_GRAPH, graphTitle, MAIN_DIRECTORY, edgeWeight)
+
+    print("times:\n"+str(profTimes))
 
     return [allCloudElementDicts, cloudElementsFileString, cloudElementsUserFileString]
 #**********************************************************************************************************************
