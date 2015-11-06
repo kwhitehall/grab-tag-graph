@@ -318,13 +318,14 @@ def find_cloud_elements(mergImgs, timelist, mainStrDir, lat, lon, TRMMdirName=No
                 #TODO: KDW - too dirty... play with itertools.izip or zip and the enumerate with this
                 #           as cloudElement is masked
                 #trialVar = ma.zeros((brightnesstemp1.shape))
-                #for index, value in np.ndenumerate(cloudElement):
-                    #if value != 0:
-                        #latIndex, lonIndex = index
-                        #latLonTuple = (cloudElementLat[latIndex], cloudElementLon[lonIndex], value)
+                cloudElementLatLonsOld = []
+                for index, value in np.ndenumerate(cloudElement):
+                    if value != 0:
+                        latIndex, lonIndex = index
+                        latLonTuple = (cloudElementLat[latIndex], cloudElementLon[lonIndex], value)
 
                         #generate the comma separated file for GIS
-                        #cloudElementLatLons.append(latLonTuple)
+                        cloudElementLatLonsOld.append(latLonTuple)
 
                         #temp data for CE NETCDF file
                         #brightnesstemp1[0, int(np.where(LAT[:,0] == cloudElementLat[latIndex])[0]), \
@@ -339,6 +340,7 @@ def find_cloud_elements(mergImgs, timelist, mainStrDir, lat, lon, TRMMdirName=No
                             #ceTRMMList.append((cloudElementLat[latIndex], cloudElementLon[lonIndex], \
                             #    finalCETRMMvalues[0,cloudElementLat[latIndex], cloudElementLon[lonIndex]]))
                 
+
                 #***GABE'S ADDITIONS***
                 #This replaces the loop computation of cloudElementLatLons - doesn't match exactly, but when I looked in the
                 #orignal variable it had two entries at the end which had values of 0, which is not supposed to happen
@@ -347,9 +349,18 @@ def find_cloud_elements(mergImgs, timelist, mainStrDir, lat, lon, TRMMdirName=No
                 cloudElementLatLons = np.zeros((passingSpots.shape[0],3))
                 cloudElementLatLons[:,0] = cloudElementLat[passingSpots[:,0]]
                 cloudElementLatLons[:,1] = cloudElementLon[passingSpots[:,1]]
-                cloudElementLatLons[:,2] = cloudElement[cloudElementNonZeros]
+                cloudElementLatLons[:,2] = cloudElement[cloudElementNonZeros].astype(np.int16)
                 cloudElementLatLons = cloudElementLatLons.tolist()
+                #cloudElementLatLons = [(cloudElementLatLons[i,0],cloudElementLatLons[i,1], cloudElementLatLons[i,2]) for i in xrange(cloudElementLatLons.shape[0])]
+                #cloudElementLatLons = cloudElementLatLons.tolist()
                 #assert(np.array_equal(trialVar,brightnesstemp1))
+                #assert(cloudElementLatLonsOld==cloudElementLatLonsNew)
+                i = 0
+                for tup in cloudElementLatLons:
+                    assert(tup==list(cloudElementLatLonsOld[i]))
+                    #if ~(tup==list(cloudElementLatLonsOld[i])):
+                    #    qq = 1
+                    i+=1
 
                 #This replaces the loop computation of brightnesstemp1, commented lines are a test
                 #trialBrightnessTemp1 = ma.zeros((brightnesstemp1.shape))
@@ -900,14 +911,15 @@ def find_single_frame_cloud_elements(t,mergImgs,timelist, mainStrDir, lat, lon, 
             #TODO: KDW - too dirty... play with itertools.izip or zip and the enumerate with this
             #           as cloudElement is masked
             #trialVar = ma.zeros((brightnesstemp1.shape))
-            for index, value in np.ndenumerate(cloudElement):
-                if value != 0:
-                    pass
+            #cloudElementLatLonsOld = [];
+            #for index, value in np.ndenumerate(cloudElement):
+                #if value != 0:
+                    #pass
                     #latIndex, lonIndex = index
                     #latLonTuple = (cloudElementLat[latIndex], cloudElementLon[lonIndex], value)
 
                     #generate the comma separated file for GIS
-                    #cloudElementLatLons.append(latLonTuple)
+                    #cloudElementLatLonsOld.append(latLonTuple)
 
                     #temp data for CE NETCDF file
                     #brightnesstemp1[0, int(np.where(LAT[:,0] == cloudElementLat[latIndex])[0]), \
@@ -927,16 +939,18 @@ def find_single_frame_cloud_elements(t,mergImgs,timelist, mainStrDir, lat, lon, 
             #orignal variable it had two entries at the end which had values of 0, which is not supposed to happen
             cloudElementNonZeros = cloudElement.nonzero()
             passingSpots = np.transpose(cloudElementNonZeros)
-            #nonZeroVals = cloudElement[cloudElementNonZeros]
-            #cloudElementLatLonsTrial = [(cloudElementLat[passingSpots[i,0]],cloudElementLon[passingSpots[i,1]],\
-            #    nonZeroVals[i]) for i in xrange(passingSpots.shape[0])]
             cloudElementLatLons = np.zeros((passingSpots.shape[0],3))
             cloudElementLatLons[:,0] = cloudElementLat[passingSpots[:,0]]
             cloudElementLatLons[:,1] = cloudElementLon[passingSpots[:,1]]
             cloudElementLatLons[:,2] = cloudElement[cloudElementNonZeros]
             cloudElementLatLons = cloudElementLatLons.tolist()
-            #assert(np.array_equal(trialVar,brightnesstemp1))
-            #assert(cloudElementLatLons==cloudElementLatLons)
+            #Mini unit test of this version as compared to the loop version, uncomment out code
+            # that computes it the old way to use this test
+            #i = 0
+            #for tup in cloudElementLatLons:
+            #    assert(tup==list(cloudElementLatLonsOld[i]))
+            #    i+=1
+
 
             #This replaces the loop computation of brightnesstemp1, commented lines are a test
             #trialBrightnessTemp1 = ma.zeros((brightnesstemp1.shape))
