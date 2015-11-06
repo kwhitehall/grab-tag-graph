@@ -912,26 +912,29 @@ def find_single_frame_cloud_elements(t,mergImgs,timelist, mainStrDir, lat, lon, 
             #           as cloudElement is masked
             #trialVar = ma.zeros((brightnesstemp1.shape))
             #cloudElementLatLonsOld = [];
-            #for index, value in np.ndenumerate(cloudElement):
-                #if value != 0:
+            #brightnesstemp1Old = ma.zeros((1, len(latitudes), len(longitudes))).astype('int16')
+            #finalCETRMMvaluesOld = ma.zeros((brightnesstemp.shape))
+            #ceTRMMListOld = []
+            for index, value in np.ndenumerate(cloudElement):
+                if value != 0:
                     #pass
-                    #latIndex, lonIndex = index
+                    latIndex, lonIndex = index
                     #latLonTuple = (cloudElementLat[latIndex], cloudElementLon[lonIndex], value)
 
                     #generate the comma separated file for GIS
                     #cloudElementLatLonsOld.append(latLonTuple)
 
                     #temp data for CE NETCDF file
-                    #brightnesstemp1[0, int(np.where(LAT[:,0] == cloudElementLat[latIndex])[0]), \
+                    #brightnesstemp1Old[0, int(np.where(LAT[:,0] == cloudElementLat[latIndex])[0]), \
                     #        int(np.where(LON[0,:] == cloudElementLon[lonIndex])[0])] = value
                     #trialVar[0,int(loc[0].start)+latIndex,int(loc[1].start)+lonIndex] = value
 
                     #if TRMMdirName:
-                        #finalCETRMMvalues[0, int(np.where(LAT[:,0] == cloudElementLat[latIndex])[0]), \
+                        #finalCETRMMvaluesOld[0, int(np.where(LAT[:,0] == cloudElementLat[latIndex])[0]), \
                         #    int(np.where(LON[0,:] == cloudElementLon[lonIndex])[0])] = \
                         #    regriddedTRMM[int(np.where(LAT[:,0] == cloudElementLat[latIndex])[0]), \
                         #    int(np.where(LON[0,:] == cloudElementLon[lonIndex])[0])]
-                        #ceTRMMList.append((cloudElementLat[latIndex], cloudElementLon[lonIndex], \
+                        #ceTRMMListOld.append((cloudElementLat[latIndex], cloudElementLon[lonIndex], \
                         #    finalCETRMMvalues[0,cloudElementLat[latIndex], cloudElementLon[lonIndex]]))
             
             #***GABE'S ADDITIONS***
@@ -953,32 +956,26 @@ def find_single_frame_cloud_elements(t,mergImgs,timelist, mainStrDir, lat, lon, 
 
 
             #This replaces the loop computation of brightnesstemp1, commented lines are a test
-            #trialBrightnessTemp1 = ma.zeros((brightnesstemp1.shape))
-            #trialBrightnessTemp1[0,loc[0],loc[1]] = cloudElement
-            #assert(np.array_equal(trialBrightnessTemp1,brightnesstemp1))
             brightnesstemp1[0,loc[0],loc[1]] = cloudElement
+            #Mini unit test comparing this to loop version. To use, uncomment the loop computation
+            #assert(np.array_equal(brightnesstemp1,brightnesstemp1Old))
 
             
-            #This replaces the loop computation of finalCETRMMvalues, commented lines are a test
+            #This replaces the loop computation of finalCETRMMvalues and ceTRMM, tests commented
             if TRMMdirName:
                 chunkToInsert = regriddedTRMM[loc[0],loc[1]]
                 chunkToInsert[cloudElement==0] = 0
-                #trialFinal = ma.zeros(finalCETRMMvalues.shape)
-                #trialFinal[0,loc[0],loc[1]] = chunkToInsert
-                #assert(np.array_equal(trialFinal,finalCETRMMvalues))
                 finalCETRMMvalues[0,loc[0],loc[1]] = chunkToInsert
-
-            #This replaces the loop computation of ceTRMMList, commented lines are a test
-            #trialCeTRMMList = [(cloudElementLat[index[0]], cloudElementLon[index[1]], \
-            #                finalCETRMMvalues[0,cloudElementLat[latIndex], cloudElementLon[lonIndex]]) \
-            #                    for index, value in np.ndenumerate(cloudElement) if value!=0]
-            #assert(trialCeTRMMList==ceTRMMList)
-            ceTRMMList = [(cloudElementLat[index[0]], cloudElementLon[index[1]], \
-                            finalCETRMMvalues[0,cloudElementLat[index[0]], cloudElementLon[index[1]]]) \
-                                for index, value in np.ndenumerate(cloudElement) if value!=0]
+                #Mini unit test comparing loop version to this. To use, uncomment loop version
+                #assert(np.array_equal(finalCETRMMvalues,finalCETRMMvaluesOld))
+                ceTRMMList = [(cloudElementLat[index[0]], cloudElementLon[index[1]], \
+                                finalCETRMMvalues[0,cloudElementLat[index[0]], cloudElementLon[index[1]]]) \
+                                    for index, value in np.ndenumerate(cloudElement) if value!=0]
+                #Mini unit test for ceTRMMList, to list uncomment loop version
+                #assert(ceTRMMList==ceTRMMListOld)
+                
+                
             #***END GABE'S ADDITIONS***
-            
-
             brightnesstemp[:] = brightnesstemp1[:]
             currNetCDFCEData.close()
 
