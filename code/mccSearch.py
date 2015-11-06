@@ -578,6 +578,25 @@ class CeFinder(object):
             varsDict['lat'],varsDict['lon'],self.TRMMdirName)
 
 
+#Serial version of find_cloud_elements which calls the find on single frames in parallel
+#This version is a little easier to debug than the parallel version. I'm going to delete the old version (plain find_cloud_elements) soon
+def serial_find_cloud_elements(mergImgs, timelist, mainStrDir, lat, lon, TRMMdirName=None):
+    varsDict['images'] = mergImgs
+    varsDict['lat'] = lat
+    varsDict['lon'] = lon
+    
+    global MAIN_DIRECTORY
+    MAIN_DIRECTORY = mainStrDir
+    global LAT
+    LAT = lat
+    global LON
+    LON = lon
+    
+    results = map(CeFinder(timelist, mainStrDir, TRMMdirName), \
+        xrange(mergImgs.shape[0]))
+    return serial_assemble_graph(results)
+
+
 #Parellel version of find_cloud_elements which calls the find on single frames in parallel
 def par_find_cloud_elements(mergImgs, timelist, mainStrDir, lat, lon, TRMMdirName=None):
     varsDict['images'] = mergImgs
