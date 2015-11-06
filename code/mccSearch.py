@@ -1034,8 +1034,10 @@ def find_single_frame_cloud_elements(t,mergImgs,timelist, mainStrDir, lat, lon, 
                 #assert(precip==trialPrecip)
 
 
-                precip = np.ravel(finalCETRMMvalues).tolist()
-                precipTotal = sum(sum(sum(finalCETRMMvalues)))
+                #precip = np.ravel(finalCETRMMvalues).tolist()
+                #precipTotal = sum(sum(sum(finalCETRMMvalues)))
+                precipTotal = np.sum(finalCETRMMvalues)
+                #assert(precipTotal==np.sum(finalCETRMMvalues)) #mini test
 
                 rainFallacc[:] = finalCETRMMvalues[:]
                 currNetCDFTRMMData.close()
@@ -1175,7 +1177,7 @@ def find_single_frame_cloud_elements(t,mergImgs,timelist, mainStrDir, lat, lon, 
     # graphTitle = 'Cloud Elements observed over somewhere from 0000Z to 0000Z'
     # plotting.draw_graph(CLOUD_ELEMENT_GRAPH, graphTitle, MAIN_DIRECTORY, edgeWeight)
 
-    print("times:\n"+str(profTimes))
+    print("times:\n"+str(profTimes/sum(profTimes)))
 
     return [allCloudElementDicts, cloudElementsFileString, cloudElementsUserFileString]
 #**********************************************************************************************************************
