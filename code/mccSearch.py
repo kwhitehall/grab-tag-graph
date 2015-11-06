@@ -915,10 +915,10 @@ def find_single_frame_cloud_elements(t,mergImgs,timelist, mainStrDir, lat, lon, 
             #brightnesstemp1Old = ma.zeros((1, len(latitudes), len(longitudes))).astype('int16')
             #finalCETRMMvaluesOld = ma.zeros((brightnesstemp.shape))
             #ceTRMMListOld = []
-            for index, value in np.ndenumerate(cloudElement):
-                if value != 0:
+            #for index, value in np.ndenumerate(cloudElement):
+                #if value != 0:
                     #pass
-                    latIndex, lonIndex = index
+                    #latIndex, lonIndex = index
                     #latLonTuple = (cloudElementLat[latIndex], cloudElementLon[lonIndex], value)
 
                     #generate the comma separated file for GIS
