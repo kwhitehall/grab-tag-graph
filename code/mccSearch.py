@@ -770,6 +770,68 @@ def find_single_frame_cloud_elements(t,mergImgs,timelist, mainStrDir, lat, lon, 
 
     profTimes = np.zeros((10,))
 
+    #First do the regridding - don't duplicate this effort by doing it in a loop
+    #if other dataset (TRMM) assumed to be a precipitation dataset was entered
+    if TRMMdirName:
+        #------------------TRMM stuff -------------------------------------------------
+        fileDate = ((str(timelist[t])).replace(' ', '')[:-8]).replace('-', '')
+        fileHr1 = (str(timelist[t])).replace(' ', '')[-8:-6]
+
+        if int(fileHr1) % temporalRes == 0:
+            fileHr = fileHr1
+        else:
+            fileHr = (int(fileHr1) / temporalRes) * temporalRes
+        if fileHr < 10:
+            fileHr = '0'+str(fileHr)
+        else:
+            str(fileHr)
+
+        #open TRMM file for the resolution info and to create the appropriate sized grid
+        TRMMfileName = TRMMdirName + '/3B42.' + fileDate + '.' + str(fileHr) + '.7A.nc'
+
+        TRMMData = Dataset(TRMMfileName, 'r', format='NETCDF4')
+        precipRate = TRMMData.variables['pcp'][:, :, :]
+        latsrawTRMMData = TRMMData.variables['latitude'][:]
+        lonsrawTRMMData = TRMMData.variables['longitude'][:]
+        lonsrawTRMMData[lonsrawTRMMData > 180] = lonsrawTRMMData[lonsrawTRMMData > 180] - 360.
+        LONTRMM, LATTRMM = np.meshgrid(lonsrawTRMMData, latsrawTRMMData)
+
+        # nygrdTRMM = len(LATTRMM[:, 0])
+        # nxgrdTRMM = len(LONTRMM[0, :])
+        precipRateMasked = ma.masked_array(precipRate, mask=(precipRate < 0.0))
+        #---------regrid the TRMM data to the MERG dataset ----------------------------------
+        #regrid using the do_regrid stuff from the Apache OCW
+        #regriddedTRMM = ma.zeros((0, nygrd, nxgrd))
+        regriddedTRMM = utils.do_regrid(precipRateMasked[0, :, :], LATTRMM, LONTRMM, LAT, LON, order=1, \
+                                           mdi=-999999999)
+        #regriddedTRMMCopy = np.copy(regriddedTRMM)
+        #----------------------------------------------------------------------------------
+
+        # #get the lat/lon info from cloudElement
+        #get the lat/lon info from the file
+        #latCEStart = LAT[0][0]
+        #latCEEnd = LAT[-1][0]
+        #lonCEStart = LON[0][0]
+        #lonCEEnd = LON[0][-1]
+
+        #get the lat/lon info for TRMM data (different resolution)
+        # latStartT = utils.find_nearest(latsrawTRMMData, latCEStart)
+        # latEndT = utils.find_nearest(latsrawTRMMData, latCEEnd)
+        # lonStartT = utils.find_nearest(lonsrawTRMMData, lonCEStart)
+        # lonEndT = utils.find_nearest(lonsrawTRMMData, lonCEEnd)
+        # Unused since CEPrecipRate isn't used and these are just inputs
+        # latStartIndex = np.where(latsrawTRMMData == latStartT)
+        # latEndIndex = np.where(latsrawTRMMData == latEndT)
+        # lonStartIndex = np.where(lonsrawTRMMData == lonStartT)
+        # lonEndIndex = np.where(lonsrawTRMMData == lonEndT)
+
+        #get the relevant TRMM info
+        # Unused Variable
+        # CEprecipRate = precipRate[:, (latStartIndex[0][0]-1):latEndIndex[0][0], \
+        #        (lonStartIndex[0][0]-1):lonEndIndex[0][0]]
+        TRMMData.close()
+
+
     #for each of the areas identified, check to determine if it a valid CE via an area and T requirement
     for count in xrange(ceCounter):
         #[0] is time dimension. Determine the actual values from the data
@@ -845,71 +907,80 @@ def find_single_frame_cloud_elements(t,mergImgs,timelist, mainStrDir, lat, lon, 
             profTimes[2]+= time.time() - pin
             pin = time.time() #forth pin drop
 
+            profTimes[3]+= time.time() - pin
+            pin = time.time() #fifth pin drop
+
             #generate array of zeros for brightness temperature
             brightnesstemp1 = ma.zeros((1, len(latitudes), len(longitudes))).astype('int16')
             #-----------End most of NETCDF file stuff ------------------------------------
 
             #if other dataset (TRMM) assumed to be a precipitation dataset was entered
             if TRMMdirName:
-                #------------------TRMM stuff -------------------------------------------------
-                fileDate = ((str(timelist[t])).replace(' ', '')[:-8]).replace('-', '')
-                fileHr1 = (str(timelist[t])).replace(' ', '')[-8:-6]
+                pass
+            #     #------------------TRMM stuff -------------------------------------------------
+            #     fileDate = ((str(timelist[t])).replace(' ', '')[:-8]).replace('-', '')
+            #     fileHr1 = (str(timelist[t])).replace(' ', '')[-8:-6]
+            #
+            #     if int(fileHr1) % temporalRes == 0:
+            #         fileHr = fileHr1
+            #     else:
+            #         fileHr = (int(fileHr1) / temporalRes) * temporalRes
+            #     if fileHr < 10:
+            #         fileHr = '0'+str(fileHr)
+            #     else:
+            #         str(fileHr)
+            #
+            #     #open TRMM file for the resolution info and to create the appropriate sized grid
+            #     TRMMfileName = TRMMdirName + '/3B42.' + fileDate + '.' + str(fileHr) + '.7A.nc'
+            #
+            #     TRMMData = Dataset(TRMMfileName, 'r', format='NETCDF4')
+            #     precipRate = TRMMData.variables['pcp'][:, :, :]
+            #     latsrawTRMMData = TRMMData.variables['latitude'][:]
+            #     lonsrawTRMMData = TRMMData.variables['longitude'][:]
+            #     lonsrawTRMMData[lonsrawTRMMData > 180] = lonsrawTRMMData[lonsrawTRMMData > 180] - 360.
+            #     LONTRMMOld, LATTRMMOld = np.meshgrid(lonsrawTRMMData, latsrawTRMMData)
+            #
+            #
+            #     # nygrdTRMM = len(LATTRMM[:, 0])
+            #     # nxgrdTRMM = len(LONTRMM[0, :])
+            #     precipRateMaskedOld = ma.masked_array(precipRate, mask=(precipRate < 0.0))
+            #     #---------regrid the TRMM data to the MERG dataset ----------------------------------
+            #     #regrid using the do_regrid stuff from the Apache OCW
+            #     #regriddedTRMMOld = ma.zeros((0, nygrd, nxgrd))
+            #     regriddedTRMMOld = utils.do_regrid(precipRateMaskedOld[0, :, :], LATTRMMOld, LONTRMMOld, LAT, LON, order=1,\
+            #                     mdi=-999999999)
+            #     #----------------------------------------------------------------------------------
+            #
+            #     # #get the lat/lon info from cloudElement
+            #     #get the lat/lon info from the file
+            #     #latCEStart = LAT[0][0]
+            #     #latCEEnd = LAT[-1][0]
+            #     #lonCEStart = LON[0][0]
+            #     #lonCEEnd = LON[0][-1]
+            #
+            #     #get the lat/lon info for TRMM data (different resolution)
+            #     # latStartT = utils.find_nearest(latsrawTRMMData, latCEStart)
+            #     # latEndT = utils.find_nearest(latsrawTRMMData, latCEEnd)
+            #     # lonStartT = utils.find_nearest(lonsrawTRMMData, lonCEStart)
+            #     # lonEndT = utils.find_nearest(lonsrawTRMMData, lonCEEnd)
+            #     # Unused since CEPrecipRate isn't used and these are just inputs
+            #     # latStartIndex = np.where(latsrawTRMMData == latStartT)
+            #     # latEndIndex = np.where(latsrawTRMMData == latEndT)
+            #     # lonStartIndex = np.where(lonsrawTRMMData == lonStartT)
+            #     # lonEndIndex = np.where(lonsrawTRMMData == lonEndT)
+            #
+            #     #get the relevant TRMM info
+            #     # Unused Variable
+            #     # CEprecipRate = precipRate[:, (latStartIndex[0][0]-1):latEndIndex[0][0], \
+            #     #        (lonStartIndex[0][0]-1):lonEndIndex[0][0]]
+            #     TRMMData.close()
 
-                if int(fileHr1) % temporalRes == 0:
-                    fileHr = fileHr1
-                else:
-                    fileHr = (int(fileHr1) / temporalRes) * temporalRes
-                if fileHr < 10:
-                    fileHr = '0'+str(fileHr)
-                else:
-                    str(fileHr)
+                #MINI UNIT TEST of change that pulls the above if statement out of the loop
+                # try:
+                #     assert(np.array_equal(regriddedTRMM,regriddedTRMMOld))
+                # except:
+                #     print("Not Equal\n")
 
-                #open TRMM file for the resolution info and to create the appropriate sized grid
-                TRMMfileName = TRMMdirName + '/3B42.' + fileDate + '.' + str(fileHr) + '.7A.nc'
-
-                TRMMData = Dataset(TRMMfileName, 'r', format='NETCDF4')
-                precipRate = TRMMData.variables['pcp'][:, :, :]
-                latsrawTRMMData = TRMMData.variables['latitude'][:]
-                lonsrawTRMMData = TRMMData.variables['longitude'][:]
-                lonsrawTRMMData[lonsrawTRMMData > 180] = lonsrawTRMMData[lonsrawTRMMData > 180] - 360.
-                LONTRMM, LATTRMM = np.meshgrid(lonsrawTRMMData, latsrawTRMMData)
-
-                profTimes[3]+= time.time() - pin
-                pin = time.time() #fifth pin drop
-
-                # nygrdTRMM = len(LATTRMM[:, 0])
-                # nxgrdTRMM = len(LONTRMM[0, :])
-                precipRateMasked = ma.masked_array(precipRate, mask=(precipRate < 0.0))
-                #---------regrid the TRMM data to the MERG dataset ----------------------------------
-                #regrid using the do_regrid stuff from the Apache OCW
-                regriddedTRMM = ma.zeros((0, nygrd, nxgrd))
-                regriddedTRMM = utils.do_regrid(precipRateMasked[0, :, :], LATTRMM, LONTRMM, LAT, LON, order=1,\
-                                mdi=-999999999)
-                #----------------------------------------------------------------------------------
-
-                # #get the lat/lon info from cloudElement
-                #get the lat/lon info from the file
-                #latCEStart = LAT[0][0]
-                #latCEEnd = LAT[-1][0]
-                #lonCEStart = LON[0][0]
-                #lonCEEnd = LON[0][-1]
-
-                #get the lat/lon info for TRMM data (different resolution)
-                # latStartT = utils.find_nearest(latsrawTRMMData, latCEStart)
-                # latEndT = utils.find_nearest(latsrawTRMMData, latCEEnd)
-                # lonStartT = utils.find_nearest(lonsrawTRMMData, lonCEStart)
-                # lonEndT = utils.find_nearest(lonsrawTRMMData, lonCEEnd)
-                # Unused since CEPrecipRate isn't used and these are just inputs
-                # latStartIndex = np.where(latsrawTRMMData == latStartT)
-                # latEndIndex = np.where(latsrawTRMMData == latEndT)
-                # lonStartIndex = np.where(lonsrawTRMMData == lonStartT)
-                # lonEndIndex = np.where(lonsrawTRMMData == lonEndT)
-
-                #get the relevant TRMM info
-                # Unused Variable
-                # CEprecipRate = precipRate[:, (latStartIndex[0][0]-1):latEndIndex[0][0], \
-                #        (lonStartIndex[0][0]-1):lonEndIndex[0][0]]
-                TRMMData.close()
 
                 profTimes[4]+= time.time() - pin
                 pin = time.time() #sixth pin drop
@@ -1004,7 +1075,8 @@ def find_single_frame_cloud_elements(t,mergImgs,timelist, mainStrDir, lat, lon, 
             
             #This replaces the loop computation of finalCETRMMvalues and ceTRMM, tests commented
             if TRMMdirName:
-                chunkToInsert = regriddedTRMM[loc[0],loc[1]]
+                chunkToInsert = np.copy(regriddedTRMM[loc[0],loc[1]])
+                #chunkToInsert = regriddedTRMMCopy[loc[0],loc[1]]
                 chunkToInsert[cloudElement==0] = 0
                 finalCETRMMvalues[0,loc[0],loc[1]] = chunkToInsert
                 #Mini unit test comparing loop version to this. To use, uncomment loop version
