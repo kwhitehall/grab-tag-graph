@@ -5,3 +5,6 @@ line_profile_script.*
 baselinDataDir/
 .gitignore~
 *.md~
+.idea/
+.idea/*
+.idea/workspace.xml
