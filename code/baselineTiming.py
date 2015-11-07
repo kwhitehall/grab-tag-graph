@@ -128,7 +128,7 @@ def main():
     #return
     unittestFile.write("\n 2. Total time to complete finding cloud elements is %g seconds"%(findCEsEnd - findCEsStart))
     print ("-"*80)
-    #return
+    return
     # #********* OR *******
     # #timing each separately
     #CEGraph = mccSearch.find_cloud_elements(mergImgs,timeList,DIRS['mainDirStr'], LAT,LON)

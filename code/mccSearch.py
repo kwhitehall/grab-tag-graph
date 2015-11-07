@@ -55,7 +55,7 @@ INNER_CLOUD_SHIELD_TEMPERATURE = 213 #in K
 MINIMUM_DURATION = 6  #min number of frames the MCC must exist for (assuming hrly frames, MCCs is 6hrs)
 MAXIMUM_DURATION = 24 #max number of framce the MCC can last for
 
-NUM_IMAGE_WORKERS = 6 #Number of workers to send off for extracting CE in the independent image frames
+NUM_IMAGE_WORKERS = 2 #Number of workers to send off for extracting CE in the independent image frames
 
 #------------------- End user defined Variables -------------------
 edgeWeight = [1, 2, 3] #weights for the graph edges
@@ -576,6 +576,12 @@ class CeFinder(object):
         #    self.lat,self.lon,self.TRMMdirName)',globals(),locals(),'poolProf')
         return find_single_frame_cloud_elements(t,varsDict['images'],self.timelist,self.mainStrDir,\
             varsDict['lat'],varsDict['lon'],self.TRMMdirName)
+            
+
+#Batch parallel version for tests of overhead slowdown. May end up being useless
+#Doesn't help much
+def runBatch(frames, mergImgs, timelist, mainStrDir, lat, lon, TRMMdirName=None):
+    return map(CeFinder(timelist, mainStrDir, TRMMdirName),frames)
 
 
 #Serial version of find_cloud_elements which calls the find on single frames serially
@@ -612,9 +618,15 @@ def par_find_cloud_elements(mergImgs, timelist, mainStrDir, lat, lon, TRMMdirNam
     global LON
     LON = lon
     
+    #batches = [xrange(mergImgs.shape[0]/3),xrange(mergImgs.shape[0]/3,2*mergImgs.shape[0]/3),xrange(2*mergImgs.shape[0]/3,mergImgs.shape[0])]
+    batches = [xrange(mergImgs.shape[0]/2),xrange(mergImgs.shape[0]/2,mergImgs.shape[0])]
+    
     p = Pool(NUM_IMAGE_WORKERS)
-    results = p.map(CeFinder(timelist, mainStrDir, TRMMdirName), \
-        xrange(mergImgs.shape[0]))
+    image_proc_start = time.time()
+    #results = p.map(CeFinder(timelist, mainStrDir, TRMMdirName), \
+    #    xrange(mergImgs.shape[0]))
+    results = map(lambda t:runBatch(t,mergImgs,timelist,mainStrDir,lat,lon,TRMMdirName),batches)
+    print(time.time() - image_proc_start)
     return serial_assemble_graph(results)
 
 #Once the images have been processed, the results are put together into the larger graph
@@ -710,6 +722,8 @@ def find_single_frame_cloud_elements(t,mergImgs,timelist, mainStrDir, lat, lon, 
         required according to Vila et al. (2008) is 2400km^2
         therefore, 2400/16 = 150 contiguous squares
     '''
+    
+    single_frame_start = time.time()
 
     #os.system('taskset -p 0x%x %d' % (t%8 + 1,os.getpid()))
     #os.system('taskset -p -c %i %d' % (t%8 + 1,os.getpid()))
@@ -1268,6 +1282,7 @@ def find_single_frame_cloud_elements(t,mergImgs,timelist, mainStrDir, lat, lon, 
     # plotting.draw_graph(CLOUD_ELEMENT_GRAPH, graphTitle, MAIN_DIRECTORY, edgeWeight)
 
     #print("times:\n"+str(profTimes/sum(profTimes)))
+    print("Single frame time: "+str(time.time()-single_frame_start)+"\n")
 
     return [allCloudElementDicts, cloudElementsFileString, cloudElementsUserFileString]
 #**********************************************************************************************************************
