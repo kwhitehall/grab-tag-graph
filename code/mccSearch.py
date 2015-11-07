@@ -1084,11 +1084,26 @@ def find_single_frame_cloud_elements(t,mergImgs,timelist, mainStrDir, lat, lon, 
                 profTimes[5]+= time.time() - pin
                 pin = time.time() #seventh pin drop
 
-                ceTRMMList = [(cloudElementLat[index[0]], cloudElementLon[index[1]], \
-                                finalCETRMMvalues[0,cloudElementLat[index[0]], cloudElementLon[index[1]]]) \
-                                    for index, value in np.ndenumerate(cloudElement) if value!=0]
-                #Mini unit test for ceTRMMList, to list uncomment loop version
-                #assert(ceTRMMList==ceTRMMListOld)
+
+                #ceTRMMListOld = [(cloudElementLat[index[0]], cloudElementLon[index[1]], \
+                #                finalCETRMMvalues[0,cloudElementLat[index[0]], cloudElementLon[index[1]]]) \
+                #                    for index, value in np.ndenumerate(cloudElement) if value!=0]
+                ceTRMMList = np.zeros((passingSpots.shape[0],3))
+                ceTRMMList[:,0] = cloudElementLat[passingSpots[:,0]]
+                ceTRMMList[:,1] = cloudElementLon[passingSpots[:,1]]
+                ceTRMMList[:,2] = finalCETRMMvalues[0,np.floor(ceTRMMList[:,0]).astype(int),np.floor(ceTRMMList[:,1]).astype(int)]
+                ceTRMMList = ceTRMMList.tolist()
+
+
+                #Mini unit test for ceTRMMList, to list uncomment loop version or the list comprehension version immediately above
+                # i = 0
+                # for tup in ceTRMMList:
+                #     try:
+                #         assert(tup==list(ceTRMMListOld[i]))
+                #     except:
+                #         print("Not equal\n")
+                #         qq=1
+                #     i+=1
                 
                 
             #***END GABE'S ADDITIONS***
@@ -1252,7 +1267,7 @@ def find_single_frame_cloud_elements(t,mergImgs,timelist, mainStrDir, lat, lon, 
     # graphTitle = 'Cloud Elements observed over somewhere from 0000Z to 0000Z'
     # plotting.draw_graph(CLOUD_ELEMENT_GRAPH, graphTitle, MAIN_DIRECTORY, edgeWeight)
 
-    print("times:\n"+str(profTimes/sum(profTimes)))
+    #print("times:\n"+str(profTimes/sum(profTimes)))
 
     return [allCloudElementDicts, cloudElementsFileString, cloudElementsUserFileString]
 #**********************************************************************************************************************
