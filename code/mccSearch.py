@@ -1013,11 +1013,10 @@ def find_single_frame_cloud_elements(t,mergImgs,timelist, mainStrDir, lat, lon, 
                 latitude.units = 'degrees_north'
                 latitude.long_name = 'Latitude'
 
-                profTimes[5]+= time.time() - pin
-                pin = time.time() #seventh pin drop
 
-                finalCETRMMvalues = ma.zeros((brightnesstemp.shape))
-                #-----------End most of NETCDF file stuff ------------------------------------
+
+            finalCETRMMvalues = ma.zeros((brightnesstemp.shape))
+            #-----------End most of NETCDF file stuff ------------------------------------
 
             #populate cloudElementLatLons by unpacking the original values from loc to get the actual value for lat and lon
             #TODO: KDW - too dirty... play with itertools.izip or zip and the enumerate with this
@@ -1067,6 +1066,7 @@ def find_single_frame_cloud_elements(t,mergImgs,timelist, mainStrDir, lat, lon, 
             #    i+=1
 
 
+
             #This replaces the loop computation of brightnesstemp1, commented lines are a test
             brightnesstemp1[0,loc[0],loc[1]] = cloudElement
             #Mini unit test comparing this to loop version. To use, uncomment the loop computation
@@ -1081,6 +1081,9 @@ def find_single_frame_cloud_elements(t,mergImgs,timelist, mainStrDir, lat, lon, 
                 finalCETRMMvalues[0,loc[0],loc[1]] = chunkToInsert
                 #Mini unit test comparing loop version to this. To use, uncomment loop version
                 #assert(np.array_equal(finalCETRMMvalues,finalCETRMMvaluesOld))
+                profTimes[5]+= time.time() - pin
+                pin = time.time() #seventh pin drop
+
                 ceTRMMList = [(cloudElementLat[index[0]], cloudElementLon[index[1]], \
                                 finalCETRMMvalues[0,cloudElementLat[index[0]], cloudElementLon[index[1]]]) \
                                     for index, value in np.ndenumerate(cloudElement) if value!=0]
