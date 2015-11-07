@@ -576,6 +576,8 @@ class CeFinder(object):
         #    self.lat,self.lon,self.TRMMdirName)',globals(),locals(),'poolProf')
         return find_single_frame_cloud_elements(t,varsDict['images'],self.timelist,self.mainStrDir,\
             varsDict['lat'],varsDict['lon'],self.TRMMdirName)
+        #return find_single_frame_cloud_elements(t,self.timelist,self.mainStrDir,\
+        #    varsDict['lat'],varsDict['lon'],self.TRMMdirName)
             
 
 #Batch parallel version for tests of overhead slowdown. May end up being useless
@@ -619,13 +621,16 @@ def par_find_cloud_elements(mergImgs, timelist, mainStrDir, lat, lon, TRMMdirNam
     LON = lon
     
     #batches = [xrange(mergImgs.shape[0]/3),xrange(mergImgs.shape[0]/3,2*mergImgs.shape[0]/3),xrange(2*mergImgs.shape[0]/3,mergImgs.shape[0])]
-    batches = [xrange(mergImgs.shape[0]/2),xrange(mergImgs.shape[0]/2,mergImgs.shape[0])]
+    #batches = [xrange(mergImgs.shape[0]/2),xrange(mergImgs.shape[0]/2,mergImgs.shape[0])]
+    #results = map(lambda t:runBatch(t,mergImgs,timelist,mainStrDir,lat,lon,TRMMdirName),batches)
+    
+    #args = []
+    #for t in xrange(mergImgs.shape[0]):
+    #    args.append((t,mergImgs[t]))
     
     p = Pool(NUM_IMAGE_WORKERS)
     image_proc_start = time.time()
-    #results = p.map(CeFinder(timelist, mainStrDir, TRMMdirName), \
-    #    xrange(mergImgs.shape[0]))
-    results = map(lambda t:runBatch(t,mergImgs,timelist,mainStrDir,lat,lon,TRMMdirName),batches)
+    results = p.map(CeFinder(timelist, mainStrDir, TRMMdirName), xrange(mergImgs.shape[0]))
     print(time.time() - image_proc_start)
     return serial_assemble_graph(results)
 
@@ -686,6 +691,7 @@ def serial_assemble_graph(results):
 #A version of find_cloud_elements which performs analysis on single frames only. The graph building
 #has been taken out to allow parallelization. This function is called by many workers. 
 def find_single_frame_cloud_elements(t,mergImgs,timelist, mainStrDir, lat, lon, TRMMdirName=None):
+#def find_single_frame_cloud_elements(tAndImg,timelist, mainStrDir, lat, lon, TRMMdirName=None):
     '''
     Purpose:: Determines the contiguous boxes for a given time of the satellite images i.e. each frame
         using scipy ndimage package
@@ -735,7 +741,7 @@ def find_single_frame_cloud_elements(t,mergImgs,timelist, mainStrDir, lat, lon, 
     LON = lon
     #global mergImgs
 
-    frame = ma.empty((1, mergImgs.shape[1], mergImgs.shape[2]))
+    #frame = ma.empty((1, mergImgs.shape[1], mergImgs.shape[2]))
     ceCounter = 0
     frameceCounter = 0
     frameNum = 0
@@ -779,6 +785,7 @@ def find_single_frame_cloud_elements(t,mergImgs,timelist, mainStrDir, lat, lon, 
 
     #determine contiguous locations with temeperature below the warmest temp i.e. cloudElements in each frame
     frame, ceCounter = ndimage.measurements.label(mergImgs[t,:,:], structure=STRUCTURING_ELEMENT)
+    #frame, ceCounter = ndimage.measurements.label(Img, structure=STRUCTURING_ELEMENT)
     frameceCounter = 0
     frameNum = t + 1
 
@@ -861,6 +868,7 @@ def find_single_frame_cloud_elements(t,mergImgs,timelist, mainStrDir, lat, lon, 
         pin = time.time() #second pin drop
 
         cloudElement = mergImgs[t,:,:][loc]
+        #cloudElement = Img[loc]
         labels, _ = ndimage.label(cloudElement)
 
         #determine the true lats and lons for this particular CE
