@@ -1290,7 +1290,7 @@ def find_single_frame_cloud_elements(t,mergImgs,timelist, mainStrDir, lat, lon, 
     # plotting.draw_graph(CLOUD_ELEMENT_GRAPH, graphTitle, MAIN_DIRECTORY, edgeWeight)
 
     #print("times:\n"+str(profTimes/sum(profTimes)))
-    print("Single frame time: "+str(time.time()-single_frame_start)+"\n")
+    #print("Single frame time: "+str(time.time()-single_frame_start)+"\n")
 
     return [allCloudElementDicts, cloudElementsFileString, cloudElementsUserFileString]
 #**********************************************************************************************************************
