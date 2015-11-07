@@ -7,6 +7,7 @@ import re
 import string
 import os
 import sys
+import time
 
 from netCDF4 import Dataset
 from datetime import timedelta, datetime
@@ -298,6 +299,7 @@ def read_data(dirName, varName, latName, lonName, filelist=None):
         lonsraw = []
         tmp.close
 
+    totalLoopTime = 0
     for files in filelist:
 
         try:
@@ -309,9 +311,11 @@ def read_data(dirName, varName, latName, lonName, filelist=None):
             #get the actual values that the mask returned
             tempMaskedValue = ma.zeros((tempRaw.shape)).astype('int16')
 
+            innerLoopStart = time.time()
             for index, value in utils.maenumerate(tempMask):
                 timeIndex, latIndex, lonIndex = index
                 tempMaskedValue[timeIndex, latIndex, lonIndex] = value
+            totalLoopTime+= time.time()-innerLoopStart
 
             xtimes = thisFile.variables[timeName]
 
@@ -329,7 +333,7 @@ def read_data(dirName, varName, latName, lonName, filelist=None):
             print 'bad file! ', files
 
     inputData = ma.array(inputData)
-
+    print("Total loop time: "+str(totalLoopTime)+"\n")
     return inputData, timelist, LAT, LON
 #**********************************************************************************************************************
 def get_model_times(xtimes, timeVarName):
