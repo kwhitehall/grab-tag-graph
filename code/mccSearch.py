@@ -65,6 +65,8 @@ CLOUD_ELEMENT_GRAPH = nx.DiGraph()
 PRUNED_GRAPH = nx.DiGraph()
 #get lat lons from iomethods.py
 
+P_TIME = 0
+
 #------------------------ End GLOBAL VARS -------------------------
 #************************ Begin Functions *************************
 #**********************************************************************************************************************
@@ -740,6 +742,7 @@ def find_single_frame_cloud_elements(t,mergImgs,timelist, mainStrDir, lat, lon, 
     global LON
     LON = lon
     #global mergImgs
+    global P_TIME
 
     #frame = ma.empty((1, mergImgs.shape[1], mergImgs.shape[2]))
     ceCounter = 0
@@ -854,13 +857,16 @@ def find_single_frame_cloud_elements(t,mergImgs,timelist, mainStrDir, lat, lon, 
 
 
     #for each of the areas identified, check to determine if it a valid CE via an area and T requirement
+    all_locs = ndimage.find_objects(frame)
     for count in xrange(ceCounter):
         #[0] is time dimension. Determine the actual values from the data
         #loc is a masked array
 
         pin = time.time() #First pin drop
         try:
-            loc = ndimage.find_objects(frame == (count + 1))[0]
+            #locOld = ndimage.find_objects(frame == (count + 1))[0]
+            loc = all_locs[count]
+            #assert(np.array_equal(loc,locOld))
         except Exception, e:
             print 'Error is ', e
             continue
@@ -880,7 +886,7 @@ def find_single_frame_cloud_elements(t,mergImgs,timelist, mainStrDir, lat, lon, 
         cloudElementArea = numOfBoxes * XRES * YRES
 
         profTimes[1]+= time.time() - pin
-        pin = time.time() #third pin drop
+        
 
         #If the area is greater than the area required, or if the area is smaller than the suggested area,
         #check if it meets a convective fraction requirement consider as CE
@@ -888,6 +894,7 @@ def find_single_frame_cloud_elements(t,mergImgs,timelist, mainStrDir, lat, lon, 
         if cloudElementArea >= AREA_MIN or (cloudElementArea < AREA_MIN and \
                 ((ndimage.minimum(cloudElement, labels=labels)) / \
                     float((ndimage.maximum(cloudElement, labels=labels)))) < CONVECTIVE_FRACTION):
+            pin = time.time() #third pin drop
             #get some time information and labeling info
             frameceCounter += 1
             ceUniqueID = 'F' + str(frameNum) + 'CE' + str(frameceCounter)
@@ -1148,18 +1155,26 @@ def find_single_frame_cloud_elements(t,mergImgs,timelist, mainStrDir, lat, lon, 
 
                 #precip = np.ravel(finalCETRMMvalues).tolist()
                 #precipTotal = sum(sum(sum(finalCETRMMvalues)))
+                
                 precipTotal = np.sum(finalCETRMMvalues)
                 #assert(precipTotal==np.sum(finalCETRMMvalues)) #mini test
-
+                
+                start = time.time()
+                #TODO: this step is really slow. We could probably get away with storing
+                # stuff in a different format which goes faster
                 rainFallacc[:] = finalCETRMMvalues[:]
                 currNetCDFTRMMData.close()
                 TRMMnumOfBoxes = np.count_nonzero(finalCETRMMvalues)
                 TRMMArea = TRMMnumOfBoxes * XRES * YRES
+                P_TIME += time.time() - start
+                
                 try:
                     maxCEprecipRate = np.max(finalCETRMMvalues[np.nonzero(finalCETRMMvalues)])
                     minCEprecipRate = np.min(finalCETRMMvalues[np.nonzero(finalCETRMMvalues)])
                 except:
                     pass
+                
+                
 
             profTimes[7]+= time.time() - pin
             pin = time.time() #ninth pin drop
@@ -1291,7 +1306,8 @@ def find_single_frame_cloud_elements(t,mergImgs,timelist, mainStrDir, lat, lon, 
 
     #print("times:\n"+str(profTimes/sum(profTimes)))
     #print("Single frame time: "+str(time.time()-single_frame_start)+"\n")
-
+    #print(P_TIME/(time.time() - single_frame_start))
+    P_TIME = 0
     return [allCloudElementDicts, cloudElementsFileString, cloudElementsUserFileString]
 #**********************************************************************************************************************
 
