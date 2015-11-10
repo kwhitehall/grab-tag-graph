@@ -10,7 +10,8 @@ from datetime import datetime
 def main():
     #inputs_one = "../../ORIG/grab-tag-graph/ORIG_results/MERGnetcdfCEs"
     inputs_one = "../../testSeparate2/MERGnetcdfCEs"
-    inputs_two = "../../testSeparate/MERGnetcdfCEs"
+    #inputs_two = "../../testSeparate/MERGnetcdfCEs"
+    inputs_two = "../../ORIG/grab-tag-graph/ORIG_results_plus_pruned/MERGnetcdfCEs"
     output_diff = "../../outputDiffs"
     check_merg_file_differences(inputs_one, inputs_two, output_diff)
 
