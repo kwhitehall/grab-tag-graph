@@ -135,32 +135,21 @@ def check_merg_file_differences(baselinePath1, baselinePath2,  outputDir):
     prunedGraph1 = []
     prunedGraph2 = []
 
-    if os.path.exists(baselinePath1+"/../unittestResults.txt") and os.path.exists(baselinePath2+"/../unittestResults.txt"):
+    if os.path.exists(baselinePath1+"/unittestResults.txt") and os.path.exists(baselinePath2+"/unittestResults.txt"):
         #open the file and graph the appropriate lines to compare
         #in if statments, extract the data needed to list then perform list comprehencsion
-        with (open (baselinePath1+"/../unittestResults.txt", "r")) as f:
+        with (open (baselinePath1+"/unittestResults.txt", "r")) as f:
             a = f.readlines()
-            if 'CEGraph nodes' in a[6]:
-                baselinePath1CEnodes = a[6].split(': ')[1].replace('[','').replace(']','')
-                baselinePath1pruned = a[8].split(': ')[1].replace('[','').replace(']','')
-            else:
-                baselinePath1CEnodes = a[4].split(': ')[1].replace('[','').replace(']','')
-                baselinePath1pruned = a[6].split(': ')[1].replace('[','').replace(']','')
-            
+            baselinePath1CEnodes = a[14].split(': ')[1].replace('[','').replace(']','')
+            baselinePath1pruned = a[15].split(': ')[1].replace('[','').replace(']','')
             CEGraph1 = baselinePath1CEnodes.strip().split(', ')
-            prunedGraph1 = baselinePath1pruned.strip().split(', ')
-            
+            prunedGraph1 = baselinePath1pruned.strip().split(', ')   
             
         a = []
-        with (open (baselinePath2+"/../unittestResults.txt", "r")) as f:
+        with (open (baselinePath2+"/unittestResults.txt", "r")) as f:
             a = f.readlines()
-            if 'CEGraph nodes' in a[6]:
-                baselinePath2CEnodes = (a[6].split(': ')[1]).replace('[','').replace(']','')
-                baselinePath2pruned = a[8].split(': ')[1].replace('[','').replace(']','')
-            else:
-                baselinePath2CEnodes = a[4].split(': ')[1].replace('[','').replace(']','')
-                baselinePath2pruned = a[6].split(': ')[1].replace('[','').replace(']','')
-
+            baselinePath2CEnodes = (a[14].split(': ')[1]).replace('[','').replace(']','')
+            baselinePath2pruned = a[15].split(': ')[1].replace('[','').replace(']','')
             CEGraph2 = baselinePath2CEnodes.strip().split(', ')
             prunedGraph2 = baselinePath2pruned.strip().split(', ')
             
@@ -179,4 +168,3 @@ def check_merg_file_differences(baselinePath1, baselinePath2,  outputDir):
 
 if __name__ == '__main__':
     main()
-

@@ -8,3 +8,4 @@ baselinDataDir/
 .idea/
 .idea/*
 .idea/workspace.xml
+*.nc
