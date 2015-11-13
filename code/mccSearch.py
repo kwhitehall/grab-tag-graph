@@ -689,6 +689,8 @@ def par_find_cloud_elements(mergImgs, timelist, mainStrDir, lat, lon, TRMMdirNam
 def serial_assemble_graph(results):
     totals = 0
     edgeWeight = [1, 2, 3] #weights for the graph edges
+    
+    cloudElementsJSON = []  #list of the key, value objects associated with a CE in the graph
 
     #openfile for storing ALL cloudElement information
     cloudElementsFile = open((MAIN_DIRECTORY + '/textFiles/cloudElements.txt'), 'wb')
@@ -704,11 +706,13 @@ def serial_assemble_graph(results):
     for t in xrange(1,len(results)):
         currFrameCEs = results[t][0]
         prevFrameCEs = results[t-1][0]
+        ceNum = 0
         for ce in currFrameCEs:
             #totals +=1
             cloudElementsFile.write(results[t][1])
             cloudElementsUserFile.write(results[t][2])
             CLOUD_ELEMENT_GRAPH.add_node(ce['uniqueID'], ce)
+            edges = []
             for cloudElementDict in prevFrameCEs:
                 percentageOverlap, areaOverlap = cloud_element_overlap(ce['cloudElementLatLon'], \
                     cloudElementDict['cloudElementLatLon'])
@@ -718,17 +722,38 @@ def serial_assemble_graph(results):
                 #them for consecutive imgs a max of 2 hrs apart
                 if percentageOverlap >= 0.95:
                     CLOUD_ELEMENT_GRAPH.add_edge(cloudElementDict['uniqueID'], ce['uniqueID'], weight=edgeWeight[0])
+                    edges.append(cloudElementDict['uniqueID'])
 
                 elif percentageOverlap >= 0.90 and percentageOverlap < 0.95 :
                     CLOUD_ELEMENT_GRAPH.add_edge(cloudElementDict['uniqueID'], ce['uniqueID'], weight=edgeWeight[1])
+                    edges.append(cloudElementDict['uniqueID'])
 
                 elif areaOverlap >= MIN_OVERLAP:
                     CLOUD_ELEMENT_GRAPH.add_edge(cloudElementDict['uniqueID'], ce['uniqueID'], weight=edgeWeight[2])
+                    edges.append(cloudElementDict['uniqueID'])
+            
+            #Pull out JSON data
+            JSONDict = results[t][3][ceNum]
+            
+            
+            if edges:
+                cloudElementsJSON.append({'cloudElement': cloudElementDict['uniqueID'], 'time': JSONDict['time'],\
+                    'area':JSONDict['area'], 'Tmax': JSONDict['tmax'], 'Tmin': JSONDict['tmin'],'center':JSONDict['center'],\
+                    'convective_fraction': JSONDict['cf'], 'lat_lon_box': JSONDict['lat_lon_box'], 'shape': JSONDict['shape'], 'edges':edges, 'eccentricity':JSONDict['cloudElementEpsilon']})
+            
+            
+            
+            ceNum += 1
 
 
     #Close info files
     cloudElementsFile.close()
     cloudElementsUserFile.close()
+    
+    #Write to JSON file
+    filenameJSON = MAIN_DIRECTORY + '/textFiles/graphJSON.txt'
+    with open(filenameJSON, 'w+') as f:
+        json.dump(cloudElementsJSON,f)
 
     #clean up graph - remove parent and childless nodes
     #print("Number of nodes before cleanup: "+str(CLOUD_ELEMENT_GRAPH.number_of_nodes()) + "\n")
@@ -792,6 +817,14 @@ def find_single_frame_cloud_elements(t,mergImgs,timelist, mainStrDir, lat, lon, 
     LON = lon
     #global mergImgs
     global P_TIME
+    
+    cloudElementsJSON = []  #list of the key, value objects associated with a CE in the graph
+    edges = []     #list of the nodes connected to a given CE
+    latLonBox = [] #list of extreme points for the min fitting box around a CE [lon_min, lat_min, lon_max, lat_max]
+    shape = 0      #max(num of non-zero boxes in lat, num of non-zero boxes in lon) for the CE
+    cf = 0.0       #convective fraction 
+    tmin = 0.0     #IR Tmin for the CE
+    tmax = 0.0     #IR Tmax for the CE
 
     #frame = ma.empty((1, mergImgs.shape[1], mergImgs.shape[2]))
     ceCounter = 0
@@ -806,6 +839,7 @@ def find_single_frame_cloud_elements(t,mergImgs,timelist, mainStrDir, lat, lon, 
     cloudElementLon = []        #list for a particular CE's lon values
     cloudElementLatLons = []    #list for a particular CE's (lat,lon) values
     allCloudElementDicts = []
+    allJSONDataDicts = []
 
     TIR_min = 0.0
     TIR_max = 0.0
@@ -823,6 +857,8 @@ def find_single_frame_cloud_elements(t,mergImgs,timelist, mainStrDir, lat, lon, 
     #openfile for storing cloudElement information meeting user criteria i.e. MCCs in this case
     #cloudElementsUserFile = open((MAIN_DIRECTORY + '/textFiles/cloudElementsUserFile.txt'), 'w')
     cloudElementsUserFileString = ''
+    
+    filenameJSON = MAIN_DIRECTORY + '/textFiles/graphJSON.txt'
 
     #NB in the TRMM files the info is hours since the time thus 00Z file has in 01, 02 and 03 times
     
@@ -1240,6 +1276,24 @@ def find_single_frame_cloud_elements(t,mergImgs,timelist, mainStrDir, lat, lon, 
             #so you need to convert this value to the overall domain truth
             latCenter = cloudElementLat[round(latCenter)]
             lonCenter = cloudElementLon[round(lonCenter)]
+            
+            #NEED TO FIX-----------------------------------------------------------------
+            #create the latLonBox
+            latLonBox.append(min(cloudElementLon))
+            latLonBox.append(min(cloudElementLat))
+            latLonBox.append(max(cloudElementLon))
+            latLonBox.append(max(cloudElementLat))
+
+            #for _ in cloudElement:
+            #    #assign a matrix to determine the legit values
+            #    nonEmptyLons = sum(sum(cloudElement) > 0)
+            #    nonEmptyLats = sum(sum(cloudElement.transpose()) > 0)
+                
+            nonEmptyLons = sum(sum(cloudElement) > 0)
+            nonEmptyLats = sum(sum(cloudElement.transpose()) > 0)
+
+            shape = max(nonEmptyLats, nonEmptyLons)
+            
             cloudElementsUserFileString+=('\nCenter (lat,lon) is: %.2f\t%.2f' %(latCenter, lonCenter))
             cloudElementCenter.append(latCenter)
             cloudElementCenter.append(lonCenter)
@@ -1272,6 +1326,32 @@ def find_single_frame_cloud_elements(t,mergImgs,timelist, mainStrDir, lat, lon, 
    
             #Store the new cloudElementDict so that it can be returned to parent function
             allCloudElementDicts.append(cloudElementDict)
+            
+            #Will hold data for JSON
+            currentJSONDict = {}
+            
+            # get some data for the JSON object which will only store the graph CEs and connected edges
+            currentJSONDict['cf'] = (((ndimage.minimum(cloudElement, \
+                labels=labels)) / float((ndimage.maximum(cloudElement, labels=labels)))) * 100.0)
+            currentJSONDict['tmin'] = ndimage.minimum(cloudElement, labels=labels)*1.
+            currentJSONDict['tmax'] = ndimage.maximum(cloudElement, labels=labels)*1.
+            currentJSONDict['time'] = str(timelist[t])
+            currentJSONDict['area'] = cloudElementArea
+            currentJSONDict['center'] = cloudElementCenter
+            currentJSONDict['lat_lon_box'] = latLonBox
+            currentJSONDict['shape'] = shape
+            currentJSONDict['cloudElementEpsilon'] = cloudElementEpsilon
+            
+            allJSONDataDicts.append(currentJSONDict)
+            
+            #cf = (((ndimage.minimum(cloudElement, \
+            #    labels=labels)) / float((ndimage.maximum(cloudElement, labels=labels)))) * 100.0)
+            #tmin = ndimage.minimum(cloudElement, labels=labels)*1.
+            #tmax = ndimage.maximum(cloudElement, labels=labels)*1.
+            #if edges:
+            #    cloudElementsJSON.append({'cloudElement': ceUniqueID, 'time': str(timelist[t]),\
+            #        'area':cloudElementArea, 'Tmax': tmax, 'Tmin': tmin,'center':cloudElementCenter,\
+            #        'convective_fraction': cf, 'lat_lon_box': latLonBox, 'shape': shape, 'edges':edges, 'eccentricity':cloudElementEpsilon})
 
             profTimes[8]+= time.time() - pin
             pin = time.time() #tenth pin drop
@@ -1283,6 +1363,7 @@ def find_single_frame_cloud_elements(t,mergImgs,timelist, mainStrDir, lat, lon, 
                 labels, _ = ndimage.label(cloudElement)
                 cloudElementsFileString+=('\n-----------------------------------------------')
                 cloudElementsFileString+=('\n\nTime is: %s' %(str(timelist[t])))
+                cloudElementsFileString+=('\n\nceUniqueID is: %s' %('F' + str(frameNum) + 'CE' + str(00)))
                 # cloudElementLat = LAT[loc[0],0]
                 # cloudElementLon = LON[0,loc[1]]
 
@@ -1333,6 +1414,7 @@ def find_single_frame_cloud_elements(t,mergImgs,timelist, mainStrDir, lat, lon, 
         ceTRMMList = []
         precipTotal = 0.0
         precip = []
+        latLonBox = []
 
 
     #cloudElementsFile.close()
@@ -1357,7 +1439,7 @@ def find_single_frame_cloud_elements(t,mergImgs,timelist, mainStrDir, lat, lon, 
     #print("Single frame time: "+str(time.time()-single_frame_start)+"\n")
     #print(P_TIME/(time.time() - single_frame_start))
     P_TIME = 0
-    return [allCloudElementDicts, cloudElementsFileString, cloudElementsUserFileString]
+    return [allCloudElementDicts, cloudElementsFileString, cloudElementsUserFileString, allJSONDataDicts]
 #**********************************************************************************************************************
 
 def find_precip_rate(TRMMdirName, timelist):
@@ -2304,6 +2386,7 @@ def check_criteria(thisCloudElementLatLon, aTemperature):
             print 'ceCounter ', ceCounter, criteriaB.shape
             print 'criteriaB ', criteriaB
 
+
         for index, value in np.ndenumerate(cloudElementCriteriaB):
             if value != 0:
                 _, lat, lon = index
@@ -2311,6 +2394,7 @@ def check_criteria(thisCloudElementLatLon, aTemperature):
                 #add back on the minLatIndex and minLonIndex to find the true lat, lon values
                 latLonTuple = (LAT[(lat),0], LON[0,(lon)], value)
                 cloudElementCriteriaBLatLon.append(latLonTuple)
+        
 
         cloudElementArea = np.count_nonzero(cloudElementCriteriaB) * XRES * YRES
         #do some cleaning up
