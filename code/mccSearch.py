@@ -1442,11 +1442,9 @@ def check_criteria(thisCloudElementLatLon, aTemperature):
     #get the actual values that the mask returned
     criteriaB = ma.zeros((criteriaBframe.shape)).astype('int16')
 
-    #for index, value in utils.maenumerate(tempMask):
-        #latIndex, lonIndex = index
-        #criteriaB[latIndex, lonIndex] = value
-
-    criteriaB = tempMask;
+    for index, value in utils.maenumerate(tempMask):
+        latIndex, lonIndex = index
+        criteriaB[latIndex, lonIndex] = value
 
     for _ in xrange(ceCounter):
         #[0] is time dimension. Determine the actual values from the data
