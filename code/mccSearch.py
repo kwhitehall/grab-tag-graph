@@ -1442,9 +1442,11 @@ def check_criteria(thisCloudElementLatLon, aTemperature):
     #get the actual values that the mask returned
     criteriaB = ma.zeros((criteriaBframe.shape)).astype('int16')
 
-    for index, value in utils.maenumerate(tempMask):
-        latIndex, lonIndex = index
-        criteriaB[latIndex, lonIndex] = value
+    #for index, value in utils.maenumerate(tempMask):
+        #latIndex, lonIndex = index
+        #criteriaB[latIndex, lonIndex] = value
+
+    criteriaB = tempMask;
 
     for _ in xrange(ceCounter):
         #[0] is time dimension. Determine the actual values from the data
@@ -1474,13 +1476,14 @@ def check_criteria(thisCloudElementLatLon, aTemperature):
                 #latLonTuple = (LAT[(lat),0], LON[0,(lon)], value)
                 #cloudElementCriteriaBLatLon.append(latLonTuple)
 
+
         cloudElementCriteriaBNonZeros = cloudElementCriteriaB.nonzero()
         passingSpots = np.transpose(cloudElementCriteriaBNonZeros)
         cloudElementCriteriaBLatLon = np.zeros((passingSpots.shape[0],3))
-        cloudElementCriteriaBLatLon[:,0] = cloudElementLat[passingSpots[:,0]]
-        cloudElementCriteriaBLatLon[:,1] = cloudElementLon[passingSpots[:,1]]
-        cloudElementCriteriaBLatLon[:,2] = cloudElement[cloudElementCriteriaBNonZeros]
-        cloudElementCriteriaBLatLon = cloudElementLatLons.tolist()        
+        cloudElementCriteriaBLatLon[:,0] = LAT[passingSpots[:,0],0]
+        cloudElementCriteriaBLatLon[:,1] = LON[0,passingSpots[:,1]]
+        cloudElementCriteriaBLatLon[:,2] = cloudElementCriteriaB[cloudElementCriteriaBNonZeros]
+        cloudElementCriteriaBLatLon = cloudElementCriteriaBLatLon.tolist()        
 
         cloudElementArea = np.count_nonzero(cloudElementCriteriaB) * XRES * YRES
         #do some cleaning up
