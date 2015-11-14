@@ -1474,14 +1474,18 @@ def check_criteria(thisCloudElementLatLon, aTemperature):
                 #latLonTuple = (LAT[(lat),0], LON[0,(lon)], value)
                 #cloudElementCriteriaBLatLon.append(latLonTuple)
 
-
+        #When doing the assertion, change the vectorized version to cloudElementCriteriaBLatLon
+        #cloudElementCriteriaBLatLonV = []
         cloudElementCriteriaBNonZeros = cloudElementCriteriaB.nonzero()
         passingSpots = np.transpose(cloudElementCriteriaBNonZeros)
         cloudElementCriteriaBLatLon = np.zeros((passingSpots.shape[0],3))
-        cloudElementCriteriaBLatLon[:,0] = LAT[passingSpots[:,0],0]
-        cloudElementCriteriaBLatLon[:,1] = LON[0,passingSpots[:,1]]
+        cloudElementCriteriaBLatLon[:,0] = LAT[passingSpots[:,1],0]
+        cloudElementCriteriaBLatLon[:,1] = LON[0,passingSpots[:,2]]
         cloudElementCriteriaBLatLon[:,2] = cloudElementCriteriaB[cloudElementCriteriaBNonZeros]
-        cloudElementCriteriaBLatLon = cloudElementCriteriaBLatLon.tolist()        
+        cloudElementCriteriaBLatLon = cloudElementCriteriaBLatLon.tolist()
+
+        #Assertion confirms the two cloudElementCriteriaBLatLon methods return the same result
+        #assert(np.array_equal(cloudElementCriteriaBLatLon, cloudElementCriteriaBLatLonV))
 
         cloudElementArea = np.count_nonzero(cloudElementCriteriaB) * XRES * YRES
         #do some cleaning up
