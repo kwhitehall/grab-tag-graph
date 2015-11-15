@@ -7,6 +7,7 @@ import re
 import string
 import os
 import sys
+import subprocess
 
 from netCDF4 import Dataset
 from datetime import timedelta, datetime
@@ -142,6 +143,66 @@ def find_time_in_file(myTime, myTimeInFile):
             lastPos += len(eachPart)
 
     return currTimeInFile
+#***********************************************************************************************************************
+def read_vars(userVariables):
+    #for GrADs
+    subprocess.call('export DISPLAY=:0.0', shell=True)
+
+    graphVariables = variables.define_graph_variables()
+    # ---------------------------------- end user inputs --------------------------------------
+    # Checks that inputs are ok
+    try:
+        if not os.path.exists(userVariables.DIRS['CEoriDirName']):
+            print "Error! MERG invalid path!"
+            userVariables.DIRS['CEoriDirName'] = raw_input("> Please enter the directory to the MERG netCDF files: \n")
+    except:
+        print "..."
+
+    try:
+        if not os.path.exists(userVariables.DIRS['TRMMdirName']):
+            print "Error: TRMM invalid path!"
+            userVariables.DIRS['TRMMdirName'] = raw_input("> Please enter the location to the raw TRMM netCDF files: \n")
+    except:
+        pass
+
+    try:
+        if not os.path.exists(userVariables.DIRS['CEoriDirName']):
+            print "Error! MERG invalid path!"
+            userVariables.DIRS['CEoriDirName'] = raw_input("> Please enter the directory to the MERG netCDF files: \n")
+    except:
+        print "..."   
+
+    #check validity of time
+    while utils.valid_date(userVariables.startDateTime) != True:
+        print "Invalid time entered for startDateTime!"
+
+    while utils.valid_date(userVariables.endDateTime) != True:
+        print "Invalid time entered for endDateTime!"
+        
+    #check if all the files exisits in the MERG and TRMM directories entered
+    test,_ = check_for_files(userVariables.DIRS['TRMMdirName'], userVariables.startDateTime, userVariables.endDateTime, 3, 'hour')
+    if test == False:
+        print "Error with files in the TRMM directory entered. Please check your files before restarting. "
+        return
+    #test,filelist = iomethods.check_for_files(startDateTime, endDateTime, DIRS['CEoriDirName'],1)
+    test,userVariables.filelist = check_for_files(userVariables.DIRS['CEoriDirName'], userVariables.startDateTime, userVariables.endDateTime, 1, 'hour')
+
+    if test == False:
+        print "Error with files in the original MERG directory entered. Please check your files before restarting. "
+        return
+    # end checks 
+
+    # create main directory and file structure for storing intel
+    userVariables.DIRS['mainDirStr'] = create_main_directory(userVariables.DIRS['mainDirStr'])
+    TRMMCEdirName = userVariables.DIRS['mainDirStr']+'/TRMMnetcdfCEs'
+    CEdirName = userVariables.DIRS['mainDirStr']+'/MERGnetcdfCEs'
+
+    #unittestFile = open(userVariables.DIRS['mainDirStr']+'/unittestResults.txt','wb')
+    #unittestFile.write("\n Timing results for "+userVariables.startDateTime+" to "+userVariables.endDateTime)
+    print "Done reading data"
+    return graphVariables
+
+
 #**********************************************************************************************************************
 def create_main_directory(mainDirStr):
     '''
@@ -208,8 +269,8 @@ def read_data(dirName, varName, latName, lonName, userVariables, filelist=None):
     timeName = 'time'
 
     filelistInstructions = dirName+'/*'
-    if filelist == None:
-        filelist = glob.glob(filelistInstructions)
+    if filelist == None and userVariables.filelist == None:
+        userVariables.filelist = glob.glob(filelistInstructions)
 
 
     inputData = []
@@ -218,8 +279,8 @@ def read_data(dirName, varName, latName, lonName, userVariables, filelist=None):
     tempMaskedValueNp = []
 
 
-    filelist.sort()
-    nfiles = len(filelist)
+    userVariables.filelist.sort()
+    nfiles = len(userVariables.filelist)
 
     # Crash nicely if there are no netcdf files
     if nfiles == 0:
@@ -227,7 +288,7 @@ def read_data(dirName, varName, latName, lonName, userVariables, filelist=None):
         sys.exit()
     else:
         # Open the first file in the list to read in lats, lons and generate the  grid for comparison
-        tmp = Dataset(filelist[0], 'r+', format='NETCDF4')
+        tmp = Dataset(userVariables.filelist[0], 'r+', format='NETCDF4')
 
         alllatsraw = tmp.variables[latName][:]
         alllonsraw = tmp.variables[lonName][:]
@@ -253,7 +314,7 @@ def read_data(dirName, varName, latName, lonName, userVariables, filelist=None):
         lonsraw = []
         tmp.close
 
-    for files in filelist:
+    for files in userVariables.filelist:
 
         try:
             thisFile = Dataset(files, 'r', format='NETCDF4')
@@ -285,7 +346,7 @@ def read_data(dirName, varName, latName, lonName, userVariables, filelist=None):
 
     inputData = ma.array(inputData)
 
-    return inputData, timelist, LAT, LON
+    return inputData, timelist, LAT, LON,userVariables
 #**********************************************************************************************************************
 def get_model_times(xtimes, timeVarName):
     '''

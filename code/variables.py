@@ -1,6 +1,8 @@
 import os
 import networkx as nx
 import json
+import utils
+import iomethods
 
 class UserVariables(object):
     # these will be assigned as the user determines which values they would like 
@@ -39,13 +41,15 @@ class UserVariables(object):
         self.DIRS = {'mainDirStr': "/Users/youssefbiaz/Documents/USC/,2015-3Fall'15/5CSCI401/grab-tag-graph/baselineTimings/output/paperData", 'TRMMdirName':"/Users/youssefbiaz/Documents/USC/,2015-3Fall'15/5CSCI401/grab-tag-graph/baselineTimings/paperData/TRMM", 'CEoriDirName': "/Users/youssefbiaz/Documents/USC/,2015-3Fall'15/5CSCI401/grab-tag-graph/baselineTimings/paperData/MERG"}
         self.startDateTime = "200609110000"
         self.endDateTime = "200609121200"
+        self.filelist = None
 
 
     def setupJSON(self):
         data = None;
         try:
-            with open('../config.txt') as f:
+            with open('../config.json') as f:
                 data = json.load(f)
+                f.close()
         except IOError, e:
             print "Config file not found! Using default variables..."
             return False
@@ -55,7 +59,7 @@ class UserVariables(object):
                 print "Bad latmin input! Check the config file. Now using default variables..."
                 return False;
             self.LATMAX = float(data['LATMAX'])
-            if (self.LATMMAX < -90 or self.LATMAX > 90 or self.LATMAX < self.LATMIN):
+            if (self.LATMAX < -90 or self.LATMAX > 90 or self.LATMAX < self.LATMIN):
                 print "Bad latmax input! Check the config file. Now using default variables..."
                 return False;
             self.LONMIN = float(data['LONMIN'])
@@ -91,32 +95,82 @@ class UserVariables(object):
             self.T_BB_MAX = float(data['T_BB_MAX'])
             self.T_BB_MIN = float(data['T_BB_MIN'])
             if (self.T_BB_MIN > self.T_BB_MAX):
-                print "Bad TBBMIN and MAX input! Check the config file. Now using default variables..."
-                return False;                            
+                print "Bad TBBMIN and MAX input! Check the config file. Switching max and min..."
+                temp = self.T_BB_MIN
+                self.T_BB_MIN = self.T_BB_MAX
+                self.T_BB_MAX = temp
             self.CONVECTIVE_FRACTION = float(data['CONVECTIVE_FRACTION'])
+            if (self.CONVECTIVE_FRACTION < 0 or self.CONVECTIVE_FRACTION > 1):
+                print "Bad convective fraction input. Now using default variables..."
+                return False
             self.MIN_MCS_DURATION = float(data['MIN_MCS_DURATION'])
+            if (self.MIN_MCS_DURATION < 3):
+                print "MIN_MCS_Duration too small. Minimum is 3. Now using default variables..."
+                return False
             self.AREA_MIN = float(data['AREA_MIN'])
+            if (self.AREA_MIN <= 0):
+            		print "Bad AREA_MIN input. Now using default variables..."
+            		return False
             self.MIN_OVERLAP = float(data['MIN_OVERLAP'])
             self.ECCENTRICITY_THRESHOLD_MAX = float(data['ECCENTRICITY_THRESHOLD_MAX'])
             self.ECCENTRICITY_THRESHOLD_MIN = float(data['ECCENTRICITY_THRESHOLD_MIN'])
+            if (self.ECCENTRICITY_THRESHOLD_MAX < 0 or self.ECCENTRICITY_THRESHOLD_MAX > 1):
+                print "Bad ECCENTRICITY THRESHOLD MAX input. Check config file. Now using default variables..."
+                return False
+            if (self.ECCENTRICITY_THRESHOLD_MIN < 0 or self.ECCENTRICITY_THRESHOLD_MIN > 1):
+            		print "Bad ECCENTRICITY THRESHOLD MIN input. Check config file. Now using default variables..."
+            		print False
             if (self.ECCENTRICITY_THRESHOLD_MIN > self.ECCENTRICITY_THRESHOLD_MAX):
                 print "Bad ECCENTRICITY THRESHOLD MIN and MAX input! Check the config file. Now using default variables..."
                 return False;            
             self.OUTER_CLOUD_SHIELD_AREA = float(data['OUTER_CLOUD_SHIELD_AREA'])
             self.INNER_CLOUD_SHIELD_AREA = float(data['INNER_CLOUD_SHIELD_AREA'])
+            if (self.INNER_CLOUD_SHIELD_AREA > self.OUTER_CLOUD_SHIELD_AREA):
+            		print "Bad cloud shield areas input. Check config file. Now using default variables..."
+            		return False
             self.OUTER_CLOUD_SHIELD_TEMPERATURE = float(data['OUTER_CLOUD_SHIELD_TEMPERATURE'])
             self.INNER_CLOUD_SHIELD_TEMPERATURE = float(data['INNER_CLOUD_SHIELD_TEMPERATURE'])
+            if (self.INNER_CLOUD_SHIELD_TEMPERATURE > self.OUTER_CLOUD_SHIELD_TEMPERATURE):
+            		print "Bad cloud shield temperatures. Check the config file. Now using default variables..."
+            		return False
             self.MINIMUM_DURATION = float(data['MINIMUM_DURATION'])
             self.MAXIMUM_DURATION = float(data['MAXIMUM_DURATION'])
             if (self.MINIMUM_DURATION > self.MAXIMUM_DURATION):
                 print "Bad MIN and MAX DURATION inputs! Check the config file. Now using default variables..."
                 return False;            
             self.DIRS = data['DIRS']
+            # Checks that inputs are ok
+            try:
+                if not os.path.exists(self.DIRS['TRMMdirName']):
+                    print "Error: TRMM invalid path!"
+                    self.DIRS['TRMMdirName'] = raw_input("> Please enter the location to the raw TRMM netCDF files: \n")
+            except:
+                pass
+            
+            try:
+                if not os.path.exists(self.DIRS['CEoriDirName']):
+                    print "Error! MERG invalid path!"
+                    self.DIRS['CEoriDirName'] = raw_input("> Please enter the directory to the MERG netCDF files: \n")
+            except:
+                print "..."   
             self.startDateTime = data['startDateTime']
             self.endDateTime = data['endDateTime']
+            #check validity of time
+            while utils.valid_date(self.startDateTime) != True:
+                print "Invalid time entered for startDateTime!"
+    
+            while utils.valid_date(self.endDateTime) != True:
+                print "Invalid time entered for endDateTime!"
             if (float(self.startDateTime) > float(self.endDateTime)):
                 print "Bad start and end times input! Check the config file. Now using default variables..."
-                return False;            
+                return False;   
+                
+            #check if all the files exisits in the MERG and TRMM directories entered
+            test,_ = iomethods.check_for_files(self.DIRS['TRMMdirName'], self.startDateTime, self.endDateTime, 3, 'hour')
+            if test == False:
+                print "Error with files in the TRMM directory entered. Please check your files before restarting. "
+                return
+            test,self.filelist = iomethods.check_for_files(self.DIRS['TRMMdirName'], self.startDateTime, self.endDateTime, 3, 'hour')
         except ValueError:
             print "Bad config file, please check that inputs are float values. Now using default variables..."
 
