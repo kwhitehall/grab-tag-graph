@@ -1440,11 +1440,17 @@ def check_criteria(thisCloudElementLatLon, aTemperature):
     tempMask = ma.masked_array(criteriaBframe, mask=(criteriaBframe >= aTemperature), fill_value = 0)
 
     #get the actual values that the mask returned
-    criteriaB = ma.zeros((criteriaBframe.shape)).astype('int16')
+    #criteriaB = ma.zeros((criteriaBframe.shape)).astype('int16')
 
-    for index, value in utils.maenumerate(tempMask):
-        latIndex, lonIndex = index
-        criteriaB[latIndex, lonIndex] = value
+    #for index, value in utils.maenumerate(tempMask):
+        #latIndex, lonIndex = index
+        #criteriaB[latIndex, lonIndex] = value
+
+    #When running the assertion, uncomment the above for loop and change the below criteriaB to testCritB
+    criteriaB = ma.zeros((criteriaBframe.shape)).astype('int16')
+    criteriaB[~tempMask.mask] = tempMask[~tempMask.mask]
+    #assert(np.array_equal(criteriaB, testCritB))
+
 
     for _ in xrange(ceCounter):
         #[0] is time dimension. Determine the actual values from the data
