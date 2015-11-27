@@ -1415,10 +1415,9 @@ def check_criteria(thisCloudElementLatLon, aTemperature):
     cloudElementCriteriaBLatLon = []
 
     _, ceCounter = ndimage.measurements.label(thisCloudElementLatLon, structure=STRUCTURING_ELEMENT)
-    #frame, ceCounter = ndimage.measurements.label(thisCloudElementLatLon, structure=STRUCTURING_ELEMENT)
-    #frameceCounter = 0
+    
     #determine min and max values in lat and lon, then use this to generate teh array from LAT,LON meshgrid
-
+    
     minLat = min(x[0] for x in thisCloudElementLatLon)
     maxLat = max(x[0] for x in thisCloudElementLatLon)
     minLon = min(x[1] for x in thisCloudElementLatLon)
@@ -1440,24 +1439,14 @@ def check_criteria(thisCloudElementLatLon, aTemperature):
     tempMask = ma.masked_array(criteriaBframe, mask=(criteriaBframe >= aTemperature), fill_value = 0)
 
     #get the actual values that the mask returned
-    #criteriaB = ma.zeros((criteriaBframe.shape)).astype('int16')
-
-    #for index, value in utils.maenumerate(tempMask):
-        #latIndex, lonIndex = index
-        #criteriaB[latIndex, lonIndex] = value
-
-    #When running the assertion, uncomment the above for loop and change the below criteriaB to testCritB
     criteriaB = ma.zeros((criteriaBframe.shape)).astype('int16')
     criteriaB[~tempMask.mask] = tempMask[~tempMask.mask]
-    #assert(np.array_equal(criteriaB, testCritB))
-
 
     for _ in xrange(ceCounter):
         #[0] is time dimension. Determine the actual values from the data
         #loc is a masked array
         #***** returns elements down then across thus (6,4) is 6 arrays deep of size 4
         try:
-
             loc = ndimage.find_objects(criteriaB)[0]
         except:
             #this would mean that no objects were found meeting criteria B
@@ -1472,29 +1461,17 @@ def check_criteria(thisCloudElementLatLon, aTemperature):
             print 'ceCounter ', ceCounter, criteriaB.shape
             print 'criteriaB ', criteriaB
 
-        #for index, value in np.ndenumerate(cloudElementCriteriaB):
-            #if value != 0:
-                #_, lat, lon = index
-                #t,lat,lon = index
-                #add back on the minLatIndex and minLonIndex to find the true lat, lon values
-                #latLonTuple = (LAT[(lat),0], LON[0,(lon)], value)
-                #cloudElementCriteriaBLatLon.append(latLonTuple)
-
-        #When doing the assertion, change the vectorized version to cloudElementCriteriaBLatLon
-        #cloudElementCriteriaBLatLonV = []
         cloudElementCriteriaBNonZeros = cloudElementCriteriaB.nonzero()
-        passingSpots = np.transpose(cloudElementCriteriaBNonZeros)
-        cloudElementCriteriaBLatLon = np.zeros((passingSpots.shape[0],3))
-        cloudElementCriteriaBLatLon[:,0] = LAT[passingSpots[:,1],0]
-        cloudElementCriteriaBLatLon[:,1] = LON[0,passingSpots[:,2]]
+        cloudElement = np.transpose(cloudElementCriteriaBNonZeros)
+        cloudElementCriteriaBLatLon = np.zeros((cloudElement.shape[0],3))
+        cloudElementCriteriaBLatLon[:,0] = LAT[cloudElement[:,1],0]
+        cloudElementCriteriaBLatLon[:,1] = LON[0,cloudElement[:,2]]
         cloudElementCriteriaBLatLon[:,2] = cloudElementCriteriaB[cloudElementCriteriaBNonZeros]
         cloudElementCriteriaBLatLon = cloudElementCriteriaBLatLon.tolist()
-
-        #Assertion confirms the two cloudElementCriteriaBLatLon methods return the same result
-        #assert(np.array_equal(cloudElementCriteriaBLatLon, cloudElementCriteriaBLatLonV))
-
+        cloudElementCriteriaBLatLon = [tuple(l)for l in cloudElementCriteriaBLatLon]
+        
         cloudElementArea = np.count_nonzero(cloudElementCriteriaB) * XRES * YRES
-        #do some cleaning up
+        
         tempMask = []
         criteriaB = []
         cloudElementCriteriaB = []
