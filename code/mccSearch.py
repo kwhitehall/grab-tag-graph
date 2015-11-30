@@ -1512,7 +1512,6 @@ def check_criteria(thisCloudElementLatLon, aTemperature):
             print 'ceCounter ', ceCounter, criteriaB.shape
             print 'criteriaB ', criteriaB
 
-<<<<<<< HEAD
         cloudElementCriteriaBNonZeros = cloudElementCriteriaB.nonzero()
         cloudElement = np.transpose(cloudElementCriteriaBNonZeros)
         cloudElementCriteriaBLatLon = np.zeros((cloudElement.shape[0],3))
@@ -1522,18 +1521,6 @@ def check_criteria(thisCloudElementLatLon, aTemperature):
         cloudElementCriteriaBLatLon = cloudElementCriteriaBLatLon.tolist()
         cloudElementCriteriaBLatLon = [tuple(l)for l in cloudElementCriteriaBLatLon]
         
-=======
-
-        for index, value in np.ndenumerate(cloudElementCriteriaB):
-            if value != 0:
-                _, lat, lon = index
-                #t,lat,lon = index
-                #add back on the minLatIndex and minLonIndex to find the true lat, lon values
-                latLonTuple = (LAT[(lat),0], LON[0,(lon)], value)
-                cloudElementCriteriaBLatLon.append(latLonTuple)
-        
-
->>>>>>> GTG-47
         cloudElementArea = np.count_nonzero(cloudElementCriteriaB) * XRES * YRES
         
         tempMask = []
