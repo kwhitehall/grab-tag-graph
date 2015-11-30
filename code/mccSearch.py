@@ -154,7 +154,7 @@ def assemble_graph(results):
     for ce in results[0][0]:
         if ce['uniqueID'] not in dict(enumerate(zip(*seenNode))):
             CLOUD_ELEMENT_GRAPH.add_node(ce['uniqueID'],ce)
-           seenNode.append(ce['uniqueID'])  
+            seenNode.append(ce['uniqueID'])  
             cloudElementsUserFile.write('Time is: %s' %(str(ce['cloudElementTime'])))
             cloudElementsUserFile.write('\nceUniqueID is: %s' %ce['uniqueID'])
             cloudElementsUserFile.write('\nCenter (lat,lon) is: %s' %ce['cloudElementCenter'])
