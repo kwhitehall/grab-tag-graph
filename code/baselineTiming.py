@@ -13,7 +13,6 @@ import iomethods
 import mccSearch
 import utils
 
-
 def main():
     sys.setrecursionlimit(5000)
 
@@ -34,12 +33,24 @@ def main():
     # utils.preprocessing_merg(rawMERG)
     # ---------------------------------------------------------------------------------
     # ---------------------------------- user inputs --------------------------------------
-    DIRS['mainDirStr'] = "/directory/to/where/to/store/outputs"
-    DIRS['TRMMdirName'] = "/directory/to/the/TRMM/netCDF/files"
-    DIRS['CEoriDirName'] = "/directory/to/the/MERG/netCDF/files"
+    DIRS['mainDirStr'] = "/home/meldefon/Studies/JPLGraphs/testSeparate2"#"/directory/to/where/to/store/outputs"
+    
+	#    BASELINE DATA + DATES
+    DIRS['TRMMdirName'] = "/home/meldefon/Studies/JPLGraphs/grab-tag-graph/baselinDataDir/datadir/TRMM"#"/directory/to/the/TRMM/netCDF/files"
+    DIRS['CEoriDirName'] = "/home/meldefon/Studies/JPLGraphs/grab-tag-graph/baselinDataDir/datadir/MERG"#"/directory/to/the/MERG/netCDF/files"
+
     #get the dates for analysis
-    startDateTime = "2006091100" #"yyyymmddhrmm"
+    startDateTime = "200908310000" #"yyyymmddhrmm"
+    endDateTime = "200908312100"
+
+	#    PAPER DATA + DATES
+    DIRS['TRMMdirName'] = "/home/meldefon/Studies/JPLGraphs/grab-tag-graph/paperData/paperData/TRMM"#"/directory/to/the/TRMM/netCDF/files"
+    DIRS['CEoriDirName'] = "/home/meldefon/Studies/JPLGraphs/grab-tag-graph/paperData/paperData/MERG"#"/directory/to/the/MERG/netCDF/files"
+
+    #get the dates for analysis
+    startDateTime = "200609110000" #"yyyymmddhrmm"
     endDateTime = "200609121200"
+
     # ---------------------------------- end user inputs --------------------------------------
     # Checks that inputs are ok
     try:
@@ -110,7 +121,7 @@ def main():
     findCEsStart = time.time()
     # ********* EITHER *********
     print "\n Using both MERG and TRMM simultaneously "
-    CEGraph = mccSearch.find_cloud_elements(mergImgs,timeList,DIRS['mainDirStr'], LAT,LON,DIRS['TRMMdirName'])
+    CEGraph = mccSearch.serial_find_cloud_elements(mergImgs,timeList,DIRS['mainDirStr'], LAT,LON,DIRS['TRMMdirName'])
     findCEsEnd = time.time()
     print "\n Number of cloud elements found is: ", CEGraph.number_of_nodes()
     print "\n End the timer for findCloudElements process"
@@ -147,6 +158,12 @@ def main():
     print "\n End the timer for the findCloudClusters process"
     print "\n Total time to complete finding the cloud clusters is %g seconds"%(findCloudClustersEnd - findCloudClustersStart)
     unittestFile.write("\n 3. Total time to complete finding the cloud clusters is %g seconds"%(findCloudClustersEnd - findCloudClustersStart))
+    print "\n The CEGraph nodes are: %s "%CEGraph.nodes()
+    unittestFile.write("\n The CEGraph nodes are: %s "%CEGraph.nodes())
+    #GABE: Added for testing with checkMERGBaseline
+    print "\n The pruned graph nodes are: %s "%prunedGraph.nodes()
+    unittestFile.write("\n\n The pruned graph nodes are: %s "%prunedGraph.nodes())
+     
     print ("-"*80)
     
     print "\n -------------- TESTING findMCCs ----------"

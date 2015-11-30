@@ -7,6 +7,7 @@ import re
 import string
 import os
 import sys
+import time
 
 from netCDF4 import Dataset
 from datetime import timedelta, datetime
@@ -108,8 +109,8 @@ def check_for_files(dirPath, startTime, endTime, tdelta, tRes):
     filelist = filter(path.isfile, glob.glob((dirPath+'/*.nc')))
     filelist.sort()
 
-    #check for the filename pattern
 
+    #check for the filename pattern
     for eachPart in re.split(r'[_,-,.,/]', re.split(r'.nc', path.basename(filelist[0]))[0]):
         tokenCounter += 1
         if tokenCounter == 1:
@@ -127,6 +128,9 @@ def check_for_files(dirPath, startTime, endTime, tdelta, tRes):
 
     startFile = glob.glob(dirPath+'/'+filenamePattern +'*'+startTimeInFile)[0]
     endTimeInFile = find_time_in_file(endTime, startTimeInFile)
+    #print("filenamePattern: "+filenamePattern)
+    #print("endTimeInFile: "+endTimeInFile)
+    #print(dirPath+'/'+filenamePattern + '*'+endTimeInFile+'*')
     endFile = glob.glob(dirPath+'/'+filenamePattern + '*'+endTimeInFile+'*')[0]
 
     currFile = startFile
@@ -295,6 +299,7 @@ def read_data(dirName, varName, latName, lonName, filelist=None):
         lonsraw = []
         tmp.close
 
+    totalLoopTime = 0
     for files in filelist:
 
         try:
@@ -304,11 +309,21 @@ def read_data(dirName, varName, latName, lonName, filelist=None):
             tempRaw = thisFile.variables[varName][:, latminIndex:latmaxIndex, lonminIndex:lonmaxIndex].astype('int16')
             tempMask = ma.masked_array(tempRaw, mask=(tempRaw > T_BB_MAX), fill_value=0)
             #get the actual values that the mask returned
-            tempMaskedValue = ma.zeros((tempRaw.shape)).astype('int16')
+            #tempMaskedValueOld = ma.zeros((tempRaw.shape)).astype('int16')
 
-            for index, value in utils.maenumerate(tempMask):
-                timeIndex, latIndex, lonIndex = index
-                tempMaskedValue[timeIndex, latIndex, lonIndex] = value
+            #innerLoopStart = time.time()
+            #for index, value in utils.maenumerate(tempMask):
+            #    timeIndex, latIndex, lonIndex = index
+            #    tempMaskedValueOld[timeIndex, latIndex, lonIndex] = value
+            #totalLoopTime+= time.time()-innerLoopStart
+            
+            #This replaces the loop computation of tempMaskedValueOld above.
+            tempMaskedValue = tempMask
+            tempMaskedValue[tempMask.mask] = 0
+            #Mini unit test of the non-loop version vers loop version. To use, 
+            # uncomment the loop immediatel above
+            #assert(np.array_equal(tempMaskedValue,tempMaskedValueOld))
+            
 
             xtimes = thisFile.variables[timeName]
 
@@ -326,7 +341,7 @@ def read_data(dirName, varName, latName, lonName, filelist=None):
             print 'bad file! ', files
 
     inputData = ma.array(inputData)
-
+    #print("Total loop time: "+str(totalLoopTime)+"\n")
     return inputData, timelist, LAT, LON
 #**********************************************************************************************************************
 def get_model_times(xtimes, timeVarName):

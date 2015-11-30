@@ -1,0 +1,14 @@
+
+ Timing results for 200609110000 to 200609121200
+ 1. Total time to complete data ingest is 3.9191 seconds
+ 2. Total time to complete finding cloud elements is 20.0264 seconds
+ 3. Total time to complete finding the cloud clusters is 0.00887799 seconds
+ 4. Total time to complete finding the MCCs is 12.0979 seconds
+ The entire evaluation took 36.0525 seconds to complete
+ ----------------------------------------------------------------
+ Number of cloud elements found is: 150
+ Number of edges (with the cloud elements) found is: 158
+ The number of nodes in the prunedGraph is: 127
+ The number of edges (with nodes) in the prunedGraph is: 119
+ MCC List has been acquired 0
+ MCS List has been acquired 5

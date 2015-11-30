@@ -1,0 +1,2689 @@
+top - 21:16:37 up 4 days, 7 min,  2 users,  load average: 0.07, 0.35, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 25.6 us, 18.0 sy,  0.2 ni, 56.0 id,  0.3 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7001432 used,  1078012 free,    70316 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2305116 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  141928  23784   9160 R  99.5  0.3   0:00.15 python
+
+top - 21:16:37 up 4 days, 7 min,  2 users,  load average: 0.07, 0.35, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 11.2 us,  1.9 sy,  0.0 ni, 87.0 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7001432 used,  1078012 free,    70316 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2305116 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  414772  79136  29880 R  89.6  1.0   0:00.33 python
+
+top - 21:16:37 up 4 days, 7 min,  2 users,  load average: 0.07, 0.35, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.1 us,  0.0 sy,  0.0 ni, 86.9 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7001432 used,  1078012 free,    70316 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2305116 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  416188  80132  29880 R  99.8  1.0   0:00.53 python
+
+top - 21:16:37 up 4 days, 7 min,  2 users,  load average: 0.07, 0.35, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.0 us,  0.6 sy,  0.0 ni, 86.3 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7001432 used,  1078012 free,    70316 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2305116 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  416620  80892  29880 R  99.8  1.0   0:00.73 python
+
+top - 21:16:38 up 4 days, 7 min,  2 users,  load average: 0.07, 0.35, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 16.2 us,  6.2 sy,  0.0 ni, 77.5 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7001432 used,  1078012 free,    70316 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2305116 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  417488  81640  29880 R  94.8  1.0   0:00.92 python
+
+top - 21:16:38 up 4 days, 7 min,  2 users,  load average: 0.07, 0.35, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 17.6 us,  4.4 sy,  0.0 ni, 78.0 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7001432 used,  1078012 free,    70316 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2305116 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  418068  82232  29880 R  99.8  1.0   0:01.12 python
+
+top - 21:16:38 up 4 days, 7 min,  2 users,  load average: 0.07, 0.35, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.6 us,  0.0 sy,  0.0 ni, 87.4 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7001432 used,  1078012 free,    70316 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2305116 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  418936  83180  29880 R  99.8  1.0   0:01.32 python
+
+top - 21:16:38 up 4 days, 7 min,  2 users,  load average: 0.07, 0.35, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.4 us,  0.6 sy,  0.0 ni, 87.0 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7001432 used,  1078012 free,    70316 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2305116 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  419516  83820  29880 R 100.0  1.0   0:01.53 python
+
+top - 21:16:38 up 4 days, 7 min,  2 users,  load average: 0.07, 0.35, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.0 us,  0.0 sy,  0.0 ni, 88.0 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7001432 used,  1078012 free,    70316 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2305116 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  420096  84400  29880 R  94.8  1.0   0:01.72 python
+
+top - 21:16:39 up 4 days, 7 min,  2 users,  load average: 0.07, 0.35, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.5 us,  0.6 sy,  0.0 ni, 86.9 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7001432 used,  1078012 free,    70316 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2305116 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  420676  84980  29880 R 100.0  1.1   0:01.93 python
+
+top - 21:16:39 up 4 days, 7 min,  2 users,  load average: 0.07, 0.35, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.8 us,  0.0 sy,  0.0 ni, 86.2 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7001432 used,  1078012 free,    70316 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2305116 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  420964  85268  29880 R  99.8  1.1   0:02.13 python
+
+top - 21:16:39 up 4 days, 7 min,  2 users,  load average: 0.07, 0.35, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.5 us,  0.6 sy,  0.0 ni, 86.9 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7001432 used,  1078012 free,    70316 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2305116 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  421544  85848  29880 R  99.8  1.1   0:02.33 python
+
+top - 21:16:39 up 4 days, 7 min,  2 users,  load average: 0.07, 0.35, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.0 us,  0.6 sy,  0.0 ni, 86.4 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7001432 used,  1078012 free,    70316 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2305116 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  422120  86428  29880 R  99.8  1.1   0:02.53 python
+
+top - 21:16:39 up 4 days, 7 min,  2 users,  load average: 0.07, 0.35, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.7 us,  0.0 sy,  0.0 ni, 87.3 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7001432 used,  1078012 free,    70316 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2305116 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  422412  86716  29880 R  99.8  1.1   0:02.73 python
+
+top - 21:16:40 up 4 days, 7 min,  2 users,  load average: 0.07, 0.35, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.0 us,  0.0 sy,  0.0 ni, 87.0 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7063240 used,  1016204 free,    70320 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2305676 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  422992  87320  29880 R 100.0  1.1   0:02.94 python
+
+top - 21:16:40 up 4 days, 7 min,  2 users,  load average: 0.07, 0.35, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.1 us,  0.6 sy,  0.0 ni, 86.2 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7063240 used,  1016204 free,    70320 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2305676 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  423716  88084  29880 R  94.6  1.1   0:03.13 python
+
+top - 21:16:40 up 4 days, 7 min,  2 users,  load average: 0.07, 0.35, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 14.5 us,  2.5 sy,  0.0 ni, 83.0 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7063240 used,  1016204 free,    70320 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2305676 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  424292  88636  29880 R  99.8  1.1   0:03.33 python
+
+top - 21:16:40 up 4 days, 7 min,  2 users,  load average: 0.07, 0.35, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 15.9 us,  1.9 sy,  0.0 ni, 82.2 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7063240 used,  1016204 free,    70320 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2305676 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  424584  88940  29880 R  99.7  1.1   0:03.53 python
+
+top - 21:16:40 up 4 days, 7 min,  2 users,  load average: 0.07, 0.35, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.1 us,  0.0 sy,  0.0 ni, 86.9 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7063240 used,  1016204 free,    70320 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2305676 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  425160  89532  29880 R 100.0  1.1   0:03.74 python
+
+top - 21:16:41 up 4 days, 7 min,  2 users,  load average: 0.15, 0.36, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 16.5 us,  8.2 sy,  0.0 ni, 75.3 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7063240 used,  1016204 free,    70320 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2305676 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  425596  89860  29880 R  99.8  1.1   0:03.94 python
+
+top - 21:16:41 up 4 days, 7 min,  2 users,  load average: 0.15, 0.36, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 17.6 us,  5.7 sy,  0.0 ni, 76.7 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7063240 used,  1016204 free,    70320 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2305676 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  425884  90312  29880 R  99.8  1.1   0:04.14 python
+
+top - 21:16:41 up 4 days, 7 min,  2 users,  load average: 0.15, 0.36, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.2 us,  3.1 sy,  0.0 ni, 83.6 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7063240 used,  1016204 free,    70320 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2305676 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  458224 114544  29880 R  89.8  1.4   0:04.32 python
+
+top - 21:16:41 up 4 days, 7 min,  2 users,  load average: 0.15, 0.36, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.2 us,  0.6 sy,  0.0 ni, 86.2 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7063240 used,  1016204 free,    70320 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2305676 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  484124 150944  32292 R  99.8  1.9   0:04.52 python
+
+top - 21:16:41 up 4 days, 7 min,  2 users,  load average: 0.15, 0.36, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.6 us,  0.6 sy,  0.0 ni, 86.8 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7063240 used,  1016204 free,    70320 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2305676 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  489136 156516  32292 R  94.8  1.9   0:04.71 python
+
+top - 21:16:42 up 4 days, 7 min,  2 users,  load average: 0.15, 0.36, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.5 us,  0.6 sy,  0.0 ni, 86.9 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7063240 used,  1016204 free,    70320 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2305676 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  491644 158888  32292 R  99.8  2.0   0:04.91 python
+
+top - 21:16:42 up 4 days, 7 min,  2 users,  load average: 0.15, 0.36, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.5 us,  0.6 sy,  0.0 ni, 86.9 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7063240 used,  1016204 free,    70320 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2305676 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  492924 160568  32292 R  99.8  2.0   0:05.11 python
+
+top - 21:16:42 up 4 days, 7 min,  2 users,  load average: 0.15, 0.36, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 11.9 us,  0.6 sy,  0.0 ni, 87.4 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7063240 used,  1016204 free,    70320 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2305676 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  500820 168504  32292 R  94.8  2.1   0:05.30 python
+
+top - 21:16:42 up 4 days, 7 min,  2 users,  load average: 0.15, 0.36, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 16.6 us,  5.1 sy,  0.0 ni, 78.3 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7063240 used,  1016204 free,    70320 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2305676 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  501332 168852  32292 R  99.8  2.1   0:05.50 python
+
+top - 21:16:42 up 4 days, 7 min,  2 users,  load average: 0.15, 0.36, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.4 us,  1.9 sy,  0.0 ni, 84.7 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7063240 used,  1016204 free,    70320 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2305676 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  501588 169044  32292 R  99.8  2.1   0:05.70 python
+
+top - 21:16:43 up 4 days, 7 min,  2 users,  load average: 0.15, 0.36, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.5 us,  0.0 sy,  0.0 ni, 87.5 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7142056 used,   937388 free,    70324 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2282008 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  502100 169724  32292 R  99.8  2.1   0:05.90 python
+
+top - 21:16:43 up 4 days, 7 min,  2 users,  load average: 0.15, 0.36, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.1 us,  0.6 sy,  0.0 ni, 86.2 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7142056 used,   937388 free,    70324 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2282008 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  502356 169860  32292 R  99.6  2.1   0:06.10 python
+
+top - 21:16:43 up 4 days, 7 min,  2 users,  load average: 0.15, 0.36, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.1 us,  0.6 sy,  0.0 ni, 86.2 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7142056 used,   937388 free,    70324 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2282008 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  502612 170328  32292 R  94.8  2.1   0:06.29 python
+
+top - 21:16:43 up 4 days, 7 min,  2 users,  load average: 0.15, 0.36, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.5 us,  0.0 sy,  0.0 ni, 87.5 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7142056 used,   937388 free,    70324 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2282008 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  502868 170532  32292 R  99.8  2.1   0:06.49 python
+
+top - 21:16:43 up 4 days, 7 min,  2 users,  load average: 0.15, 0.36, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.1 us,  0.0 sy,  0.0 ni, 86.9 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7142056 used,   937388 free,    70324 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2282008 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  503380 170908  32292 R  99.8  2.1   0:06.69 python
+
+top - 21:16:44 up 4 days, 7 min,  2 users,  load average: 0.15, 0.36, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 16.2 us,  7.5 sy,  0.0 ni, 76.2 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7142056 used,   937388 free,    70324 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2282008 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  503636 171144  32292 R  99.8  2.1   0:06.89 python
+
+top - 21:16:44 up 4 days, 7 min,  2 users,  load average: 0.15, 0.36, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 15.1 us,  5.7 sy,  0.0 ni, 79.2 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7142056 used,   937388 free,    70324 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2282008 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  503892 171296  32292 R  99.8  2.1   0:07.09 python
+
+top - 21:16:44 up 4 days, 7 min,  2 users,  load average: 0.15, 0.36, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.0 us,  0.6 sy,  0.0 ni, 86.3 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7142056 used,   937388 free,    70324 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2282008 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  504148 171708  32292 R  94.8  2.1   0:07.28 python
+
+top - 21:16:44 up 4 days, 7 min,  2 users,  load average: 0.15, 0.36, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 11.9 us,  0.6 sy,  0.0 ni, 86.2 id,  1.3 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7142056 used,   937388 free,    70324 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2282008 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  504660 172120  32292 R  99.8  2.1   0:07.48 python
+
+top - 21:16:44 up 4 days, 7 min,  2 users,  load average: 0.15, 0.36, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.5 us,  0.6 sy,  0.0 ni, 86.9 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7142056 used,   937388 free,    70324 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2282008 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  504660 172340  32292 R  99.8  2.1   0:07.68 python
+
+top - 21:16:45 up 4 days, 7 min,  2 users,  load average: 0.15, 0.36, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 11.8 us,  2.5 sy,  0.0 ni, 85.7 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7142056 used,   937388 free,    70324 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2282008 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  504916 172472  32292 R  89.8  2.1   0:07.86 python
+
+top - 21:16:45 up 4 days, 7 min,  2 users,  load average: 0.15, 0.36, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.2 us,  0.0 sy,  0.0 ni, 86.8 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7142056 used,   937388 free,    70324 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2282008 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  505172 172748  32292 R  99.8  2.1   0:08.06 python
+
+top - 21:16:45 up 4 days, 7 min,  2 users,  load average: 0.15, 0.36, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.7 us,  0.0 sy,  0.0 ni, 85.4 id,  1.9 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7142056 used,   937388 free,    70324 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2282008 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  505684 173144  32292 R 100.0  2.1   0:08.27 python
+
+top - 21:16:45 up 4 days, 7 min,  2 users,  load average: 0.15, 0.36, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.0 us,  0.6 sy,  0.0 ni, 84.6 id,  1.9 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7142056 used,   937388 free,    70324 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2282008 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  505940 173360  32292 R  94.8  2.1   0:08.46 python
+
+top - 21:16:45 up 4 days, 7 min,  2 users,  load average: 0.15, 0.36, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.0 us,  1.2 sy,  0.0 ni, 85.7 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7142056 used,   937388 free,    70324 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2282008 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  506196 173656  32292 R  94.8  2.1   0:08.65 python
+
+top - 21:16:46 up 4 days, 7 min,  2 users,  load average: 0.21, 0.37, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.6 us,  0.0 sy,  0.0 ni, 87.4 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7147688 used,   931756 free,    70352 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2284668 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  506196 173856  32292 R  99.8  2.2   0:08.85 python
+
+top - 21:16:46 up 4 days, 7 min,  2 users,  load average: 0.21, 0.37, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.2 us,  0.0 sy,  0.0 ni, 86.8 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7147688 used,   931756 free,    70352 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2284668 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  506708 174148  32292 R  99.6  2.2   0:09.05 python
+
+top - 21:16:46 up 4 days, 7 min,  2 users,  load average: 0.21, 0.37, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.4 us,  1.2 sy,  0.0 ni, 86.3 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7147688 used,   931756 free,    70352 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2284668 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  506708 174240  32292 R 100.0  2.2   0:09.26 python
+
+top - 21:16:46 up 4 days, 7 min,  2 users,  load average: 0.21, 0.37, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.4 us,  1.2 sy,  0.0 ni, 86.3 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7147688 used,   931756 free,    70352 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2284668 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  506964 174424  32292 R  89.8  2.2   0:09.44 python
+
+top - 21:16:46 up 4 days, 7 min,  2 users,  load average: 0.21, 0.37, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.1 us,  0.6 sy,  0.0 ni, 86.2 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7147688 used,   931756 free,    70352 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2284668 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  507220 174728  32292 R  99.8  2.2   0:09.64 python
+
+top - 21:16:47 up 4 days, 7 min,  2 users,  load average: 0.21, 0.37, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 14.9 us,  9.3 sy,  0.0 ni, 75.8 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7147688 used,   931756 free,    70352 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2284668 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  507220 174752  32292 R  99.8  2.2   0:09.84 python
+
+top - 21:16:47 up 4 days, 7 min,  2 users,  load average: 0.21, 0.37, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 15.8 us,  3.8 sy,  0.0 ni, 80.4 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7147688 used,   931756 free,    70352 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2284668 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  507220 174872  32292 R  99.8  2.2   0:10.04 python
+
+top - 21:16:47 up 4 days, 7 min,  2 users,  load average: 0.21, 0.37, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 11.9 us,  0.6 sy,  0.0 ni, 87.4 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7147688 used,   931756 free,    70352 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2284668 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  507476 175092  32292 R  94.8  2.2   0:10.23 python
+
+top - 21:16:47 up 4 days, 7 min,  2 users,  load average: 0.21, 0.37, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.4 us,  0.6 sy,  0.0 ni, 87.0 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7147688 used,   931756 free,    70352 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2284668 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  507732 175392  32292 R  99.8  2.2   0:10.43 python
+
+top - 21:16:47 up 4 days, 7 min,  2 users,  load average: 0.21, 0.37, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.6 us,  0.6 sy,  0.0 ni, 86.8 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7147688 used,   931756 free,    70352 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2284668 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  507988 175488  32292 R  89.8  2.2   0:10.61 python
+
+top - 21:16:48 up 4 days, 7 min,  2 users,  load average: 0.21, 0.37, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.7 us,  0.0 sy,  0.0 ni, 85.7 id,  0.6 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7147688 used,   931756 free,    70352 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2284668 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  508500 175928  32292 R  99.7  2.2   0:10.81 python
+
+top - 21:16:48 up 4 days, 7 min,  2 users,  load average: 0.21, 0.37, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.5 us,  1.2 sy,  0.0 ni, 86.2 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7147688 used,   931756 free,    70352 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2284668 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  508500 176076  32292 R  94.8  2.2   0:11.00 python
+
+top - 21:16:48 up 4 days, 7 min,  2 users,  load average: 0.21, 0.37, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.1 us,  0.0 sy,  0.0 ni, 86.9 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7147688 used,   931756 free,    70352 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2284668 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  509012 176544  32292 R  99.8  2.2   0:11.20 python
+
+top - 21:16:48 up 4 days, 7 min,  2 users,  load average: 0.21, 0.37, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.1 us,  0.0 sy,  0.0 ni, 86.9 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7147688 used,   931756 free,    70352 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2284668 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  509012 176564  32292 R 100.0  2.2   0:11.41 python
+
+top - 21:16:48 up 4 days, 7 min,  2 users,  load average: 0.21, 0.37, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.4 us,  1.2 sy,  0.0 ni, 86.3 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7147688 used,   931756 free,    70352 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2284668 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  509524 176984  32292 R  84.8  2.2   0:11.58 python
+
+top - 21:16:49 up 4 days, 7 min,  2 users,  load average: 0.21, 0.37, 0.77
+Tasks:   1 total,   0 running,   1 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 11.9 us,  0.6 sy,  0.0 ni, 87.4 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7204692 used,   874752 free,    70352 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2303068 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  509524 177148  32292 S  99.8  2.2   0:11.78 python
+
+top - 21:16:49 up 4 days, 7 min,  2 users,  load average: 0.21, 0.37, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.6 us,  0.6 sy,  0.0 ni, 86.8 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7204692 used,   874752 free,    70352 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2303068 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  510560 178000  32292 R  94.5  2.2   0:11.97 python
+
+top - 21:16:49 up 4 days, 7 min,  2 users,  load average: 0.21, 0.37, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.1 us,  0.0 sy,  0.0 ni, 86.9 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7204692 used,   874752 free,    70352 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2303068 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  510816 178256  32292 R 100.0  2.2   0:12.18 python
+
+top - 21:16:49 up 4 days, 7 min,  2 users,  load average: 0.21, 0.37, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.5 us,  0.0 sy,  0.0 ni, 87.5 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7204692 used,   874752 free,    70352 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2303068 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  510816 178404  32292 R  99.8  2.2   0:12.38 python
+
+top - 21:16:49 up 4 days, 7 min,  2 users,  load average: 0.21, 0.37, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 11.9 us,  1.2 sy,  0.0 ni, 86.9 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7204692 used,   874752 free,    70352 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2303068 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  510816 178448  32292 R  99.8  2.2   0:12.58 python
+
+top - 21:16:50 up 4 days, 7 min,  2 users,  load average: 0.21, 0.37, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 15.1 us,  8.8 sy,  0.0 ni, 76.1 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7204692 used,   874752 free,    70352 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2303068 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  511072 178476  32292 R  99.8  2.2   0:12.78 python
+
+top - 21:16:50 up 4 days, 7 min,  2 users,  load average: 0.21, 0.37, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 16.4 us,  3.8 sy,  0.0 ni, 79.9 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7204692 used,   874752 free,    70352 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2303068 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  511964 179544  32292 R  89.8  2.2   0:12.96 python
+
+top - 21:16:50 up 4 days, 7 min,  2 users,  load average: 0.21, 0.37, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.0 us,  0.0 sy,  0.0 ni, 87.0 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7204692 used,   874752 free,    70352 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2303068 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  512220 179748  32292 R  99.7  2.2   0:13.16 python
+
+top - 21:16:50 up 4 days, 7 min,  2 users,  load average: 0.21, 0.37, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.6 us,  0.0 sy,  0.0 ni, 87.4 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7204692 used,   874752 free,    70352 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2303068 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  512220 179860  32292 R  99.8  2.2   0:13.36 python
+
+top - 21:16:50 up 4 days, 7 min,  2 users,  load average: 0.21, 0.37, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.5 us,  0.6 sy,  0.0 ni, 86.9 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7204692 used,   874752 free,    70352 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2303068 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  512476 180044  32292 R  99.8  2.2   0:13.56 python
+
+top - 21:16:51 up 4 days, 7 min,  2 users,  load average: 0.28, 0.38, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.0 us,  0.6 sy,  0.0 ni, 86.3 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7204692 used,   874752 free,    70352 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2303068 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  512476 180088  32292 R  99.8  2.2   0:13.76 python
+
+top - 21:16:51 up 4 days, 7 min,  2 users,  load average: 0.28, 0.38, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.7 us,  0.0 sy,  0.0 ni, 87.3 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7204692 used,   874752 free,    70352 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2303068 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  512732 180148  32292 R 100.0  2.2   0:13.97 python
+
+top - 21:16:51 up 4 days, 7 min,  2 users,  load average: 0.28, 0.38, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.5 us,  0.6 sy,  0.0 ni, 86.9 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7204692 used,   874752 free,    70352 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2303068 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  512732 180368  32292 R  94.8  2.2   0:14.16 python
+
+top - 21:16:51 up 4 days, 7 min,  2 users,  load average: 0.28, 0.38, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.4 us,  0.6 sy,  0.0 ni, 87.0 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7204692 used,   874752 free,    70352 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2303068 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  512988 180420  32292 R  99.8  2.2   0:14.36 python
+
+top - 21:16:51 up 4 days, 7 min,  2 users,  load average: 0.28, 0.38, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.0 us,  0.6 sy,  0.0 ni, 87.3 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7204692 used,   874752 free,    70352 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2303068 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  518900 186372  32292 R  99.8  2.3   0:14.56 python
+
+top - 21:16:52 up 4 days, 7 min,  2 users,  load average: 0.28, 0.38, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.6 us,  0.6 sy,  0.0 ni, 85.8 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7188588 used,   890856 free,    70360 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2311756 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  519156 186696  32292 R  94.8  2.3   0:14.75 python
+
+top - 21:16:52 up 4 days, 7 min,  2 users,  load average: 0.28, 0.38, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.7 us,  0.0 sy,  0.0 ni, 87.3 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7188588 used,   890856 free,    70360 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2311756 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  519156 186696  32292 R  99.6  2.3   0:14.95 python
+
+top - 21:16:52 up 4 days, 7 min,  2 users,  load average: 0.28, 0.38, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.7 us,  0.0 sy,  0.0 ni, 86.3 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7188588 used,   890856 free,    70360 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2311756 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  519412 186872  32292 R  99.8  2.3   0:15.15 python
+
+top - 21:16:52 up 4 days, 7 min,  2 users,  load average: 0.28, 0.38, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 11.9 us,  0.0 sy,  0.0 ni, 88.1 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7188588 used,   890856 free,    70360 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2311756 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  519412 186932  32292 R 100.0  2.3   0:15.36 python
+
+top - 21:16:52 up 4 days, 7 min,  2 users,  load average: 0.28, 0.38, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.5 us,  0.6 sy,  0.0 ni, 86.9 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7188588 used,   890856 free,    70360 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2311756 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  519668 187108  32292 R  99.8  2.3   0:15.56 python
+
+top - 21:16:53 up 4 days, 7 min,  2 users,  load average: 0.28, 0.38, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 14.4 us, 10.6 sy,  0.0 ni, 75.0 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7188588 used,   890856 free,    70360 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2311756 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  519668 187232  32292 R  99.8  2.3   0:15.76 python
+
+top - 21:16:53 up 4 days, 8 min,  2 users,  load average: 0.28, 0.38, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 14.6 us,  3.8 sy,  0.0 ni, 81.6 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7188588 used,   890856 free,    70360 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2311756 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  520180 187576  32292 R  94.8  2.3   0:15.95 python
+
+top - 21:16:53 up 4 days, 8 min,  2 users,  load average: 0.28, 0.38, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.1 us,  0.0 sy,  0.0 ni, 86.9 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7188588 used,   890856 free,    70360 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2311756 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  520180 187744  32292 R 100.0  2.3   0:16.16 python
+
+top - 21:16:53 up 4 days, 8 min,  2 users,  load average: 0.28, 0.38, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.0 us,  1.2 sy,  0.0 ni, 85.8 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7188588 used,   890856 free,    70360 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2311756 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  521204 188856  32292 R  94.8  2.3   0:16.35 python
+
+top - 21:16:53 up 4 days, 8 min,  2 users,  load average: 0.28, 0.38, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.6 us,  0.0 sy,  0.0 ni, 87.4 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7188588 used,   890856 free,    70360 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2311756 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  521460 188908  32292 R  99.8  2.3   0:16.55 python
+
+top - 21:16:54 up 4 days, 8 min,  2 users,  load average: 0.28, 0.38, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.1 us,  0.0 sy,  0.0 ni, 86.9 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7188588 used,   890856 free,    70360 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2311756 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  521716 188940  32292 R  94.8  2.3   0:16.74 python
+
+top - 21:16:54 up 4 days, 8 min,  2 users,  load average: 0.28, 0.38, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.7 us,  0.6 sy,  0.0 ni, 86.7 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7188588 used,   890856 free,    70360 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2311756 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  521716 189228  32292 R  99.8  2.3   0:16.94 python
+
+top - 21:16:54 up 4 days, 8 min,  2 users,  load average: 0.28, 0.38, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.5 us,  0.6 sy,  0.0 ni, 86.9 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7188588 used,   890856 free,    70360 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2311756 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  522228 189840  32292 R 100.0  2.3   0:17.15 python
+
+top - 21:16:54 up 4 days, 8 min,  2 users,  load average: 0.28, 0.38, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.5 us,  0.6 sy,  0.0 ni, 86.9 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7188588 used,   890856 free,    70360 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2311756 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  522228 189840  32292 R  94.8  2.3   0:17.34 python
+
+top - 21:16:54 up 4 days, 8 min,  2 users,  load average: 0.28, 0.38, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.1 us,  0.0 sy,  0.0 ni, 86.9 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7188588 used,   890856 free,    70360 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2311756 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  522484 189968  32292 R  99.8  2.4   0:17.54 python
+
+top - 21:16:55 up 4 days, 8 min,  2 users,  load average: 0.28, 0.38, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.5 us,  0.6 sy,  0.0 ni, 86.9 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7193360 used,   886084 free,    70360 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2312732 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  522484 190068  32292 R 100.0  2.4   0:17.75 python
+
+top - 21:16:55 up 4 days, 8 min,  2 users,  load average: 0.28, 0.38, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.6 us,  0.6 sy,  0.0 ni, 86.8 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7193360 used,   886084 free,    70360 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2312732 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  523508 190904  32292 R  94.7  2.4   0:17.94 python
+
+top - 21:16:55 up 4 days, 8 min,  2 users,  load average: 0.28, 0.38, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.0 us,  0.6 sy,  0.0 ni, 86.3 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7193360 used,   886084 free,    70360 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2312732 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  523508 191064  32292 R 100.0  2.4   0:18.15 python
+
+top - 21:16:55 up 4 days, 8 min,  2 users,  load average: 0.28, 0.38, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 11.5 us,  0.6 sy,  0.0 ni, 87.3 id,  0.6 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7193360 used,   886084 free,    70360 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2312732 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  524788 192184  32292 R  89.8  2.4   0:18.33 python
+
+top - 21:16:55 up 4 days, 8 min,  2 users,  load average: 0.28, 0.38, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.5 us,  0.6 sy,  0.0 ni, 83.1 id,  3.8 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7193360 used,   886084 free,    70360 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2312732 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  524788 192420  32292 R  99.8  2.4   0:18.53 python
+
+top - 21:16:56 up 4 days, 8 min,  2 users,  load average: 0.34, 0.39, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 16.0 us,  9.3 sy,  0.0 ni, 74.1 id,  0.0 wa,  0.0 hi,  0.6 si,  0.0 st
+KiB Mem:   8079444 total,  7193360 used,   886084 free,    70360 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2312732 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  524788 192420  32292 R  99.8  2.4   0:18.73 python
+
+top - 21:16:56 up 4 days, 8 min,  2 users,  load average: 0.34, 0.39, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 15.6 us,  3.1 sy,  0.0 ni, 81.2 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7193360 used,   886084 free,    70360 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2312732 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  524788 192432  32292 R  99.8  2.4   0:18.93 python
+
+top - 21:16:56 up 4 days, 8 min,  2 users,  load average: 0.34, 0.39, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.6 us,  0.0 sy,  0.0 ni, 87.4 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7193360 used,   886084 free,    70360 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2312732 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  525556 193208  32292 R  99.8  2.4   0:19.13 python
+
+top - 21:16:56 up 4 days, 8 min,  2 users,  load average: 0.34, 0.39, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.1 us,  0.0 sy,  0.0 ni, 86.9 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7193360 used,   886084 free,    70360 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2312732 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  525812 193220  32292 R  99.8  2.4   0:19.33 python
+
+top - 21:16:56 up 4 days, 8 min,  2 users,  load average: 0.34, 0.39, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.6 us,  0.0 sy,  0.0 ni, 87.4 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7193360 used,   886084 free,    70360 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2312732 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  525812 193344  32292 R  99.8  2.4   0:19.53 python
+
+top - 21:16:57 up 4 days, 8 min,  2 users,  load average: 0.34, 0.39, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.6 us,  0.0 sy,  0.0 ni, 87.4 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7193360 used,   886084 free,    70360 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2312732 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  525812 193400  32292 R 100.0  2.4   0:19.74 python
+
+top - 21:16:57 up 4 days, 8 min,  2 users,  load average: 0.34, 0.39, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.6 us,  1.2 sy,  0.0 ni, 85.2 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7193360 used,   886084 free,    70360 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2312732 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  527092 194744  32292 R  99.8  2.4   0:19.94 python
+
+top - 21:16:57 up 4 days, 8 min,  2 users,  load average: 0.34, 0.39, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 11.9 us,  1.3 sy,  0.0 ni, 86.8 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7193360 used,   886084 free,    70360 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2312732 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  527348 194772  32292 R  94.8  2.4   0:20.13 python
+
+top - 21:16:57 up 4 days, 8 min,  2 users,  load average: 0.34, 0.39, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 11.9 us,  0.6 sy,  0.0 ni, 87.4 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7193360 used,   886084 free,    70360 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2312732 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  529140 196792  32292 R  99.8  2.4   0:20.33 python
+
+top - 21:16:57 up 4 days, 8 min,  2 users,  load average: 0.34, 0.39, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.6 us,  0.0 sy,  0.0 ni, 87.4 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7193360 used,   886084 free,    70360 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2312732 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  529396 196804  32292 R  94.8  2.4   0:20.52 python
+
+top - 21:16:58 up 4 days, 8 min,  2 users,  load average: 0.34, 0.39, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.1 us,  0.0 sy,  0.0 ni, 86.9 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7201276 used,   878168 free,    70368 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2312124 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  529396 197048  32292 R 100.0  2.4   0:20.73 python
+
+top - 21:16:58 up 4 days, 8 min,  2 users,  load average: 0.34, 0.39, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 11.9 us,  1.2 sy,  0.0 ni, 86.9 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7201276 used,   878168 free,    70368 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2312124 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  530420 198072  32292 R  99.5  2.5   0:20.93 python
+
+top - 21:16:58 up 4 days, 8 min,  2 users,  load average: 0.34, 0.39, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.6 us,  0.0 sy,  0.0 ni, 87.4 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7201276 used,   878168 free,    70368 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2312124 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  530676 198108  32292 R  99.7  2.5   0:21.13 python
+
+top - 21:16:58 up 4 days, 8 min,  2 users,  load average: 0.34, 0.39, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.5 us,  0.6 sy,  0.0 ni, 86.9 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7201276 used,   878168 free,    70368 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2312124 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  530676 198148  32292 R  99.8  2.5   0:21.33 python
+
+top - 21:16:58 up 4 days, 8 min,  2 users,  load average: 0.34, 0.39, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.5 us,  0.0 sy,  0.0 ni, 87.5 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7201276 used,   878168 free,    70368 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2312124 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  530676 198176  32292 R  99.8  2.5   0:21.53 python
+
+top - 21:16:59 up 4 days, 8 min,  2 users,  load average: 0.34, 0.39, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 15.2 us, 10.1 sy,  0.0 ni, 74.7 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7201276 used,   878168 free,    70368 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2312124 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  530676 198280  32292 R  99.8  2.5   0:21.73 python
+
+top - 21:16:59 up 4 days, 8 min,  2 users,  load average: 0.34, 0.39, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 15.7 us,  2.5 sy,  0.0 ni, 81.8 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7201276 used,   878168 free,    70368 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2312124 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  530932 198328  32292 R  99.8  2.5   0:21.93 python
+
+top - 21:16:59 up 4 days, 8 min,  2 users,  load average: 0.34, 0.39, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.1 us,  0.0 sy,  0.0 ni, 86.9 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7201276 used,   878168 free,    70368 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2312124 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  532468 200120  32292 R  99.8  2.5   0:22.13 python
+
+top - 21:16:59 up 4 days, 8 min,  2 users,  load average: 0.34, 0.39, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 11.9 us,  1.2 sy,  0.0 ni, 86.9 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7201276 used,   878168 free,    70368 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2312124 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  534004 201400  32292 R  94.8  2.5   0:22.32 python
+
+top - 21:16:59 up 4 days, 8 min,  2 users,  load average: 0.34, 0.39, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.0 us,  0.6 sy,  0.0 ni, 86.3 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7201276 used,   878168 free,    70368 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2312124 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  538380 205768  32292 R  99.8  2.5   0:22.52 python
+
+top - 21:17:00 up 4 days, 8 min,  2 users,  load average: 0.34, 0.39, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.6 us,  0.6 sy,  0.0 ni, 86.8 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7201276 used,   878168 free,    70368 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2312124 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  538380 206032  32292 R  99.8  2.6   0:22.72 python
+
+top - 21:17:00 up 4 days, 8 min,  2 users,  load average: 0.34, 0.39, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.6 us,  0.6 sy,  0.0 ni, 86.8 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7201276 used,   878168 free,    70368 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2312124 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  538892 206308  32292 R  99.8  2.6   0:22.92 python
+
+top - 21:17:00 up 4 days, 8 min,  2 users,  load average: 0.34, 0.39, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.6 us,  0.6 sy,  0.0 ni, 85.8 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7201276 used,   878168 free,    70368 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2312124 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  539660 207312  32292 R  99.8  2.6   0:23.12 python
+
+top - 21:17:00 up 4 days, 8 min,  2 users,  load average: 0.34, 0.39, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 11.3 us,  0.6 sy,  0.0 ni, 88.1 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7201276 used,   878168 free,    70368 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2312124 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  542168 209436  32292 R  99.8  2.6   0:23.32 python
+
+top - 21:17:01 up 4 days, 8 min,  2 users,  load average: 0.34, 0.39, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.5 us,  0.6 sy,  0.0 ni, 83.1 id,  3.8 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7213264 used,   866180 free,    70376 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2311880 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  542168 209652  32292 R  99.8  2.6   0:23.52 python
+
+top - 21:17:01 up 4 days, 8 min,  2 users,  load average: 0.39, 0.40, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.1 us,  0.6 sy,  0.0 ni, 82.5 id,  3.8 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7213264 used,   866180 free,    70376 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2311880 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  542168 209736  32292 R  99.5  2.6   0:23.72 python
+
+top - 21:17:01 up 4 days, 8 min,  2 users,  load average: 0.39, 0.40, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 11.9 us,  1.3 sy,  0.0 ni, 86.8 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7213264 used,   866180 free,    70376 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2311880 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  542424 209844  32292 R 100.0  2.6   0:23.93 python
+
+top - 21:17:01 up 4 days, 8 min,  2 users,  load average: 0.39, 0.40, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.6 us,  0.0 sy,  0.0 ni, 87.4 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7213264 used,   866180 free,    70376 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2311880 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  543192 210588  32292 R  94.8  2.6   0:24.12 python
+
+top - 21:17:01 up 4 days, 8 min,  2 users,  load average: 0.39, 0.40, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.6 us,  0.6 sy,  0.0 ni, 85.8 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7213264 used,   866180 free,    70376 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2311880 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  544472 212124  32292 R  99.8  2.6   0:24.32 python
+
+top - 21:17:02 up 4 days, 8 min,  2 users,  load average: 0.39, 0.40, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.6 us,  0.6 sy,  0.0 ni, 86.8 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7213264 used,   866180 free,    70376 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2311880 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  549148 216544  32292 R  94.8  2.7   0:24.51 python
+
+top - 21:17:02 up 4 days, 8 min,  2 users,  load average: 0.39, 0.40, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 15.0 us, 10.6 sy,  0.0 ni, 74.4 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7213264 used,   866180 free,    70376 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2311880 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  549916 217556  32292 R  99.8  2.7   0:24.71 python
+
+top - 21:17:02 up 4 days, 8 min,  2 users,  load average: 0.39, 0.40, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 15.1 us,  2.5 sy,  0.0 ni, 82.4 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7213264 used,   866180 free,    70376 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2311880 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  550172 217644  32292 R  99.8  2.7   0:24.91 python
+
+top - 21:17:02 up 4 days, 8 min,  2 users,  load average: 0.39, 0.40, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 11.9 us,  1.2 sy,  0.0 ni, 86.9 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7213264 used,   866180 free,    70376 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2311880 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  550172 217796  32292 R  99.8  2.7   0:25.11 python
+
+top - 21:17:02 up 4 days, 8 min,  2 users,  load average: 0.39, 0.40, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.6 us,  0.0 sy,  0.0 ni, 87.4 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7213264 used,   866180 free,    70376 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2311880 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  551196 218848  32292 R 100.0  2.7   0:25.32 python
+
+top - 21:17:03 up 4 days, 8 min,  2 users,  load average: 0.39, 0.40, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.5 us,  0.6 sy,  0.0 ni, 86.9 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7213264 used,   866180 free,    70376 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2311880 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  551452 218940  32292 R  99.8  2.7   0:25.52 python
+
+top - 21:17:03 up 4 days, 8 min,  2 users,  load average: 0.39, 0.40, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 11.9 us,  1.2 sy,  0.0 ni, 86.9 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7213264 used,   866180 free,    70376 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2311880 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  551452 219068  32292 R  99.8  2.7   0:25.72 python
+
+top - 21:17:03 up 4 days, 8 min,  2 users,  load average: 0.39, 0.40, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.7 us,  0.0 sy,  0.0 ni, 87.3 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7213264 used,   866180 free,    70376 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2311880 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  551708 219212  32292 R  94.8  2.7   0:25.91 python
+
+top - 21:17:03 up 4 days, 8 min,  2 users,  load average: 0.39, 0.40, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.5 us,  0.6 sy,  0.0 ni, 86.9 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7213264 used,   866180 free,    70376 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2311880 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  552220 219616  32292 R  99.7  2.7   0:26.11 python
+
+top - 21:17:03 up 4 days, 8 min,  2 users,  load average: 0.39, 0.40, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.4 us,  1.2 sy,  0.0 ni, 86.3 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7213264 used,   866180 free,    70376 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2311880 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  558768 226420  32292 R  94.8  2.8   0:26.30 python
+
+top - 21:17:04 up 4 days, 8 min,  2 users,  load average: 0.39, 0.40, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.4 us,  0.6 sy,  0.0 ni, 87.0 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7233124 used,   846320 free,    70388 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2311516 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  561840 229240  32292 R  99.8  2.8   0:26.50 python
+
+top - 21:17:04 up 4 days, 8 min,  2 users,  load average: 0.39, 0.40, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.6 us,  0.6 sy,  0.0 ni, 86.8 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7233124 used,   846320 free,    70388 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2311516 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  562352 229928  32292 R  99.6  2.8   0:26.70 python
+
+top - 21:17:04 up 4 days, 8 min,  2 users,  load average: 0.39, 0.40, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.8 us,  0.0 sy,  0.0 ni, 86.2 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7233124 used,   846320 free,    70388 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2311516 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  562608 230024  32292 R  99.8  2.8   0:26.90 python
+
+top - 21:17:04 up 4 days, 8 min,  2 users,  load average: 0.39, 0.40, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.6 us,  0.0 sy,  0.0 ni, 87.4 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7233124 used,   846320 free,    70388 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2311516 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  562608 230180  32292 R  99.8  2.8   0:27.10 python
+
+top - 21:17:04 up 4 days, 8 min,  2 users,  load average: 0.39, 0.40, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.4 us,  1.2 sy,  0.0 ni, 86.3 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7233124 used,   846320 free,    70388 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2311516 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  562864 230300  32292 R  99.7  2.9   0:27.30 python
+
+top - 21:17:05 up 4 days, 8 min,  2 users,  load average: 0.39, 0.40, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.6 us,  0.6 sy,  0.0 ni, 86.8 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7233124 used,   846320 free,    70388 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2311516 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  564144 231544  32292 R 100.0  2.9   0:27.51 python
+
+top - 21:17:05 up 4 days, 8 min,  2 users,  load average: 0.39, 0.40, 0.77
+Tasks:   1 total,   0 running,   1 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 16.2 us, 10.0 sy,  0.0 ni, 68.1 id,  5.6 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7233124 used,   846320 free,    70388 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2311516 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  565168 232820  32292 S  89.8  2.9   0:27.69 python
+
+top - 21:17:05 up 4 days, 8 min,  2 users,  load average: 0.39, 0.40, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 15.6 us,  2.5 sy,  0.0 ni, 81.9 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7233124 used,   846320 free,    70388 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2311516 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  568240 235636  32292 R  99.7  2.9   0:27.89 python
+
+top - 21:17:05 up 4 days, 8 min,  2 users,  load average: 0.39, 0.40, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.1 us,  0.0 sy,  0.0 ni, 86.9 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7233124 used,   846320 free,    70388 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2311516 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  568752 236316  32292 R  99.8  2.9   0:28.09 python
+
+top - 21:17:05 up 4 days, 8 min,  2 users,  load average: 0.39, 0.40, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 11.9 us,  0.6 sy,  0.0 ni, 87.4 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7233124 used,   846320 free,    70388 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2311516 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  568752 236340  32292 R  99.8  2.9   0:28.29 python
+
+top - 21:17:06 up 4 days, 8 min,  2 users,  load average: 0.39, 0.40, 0.77
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.6 us,  0.0 sy,  0.0 ni, 82.4 id,  5.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7233124 used,   846320 free,    70388 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2311516 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  571204 238700  32292 R  99.8  3.0   0:28.49 python
+
+top - 21:17:06 up 4 days, 8 min,  2 users,  load average: 0.44, 0.41, 0.78
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.5 us,  0.6 sy,  0.0 ni, 86.9 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7233124 used,   846320 free,    70388 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2311516 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  572996 240392  32292 R  99.8  3.0   0:28.69 python
+
+top - 21:17:06 up 4 days, 8 min,  2 users,  load average: 0.44, 0.41, 0.78
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.8 us,  0.6 sy,  0.0 ni, 85.6 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7233124 used,   846320 free,    70388 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2311516 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  573252 240648  32292 R  99.8  3.0   0:28.89 python
+
+top - 21:17:06 up 4 days, 8 min,  2 users,  load average: 0.44, 0.41, 0.78
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.2 us,  0.0 sy,  0.0 ni, 86.8 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7233124 used,   846320 free,    70388 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2311516 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  576660 244124  32292 R  94.8  3.0   0:29.08 python
+
+top - 21:17:06 up 4 days, 8 min,  2 users,  load average: 0.44, 0.41, 0.78
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.5 us,  0.6 sy,  0.0 ni, 86.9 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7233124 used,   846320 free,    70388 buffers
+KiB Swap:  8290300 total,  1525912 used,  6764388 free.  2311516 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  577172 244824  32292 R 100.0  3.0   0:29.29 python
+
+top - 21:17:07 up 4 days, 8 min,  2 users,  load average: 0.44, 0.41, 0.78
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 11.9 us,  0.6 sy,  0.0 ni, 87.5 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7251340 used,   828104 free,    70392 buffers
+KiB Swap:  8290300 total,  1525900 used,  6764400 free.  2310868 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  580244 247644  32292 R  94.8  3.1   0:29.48 python
+
+top - 21:17:07 up 4 days, 8 min,  2 users,  load average: 0.44, 0.41, 0.78
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.1 us,  0.0 sy,  0.0 ni, 86.9 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7251340 used,   828104 free,    70392 buffers
+KiB Swap:  8290300 total,  1525900 used,  6764400 free.  2310868 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  580756 248208  32292 R  99.6  3.1   0:29.68 python
+
+top - 21:17:07 up 4 days, 8 min,  2 users,  load average: 0.44, 0.41, 0.78
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.7 us,  0.6 sy,  0.0 ni, 86.7 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7251340 used,   828104 free,    70392 buffers
+KiB Swap:  8290300 total,  1525900 used,  6764400 free.  2310868 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  580756 248316  32292 R 100.0  3.1   0:29.89 python
+
+top - 21:17:07 up 4 days, 8 min,  2 users,  load average: 0.44, 0.41, 0.78
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.6 us,  0.0 sy,  0.0 ni, 87.4 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7251340 used,   828104 free,    70392 buffers
+KiB Swap:  8290300 total,  1525900 used,  6764400 free.  2310868 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  582036 249640  32292 R  99.8  3.1   0:30.09 python
+
+top - 21:17:07 up 4 days, 8 min,  2 users,  load average: 0.44, 0.41, 0.78
+Tasks:   1 total,   0 running,   1 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.5 us,  0.6 sy,  0.0 ni, 85.9 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7251340 used,   828104 free,    70392 buffers
+KiB Swap:  8290300 total,  1525900 used,  6764400 free.  2310868 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  583340 250692  32292 S  94.9  3.1   0:30.28 python
+
+top - 21:17:08 up 4 days, 8 min,  2 users,  load average: 0.44, 0.41, 0.78
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 11.9 us,  2.5 sy,  0.0 ni, 85.5 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7251340 used,   828104 free,    70392 buffers
+KiB Swap:  8290300 total,  1525900 used,  6764400 free.  2310868 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  584876 252272  32292 R  99.8  3.1   0:30.48 python
+
+top - 21:17:08 up 4 days, 8 min,  2 users,  load average: 0.44, 0.41, 0.78
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.8 us, 11.3 sy,  0.0 ni, 74.8 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7251340 used,   828104 free,    70392 buffers
+KiB Swap:  8290300 total,  1525900 used,  6764400 free.  2310868 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  586412 254064  32292 R  99.8  3.1   0:30.68 python
+
+top - 21:17:08 up 4 days, 8 min,  2 users,  load average: 0.44, 0.41, 0.78
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 14.9 us,  2.5 sy,  0.0 ni, 82.6 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7251340 used,   828104 free,    70392 buffers
+KiB Swap:  8290300 total,  1525900 used,  6764400 free.  2310868 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  586668 254116  32292 R  94.8  3.1   0:30.87 python
+
+top - 21:17:08 up 4 days, 8 min,  2 users,  load average: 0.44, 0.41, 0.78
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.5 us,  0.6 sy,  0.0 ni, 86.9 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7251340 used,   828104 free,    70392 buffers
+KiB Swap:  8290300 total,  1525900 used,  6764400 free.  2310868 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  586668 254320  32292 R  99.8  3.1   0:31.07 python
+
+top - 21:17:08 up 4 days, 8 min,  2 users,  load average: 0.44, 0.41, 0.78
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.6 us,  0.0 sy,  0.0 ni, 87.4 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7251340 used,   828104 free,    70392 buffers
+KiB Swap:  8290300 total,  1525900 used,  6764400 free.  2310868 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  587180 254832  32292 R  99.8  3.2   0:31.27 python
+
+top - 21:17:09 up 4 days, 8 min,  2 users,  load average: 0.44, 0.41, 0.78
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.0 us,  0.6 sy,  0.0 ni, 86.3 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7251340 used,   828104 free,    70392 buffers
+KiB Swap:  8290300 total,  1525900 used,  6764400 free.  2310868 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  587436 254924  32292 R  94.8  3.2   0:31.46 python
+
+top - 21:17:09 up 4 days, 8 min,  2 users,  load average: 0.44, 0.41, 0.78
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.4 us,  1.2 sy,  0.0 ni, 86.3 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7251340 used,   828104 free,    70392 buffers
+KiB Swap:  8290300 total,  1525900 used,  6764400 free.  2310868 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  589484 256880  32292 R  99.8  3.2   0:31.66 python
+
+top - 21:17:09 up 4 days, 8 min,  2 users,  load average: 0.44, 0.41, 0.78
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.2 us,  0.0 sy,  0.0 ni, 86.8 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7251340 used,   828104 free,    70392 buffers
+KiB Swap:  8290300 total,  1525900 used,  6764400 free.  2310868 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  591020 258416  32292 R  99.8  3.2   0:31.86 python
+
+top - 21:17:09 up 4 days, 8 min,  2 users,  load average: 0.44, 0.41, 0.78
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.6 us,  0.0 sy,  0.0 ni, 87.4 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7251340 used,   828104 free,    70392 buffers
+KiB Swap:  8290300 total,  1525900 used,  6764400 free.  2310868 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  591972 259380  32292 R  99.8  3.2   0:32.06 python
+
+top - 21:17:09 up 4 days, 8 min,  2 users,  load average: 0.44, 0.41, 0.78
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.5 us,  0.6 sy,  0.0 ni, 86.9 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7251340 used,   828104 free,    70392 buffers
+KiB Swap:  8290300 total,  1525900 used,  6764400 free.  2310868 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  592228 259828  32292 R  89.8  3.2   0:32.24 python
+
+top - 21:17:10 up 4 days, 8 min,  2 users,  load average: 0.44, 0.41, 0.78
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 11.9 us,  0.6 sy,  0.0 ni, 87.5 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7235780 used,   843664 free,    70392 buffers
+KiB Swap:  8290300 total,  1525900 used,  6764400 free.  2310784 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  595300 262764  32292 R 100.0  3.3   0:32.45 python
+
+top - 21:17:10 up 4 days, 8 min,  2 users,  load average: 0.44, 0.41, 0.78
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.6 us,  0.0 sy,  0.0 ni, 80.5 id,  6.9 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7235780 used,   843664 free,    70392 buffers
+KiB Swap:  8290300 total,  1525900 used,  6764400 free.  2310784 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  596580 264176  32292 R  99.6  3.3   0:32.65 python
+
+top - 21:17:10 up 4 days, 8 min,  2 users,  load average: 0.44, 0.41, 0.78
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.6 us,  1.3 sy,  0.0 ni, 81.8 id,  4.4 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7235780 used,   843664 free,    70392 buffers
+KiB Swap:  8290300 total,  1525900 used,  6764400 free.  2310784 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  599152 266592  32292 R  99.8  3.3   0:32.85 python
+
+top - 21:17:10 up 4 days, 8 min,  2 users,  load average: 0.44, 0.41, 0.78
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.5 us,  0.6 sy,  0.0 ni, 86.9 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7235780 used,   843664 free,    70392 buffers
+KiB Swap:  8290300 total,  1525900 used,  6764400 free.  2310784 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  599152 266680  32292 R  94.8  3.3   0:33.04 python
+
+top - 21:17:10 up 4 days, 8 min,  2 users,  load average: 0.44, 0.41, 0.78
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.4 us,  0.6 sy,  0.0 ni, 87.0 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7235780 used,   843664 free,    70392 buffers
+KiB Swap:  8290300 total,  1525900 used,  6764400 free.  2310784 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  601968 269368  32292 R  99.8  3.3   0:33.24 python
+
+top - 21:17:11 up 4 days, 8 min,  2 users,  load average: 0.44, 0.41, 0.78
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.2 us,  1.3 sy,  0.0 ni, 85.5 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7235780 used,   843664 free,    70392 buffers
+KiB Swap:  8290300 total,  1525900 used,  6764400 free.  2310784 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  603504 270904  32292 R  99.8  3.4   0:33.44 python
+
+top - 21:17:11 up 4 days, 8 min,  2 users,  load average: 0.56, 0.44, 0.78
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 16.4 us,  9.4 sy,  0.0 ni, 74.2 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7235780 used,   843664 free,    70392 buffers
+KiB Swap:  8290300 total,  1525900 used,  6764400 free.  2310784 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  604660 272204  32292 R  99.8  3.4   0:33.64 python
+
+top - 21:17:11 up 4 days, 8 min,  2 users,  load average: 0.56, 0.44, 0.78
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 15.0 us,  1.9 sy,  0.0 ni, 83.1 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7235780 used,   843664 free,    70392 buffers
+KiB Swap:  8290300 total,  1525900 used,  6764400 free.  2310784 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  609548 277172  32292 R  89.8  3.4   0:33.82 python
+
+top - 21:17:11 up 4 days, 8 min,  2 users,  load average: 0.56, 0.44, 0.78
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.5 us,  0.6 sy,  0.0 ni, 86.9 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7235780 used,   843664 free,    70392 buffers
+KiB Swap:  8290300 total,  1525900 used,  6764400 free.  2310784 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  611852 279268  32292 R  99.8  3.5   0:34.02 python
+
+top - 21:17:11 up 4 days, 8 min,  2 users,  load average: 0.56, 0.44, 0.78
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.5 us,  0.0 sy,  0.0 ni, 87.5 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7235780 used,   843664 free,    70392 buffers
+KiB Swap:  8290300 total,  1525900 used,  6764400 free.  2310784 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  613388 281040  32292 R  99.8  3.5   0:34.22 python
+
+top - 21:17:12 up 4 days, 8 min,  2 users,  load average: 0.56, 0.44, 0.78
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.5 us,  0.6 sy,  0.0 ni, 86.9 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7235780 used,   843664 free,    70392 buffers
+KiB Swap:  8290300 total,  1525900 used,  6764400 free.  2310784 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  614156 281544  32292 R  99.8  3.5   0:34.42 python
+
+top - 21:17:12 up 4 days, 8 min,  2 users,  load average: 0.56, 0.44, 0.78
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.6 us,  0.6 sy,  0.0 ni, 86.8 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7235780 used,   843664 free,    70392 buffers
+KiB Swap:  8290300 total,  1525900 used,  6764400 free.  2310784 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  620908 288412  32292 R  94.8  3.6   0:34.61 python
+
+top - 21:17:12 up 4 days, 8 min,  2 users,  load average: 0.56, 0.44, 0.78
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.2 us,  0.0 sy,  0.0 ni, 86.8 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7235780 used,   843664 free,    70392 buffers
+KiB Swap:  8290300 total,  1525900 used,  6764400 free.  2310784 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  620908 288600  32292 R  99.8  3.6   0:34.81 python
+
+top - 21:17:12 up 4 days, 8 min,  2 users,  load average: 0.56, 0.44, 0.78
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.6 us,  0.6 sy,  0.0 ni, 85.8 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7235780 used,   843664 free,    70392 buffers
+KiB Swap:  8290300 total,  1525900 used,  6764400 free.  2310784 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  624748 292196  32292 R  99.8  3.6   0:35.01 python
+
+top - 21:17:12 up 4 days, 8 min,  2 users,  load average: 0.56, 0.44, 0.78
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.0 us,  0.0 sy,  0.0 ni, 86.3 id,  0.6 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7235780 used,   843664 free,    70392 buffers
+KiB Swap:  8290300 total,  1525900 used,  6764400 free.  2310784 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  624748 292440  32292 R  99.8  3.6   0:35.21 python
+
+top - 21:17:13 up 4 days, 8 min,  2 users,  load average: 0.56, 0.44, 0.78
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.5 us,  0.6 sy,  0.0 ni, 86.9 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7268088 used,   811356 free,    70536 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2311776 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  625260 292940  32292 R 100.0  3.6   0:35.42 python
+
+top - 21:17:13 up 4 days, 8 min,  2 users,  load average: 0.56, 0.44, 0.78
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 11.9 us,  0.6 sy,  0.0 ni, 87.4 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7268088 used,   811356 free,    70536 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2311776 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  625516 293084  32292 R  89.6  3.6   0:35.60 python
+
+top - 21:17:13 up 4 days, 8 min,  2 users,  load average: 0.56, 0.44, 0.78
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.2 us,  0.0 sy,  0.0 ni, 86.8 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7268088 used,   811356 free,    70536 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2311776 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  625772 293324  32292 R  99.8  3.6   0:35.80 python
+
+top - 21:17:13 up 4 days, 8 min,  2 users,  load average: 0.56, 0.44, 0.78
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.0 us,  0.0 sy,  0.0 ni, 87.0 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7268088 used,   811356 free,    70536 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2311776 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  629100 296536  32292 R  99.8  3.7   0:36.00 python
+
+top - 21:17:13 up 4 days, 8 min,  2 users,  load average: 0.56, 0.44, 0.78
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.6 us,  0.0 sy,  0.0 ni, 87.4 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7268088 used,   811356 free,    70536 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2311776 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  630636 298084  32292 R  99.8  3.7   0:36.20 python
+
+top - 21:17:14 up 4 days, 8 min,  2 users,  load average: 0.56, 0.44, 0.78
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.5 us,  2.5 sy,  0.0 ni, 85.0 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7268088 used,   811356 free,    70536 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2311776 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  630636 298240  32292 R  94.8  3.7   0:36.39 python
+
+top - 21:17:14 up 4 days, 8 min,  2 users,  load average: 0.56, 0.44, 0.78
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 15.5 us, 10.6 sy,  0.0 ni, 73.9 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7268088 used,   811356 free,    70536 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2311776 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  630892 298556  32292 R  99.8  3.7   0:36.59 python
+
+top - 21:17:14 up 4 days, 8 min,  2 users,  load average: 0.56, 0.44, 0.78
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 14.6 us,  1.3 sy,  0.0 ni, 84.1 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7268088 used,   811356 free,    70536 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2311776 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  634732 302172  32292 R  99.8  3.7   0:36.79 python
+
+top - 21:17:14 up 4 days, 8 min,  2 users,  load average: 0.56, 0.44, 0.78
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.0 us,  0.0 sy,  0.0 ni, 87.0 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7268088 used,   811356 free,    70536 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2311776 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  637112 304508  32292 R  99.8  3.8   0:36.99 python
+
+top - 21:17:14 up 4 days, 8 min,  2 users,  load average: 0.56, 0.44, 0.78
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.1 us,  0.0 sy,  0.0 ni, 86.9 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7268088 used,   811356 free,    70536 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2311776 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  637880 305364  32292 R  99.8  3.8   0:37.19 python
+
+top - 21:17:15 up 4 days, 8 min,  2 users,  load average: 0.56, 0.44, 0.78
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.6 us,  0.6 sy,  0.0 ni, 86.8 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7268088 used,   811356 free,    70536 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2311776 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  637880 305432  32292 R 100.0  3.8   0:37.40 python
+
+top - 21:17:15 up 4 days, 8 min,  2 users,  load average: 0.56, 0.44, 0.78
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.0 us,  1.2 sy,  0.0 ni, 85.8 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7268088 used,   811356 free,    70536 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2311776 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  638392 305788  32292 R  89.8  3.8   0:37.58 python
+
+top - 21:17:15 up 4 days, 8 min,  2 users,  load average: 0.56, 0.44, 0.78
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.7 us,  0.0 sy,  0.0 ni, 87.3 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7268088 used,   811356 free,    70536 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2311776 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  641976 309372  32292 R  99.8  3.8   0:37.78 python
+
+top - 21:17:15 up 4 days, 8 min,  2 users,  load average: 0.56, 0.44, 0.78
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.0 us,  0.6 sy,  0.0 ni, 85.8 id,  0.6 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7268088 used,   811356 free,    70536 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2311776 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  647756 315260  32292 R  99.8  3.9   0:37.98 python
+
+top - 21:17:15 up 4 days, 8 min,  2 users,  load average: 0.56, 0.44, 0.78
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 11.9 us,  0.6 sy,  0.0 ni, 87.5 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7268088 used,   811356 free,    70536 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2311776 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  648268 315932  32292 R  99.7  3.9   0:38.18 python
+
+top - 21:17:16 up 4 days, 8 min,  2 users,  load average: 0.56, 0.44, 0.78
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.7 us,  0.6 sy,  0.0 ni, 85.7 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7291288 used,   788156 free,    70544 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2311904 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  648524 316236  32292 R  94.8  3.9   0:38.37 python
+
+top - 21:17:16 up 4 days, 8 min,  2 users,  load average: 0.60, 0.44, 0.78
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.5 us,  0.6 sy,  0.0 ni, 86.9 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7291288 used,   788156 free,    70544 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2311904 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  651596 319064  32292 R  94.6  3.9   0:38.56 python
+
+top - 21:17:16 up 4 days, 8 min,  2 users,  load average: 0.60, 0.44, 0.78
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 14.5 us,  0.0 sy,  0.0 ni, 84.9 id,  0.6 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7291288 used,   788156 free,    70544 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2311904 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  654156 321880  32292 R  99.8  4.0   0:38.76 python
+
+top - 21:17:16 up 4 days, 8 min,  2 users,  load average: 0.60, 0.44, 0.78
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.4 us,  0.6 sy,  0.0 ni, 87.0 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7291288 used,   788156 free,    70544 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2311904 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  654668 322392  32292 R 100.0  4.0   0:38.97 python
+
+top - 21:17:16 up 4 days, 8 min,  2 users,  load average: 0.60, 0.44, 0.78
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 11.9 us,  0.6 sy,  0.0 ni, 87.4 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7291288 used,   788156 free,    70544 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2311904 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  657652 325048  32292 R  94.8  4.0   0:39.16 python
+
+top - 21:17:17 up 4 days, 8 min,  2 users,  load average: 0.60, 0.44, 0.78
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 14.4 us,  1.2 sy,  0.0 ni, 84.4 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7291288 used,   788156 free,    70544 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2311904 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  660980 328124  32292 R  99.8  4.1   0:39.36 python
+
+top - 21:17:17 up 4 days, 8 min,  2 users,  load average: 0.60, 0.44, 0.78
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 15.1 us, 10.1 sy,  0.0 ni, 74.8 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7291288 used,   788156 free,    70544 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2311904 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  662004 329656  32292 R  99.8  4.1   0:39.56 python
+
+top - 21:17:17 up 4 days, 8 min,  2 users,  load average: 0.60, 0.44, 0.78
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 15.1 us,  0.6 sy,  0.0 ni, 84.3 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7291288 used,   788156 free,    70544 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2311904 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  664388 331920  32292 R  89.8  4.1   0:39.74 python
+
+top - 21:17:17 up 4 days, 8 min,  2 users,  load average: 0.60, 0.44, 0.78
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.4 us,  0.6 sy,  0.0 ni, 87.0 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7291288 used,   788156 free,    70544 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2311904 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  667460 334860  32292 R 100.0  4.1   0:39.95 python
+
+top - 21:17:17 up 4 days, 8 min,  2 users,  load average: 0.60, 0.44, 0.78
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.5 us,  0.0 sy,  0.0 ni, 87.5 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7291288 used,   788156 free,    70544 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2311904 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  670532 337940  32292 R  99.8  4.2   0:40.15 python
+
+top - 21:17:18 up 4 days, 8 min,  2 users,  load average: 0.60, 0.44, 0.78
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 11.9 us,  1.3 sy,  0.0 ni, 86.8 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7291288 used,   788156 free,    70544 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2311904 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  672780 340432  32292 R  89.8  4.2   0:40.33 python
+
+top - 21:17:18 up 4 days, 8 min,  2 users,  load average: 0.60, 0.44, 0.78
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.5 us,  0.6 sy,  0.0 ni, 86.9 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7291288 used,   788156 free,    70544 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2311904 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  677456 344852  32292 R  99.8  4.3   0:40.53 python
+
+top - 21:17:18 up 4 days, 8 min,  2 users,  load average: 0.60, 0.44, 0.78
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.2 us,  0.0 sy,  0.0 ni, 86.8 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7291288 used,   788156 free,    70544 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2311904 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  680272 347668  32292 R  99.8  4.3   0:40.73 python
+
+top - 21:17:18 up 4 days, 8 min,  2 users,  load average: 0.60, 0.44, 0.78
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 11.4 us,  0.6 sy,  0.0 ni, 88.0 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7291288 used,   788156 free,    70544 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2311904 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  683264 350660  32292 R  94.8  4.3   0:40.92 python
+
+top - 21:17:18 up 4 days, 8 min,  2 users,  load average: 0.60, 0.44, 0.78
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.0 us,  0.0 sy,  0.0 ni, 87.0 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7291288 used,   788156 free,    70544 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2311904 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  688668 356064  32292 R  99.8  4.4   0:41.12 python
+
+top - 21:17:19 up 4 days, 8 min,  2 users,  load average: 0.60, 0.44, 0.78
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.1 us,  0.0 sy,  0.0 ni, 86.9 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7333340 used,   746104 free,    70556 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2311868 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  690460 358112  32292 R  99.8  4.4   0:41.32 python
+
+top - 21:17:19 up 4 days, 8 min,  2 users,  load average: 0.60, 0.44, 0.78
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.1 us,  0.0 sy,  0.0 ni, 86.9 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7333340 used,   746104 free,    70556 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2311868 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  693020 360416  32292 R  99.5  4.5   0:41.52 python
+
+top - 21:17:19 up 4 days, 8 min,  2 users,  load average: 0.60, 0.44, 0.78
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.5 us,  1.2 sy,  0.0 ni, 86.2 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7333340 used,   746104 free,    70556 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2311868 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  694044 361452  32292 R  94.8  4.5   0:41.71 python
+
+top - 21:17:19 up 4 days, 8 min,  2 users,  load average: 0.60, 0.44, 0.78
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.6 us,  0.0 sy,  0.0 ni, 87.4 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7333340 used,   746104 free,    70556 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2311868 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  697004 364420  32292 R  99.8  4.5   0:41.91 python
+
+top - 21:17:19 up 4 days, 8 min,  2 users,  load average: 0.60, 0.44, 0.78
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 11.9 us,  0.6 sy,  0.0 ni, 87.5 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7333340 used,   746104 free,    70556 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2311868 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  700280 367728  32292 R  99.8  4.6   0:42.11 python
+
+top - 21:17:20 up 4 days, 8 min,  2 users,  load average: 0.60, 0.44, 0.78
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.2 us,  2.5 sy,  0.0 ni, 84.3 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7333340 used,   746104 free,    70556 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2311868 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  700792 368220  32292 R  99.8  4.6   0:42.31 python
+
+top - 21:17:20 up 4 days, 8 min,  2 users,  load average: 0.60, 0.44, 0.78
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 14.4 us, 11.2 sy,  0.0 ni, 74.4 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7333340 used,   746104 free,    70556 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2311868 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  702840 370264  32292 R  99.8  4.6   0:42.51 python
+
+top - 21:17:20 up 4 days, 8 min,  2 users,  load average: 0.60, 0.44, 0.78
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 16.0 us,  0.6 sy,  0.0 ni, 83.3 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7333340 used,   746104 free,    70556 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2311868 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  705344 372740  32292 R  99.8  4.6   0:42.71 python
+
+top - 21:17:20 up 4 days, 8 min,  2 users,  load average: 0.60, 0.44, 0.78
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.0 us,  0.0 sy,  0.0 ni, 88.0 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7333340 used,   746104 free,    70556 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2311868 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  705600 373044  32292 R  99.8  4.6   0:42.91 python
+
+top - 21:17:20 up 4 days, 8 min,  2 users,  load average: 0.60, 0.44, 0.78
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 11.9 us,  0.6 sy,  0.0 ni, 87.5 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7333340 used,   746104 free,    70556 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2311868 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  706120 373772  32292 R  99.8  4.6   0:43.11 python
+
+top - 21:17:21 up 4 days, 8 min,  2 users,  load average: 0.63, 0.45, 0.78
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.7 us,  0.0 sy,  0.0 ni, 86.3 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7333340 used,   746104 free,    70556 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2311868 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  706120 373516  32292 R  99.8  4.6   0:43.31 python
+
+top - 21:17:21 up 4 days, 8 min,  2 users,  load average: 0.63, 0.45, 0.78
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.1 us,  0.0 sy,  0.0 ni, 86.9 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7333340 used,   746104 free,    70556 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2311868 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  706632 374040  32292 R  99.8  4.6   0:43.51 python
+
+top - 21:17:21 up 4 days, 8 min,  2 users,  load average: 0.63, 0.45, 0.78
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.7 us,  0.0 sy,  0.0 ni, 86.7 id,  0.6 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7333340 used,   746104 free,    70556 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2311868 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  706376 374028  32292 R  99.8  4.6   0:43.71 python
+
+top - 21:17:21 up 4 days, 8 min,  2 users,  load average: 0.63, 0.45, 0.78
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.4 us,  0.6 sy,  0.0 ni, 87.0 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7333340 used,   746104 free,    70556 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2311868 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  706120 373772  32292 R 100.0  4.6   0:43.92 python
+
+top - 21:17:21 up 4 days, 8 min,  2 users,  load average: 0.63, 0.45, 0.78
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 11.9 us,  0.6 sy,  0.0 ni, 87.4 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7333340 used,   746104 free,    70556 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2311868 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  706632 374060  32292 R  94.8  4.6   0:44.11 python
+
+top - 21:17:22 up 4 days, 8 min,  2 users,  load average: 0.63, 0.45, 0.78
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.7 us,  0.0 sy,  0.0 ni, 86.3 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7349452 used,   729992 free,    70560 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2312052 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  706632 374040  32292 R  99.8  4.6   0:44.31 python
+
+top - 21:17:22 up 4 days, 8 min,  2 users,  load average: 0.63, 0.45, 0.78
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.1 us,  0.0 sy,  0.0 ni, 86.9 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7349452 used,   729992 free,    70560 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2312052 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  706376 373776  32292 R 100.0  4.6   0:44.52 python
+
+top - 21:17:22 up 4 days, 8 min,  2 users,  load average: 0.63, 0.45, 0.78
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.2 us,  0.6 sy,  0.0 ni, 86.2 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7349452 used,   729992 free,    70560 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2312052 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  707144 374636  32292 R  99.8  4.6   0:44.72 python
+
+top - 21:17:22 up 4 days, 8 min,  2 users,  load average: 0.63, 0.45, 0.78
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.6 us,  0.0 sy,  0.0 ni, 86.4 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7349452 used,   729992 free,    70560 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2312052 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  708424 375672  32292 R  99.8  4.6   0:44.92 python
+
+top - 21:17:22 up 4 days, 8 min,  2 users,  load average: 0.63, 0.45, 0.78
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.0 us,  0.6 sy,  0.0 ni, 86.3 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7349452 used,   729992 free,    70560 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2312052 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  707400 374796  32292 R  99.8  4.6   0:45.12 python
+
+top - 21:17:23 up 4 days, 8 min,  2 users,  load average: 0.63, 0.45, 0.78
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.1 us,  3.1 sy,  0.0 ni, 83.8 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7349452 used,   729992 free,    70560 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2312052 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  708424 375812  32292 R  99.8  4.7   0:45.32 python
+
+top - 21:17:23 up 4 days, 8 min,  2 users,  load average: 0.63, 0.45, 0.78
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 15.7 us, 10.1 sy,  0.0 ni, 74.2 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7349452 used,   729992 free,    70560 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2312052 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  707392 375044  32292 R  99.8  4.6   0:45.52 python
+
+top - 21:17:23 up 4 days, 8 min,  2 users,  load average: 0.63, 0.45, 0.78
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 14.5 us,  0.0 sy,  0.0 ni, 85.5 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7349452 used,   729992 free,    70560 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2312052 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  707392 375044  32292 R  99.8  4.6   0:45.72 python
+
+top - 21:17:23 up 4 days, 8 min,  2 users,  load average: 0.63, 0.45, 0.78
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.6 us,  0.0 sy,  0.0 ni, 87.4 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7349452 used,   729992 free,    70560 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2312052 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  707392 375044  32292 R  99.8  4.6   0:45.92 python
+
+top - 21:17:23 up 4 days, 8 min,  2 users,  load average: 0.63, 0.45, 0.78
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.5 us,  0.0 sy,  0.0 ni, 87.5 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7349452 used,   729992 free,    70560 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2312052 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  707392 375044  32292 R  99.8  4.6   0:46.12 python
+
+top - 21:17:24 up 4 days, 8 min,  2 users,  load average: 0.63, 0.45, 0.78
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.1 us,  0.0 sy,  0.0 ni, 86.9 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7349452 used,   729992 free,    70560 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2312052 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  707392 375044  32292 R  99.8  4.6   0:46.32 python
+
+top - 21:17:24 up 4 days, 8 min,  2 users,  load average: 0.63, 0.45, 0.78
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.6 us,  0.0 sy,  0.0 ni, 87.4 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7349452 used,   729992 free,    70560 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2312052 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  707392 375044  32292 R  99.8  4.6   0:46.52 python
+
+top - 21:17:24 up 4 days, 8 min,  2 users,  load average: 0.63, 0.45, 0.78
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.1 us,  1.2 sy,  0.0 ni, 85.6 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7349452 used,   729992 free,    70560 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2312052 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  707392 375044  32292 R  99.8  4.6   0:46.72 python
+
+top - 21:17:24 up 4 days, 8 min,  2 users,  load average: 0.63, 0.45, 0.78
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.8 us,  0.0 sy,  0.0 ni, 86.2 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7349452 used,   729992 free,    70560 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2312052 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  707392 375044  32292 R  99.8  4.6   0:46.92 python
+
+top - 21:17:24 up 4 days, 8 min,  2 users,  load average: 0.63, 0.45, 0.78
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.7 us,  0.0 sy,  0.0 ni, 86.3 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7349452 used,   729992 free,    70560 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2312052 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  707392 375044  32292 R  99.8  4.6   0:47.12 python
+
+top - 21:17:25 up 4 days, 8 min,  2 users,  load average: 0.63, 0.45, 0.78
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.6 us,  0.0 sy,  0.0 ni, 84.9 id,  2.5 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7349876 used,   729568 free,    70568 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2312468 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  707392 375044  32292 R  99.8  4.6   0:47.32 python
+
+top - 21:17:25 up 4 days, 8 min,  2 users,  load average: 0.63, 0.45, 0.78
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.6 us,  0.6 sy,  0.0 ni, 85.8 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7349876 used,   729568 free,    70568 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2312468 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  707392 375044  32292 R  99.6  4.6   0:47.52 python
+
+top - 21:17:25 up 4 days, 8 min,  2 users,  load average: 0.63, 0.45, 0.78
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.1 us,  0.6 sy,  0.0 ni, 86.2 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7349876 used,   729568 free,    70568 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2312468 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  707392 375044  32292 R  99.8  4.6   0:47.72 python
+
+top - 21:17:25 up 4 days, 8 min,  2 users,  load average: 0.63, 0.45, 0.78
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.2 us,  0.0 sy,  0.0 ni, 86.8 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7349876 used,   729568 free,    70568 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2312468 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  707392 375044  32292 R 100.0  4.6   0:47.93 python
+
+top - 21:17:25 up 4 days, 8 min,  2 users,  load average: 0.63, 0.45, 0.78
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.5 us,  0.0 sy,  0.0 ni, 87.5 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7349876 used,   729568 free,    70568 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2312468 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  707392 375044  32292 R  99.8  4.6   0:48.13 python
+
+top - 21:17:26 up 4 days, 8 min,  2 users,  load average: 0.74, 0.48, 0.79
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.8 us,  3.1 sy,  0.0 ni, 83.1 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7349876 used,   729568 free,    70568 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2312468 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  707392 375044  32292 R  99.8  4.6   0:48.33 python
+
+top - 21:17:26 up 4 days, 8 min,  2 users,  load average: 0.74, 0.48, 0.79
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 17.5 us,  8.1 sy,  0.0 ni, 74.4 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7349876 used,   729568 free,    70568 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2312468 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  707392 375044  32292 R  99.8  4.6   0:48.53 python
+
+top - 21:17:26 up 4 days, 8 min,  2 users,  load average: 0.74, 0.48, 0.79
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.8 us,  0.6 sy,  0.0 ni, 85.6 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7349876 used,   729568 free,    70568 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2312468 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  707392 375044  32292 R  99.8  4.6   0:48.73 python
+
+top - 21:17:26 up 4 days, 8 min,  2 users,  load average: 0.74, 0.48, 0.79
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.6 us,  0.0 sy,  0.0 ni, 87.4 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7349876 used,   729568 free,    70568 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2312468 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  707392 375044  32292 R  99.8  4.6   0:48.93 python
+
+top - 21:17:26 up 4 days, 8 min,  2 users,  load average: 0.74, 0.48, 0.79
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.6 us,  0.6 sy,  0.0 ni, 85.8 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7349876 used,   729568 free,    70568 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2312468 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  707392 375044  32292 R  99.8  4.6   0:49.13 python
+
+top - 21:17:27 up 4 days, 8 min,  2 users,  load average: 0.74, 0.48, 0.79
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.6 us,  0.0 sy,  0.0 ni, 87.4 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7349876 used,   729568 free,    70568 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2312468 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  707392 375044  32292 R  99.8  4.6   0:49.33 python
+
+top - 21:17:27 up 4 days, 8 min,  2 users,  load average: 0.74, 0.48, 0.79
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.6 us,  0.0 sy,  0.0 ni, 87.4 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7349876 used,   729568 free,    70568 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2312468 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  707392 375044  32292 R  99.8  4.6   0:49.53 python
+
+top - 21:17:27 up 4 days, 8 min,  2 users,  load average: 0.74, 0.48, 0.79
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.7 us,  0.6 sy,  0.0 ni, 85.7 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7349876 used,   729568 free,    70568 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2312468 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  707392 375044  32292 R  99.8  4.6   0:49.73 python
+
+top - 21:17:27 up 4 days, 8 min,  2 users,  load average: 0.74, 0.48, 0.79
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.1 us,  0.0 sy,  0.0 ni, 86.9 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7349876 used,   729568 free,    70568 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2312468 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  708160 375560  32292 R  99.8  4.6   0:49.93 python
+
+top - 21:17:27 up 4 days, 8 min,  2 users,  load average: 0.74, 0.48, 0.79
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.6 us,  0.0 sy,  0.0 ni, 87.4 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7349876 used,   729568 free,    70568 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2312468 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  708160 375560  32292 R  99.8  4.6   0:50.13 python
+
+top - 21:17:28 up 4 days, 8 min,  2 users,  load average: 0.74, 0.48, 0.79
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.1 us,  0.0 sy,  0.0 ni, 86.9 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7350652 used,   728792 free,    70568 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2312516 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  708160 375560  32292 R  99.8  4.6   0:50.33 python
+
+top - 21:17:28 up 4 days, 8 min,  2 users,  load average: 0.74, 0.48, 0.79
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.0 us,  0.6 sy,  0.0 ni, 86.3 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7350652 used,   728792 free,    70568 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2312516 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  709440 376840  32292 R  99.6  4.7   0:50.53 python
+
+top - 21:17:28 up 4 days, 8 min,  2 users,  load average: 0.74, 0.48, 0.79
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.2 us,  0.0 sy,  0.0 ni, 86.8 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7350652 used,   728792 free,    70568 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2312516 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  709440 376840  32292 R 100.0  4.7   0:50.74 python
+
+top - 21:17:28 up 4 days, 8 min,  2 users,  load average: 0.74, 0.48, 0.79
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.6 us,  0.0 sy,  0.0 ni, 87.4 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7350652 used,   728792 free,    70568 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2312516 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  709440 376840  32292 R  99.8  4.7   0:50.94 python
+
+top - 21:17:28 up 4 days, 8 min,  2 users,  load average: 0.74, 0.48, 0.79
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.7 us,  0.0 sy,  0.0 ni, 86.3 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7350652 used,   728792 free,    70568 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2312516 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  710464 378016  32292 R  99.8  4.7   0:51.14 python
+
+top - 21:17:29 up 4 days, 8 min,  2 users,  load average: 0.74, 0.48, 0.79
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.1 us,  3.8 sy,  0.0 ni, 83.1 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7350652 used,   728792 free,    70568 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2312516 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  710464 378016  32292 R  99.8  4.7   0:51.34 python
+
+top - 21:17:29 up 4 days, 8 min,  2 users,  load average: 0.74, 0.48, 0.79
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 17.6 us,  8.2 sy,  0.0 ni, 74.2 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7350652 used,   728792 free,    70568 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2312516 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  710464 378016  32292 R  99.8  4.7   0:51.54 python
+
+top - 21:17:29 up 4 days, 8 min,  2 users,  load average: 0.74, 0.48, 0.79
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.2 us,  0.0 sy,  0.0 ni, 86.8 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7350652 used,   728792 free,    70568 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2312516 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  711232 378876  32292 R  99.8  4.7   0:51.74 python
+
+top - 21:17:29 up 4 days, 8 min,  2 users,  load average: 0.74, 0.48, 0.79
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.6 us,  0.0 sy,  0.0 ni, 86.4 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7350652 used,   728792 free,    70568 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2312516 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  711232 378876  32292 R  99.8  4.7   0:51.94 python
+
+top - 21:17:29 up 4 days, 8 min,  2 users,  load average: 0.74, 0.48, 0.79
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.5 us,  0.6 sy,  0.0 ni, 86.9 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7350652 used,   728792 free,    70568 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2312516 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  711232 378876  32292 R  99.8  4.7   0:52.14 python
+
+top - 21:17:30 up 4 days, 8 min,  2 users,  load average: 0.74, 0.48, 0.79
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.6 us,  0.0 sy,  0.0 ni, 87.4 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7350652 used,   728792 free,    70568 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2312516 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  712256 379700  32292 R 100.0  4.7   0:52.35 python
+
+top - 21:17:30 up 4 days, 8 min,  2 users,  load average: 0.74, 0.48, 0.79
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.5 us,  0.6 sy,  0.0 ni, 86.9 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7350652 used,   728792 free,    70568 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2312516 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  712256 379700  32292 R  99.8  4.7   0:52.55 python
+
+top - 21:17:30 up 4 days, 8 min,  2 users,  load average: 0.74, 0.48, 0.79
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 14.4 us,  0.0 sy,  0.0 ni, 85.6 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7350652 used,   728792 free,    70568 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2312516 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  712256 379700  32292 R  99.8  4.7   0:52.75 python
+
+top - 21:17:30 up 4 days, 8 min,  2 users,  load average: 0.74, 0.48, 0.79
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.5 us,  0.0 sy,  0.0 ni, 87.5 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7350652 used,   728792 free,    70568 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2312516 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  712768 380164  32292 R  99.8  4.7   0:52.95 python
+
+top - 21:17:30 up 4 days, 8 min,  2 users,  load average: 0.74, 0.48, 0.79
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.5 us,  0.0 sy,  0.0 ni, 87.5 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7350652 used,   728792 free,    70568 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2312516 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  713536 381052  32292 R  99.8  4.7   0:53.15 python
+
+top - 21:17:31 up 4 days, 8 min,  2 users,  load average: 0.76, 0.49, 0.79
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.1 us,  0.0 sy,  0.0 ni, 86.9 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7355424 used,   724020 free,    70576 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2312524 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  713536 381052  32292 R  99.8  4.7   0:53.35 python
+
+top - 21:17:31 up 4 days, 8 min,  2 users,  load average: 0.76, 0.49, 0.79
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.6 us,  0.0 sy,  0.0 ni, 87.4 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7355424 used,   724020 free,    70576 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2312524 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  714048 381444  32292 R  99.6  4.7   0:53.55 python
+
+top - 21:17:31 up 4 days, 8 min,  2 users,  load average: 0.76, 0.49, 0.79
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.2 us,  0.0 sy,  0.0 ni, 86.8 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7355424 used,   724020 free,    70576 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2312524 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  714048 381444  32292 R  99.8  4.7   0:53.75 python
+
+top - 21:17:31 up 4 days, 8 min,  2 users,  load average: 0.76, 0.49, 0.79
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.0 us,  0.6 sy,  0.0 ni, 86.3 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7355424 used,   724020 free,    70576 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2312524 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  714304 381932  32292 R  99.8  4.7   0:53.95 python
+
+top - 21:17:31 up 4 days, 8 min,  2 users,  load average: 0.76, 0.49, 0.79
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.5 us,  0.0 sy,  0.0 ni, 87.5 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7355424 used,   724020 free,    70576 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2312524 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  714304 381932  32292 R  99.8  4.7   0:54.15 python
+
+top - 21:17:32 up 4 days, 8 min,  2 users,  load average: 0.76, 0.49, 0.79
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 14.4 us,  3.1 sy,  0.0 ni, 82.5 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7355424 used,   724020 free,    70576 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2312524 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  715072 382480  32292 R 100.0  4.7   0:54.36 python
+
+top - 21:17:32 up 4 days, 8 min,  2 users,  load average: 0.76, 0.49, 0.79
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 18.1 us,  7.5 sy,  0.0 ni, 74.4 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7355424 used,   724020 free,    70576 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2312524 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  716096 383496  32292 R  99.8  4.7   0:54.56 python
+
+top - 21:17:32 up 4 days, 8 min,  2 users,  load average: 0.76, 0.49, 0.79
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.6 us,  0.6 sy,  0.0 ni, 86.8 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7355424 used,   724020 free,    70576 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2312524 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  715072 382664  32292 R  99.8  4.7   0:54.76 python
+
+top - 21:17:32 up 4 days, 8 min,  2 users,  load average: 0.76, 0.49, 0.79
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.5 us,  0.0 sy,  0.0 ni, 87.5 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7355424 used,   724020 free,    70576 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2312524 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  715584 382980  32292 R  99.8  4.7   0:54.96 python
+
+top - 21:17:32 up 4 days, 8 min,  2 users,  load average: 0.76, 0.49, 0.79
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.6 us,  0.0 sy,  0.0 ni, 87.4 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7355424 used,   724020 free,    70576 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2312524 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  715072 382716  32292 R  99.8  4.7   0:55.16 python
+
+top - 21:17:33 up 4 days, 8 min,  2 users,  load average: 0.76, 0.49, 0.79
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.7 us,  0.0 sy,  0.0 ni, 86.3 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7355424 used,   724020 free,    70576 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2312524 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  715584 382980  32292 R  99.8  4.7   0:55.36 python
+
+top - 21:17:33 up 4 days, 8 min,  2 users,  load average: 0.76, 0.49, 0.79
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.0 us,  0.0 sy,  0.0 ni, 86.3 id,  0.6 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7355424 used,   724020 free,    70576 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2312524 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  716352 383928  32292 R  99.8  4.8   0:55.56 python
+
+top - 21:17:33 up 4 days, 8 min,  2 users,  load average: 0.76, 0.49, 0.79
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.1 us,  0.6 sy,  0.0 ni, 86.2 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7355424 used,   724020 free,    70576 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2312524 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  715840 383288  32292 R  99.8  4.7   0:55.76 python
+
+top - 21:17:33 up 4 days, 8 min,  2 users,  load average: 0.76, 0.49, 0.79
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 11.9 us,  0.6 sy,  0.0 ni, 87.4 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7355424 used,   724020 free,    70576 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2312524 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  717632 384784  32292 R  99.8  4.8   0:55.96 python
+
+top - 21:17:33 up 4 days, 8 min,  2 users,  load average: 0.76, 0.49, 0.79
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.6 us,  0.0 sy,  0.0 ni, 87.4 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7355424 used,   724020 free,    70576 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2312524 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  717632 384784  32292 R  99.8  4.8   0:56.16 python
+
+top - 21:17:34 up 4 days, 8 min,  2 users,  load average: 0.76, 0.49, 0.79
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.5 us,  0.0 sy,  0.0 ni, 87.5 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7360552 used,   718892 free,    70596 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2312512 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  718144 385752  32292 R  99.8  4.8   0:56.36 python
+
+top - 21:17:34 up 4 days, 8 min,  2 users,  load average: 0.76, 0.49, 0.79
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.1 us,  0.0 sy,  0.0 ni, 86.9 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7360552 used,   718892 free,    70596 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2312512 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  719424 386820  32292 R 100.0  4.8   0:56.57 python
+
+top - 21:17:34 up 4 days, 8 min,  2 users,  load average: 0.76, 0.49, 0.79
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.3 us,  0.0 sy,  0.0 ni, 86.7 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7360552 used,   718892 free,    70596 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2312512 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  719168 386656  32292 R  99.8  4.8   0:56.77 python
+
+top - 21:17:34 up 4 days, 8 min,  2 users,  load average: 0.76, 0.49, 0.79
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.0 us,  0.6 sy,  0.0 ni, 86.3 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7360552 used,   718892 free,    70596 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2312512 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  719168 386580  32292 R  99.8  4.8   0:56.97 python
+
+top - 21:17:34 up 4 days, 8 min,  2 users,  load average: 0.76, 0.49, 0.79
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.5 us,  0.0 sy,  0.0 ni, 87.5 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7360552 used,   718892 free,    70596 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2312512 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  719936 387336  32292 R  99.8  4.8   0:57.17 python
+
+top - 21:17:35 up 4 days, 8 min,  2 users,  load average: 0.76, 0.49, 0.79
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 13.8 us,  3.8 sy,  0.0 ni, 82.4 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7360552 used,   718892 free,    70596 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2312512 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0  708708 376152  32292 R  94.8  4.7   0:57.36 python
+
+top - 21:17:35 up 4 days, 8 min,  2 users,  load average: 0.76, 0.49, 0.79
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 16.8 us,  9.9 sy,  0.0 ni, 73.3 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7360552 used,   718892 free,    70596 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2312512 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+31812 meldefon  20   0       0      0      0 R  99.7  0.0   0:57.56 python
+
+top - 21:17:35 up 4 days, 8 min,  2 users,  load average: 0.76, 0.49, 0.79
+Tasks:   0 total,   0 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s):  0.6 us,  0.0 sy,  0.0 ni, 99.4 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7360552 used,   718892 free,    70596 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2312512 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+
+top - 21:17:35 up 4 days, 8 min,  2 users,  load average: 0.76, 0.49, 0.79
+Tasks:   0 total,   0 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s):  0.6 us,  0.0 sy,  0.0 ni, 99.4 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7360552 used,   718892 free,    70596 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2312512 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+
+top - 21:17:35 up 4 days, 8 min,  2 users,  load average: 0.76, 0.49, 0.79
+Tasks:   0 total,   0 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s):  0.6 us,  0.0 sy,  0.0 ni, 99.4 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7360552 used,   718892 free,    70596 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2312512 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+
+top - 21:17:36 up 4 days, 8 min,  2 users,  load average: 0.70, 0.48, 0.79
+Tasks:   0 total,   0 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s):  0.6 us,  0.0 sy,  0.0 ni, 99.4 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7360552 used,   718892 free,    70596 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2312512 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+
+top - 21:17:36 up 4 days, 8 min,  2 users,  load average: 0.70, 0.48, 0.79
+Tasks:   0 total,   0 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s):  1.3 us,  0.0 sy,  0.0 ni, 97.5 id,  1.3 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7360552 used,   718892 free,    70596 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2312512 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+
+top - 21:17:36 up 4 days, 8 min,  2 users,  load average: 0.70, 0.48, 0.79
+Tasks:   0 total,   0 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s):  1.2 us,  0.6 sy,  0.0 ni, 98.1 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7360552 used,   718892 free,    70596 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2312512 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+
+top - 21:17:36 up 4 days, 8 min,  2 users,  load average: 0.70, 0.48, 0.79
+Tasks:   0 total,   0 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s):  0.6 us,  0.0 sy,  0.0 ni, 99.4 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7360552 used,   718892 free,    70596 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2312512 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+
+top - 21:17:36 up 4 days, 8 min,  2 users,  load average: 0.70, 0.48, 0.79
+Tasks:   0 total,   0 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s):  0.6 us,  0.0 sy,  0.0 ni, 99.4 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  7360552 used,   718892 free,    70596 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2312512 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+
+top - 21:17:37 up 4 days, 8 min,  2 users,  load average: 0.70, 0.48, 0.79
+Tasks:   0 total,   0 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s):  0.6 us,  0.0 sy,  0.0 ni, 99.4 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  6966156 used,  1113288 free,    70596 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2312548 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+
+top - 21:17:37 up 4 days, 8 min,  2 users,  load average: 0.70, 0.48, 0.79
+Tasks:   0 total,   0 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s):  0.6 us,  0.6 sy,  0.0 ni, 98.8 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem:   8079444 total,  6966156 used,  1113288 free,    70596 buffers
+KiB Swap:  8290300 total,  1525892 used,  6764408 free.  2312548 cached Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
