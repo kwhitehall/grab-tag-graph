@@ -85,26 +85,8 @@ class CeFinder(object):
     def __call__(self,t):
         return find_single_frame_cloud_elements(t,varsDict['images'],self.timelist,self.mainStrDir,\
             varsDict['lat'],varsDict['lon'],self.TRMMdirName)    
-
-#Batch parallel version for tests of overhead slowdown. May end up being useless
-#Doesn't help much
-# def runBatch(frames, mergImgs, timelist, mainStrDir, lat, lon, TRMMdirName=None):
-#     '''
-#     Purpose:: master function to drive the parallelization of the find_cloud_elements section of the code
-#     Input:: frames - a list of 
-#             mergImgs -
-#             timelist - 
-#             mainStrDir -
-#             lat - 
-#             lon - 
-#             TRMMdirName (optional) - a string representing the path to the TRMM data
-#     Output::
-#     Assumptions:
-#     '''
-#     return map(CeFinder(timelist, mainStrDir, TRMMdirName),frames)
-
 #**********************************************************************************************************************
-def par_find_cloud_elements(mergImgs, timelist, mainStrDir, lat, lon, TRMMdirName=None):
+def find_cloud_elements(mergImgs, timelist, mainStrDir, lat, lon, TRMMdirName=None):
     '''
     Purpose: parallelizes the process to determine the contiguous boxes for a given time in the satellite images 
              i.e. each frame using scipy ndimage package
