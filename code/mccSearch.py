@@ -156,9 +156,18 @@ def assemble_graph(results):
     for ce in results[0][0]:
         if ce['uniqueID'] not in dict(enumerate(zip(*seenNode))):
             CLOUD_ELEMENT_GRAPH.add_node(ce['uniqueID'],ce)
-            cloudElementsFile.write(results[0][1])
-            cloudElementsUserFile.write(results[0][2])  
+            # cloudElementsFile.write(results[0][1])
             seenNode.append(ce['uniqueID'])  
+            cloudElementsUserFile.write('\nTime is: %s' %(str(ce['cloudElementTime'])))
+            cloudElementsUserFile.write('\nceUniqueID is: %s' %ce['uniqueID'])
+            cloudElementsUserFile.write('\nCenter (lat,lon) is: %s' %ce['cloudElementCenter'])
+            cloudElementsUserFile.write('\nArea is: %.4f km^2' %ce['cloudElementArea'])
+            cloudElementsUserFile.write('\nAverage brightness temperature is: %.4f' %ce['cloudElementBTavg'])
+            cloudElementsUserFile.write('\nMin brightness temperature is: %.4f K' %ce['cloudElementTmin'])
+            cloudElementsUserFile.write('\nMax brightness temperature is: %.4f K' %ce['cloudElementTmax'])
+            cloudElementsUserFile.write('\nBrightness temperature variance is: %.4f K' %ce['cloudElementBTvar'])
+            cloudElementsUserFile.write('\nConvective fraction is: %.4f ' %ce['cloudElementCF'])
+            cloudElementsUserFile.write('\nEccentricity is: %.4f ' %ce['cloudElementEccentricity'])
 
     for t in xrange(1,len(results)):
         currFrameCEs = results[t][0]
@@ -167,10 +176,19 @@ def assemble_graph(results):
         for ce in currFrameCEs:
             if ce['uniqueID'] not in dict(enumerate(zip(*seenNode))):
                 CLOUD_ELEMENT_GRAPH.add_node(ce['uniqueID'], ce)
-                cloudElementsFile.write(results[t][1])
-                cloudElementsUserFile.write(results[t][2])
                 seenNode.append(ce['uniqueID'])
                 edges = []
+                cloudElementsUserFile.write('\nTime is: %s' %(str(ce['cloudElementTime'])))
+                cloudElementsUserFile.write('\nceUniqueID is: %s' %ce['uniqueID'])
+                cloudElementsUserFile.write('\nCenter (lat,lon) is: %s' %ce['cloudElementCenter'])
+                cloudElementsUserFile.write('\nArea is: %.4f km^2' %ce['cloudElementArea'])
+                cloudElementsUserFile.write('\nAverage brightness temperature is: %.4f' %ce['cloudElementBTavg'])
+                cloudElementsUserFile.write('\nMin brightness temperature is: %.4f K' %ce['cloudElementTmin'])
+                cloudElementsUserFile.write('\nMax brightness temperature is: %.4f K' %ce['cloudElementTmax'])
+                cloudElementsUserFile.write('\nBrightness temperature variance is: %.4f K' %ce['cloudElementBTvar'])
+                cloudElementsUserFile.write('\nConvective fraction is: %.4f ' %ce['cloudElementCF'])
+                cloudElementsUserFile.write('\nEccentricity is: %.4f ' %ce['cloudElementEccentricity'])
+                #cloudElementsFile.write(results[t][1])
                 
                 for cloudElementDict in prevFrameCEs:
                     percentageOverlap, areaOverlap = cloud_element_overlap(ce['cloudElementLatLon'], \
@@ -268,6 +286,8 @@ def find_single_frame_cloud_elements(t,mergImgs,timelist, mainStrDir, lat, lon, 
     cf = 0.0       #convective fraction 
     tmin = 0.0     #IR Tmin for the CE
     tmax = 0.0     #IR Tmax for the CE
+    varBT = 0.0    #IR variance
+    avgBT = 0.0    #IR average     
 
     #frame = ma.empty((1, mergImgs.shape[1], mergImgs.shape[2]))
     ceCounter = 0
@@ -505,18 +525,18 @@ def find_single_frame_cloud_elements(t,mergImgs,timelist, mainStrDir, lat, lon, 
                     labels=labels)) / float((ndimage.maximum(cloudElement, labels=labels)))) * 100.0)
             tmin = ndimage.minimum(cloudElement, labels=labels)*1.
             tmax = ndimage.maximum(cloudElement, labels=labels)*1.
+            avgBT =  ndimage.mean(cloudElement, labels=labels)
+            varBT = ndimage.variance(cloudElement, labels=labels)
             
             cloudElementsUserFileString+=('\nCenter (lat,lon) is: %.2f\t%.2f' %(latCenter, lonCenter))
             cloudElementCenter.append(latCenter)
             cloudElementCenter.append(lonCenter)
             cloudElementsUserFileString+=('\nNumber of boxes are: %d' %numOfBoxes)
             cloudElementsUserFileString+=('\nArea is: %.4f km^2' %(cloudElementArea))
-            cloudElementsUserFileString+=('\nAverage brightness temperature is: %.4f K' %ndimage.mean(cloudElement, \
-                labels=labels))
+            cloudElementsUserFileString+=('\nAverage brightness temperature is: %.4f K' %avgBT)
             cloudElementsUserFileString+=('\nMin brightness temperature is: %.4f K' %tmin)
             cloudElementsUserFileString+=('\nMax brightness temperature is: %.4f K' %tmax)
-            cloudElementsUserFileString+=('\nBrightness temperature variance is: %.4f K' \
-                %ndimage.variance(cloudElement, labels=labels))
+            cloudElementsUserFileString+=('\nBrightness temperature variance is: %.4f K' %varBT)
             cloudElementsUserFileString+=('\nConvective fraction is: %.4f ' %cf)
             cloudElementsUserFileString+=('\nEccentricity is: %.4f ' %(cloudElementEpsilon))
             #populate the dictionary
@@ -526,12 +546,14 @@ def find_single_frame_cloud_elements(t,mergImgs,timelist, mainStrDir, lat, lon, 
                     'cloudElementArea':cloudElementArea, 'cloudElementEccentricity':cloudElementEpsilon, \
                     'cloudElementTmax':tmax, 'cloudElementTmin': tmin, 'cloudElementPrecipTotal':precipTotal,\
                     'cloudElementLatLonTRMM':ceTRMMList, 'TRMMArea': TRMMArea, 'CETRMMmax':maxCEprecipRate, \
-                    'CETRMMmin':minCEprecipRate, 'cloudElementLatLonBox': latLonBox, 'cloudElementCF':cf}
+                    'CETRMMmin':minCEprecipRate, 'cloudElementLatLonBox': latLonBox, 'cloudElementCF':cf,\
+                    'cloudElementBTavg':avgBT, 'cloudElementBTvar':varBT}
             else:
                 cloudElementDict = {'uniqueID': ceUniqueID, 'cloudElementTime': timelist[t],\
                     'cloudElementLatLon': cloudElementLatLons, 'cloudElementCenter':cloudElementCenter, \
                     'cloudElementArea':cloudElementArea, 'cloudElementEccentricity':cloudElementEpsilon, \
-                    'cloudElementTmax':tmax, 'cloudElementTmin': tmin, 'cloudElementLatLonBox':latLonBox, 'cloudElementCF':cf}
+                    'cloudElementTmax':tmax, 'cloudElementTmin': tmin, 'cloudElementLatLonBox':latLonBox, \
+                    'cloudElementCF':cf, 'cloudElementBTavg':avgBT, 'cloudElementBTvar':varBT}
    
             #data to be returned to parent function
             allCloudElementDicts.append(cloudElementDict)
