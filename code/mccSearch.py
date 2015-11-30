@@ -682,9 +682,14 @@ def assemble_graph(results):
     Purpose:: to build the full graph from all the data being considered. 
         i.e. Once the images have been processed in a parallelized manner, put the results together 
 
-    Inputs:: results: a list of dictionaries for each of the cloudElements identified 
+    Inputs:: results: a list of three items
+               (1) a list of dictionaries for all cloud elements found
+               (2) a string with the information for all cloud elements meeting the size and T criteria
+               (3) a string with the information for all cloudy areas found 
 
-    Outputs::
+    Outputs:: CLOUD_ELEMENT_GRAPH: a Networkx directed graph where each node contains the information in cloudElementDict
+        The nodes are determined according to the area of contiguous squares. The nodes are linked through weighted
+        edges.
     
     Assumptions::
     '''
@@ -771,12 +776,9 @@ def find_single_frame_cloud_elements(t,mergImgs,timelist, mainStrDir, lat, lon, 
         lon: a 2D array of the set of longitudes from the files opened
         TRMMdirName (optional): string representing the path where to find the TRMM datafiles
 
-    Returns::
-        CLOUD_ELEMENT_GRAPH: a Networkx directed graph where each node contains the information in cloudElementDict
-        The nodes are determined according to the area of contiguous squares. The nodes are linked through weighted
-        edges.
-
-        cloudElementDict = {'uniqueID': unique tag for this CE,
+    Returns:: a list of three items
+               (1) a list of dictionaries for all cloud elements found
+               cloudElementDict = {'uniqueID': unique tag for this CE,
                             'cloudElementTime': time of the CE,
                             'cloudElementLatLon': (lat,lon,value) of MERG data of CE,
                             'cloudElementCenter':list of floating-point [lat,lon] representing the CE's center
@@ -784,12 +786,20 @@ def find_single_frame_cloud_elements(t,mergImgs,timelist, mainStrDir, lat, lon, 
                             'cloudElementEccentricity': floating-point representing the shape of the CE,
                             'cloudElementTmax':integer representing the maximum Tb in CE,
                             'cloudElementTmin': integer representing the minimum Tb in CE,
+                            'cloudElementCF': a floating-point representing the convective_fraction
+                            'cloudElementLatLonBox': a list of floating-point representing the corners of the bounding box
+                                                    of the CE [min_cloudElementLon, min_cloudElementLat, max_cloudElementLon,
+                                                    max_cloudElementLat]
                             'cloudElementPrecipTotal':floating-point representing the sum of all rainfall in CE if
                                                       TRMMdirName entered,
                             'cloudElementLatLonTRMM':(lat,lon,value) of TRMM data in CE if TRMMdirName entered,
                             'TRMMArea': floating-point representing the CE if TRMMdirName entered,
                             'CETRMMmax':floating-point representing the max rate in the CE if TRMMdirName entered,
                             'CETRMMmin':floating-point representing the min rate in the CE if TRMMdirName entered}
+                            
+               (2) a string with the information for all cloud elements meeting the size and T criteria
+               (3) a string with the information for all cloudy areas found 
+        
     Assumptions::
         Assumes we are dealing with MERG data which is 4kmx4km resolved, thus the smallest value
         required according to Vila et al. (2008) is 2400km^2
@@ -1081,7 +1091,7 @@ def find_single_frame_cloud_elements(t,mergImgs,timelist, mainStrDir, lat, lon, 
                     'cloudElementArea':cloudElementArea, 'cloudElementEccentricity':cloudElementEpsilon, \
                     'cloudElementTmax':tmax, 'cloudElementTmin': tmin, 'cloudElementLatLonBox':latLonBox, 'cloudElementCF':cf}
    
-            #Store the new cloudElementDict so that it can be returned to parent function
+            #data to be returned to parent function
             allCloudElementDicts.append(cloudElementDict)
         else:
             #TODO: remove this else as we only wish for the CE details
@@ -1137,7 +1147,7 @@ def find_single_frame_cloud_elements(t,mergImgs,timelist, mainStrDir, lat, lon, 
         precip = []
         latLonBox = []
 
-    return [allCloudElementDicts, cloudElementsFileString, cloudElementsUserFileString, allJSONDataDicts]
+    return [allCloudElementDicts, cloudElementsFileString, cloudElementsUserFileString]
 #**********************************************************************************************************************
 def find_precip_rate(TRMMdirName, timelist):
     counter = 0
