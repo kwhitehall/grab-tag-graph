@@ -130,10 +130,9 @@ def assemble_graph(results):
     Purpose:: to build the full graph from all the data being considered. 
         i.e. Once the images have been processed in a parallelized manner, put the results together 
 
-    Inputs:: results: a list of three items
+    Inputs:: results: a list of two items
                (1) a list of dictionaries for all cloud elements found
-               (2) a string with the information for all cloud elements meeting the size and T criteria
-               (3) a string with the information for all cloudy areas found 
+               (2) a string with the information for all cloud elements meeting the size and T criteria 
 
     Outputs:: CLOUD_ELEMENT_GRAPH: a Networkx directed graph where each node contains the information in cloudElementDict
         The nodes are determined according to the area of contiguous squares. The nodes are linked through weighted
@@ -158,7 +157,7 @@ def assemble_graph(results):
             CLOUD_ELEMENT_GRAPH.add_node(ce['uniqueID'],ce)
             # cloudElementsFile.write(results[0][1])
             seenNode.append(ce['uniqueID'])  
-            cloudElementsUserFile.write('\nTime is: %s' %(str(ce['cloudElementTime'])))
+            cloudElementsUserFile.write('Time is: %s' %(str(ce['cloudElementTime'])))
             cloudElementsUserFile.write('\nceUniqueID is: %s' %ce['uniqueID'])
             cloudElementsUserFile.write('\nCenter (lat,lon) is: %s' %ce['cloudElementCenter'])
             cloudElementsUserFile.write('\nArea is: %.4f km^2' %ce['cloudElementArea'])
@@ -178,7 +177,7 @@ def assemble_graph(results):
                 CLOUD_ELEMENT_GRAPH.add_node(ce['uniqueID'], ce)
                 seenNode.append(ce['uniqueID'])
                 edges = []
-                cloudElementsUserFile.write('\nTime is: %s' %(str(ce['cloudElementTime'])))
+                cloudElementsUserFile.write('\n\nTime is: %s' %(str(ce['cloudElementTime'])))
                 cloudElementsUserFile.write('\nceUniqueID is: %s' %ce['uniqueID'])
                 cloudElementsUserFile.write('\nCenter (lat,lon) is: %s' %ce['cloudElementCenter'])
                 cloudElementsUserFile.write('\nArea is: %.4f km^2' %ce['cloudElementArea'])
@@ -312,8 +311,6 @@ def find_single_frame_cloud_elements(t,mergImgs,timelist, mainStrDir, lat, lon, 
     nxgrd = len(LON[0, :])
 
     cloudElementsFileString = ''
-    cloudElementsUserFileString = ''
-    
     
     #determine contiguous locations with temeperature below the warmest temp i.e. cloudElements in each frame
     frame, ceCounter = ndimage.measurements.label(mergImgs[t,:,:], structure=STRUCTURING_ELEMENT)
@@ -502,8 +499,6 @@ def find_single_frame_cloud_elements(t,mergImgs,timelist, mainStrDir, lat, lon, 
             cloudElementLatLons.sort(key=lambda tup: tup[0])
             #determine if the cloud element the shape
             cloudElementEpsilon = eccentricity(cloudElement)
-            cloudElementsUserFileString+=('\n\nTime is: %s' %(str(timelist[t])))
-            cloudElementsUserFileString+=('\nceUniqueID is: %s' %ceUniqueID)
             latCenter, lonCenter = ndimage.measurements.center_of_mass(cloudElement, labels=labels)
             #latCenter and lonCenter are given according to the particular array defining this CE
             #so you need to convert this value to the overall domain truth
@@ -527,18 +522,8 @@ def find_single_frame_cloud_elements(t,mergImgs,timelist, mainStrDir, lat, lon, 
             tmax = ndimage.maximum(cloudElement, labels=labels)*1.
             avgBT =  ndimage.mean(cloudElement, labels=labels)
             varBT = ndimage.variance(cloudElement, labels=labels)
-            
-            cloudElementsUserFileString+=('\nCenter (lat,lon) is: %.2f\t%.2f' %(latCenter, lonCenter))
             cloudElementCenter.append(latCenter)
             cloudElementCenter.append(lonCenter)
-            cloudElementsUserFileString+=('\nNumber of boxes are: %d' %numOfBoxes)
-            cloudElementsUserFileString+=('\nArea is: %.4f km^2' %(cloudElementArea))
-            cloudElementsUserFileString+=('\nAverage brightness temperature is: %.4f K' %avgBT)
-            cloudElementsUserFileString+=('\nMin brightness temperature is: %.4f K' %tmin)
-            cloudElementsUserFileString+=('\nMax brightness temperature is: %.4f K' %tmax)
-            cloudElementsUserFileString+=('\nBrightness temperature variance is: %.4f K' %varBT)
-            cloudElementsUserFileString+=('\nConvective fraction is: %.4f ' %cf)
-            cloudElementsUserFileString+=('\nEccentricity is: %.4f ' %(cloudElementEpsilon))
             #populate the dictionary
             if TRMMdirName:
                 cloudElementDict = {'uniqueID': ceUniqueID, 'cloudElementTime': timelist[t],\
@@ -611,7 +596,7 @@ def find_single_frame_cloud_elements(t,mergImgs,timelist, mainStrDir, lat, lon, 
         precip = []
         latLonBox = []
 
-    return [allCloudElementDicts, cloudElementsFileString, cloudElementsUserFileString]
+    return [allCloudElementDicts, cloudElementsFileString]
 #**********************************************************************************************************************
 def find_precip_rate(TRMMdirName, timelist):
     counter = 0
