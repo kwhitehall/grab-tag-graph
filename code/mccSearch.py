@@ -154,8 +154,7 @@ def assemble_graph(results):
     for ce in results[0][0]:
         if ce['uniqueID'] not in dict(enumerate(zip(*seenNode))):
             CLOUD_ELEMENT_GRAPH.add_node(ce['uniqueID'],ce)
-            # cloudElementsFile.write(results[0][1])
-            seenNode.append(ce['uniqueID'])  
+           seenNode.append(ce['uniqueID'])  
             cloudElementsUserFile.write('Time is: %s' %(str(ce['cloudElementTime'])))
             cloudElementsUserFile.write('\nceUniqueID is: %s' %ce['uniqueID'])
             cloudElementsUserFile.write('\nCenter (lat,lon) is: %s' %ce['cloudElementCenter'])
@@ -167,6 +166,9 @@ def assemble_graph(results):
             cloudElementsUserFile.write('\nConvective fraction is: %.4f ' %ce['cloudElementCF'])
             cloudElementsUserFile.write('\nEccentricity is: %.4f ' %ce['cloudElementEccentricity'])
 
+            #TODO: remove the duplication from cloudElementsFile below
+            cloudElementsFile.write(results[0][1])
+            
     for t in xrange(1,len(results)):
         currFrameCEs = results[t][0]
         prevFrameCEs = results[t-1][0]
@@ -186,7 +188,8 @@ def assemble_graph(results):
                 cloudElementsUserFile.write('\nBrightness temperature variance is: %.4f K' %ce['cloudElementBTvar'])
                 cloudElementsUserFile.write('\nConvective fraction is: %.4f ' %ce['cloudElementCF'])
                 cloudElementsUserFile.write('\nEccentricity is: %.4f ' %ce['cloudElementEccentricity'])
-                #cloudElementsFile.write(results[t][1])
+                #TODO: remove the duplication form cloudElmentsFile below
+                cloudElementsFile.write(results[t][1])
                 
                 for cloudElementDict in prevFrameCEs:
                     percentageOverlap, areaOverlap = cloud_element_overlap(ce['cloudElementLatLon'], \
