@@ -142,16 +142,15 @@ def assemble_graph(results):
     '''
     totals = 0
     edgeWeight = [1, 2, 3] #weights for the graph edges
-    
     cloudElementsJSON = []  #list of the key, value objects associated with a CE in the graph
     seenNode = []
+    filenameJSON = MAIN_DIRECTORY + '/textFiles/graphJSON.txt'
 
     #openfile for storing ALL cloudElement information
     cloudElementsFile = open((MAIN_DIRECTORY + '/textFiles/cloudElements.txt'), 'wb')
     #openfile for storing cloudElement information meeting user criteria i.e. MCCs in this case
     cloudElementsUserFile = open((MAIN_DIRECTORY + '/textFiles/cloudElementsUserFile.txt'), 'w')
-    filenameJSON = MAIN_DIRECTORY + '/textFiles/graphJSON.txt'
-
+    
     for ce in results[0][0]:
         if ce['uniqueID'] not in dict(enumerate(zip(*seenNode))):
             CLOUD_ELEMENT_GRAPH.add_node(ce['uniqueID'],ce)
@@ -252,6 +251,8 @@ def find_single_frame_cloud_elements(t,mergImgs,timelist, mainStrDir, lat, lon, 
                             'cloudElementLatLonBox': a list of floating-point representing the corners of the bounding box
                                                     of the CE [min_cloudElementLon, min_cloudElementLat, max_cloudElementLon,
                                                     max_cloudElementLat]
+                            'cloudElementBTvar': floating-point representing the variance of BT across the CE
+                            'cloudElementBTavg': floating-point representing the average of BT across the CE
                             'cloudElementPrecipTotal':floating-point representing the sum of all rainfall in CE if
                                                       TRMMdirName entered,
                             'cloudElementLatLonTRMM':(lat,lon,value) of TRMM data in CE if TRMMdirName entered,
