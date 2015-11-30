@@ -742,28 +742,16 @@ def assemble_graph(results):
                     cloudElementsJSON.append({'cloudElement': ce['uniqueID'], 'time':str(ce['cloudElementTime']),\
                         'area':ce['cloudElementArea'],'Tmax':ce['cloudElementTmax'], 'Tmin':ce['cloudElementTmin'], 'center':ce['cloudElementCenter'], \
                         'shape':ce['cloudElementEccentricity'], 'cloudElementLatLonBox':ce['cloudElementLatLonBox'],'convective_fraction': ce['cloudElementCF'],'edges':edges })
-                # #Pull out JSON data
-                # JSONDict = results[t][3][ceNum]
-                # if edges:
-                #     #search for the dictionary with the ce as current ce, pull out that list and append
-                #     cloudElementsJSON.append({'cloudElement': cloudElementDict['uniqueID'], 'time': JSONDict['time'],\
-                #         'area':JSONDict['area'], 'Tmax': JSONDict['tmax'], 'Tmin': JSONDict['tmin'],'center':JSONDict['center'],\
-                #         'convective_fraction': JSONDict['cf'], 'lat_lon_box': JSONDict['lat_lon_box'], 'shape': JSONDict['shape'], 'edges':edges, 'eccentricity':JSONDict['cloudElementEpsilon']})
-                
-                
-                # ceNum += 1
     
     #Close info files
     cloudElementsFile.close()
     cloudElementsUserFile.close()
-    # sys.exit()
+    
     #Write to JSON file
     with open(filenameJSON, 'w+') as f:
         json.dump(cloudElementsJSON,f)
 
     #clean up graph - remove parent and childless nodes
-    #print("Number of nodes before cleanup: "+str(CLOUD_ELEMENT_GRAPH.number_of_nodes()) + "\n")
-    #print("TOTALS: "+str(totals)+"\n")
     outAndInDeg = CLOUD_ELEMENT_GRAPH.degree_iter()
     toRemove = [node[0] for node in outAndInDeg if node[1] < 1]
     CLOUD_ELEMENT_GRAPH.remove_nodes_from(toRemove)
@@ -1095,21 +1083,6 @@ def find_single_frame_cloud_elements(t,mergImgs,timelist, mainStrDir, lat, lon, 
    
             #Store the new cloudElementDict so that it can be returned to parent function
             allCloudElementDicts.append(cloudElementDict)
-
-            # #Will hold data for JSON
-            # currentJSONDict = {}
-
-            # currentJSONDict['cf'] = (((ndimage.minimum(cloudElement, \
-            #     labels=labels)) / float((ndimage.maximum(cloudElement, labels=labels)))) * 100.0)
-            # currentJSONDict['tmin'] = ndimage.minimum(cloudElement, labels=labels)*1.
-            # currentJSONDict['tmax'] = ndimage.maximum(cloudElement, labels=labels)*1.
-            # currentJSONDict['time'] = str(timelist[t])
-            # currentJSONDict['area'] = cloudElementArea
-            # currentJSONDict['center'] = cloudElementCenter
-            # currentJSONDict['lat_lon_box'] = latLonBox
-            # currentJSONDict['shape'] = shape
-            # currentJSONDict['cloudElementEpsilon'] = cloudElementEpsilon
-            # allJSONDataDicts.append(currentJSONDict)
         else:
             #TODO: remove this else as we only wish for the CE details
             #ensure only the non-zero elements are considered
