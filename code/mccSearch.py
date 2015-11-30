@@ -238,7 +238,7 @@ def find_single_frame_cloud_elements(t,mergImgs,timelist, mainStrDir, lat, lon, 
         lon: a 2D array of the set of longitudes from the files opened
         TRMMdirName (optional): string representing the path where to find the TRMM datafiles
 
-    Returns:: a list of three items
+    Returns:: a list of two items
                (1) a list of dictionaries for all cloud elements found
                cloudElementDict = {'uniqueID': unique tag for this CE,
                             'cloudElementTime': time of the CE,
@@ -260,7 +260,6 @@ def find_single_frame_cloud_elements(t,mergImgs,timelist, mainStrDir, lat, lon, 
                             'CETRMMmin':floating-point representing the min rate in the CE if TRMMdirName entered}
                             
                (2) a string with the information for all cloud elements meeting the size and T criteria
-               (3) a string with the information for all cloudy areas found 
         
     Assumptions::
         Assumes we are dealing with MERG data which is 4kmx4km resolved, thus the smallest value
