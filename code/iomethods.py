@@ -184,25 +184,20 @@ def read_vars(userVariables):
     if test == False:
         print "Error with files in the TRMM directory entered. Please check your files before restarting. "
         return
-    #test,filelist = iomethods.check_for_files(startDateTime, endDateTime, DIRS['CEoriDirName'],1)
+    
     test,userVariables.filelist = check_for_files(userVariables.DIRS['CEoriDirName'], userVariables.startDateTime, userVariables.endDateTime, 1, 'hour')
 
     if test == False:
         print "Error with files in the original MERG directory entered. Please check your files before restarting. "
         return
-    # end checks 
+    
 
     # create main directory and file structure for storing intel
     userVariables.DIRS['mainDirStr'] = create_main_directory(userVariables.DIRS['mainDirStr'])
     TRMMCEdirName = userVariables.DIRS['mainDirStr']+'/TRMMnetcdfCEs'
     CEdirName = userVariables.DIRS['mainDirStr']+'/MERGnetcdfCEs'
 
-    #unittestFile = open(userVariables.DIRS['mainDirStr']+'/unittestResults.txt','wb')
-    #unittestFile.write("\n Timing results for "+userVariables.startDateTime+" to "+userVariables.endDateTime)
-    print "Done reading data"
     return graphVariables
-
-
 #**********************************************************************************************************************
 def create_main_directory(mainDirStr):
     '''
@@ -269,9 +264,12 @@ def read_data(dirName, varName, latName, lonName, userVariables, filelist=None):
     timeName = 'time'
 
     filelistInstructions = dirName+'/*'
+    
     if filelist == None and userVariables.filelist == None:
         userVariables.filelist = glob.glob(filelistInstructions)
-
+        
+    userVariables.filelist.sort()
+    
 
     inputData = []
     timelist = []
@@ -279,7 +277,6 @@ def read_data(dirName, varName, latName, lonName, userVariables, filelist=None):
     tempMaskedValueNp = []
 
 
-    userVariables.filelist.sort()
     nfiles = len(userVariables.filelist)
 
     # Crash nicely if there are no netcdf files
