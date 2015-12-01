@@ -19,12 +19,12 @@ def main():
 
     CEGraph = nx.DiGraph()
     prunedGraph = nx.DiGraph()
-    MCCList =[]
-    MCSList=[]
-    MCSMCCNodesList =[]
-    allMCSsList =[]
-    allCETRMMList =[]
-    DIRS={}
+    MCCList = []
+    MCSList = []
+    MCSMCCNodesList = []
+    allMCSsList = []
+    allCETRMMList = []
+    DIRS = {}
 
     #for GrADs
     subprocess.call('export DISPLAY=:0.0', shell=True)
@@ -87,7 +87,7 @@ def main():
     print "\n -------------- Read MERG Data ----------"
     print "\n Start the timer for the data ingest process"
     readMergStart = time.time()
-    mergImgs, timeList, LAT, LON = iomethods.read_data(userVariables.DIRS['CEoriDirName'],'ch4','latitude','longitude', userVariables,filelist)
+    mergImgs, timeList, LAT, LON, userVariables = iomethods.read_data(userVariables.DIRS['CEoriDirName'],'ch4','latitude','longitude', userVariables)
     readMergEnd = time.time()
     print "\n End the timer for the data ingest process"
     print "\n Total time to complete data ingest is %g seconds"%(readMergEnd - readMergStart)
@@ -98,7 +98,7 @@ def main():
     print "\n Start the timer for findCloudElements process"
     findCEsStart = time.time()
     print "\n Using both MERG and TRMM simultaneously "
-    CEGraph = mccSearch.find_cloud_elements(mergImgs,timeList,DIRS['mainDirStr'], LAT,LON,DIRS['TRMMdirName'])
+    CEGraph = mccSearch.find_cloud_elements(mergImgs,timeList,userVariables.DIRS['mainDirStr'], LAT,LON,userVariables, graphVariables, userVariables.DIRS['TRMMdirName'])
     findCEsEnd = time.time()
     print "\n End the timer for findCloudElements process using MERG only"
     print "\n Total time to complete finding cloud elements in MERG only is %g seconds"%(findCEsEnd - findCEsStart)
