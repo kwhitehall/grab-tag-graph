@@ -1,11 +1,2 @@
 *.pyc
-paperData/
-line_profile_script.*
-*.py~
-baselinDataDir/
-.gitignore~
-*.md~
-.idea/
-.idea/*
-.idea/workspace.xml
 *.nc
