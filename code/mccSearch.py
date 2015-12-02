@@ -95,10 +95,18 @@ def assemble_graph(results, userVariables, graphVariables):
     Outputs:: CLOUD_ELEMENT_GRAPH: a Networkx directed graph where each node contains the information in cloudElementDict
         The nodes are determined according to the area of contiguous squares. The nodes are linked through weighted
         edges.
+        ceCountTuple: a tuple of list of ints representing (totalCEsList, acceptedCEsList) where 
+            totalCEsList is a list of the sum of all CEs identified for each time between starttime and endtime and 
+            acceptedCEsList is a list of the sum of CEs connected to another frame for each time between starttime and endtime in the graph
     
     Assumptions::
     '''
-    totals = 0
+    
+    totalCEs = 0 
+    totalCEsList = []  
+    acceptedCEs = 0
+    acceptedCEsList = []
+
     edgeWeight = [1, 2, 3] #weights for the graph edges
     cloudElementsJSON = []  #list of the key, value objects associated with a CE in the graph
     seenNode = []
@@ -111,6 +119,7 @@ def assemble_graph(results, userVariables, graphVariables):
     
     for ce in results[0][0]:
         if ce['uniqueID'] not in dict(enumerate(zip(*seenNode))):
+            totalCEs += 1
             graphVariables.CLOUD_ELEMENT_GRAPH.add_node(ce['uniqueID'],ce)
             seenNode.append(ce['uniqueID'])  
             cloudElementsUserFile.write('Time is: %s' %(str(ce['cloudElementTime'])))
@@ -126,11 +135,12 @@ def assemble_graph(results, userVariables, graphVariables):
 
             #TODO: remove the duplication from cloudElementsFile below
             cloudElementsFile.write(results[0][1])
-            
+    
     for t in xrange(1,len(results)):
         currFrameCEs = results[t][0]
         prevFrameCEs = results[t-1][0]
         ceNum = 0
+        
         for ce in currFrameCEs:
             if ce['uniqueID'] not in dict(enumerate(zip(*seenNode))):
                 graphVariables.CLOUD_ELEMENT_GRAPH.add_node(ce['uniqueID'], ce)
@@ -148,6 +158,7 @@ def assemble_graph(results, userVariables, graphVariables):
                 cloudElementsUserFile.write('\nEccentricity is: %.4f ' %ce['cloudElementEccentricity'])
                 #TODO: remove the duplication form cloudElmentsFile below
                 cloudElementsFile.write(results[t][1])
+                totalCEs += 1
                 
                 for cloudElementDict in prevFrameCEs:
                     percentageOverlap, areaOverlap = cloud_element_overlap(ce['cloudElementLatLon'], \
@@ -156,20 +167,28 @@ def assemble_graph(results, userVariables, graphVariables):
                     if percentageOverlap >= 0.95:
                         graphVariables.CLOUD_ELEMENT_GRAPH.add_edge(cloudElementDict['uniqueID'], ce['uniqueID'], weight=graphVariables.edgeWeight[0])
                         edges.append(cloudElementDict['uniqueID'])
-
+                        acceptedCEs += 1
+                        
                     elif percentageOverlap >= 0.90 and percentageOverlap < 0.95 :
                         graphVariables.CLOUD_ELEMENT_GRAPH.add_edge(cloudElementDict['uniqueID'], ce['uniqueID'], weight=graphVariables.edgeWeight[1])
                         edges.append(cloudElementDict['uniqueID'])
-
+                        acceptedCEs += 1
+                        
                     elif areaOverlap >= userVariables.MIN_OVERLAP:
                         graphVariables.CLOUD_ELEMENT_GRAPH.add_edge(cloudElementDict['uniqueID'], ce['uniqueID'], weight=graphVariables.edgeWeight[2])
                         edges.append(cloudElementDict['uniqueID'])
+                        acceptedCEs += 1
                 
                 if edges:
                     cloudElementsJSON.append({'cloudElement': ce['uniqueID'], 'time':str(ce['cloudElementTime']),\
                         'area':ce['cloudElementArea'],'Tmax':ce['cloudElementTmax'], 'Tmin':ce['cloudElementTmin'], 'center':ce['cloudElementCenter'], \
                         'shape':ce['cloudElementEccentricity'], 'cloudElementLatLonBox':ce['cloudElementLatLonBox'],'convective_fraction': ce['cloudElementCF'],'edges':edges })
-    
+        
+        acceptedCEsList.append(acceptedCEs)
+        acceptedCEs = 0
+        totalCEsList.append(totalCEs)
+        totalCEs = 0
+
     #Close info files
     cloudElementsFile.close()
     cloudElementsUserFile.close()
@@ -177,13 +196,13 @@ def assemble_graph(results, userVariables, graphVariables):
     #Write to JSON file
     with open(filenameJSON, 'w+') as f:
         json.dump(cloudElementsJSON,f)
-
+    
     #clean up graph - remove parent and childless nodes
     outAndInDeg = graphVariables.CLOUD_ELEMENT_GRAPH.degree_iter()
     toRemove = [node[0] for node in outAndInDeg if node[1] < 1]
     graphVariables.CLOUD_ELEMENT_GRAPH.remove_nodes_from(toRemove)
     
-    return graphVariables.CLOUD_ELEMENT_GRAPH
+    return graphVariables.CLOUD_ELEMENT_GRAPH, (totalCEsList, acceptedCEsList)
 #**********************************************************************************************************************
 def find_single_frame_cloud_elements(t,mergImgs,timelist, lat, lon, userVariables, TRMMdirName=None):
     '''
@@ -259,7 +278,7 @@ def find_single_frame_cloud_elements(t,mergImgs,timelist, lat, lon, userVariable
     cloudElementLon = []        #list for a particular CE's lon values
     cloudElementLatLons = []    #list for a particular CE's (lat,lon) values
     allCloudElementDicts = []
-    
+   
     temporalRes = 3 # TRMM data is 3 hourly
     precipTotal = 0.0
     ceTRMMList = []
@@ -501,7 +520,6 @@ def find_single_frame_cloud_elements(t,mergImgs,timelist, lat, lon, userVariable
             #data to be returned to parent function
             allCloudElementDicts.append(cloudElementDict)
         else:
-            #TODO: remove this else as we only wish for the CE details
             #ensure only the non-zero elements are considered
             #store intel in allCE file
             labels, _ = ndimage.label(cloudElement)
