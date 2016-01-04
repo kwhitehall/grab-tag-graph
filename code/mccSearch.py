@@ -65,7 +65,7 @@ CLOUD_ELEMENT_GRAPH = nx.DiGraph()
 PRUNED_GRAPH = nx.DiGraph()
 #get lat lons from iomethods.py
 
-P_TIME = 0
+# P_TIME = 0
 
 #------------------------ End GLOBAL VARS -------------------------
 #************************ Begin Functions *************************
@@ -166,7 +166,6 @@ def assemble_graph(results):
             cloudElementsUserFile.write('\nConvective fraction is: %.4f ' %ce['cloudElementCF'])
             cloudElementsUserFile.write('\nEccentricity is: %.4f ' %ce['cloudElementEccentricity'])
 
-            #TODO: remove the duplication from cloudElementsFile below
             cloudElementsFile.write(results[0][1])
             
     for t in xrange(1,len(results)):
@@ -188,7 +187,7 @@ def assemble_graph(results):
                 cloudElementsUserFile.write('\nBrightness temperature variance is: %.4f K' %ce['cloudElementBTvar'])
                 cloudElementsUserFile.write('\nConvective fraction is: %.4f ' %ce['cloudElementCF'])
                 cloudElementsUserFile.write('\nEccentricity is: %.4f ' %ce['cloudElementEccentricity'])
-                #TODO: remove the duplication form cloudElmentsFile below
+                
                 cloudElementsFile.write(results[t][1])
                 
                 for cloudElementDict in prevFrameCEs:
@@ -279,7 +278,7 @@ def find_single_frame_cloud_elements(t,mergImgs,timelist, mainStrDir, lat, lon, 
     global LON
     LON = lon
     
-    global P_TIME
+    # global P_TIME
     
     cloudElementsJSON = []  #list of the key, value objects associated with a CE in the graph
     edges = []     #list of the nodes connected to a given CE
