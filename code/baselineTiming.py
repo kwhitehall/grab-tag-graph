@@ -33,23 +33,15 @@ def main():
     # utils.preprocessing_merg(rawMERG)
     # ---------------------------------------------------------------------------------
     # ---------------------------------- user inputs --------------------------------------
-    DIRS['mainDirStr'] = "/home/meldefon/Studies/JPLGraphs/testSeparate2"#"/directory/to/where/to/store/outputs"
+    DIRS['mainDirStr'] = "/directory/to/where/to/store/outputs"
     
-	#    BASELINE DATA + DATES
-    DIRS['TRMMdirName'] = "/home/meldefon/Studies/JPLGraphs/grab-tag-graph/baselinDataDir/datadir/TRMM"#"/directory/to/the/TRMM/netCDF/files"
-    DIRS['CEoriDirName'] = "/home/meldefon/Studies/JPLGraphs/grab-tag-graph/baselinDataDir/datadir/MERG"#"/directory/to/the/MERG/netCDF/files"
-
-    #get the dates for analysis
-    startDateTime = "200908310000" #"yyyymmddhrmm"
-    endDateTime = "200908312100"
-
 	#    PAPER DATA + DATES
-    DIRS['TRMMdirName'] = "/home/meldefon/Studies/JPLGraphs/grab-tag-graph/paperData/paperData/TRMM"#"/directory/to/the/TRMM/netCDF/files"
-    DIRS['CEoriDirName'] = "/home/meldefon/Studies/JPLGraphs/grab-tag-graph/paperData/paperData/MERG"#"/directory/to/the/MERG/netCDF/files"
+    DIRS['TRMMdirName'] = "/directory/to/the/TRMM/netCDF/files"
+    DIRS['CEoriDirName'] = "/directory/to/the/MERG/netCDF/files"
 
     #get the dates for analysis
-    startDateTime = "200609110000" #"yyyymmddhrmm"
-    endDateTime = "200609121200"
+    startDateTime = "yyyymmddhrmm"
+    endDateTime = "yyyymmddhrmm"
 
     # ---------------------------------- end user inputs --------------------------------------
     # Checks that inputs are ok
