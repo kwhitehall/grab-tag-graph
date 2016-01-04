@@ -310,6 +310,9 @@ def find_single_frame_cloud_elements(t,mergImgs,timelist, mainStrDir, lat, lon, 
     ceTRMMList = []
     precip = []
 
+    maxCEprecipRate = 0.0
+    minCEprecipRate = 0.0
+
     nygrd = len(LAT[:, 0])
     nxgrd = len(LON[0, :])
 
