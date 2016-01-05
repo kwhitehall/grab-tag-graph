@@ -211,7 +211,7 @@ def find_cloud_elements(mergImgs, timelist, mainStrDir, lat, lon, TRMMdirName=No
                 times.units = 'hours since '+ str(timelist[t])[:-6]
                 latitudes = currNetCDFCEData.createVariable('latitude', 'f8', ('lat',))
                 longitudes = currNetCDFCEData.createVariable('longitude', 'f8', ('lon',))
-                brightnesstemp = currNetCDFCEData.createVariable('brightnesstemp', 'i16', tempDims)
+                brightnesstemp = currNetCDFCEData.createVariable('brightnesstemp', 'f8', tempDims)
                 brightnesstemp.units = 'Kelvin'
                 # NETCDF data
                 dates = [timelist[t] + timedelta(hours=0)]
@@ -1406,15 +1406,17 @@ def check_criteria(thisCloudElementLatLon, aTemperature):
     '''
     Purpose:: Determine if criteria B is met for a CEGraph
 
-    Inputs:: thisCloudElementLatLon: 2D array of (lat,lon) variable from the node dictionary being currently considered
+    Inputs:: thisCloudElementLatLon: an array of (lat,lon, t_bb)
         aTemperature:a integer representing the temperature maximum for masking
 
     Returns:: cloudElementArea: a floating-point number representing the area in the array that meet the criteria 
 
     '''
     cloudElementCriteriaBLatLon = []
-
+    allCriteriaB = []
+    
     _, ceCounter = ndimage.measurements.label(thisCloudElementLatLon, structure=STRUCTURING_ELEMENT)
+
     #frame, ceCounter = ndimage.measurements.label(thisCloudElementLatLon, structure=STRUCTURING_ELEMENT)
     #frameceCounter = 0
     #determine min and max values in lat and lon, then use this to generate teh array from LAT,LON meshgrid
@@ -1451,13 +1453,13 @@ def check_criteria(thisCloudElementLatLon, aTemperature):
         #loc is a masked array
         #***** returns elements down then across thus (6,4) is 6 arrays deep of size 4
         try:
-
             loc = ndimage.find_objects(criteriaB)[0]
         except:
             #this would mean that no objects were found meeting criteria B
             print 'no objects at this temperature!'
             cloudElementArea = 0.0
-            return cloudElementArea, cloudElementCriteriaBLatLon
+            continue
+            
         try:
             cloudElementCriteriaB = ma.zeros((criteriaB.shape))
             cloudElementCriteriaB = criteriaB[loc]
@@ -1479,8 +1481,10 @@ def check_criteria(thisCloudElementLatLon, aTemperature):
         tempMask = []
         criteriaB = []
         cloudElementCriteriaB = []
+]
+        allCriteriaB.append((cloudElementArea, cloudElementCriteriaBLatLon))
 
-        return cloudElementArea, cloudElementCriteriaBLatLon
+    return  max(allCriteriaB, key=lambda x:x[0])  
 #**********************************************************************************************************************
 def has_merges_or_splits(nodeList):
     '''
