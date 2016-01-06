@@ -358,13 +358,12 @@ def find_single_frame_cloud_elements(t,mergImgs,timelist, mainStrDir, lat, lon, 
         TRMMData.close()
 
     #for each of the areas identified in the IR data, check to determine valid CEs via an area and T requirement
-    all_locs = ndimage.find_objects(frame)
     for count in xrange(ceCounter):
         #[0] is time dimension. Determine the actual values from the data
         #loc is a masked array
         try:
-            loc = all_locs[count]
-    
+            loc = ndimage.find_objects(frame==(count+1))[0]
+            
         except Exception, e:
             print 'Error is ', e
             continue
