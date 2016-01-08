@@ -8,7 +8,8 @@ Using GTG
 =========
 1. Download the source code tarball. The tarball contains some data to get you started (baselinDataDir.zip)
 2. Once you unzip the tarball, unzip and change directory to **code/**
-3. `python mccSearchUI.py`
+3. Run GTG via the following command
+   ** python mccSearchUI.py**
 mccSearchUI.py is the use of GTG for the weather application of finding mesoscale convective complexes (MCCs) in
 When you run the command line, mccSearchUI.py, there are a number of inputs that will be required.
 There are the main inputs you will have to supply (as well as their variable names in the code - especially useful for editing mainProg.py or tracing the code:
@@ -19,9 +20,7 @@ There are the main inputs you will have to supply (as well as their variable nam
 * Start date and time in the format yyyymmddhr
 * End date and time in the format yyyymmddhr
 
-The following assumptions are made:
-* input data are in one folder. For MERG data this is CEoriDirName and for the TRMM data this is TRMMdirName in mainProg.py.  These directories cannot be the same.
-* THERE IS NO FILE CHECKING. So please ensure ALL your files are there in netCDF format. 
+See the [wiki page 'Using GTG'](https://github.com/kwhitehall/grab-tag-graph/wiki/Using-GTG) for more details
 
 4. Wait a bit!
 5. Once everything went well, the directory you indicated where outputs should be stored when prompted in the CL will be generated, and four folders should appear in it. 
