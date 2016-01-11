@@ -1458,16 +1458,16 @@ def check_criteria(thisCloudElementLatLon, aTemperature):
     '''
     Purpose:: Determine if criteria B is met for a CEGraph
 
-    Inputs:: thisCloudElementLatLon: 2D array of (lat,lon) variable from the node dictionary being currently considered
+    Inputs:: thisCloudElementLatLon: an array of (lat,lon, t_bb)
         aTemperature:a integer representing the temperature maximum for masking
 
     Returns:: cloudElementArea: a floating-point number representing the area in the array that meet the criteria 
 
     '''
     cloudElementCriteriaBLatLon = []
-
-    _, ceCounter = ndimage.measurements.label(thisCloudElementLatLon, structure=STRUCTURING_ELEMENT)
+    allCriteriaB = []
     
+    _, ceCounter = ndimage.measurements.label(thisCloudElementLatLon, structure=STRUCTURING_ELEMENT)
     #determine min and max values in lat and lon, then use this to generate teh array from LAT,LON meshgrid
     
     minLat = min(x[0] for x in thisCloudElementLatLon)
@@ -1504,7 +1504,8 @@ def check_criteria(thisCloudElementLatLon, aTemperature):
             #this would mean that no objects were found meeting criteria B
             print 'no objects at this temperature!'
             cloudElementArea = 0.0
-            return cloudElementArea, cloudElementCriteriaBLatLon
+            continue
+            
         try:
             cloudElementCriteriaB = ma.zeros((criteriaB.shape))
             cloudElementCriteriaB = criteriaB[loc]
@@ -1527,8 +1528,10 @@ def check_criteria(thisCloudElementLatLon, aTemperature):
         tempMask = []
         criteriaB = []
         cloudElementCriteriaB = []
+]
+        allCriteriaB.append((cloudElementArea, cloudElementCriteriaBLatLon))
 
-        return cloudElementArea, cloudElementCriteriaBLatLon
+    return  max(allCriteriaB, key=lambda x:x[0])  
 #**********************************************************************************************************************
 def has_merges_or_splits(nodeList):
     '''
