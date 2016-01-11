@@ -1,5 +1,34 @@
 {
     "LATMAX": "19.0", 
+    "LATMIN": "5.0", 
+    "LONMIN": "-5.0", 
+    "LONMAX": "9.0",
+    "DIRS": {
+        "CEoriDirName": "/directory/to/where/to/TRMM/netCDF/files",
+        "mainDirStr": "/directory/to/where/to/store/outputs",
+        "TRMMdirName": "/directory/to/where/to/MERG/netCDF/files"
+    }, 
+    "startDateTime": "yyyymmddhhss", 
+    "endDateTime": "yyyymmddhhss", 
+    "T_BB_MAX": 243, 
+    "OUTER_CLOUD_SHIELD_AREA": 80000.0, 
+    "ECCENTRICITY_THRESHOLD_MIN": 0.7, 
+    "MAXIMUM_DURATION": 24, 
+    "MINIMUM_DURATION": 6, 
+    "ECCENTRICITY_THRESHOLD_MAX": 1.0, 
+    "MIN_OVERLAP": 10000.0, 
+    "OUTER_CLOUD_SHIELD_TEMPERATURE": 233, 
+    "MIN_MCS_DURATION": 3, 
+    "AREA_MIN": 2400.0, 
+    "LON_DISTANCE": 111.0, 
+    "CONVECTIVE_FRACTION": 0.9, 
+    "LAT_DISTANCE": 111.0, 
+    "INNER_CLOUD_SHIELD_AREA": 30000.0, 
+    "INNER_CLOUD_SHIELD_TEMPERATURE": 213, 
+    "T_BB_MIN": 218, 
+    "YRES": 4.0, 
+    "XRES": 4.0, 
+    "TRES": 1,
     "STRUCTURING_ELEMENT": [
         [
             0, 
@@ -17,33 +46,5 @@
             0
         ]
     ], 
-    "T_BB_MAX": 243, 
-    "OUTER_CLOUD_SHIELD_AREA": 80000.0, 
-    "ECCENTRICITY_THRESHOLD_MIN": 0.7, 
-    "MAXIMUM_DURATION": 24, 
-    "MINIMUM_DURATION": 6, 
-    "ECCENTRICITY_THRESHOLD_MAX": 1.0, 
-    "MIN_OVERLAP": 10000.0, 
-    "OUTER_CLOUD_SHIELD_TEMPERATURE": 233, 
-    "YRES": 4.0, 
-    "LATMIN": "5.0", 
-    "DIRS": {
-        "CEoriDirName": "/Users/youssefbiaz/Documents/USC/,2015-3Fall'15/5CSCI401/grab-tag-graph/baselineTimings/paperData/MERG", 
-        "mainDirStr": "/Users/youssefbiaz/Documents/USC/,2015-3Fall'15/5CSCI401/grab-tag-graph/baselineTimings/output/paperData", 
-        "TRMMdirName": "/Users/youssefbiaz/Documents/USC/,2015-3Fall'15/5CSCI401/grab-tag-graph/baselineTimings/paperData/TRMM"
-    }, 
-    "startDateTime": "200609110000", 
-    "MIN_MCS_DURATION": 3, 
-    "AREA_MIN": 2400.0, 
-    "LON_DISTANCE": 111.0, 
-    "CONVECTIVE_FRACTION": 0.9, 
-    "LAT_DISTANCE": 111.0, 
-    "INNER_CLOUD_SHIELD_AREA": 30000.0, 
-    "INNER_CLOUD_SHIELD_TEMPERATURE": 213, 
-    "T_BB_MIN": 218, 
-    "endDateTime": "200609121200", 
-    "LONMIN": "-5.0", 
-    "XRES": 4.0, 
-    "TRES": 1, 
-    "LONMAX": "9.0"
+     
 }

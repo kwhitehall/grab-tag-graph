@@ -37,11 +37,11 @@ class UserVariables(object):
         self.INNER_CLOUD_SHIELD_TEMPERATURE = 213   #in K                                                                 
         self.MINIMUM_DURATION = 6    #min number of frames the MCC must exist for (assuming hrly frames, MCCs is 6hrs) 
         self.MAXIMUM_DURATION = 24   #max number of framce the MCC can last for   
-        self.DIRS = {'mainDirStr': "/Users/kwhitehall/Documents/capstones/usc2015/haig", \
-                     'TRMMdirName':"/Users/kwhitehall/Documents/capstones/usc2015/paperData/TRMM", \
-                     'CEoriDirName': "/Users/kwhitehall/Documents/capstones/usc2015/paperData/MERG"}
-        self.startDateTime = "200609110000"
-        self.endDateTime = "200609121200"
+        self.DIRS = {'mainDirStr': "/directory/to/where/to/store/outputs", \
+                     'TRMMdirName':"/directory/to/where/to/TRMM/netCDF/files", \
+                     'CEoriDirName': "/directory/to/where/to/MERG/netCDF/files"}
+        self.startDateTime = "yyyymmddhhss" 
+        self.endDateTime = "yyyymmddhhss"
         self.filelist = None
 
 
