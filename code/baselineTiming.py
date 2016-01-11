@@ -99,7 +99,7 @@ def main():
     findCEsStart = time.time()
     print "\n Using both MERG and TRMM simultaneously "
     #CEGraph = mccSearch.find_cloud_elements(mergImgs,timeList,userVariables.DIRS['mainDirStr'], LAT,LON,userVariables, graphVariables, userVariables.DIRS['TRMMdirName'])
-    CEGraph = mccSearch.find_cloud_elements(mergImgs,timeList, LAT, LON, userVariables, graphVariables, userVariables.DIRS['TRMMdirName'])
+    CEGraph,_ = mccSearch.find_cloud_elements(mergImgs,timeList, LAT, LON, userVariables, graphVariables, userVariables.DIRS['TRMMdirName'])
     findCEsEnd = time.time()
     print "\n Number of cloud elements found is: ", CEGraph.number_of_nodes()
     print "\n End the timer for findCloudElements process"
