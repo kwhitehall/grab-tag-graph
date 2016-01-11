@@ -124,7 +124,6 @@ def assemble_graph(results, userVariables, graphVariables):
             cloudElementsUserFile.write('\nConvective fraction is: %.4f ' %ce['cloudElementCF'])
             cloudElementsUserFile.write('\nEccentricity is: %.4f ' %ce['cloudElementEccentricity'])
 
-            #TODO: remove the duplication from cloudElementsFile below
             cloudElementsFile.write(results[0][1])
             
     for t in xrange(1,len(results)):
@@ -146,7 +145,7 @@ def assemble_graph(results, userVariables, graphVariables):
                 cloudElementsUserFile.write('\nBrightness temperature variance is: %.4f K' %ce['cloudElementBTvar'])
                 cloudElementsUserFile.write('\nConvective fraction is: %.4f ' %ce['cloudElementCF'])
                 cloudElementsUserFile.write('\nEccentricity is: %.4f ' %ce['cloudElementEccentricity'])
-                #TODO: remove the duplication form cloudElmentsFile below
+                
                 cloudElementsFile.write(results[t][1])
                 
                 for cloudElementDict in prevFrameCEs:
@@ -234,7 +233,7 @@ def find_single_frame_cloud_elements(t,mergImgs,timelist, lat, lon, userVariable
     global LON
     LON = lon
     
-    global P_TIME
+    # global P_TIME
     
     cloudElementsJSON = []  #list of the key, value objects associated with a CE in the graph
     edges = []     #list of the nodes connected to a given CE
@@ -264,6 +263,9 @@ def find_single_frame_cloud_elements(t,mergImgs,timelist, lat, lon, userVariable
     precipTotal = 0.0
     ceTRMMList = []
     precip = []
+
+    maxCEprecipRate = 0.0
+    minCEprecipRate = 0.0
 
     nygrd = len(LAT[:, 0])
     nxgrd = len(LON[0, :])
@@ -311,13 +313,12 @@ def find_single_frame_cloud_elements(t,mergImgs,timelist, lat, lon, userVariable
         TRMMData.close()
 
     #for each of the areas identified in the IR data, check to determine valid CEs via an area and T requirement
-    all_locs = ndimage.find_objects(frame)
     for count in xrange(ceCounter):
         #[0] is time dimension. Determine the actual values from the data
         #loc is a masked array
         try:
-            loc = all_locs[count]
-    
+            loc = ndimage.find_objects(frame==(count+1))[0]
+            
         except Exception, e:
             print 'Error is ', e
             continue
@@ -1412,7 +1413,7 @@ def check_criteria(thisCloudElementLatLon, aTemperature,userVariables):
     '''
     Purpose:: Determine if criteria B is met for a CEGraph
 
-    Inputs:: thisCloudElementLatLon: 2D array of (lat,lon) variable from the node dictionary being currently considered
+    Inputs:: thisCloudElementLatLon: an array of (lat,lon, t_bb)
         aTemperature:a integer representing the temperature maximum for masking
 
     Returns:: cloudElementArea: a floating-point number representing the area in the array that meet the criteria 
@@ -1421,7 +1422,9 @@ def check_criteria(thisCloudElementLatLon, aTemperature,userVariables):
     cloudElementCriteriaBLatLon = []
 
     _, ceCounter = ndimage.measurements.label(thisCloudElementLatLon, structure=userVariables.STRUCTURING_ELEMENT)
-    
+
+    allCriteriaB = []
+
     #determine min and max values in lat and lon, then use this to generate teh array from LAT,LON meshgrid
     
     minLat = min(x[0] for x in thisCloudElementLatLon)
@@ -1458,7 +1461,8 @@ def check_criteria(thisCloudElementLatLon, aTemperature,userVariables):
             #this would mean that no objects were found meeting criteria B
             print 'no objects at this temperature!'
             cloudElementArea = 0.0
-            return cloudElementArea, cloudElementCriteriaBLatLon
+            continue
+            
         try:
             cloudElementCriteriaB = ma.zeros((criteriaB.shape))
             cloudElementCriteriaB = criteriaB[loc]
@@ -1482,7 +1486,9 @@ def check_criteria(thisCloudElementLatLon, aTemperature,userVariables):
         criteriaB = []
         cloudElementCriteriaB = []
 
-        return cloudElementArea, cloudElementCriteriaBLatLon
+        allCriteriaB.append((cloudElementArea, cloudElementCriteriaBLatLon))
+
+    return  max(allCriteriaB, key=lambda x:x[0])  
 #**********************************************************************************************************************
 def has_merges_or_splits(nodeList,graphVariables):
     '''

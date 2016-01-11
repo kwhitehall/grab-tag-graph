@@ -35,6 +35,7 @@ def main():
     # ---------------------------------- user inputs --------------------------------------
     userVariables = variables.define_user_variables()
     graphVariables = variables.define_graph_variables()
+
     # ---------------------------------- end user inputs --------------------------------------
     # Checks that inputs are ok
     try:
