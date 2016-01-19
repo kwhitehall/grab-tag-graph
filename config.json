@@ -4,9 +4,9 @@
     "LONMIN": "-5.0", 
     "LONMAX": "9.0",
     "DIRS": {
-        "CEoriDirName": "/directory/to/where/to/TRMM/netCDF/files",
-        "mainDirStr": "/directory/to/where/to/store/outputs",
-        "TRMMdirName": "/directory/to/where/to/MERG/netCDF/files"
+        "CEoriDirName": "/directory/with/IR/data",
+        "mainDirStr": "/directory/to/save/outputs",
+        "TRMMdirName": "None"
     }, 
     "startDateTime": "yyyymmddhhss", 
     "endDateTime": "yyyymmddhhss", 
@@ -28,23 +28,5 @@
     "T_BB_MIN": 218, 
     "YRES": 4.0, 
     "XRES": 4.0, 
-    "TRES": 1,
-    "STRUCTURING_ELEMENT": [
-        [
-            0, 
-            1, 
-            0
-        ], 
-        [
-            1, 
-            1, 
-            1
-        ], 
-        [
-            0, 
-            1, 
-            0
-        ]
-    ], 
-     
+    "TRES": 1
 }

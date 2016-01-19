@@ -37,6 +37,10 @@ class UserVariables(object):
         self.INNER_CLOUD_SHIELD_TEMPERATURE = 213   #in K                                                                 
         self.MINIMUM_DURATION = 6    #min number of frames the MCC must exist for (assuming hrly frames, MCCs is 6hrs) 
         self.MAXIMUM_DURATION = 24   #max number of framce the MCC can last for   
+        self.STRUCTURING_ELEMENT = [[0, 1, 0],
+                                       [1, 1, 1],
+                                       [0, 1, 0]
+                                      ]
         self.DIRS = {'mainDirStr': "/directory/to/where/to/store/outputs", \
                      'TRMMdirName':"/directory/to/where/to/TRMM/netCDF/files", \
                      'CEoriDirName': "/directory/to/where/to/MERG/netCDF/files"}
@@ -109,7 +113,10 @@ class UserVariables(object):
             #     print "Bad LON_DISTANCE input! Check the config file. Now using default variables..."
             #     return False          
 
-            self.STRUCTURING_ELEMENT = data['STRUCTURING_ELEMENT'] 
+            self.STRUCTURING_ELEMENT = [[0, 1, 0],
+                                       [1, 1, 1],
+                                       [0, 1, 0]
+                                      ] #data['STRUCTURING_ELEMENT'] 
             self.T_BB_MAX = float(data['T_BB_MAX'])
             self.T_BB_MIN = float(data['T_BB_MIN'])
             if (self.T_BB_MIN > self.T_BB_MAX):
@@ -164,15 +171,35 @@ class UserVariables(object):
             if (self.MINIMUM_DURATION > self.MAXIMUM_DURATION):
                 print "Bad MIN and MAX DURATION inputs! Check the config file. Now using default variables..."
                 return False;            
+
+            self.startDateTime = data['startDateTime']
+            self.endDateTime = data['endDateTime']
+            #check validity of time
+            while utils.valid_date(self.startDateTime) != True:
+                print "Invalid time entered for startDateTime!"
+            while utils.valid_date(self.endDateTime) != True:
+                print "Invalid time entered for endDateTime!"
+
+            if (float(self.startDateTime) > float(self.endDateTime)):
+                print "Bad start and end times input! Check the config file. Now using default variables..."
+                return False
+
             self.DIRS = data['DIRS']
 
             # Checks that inputs are ok
-            try:
-                if not os.path.exists(self.DIRS['TRMMdirName']):
-                    print "Error: TRMM invalid path!"
-                    self.DIRS['TRMMdirName'] = raw_input("> Please enter the location to the raw TRMM netCDF files: \n")
-            except:
-                pass
+            if not self.DIRS['TRMMdirName'] == "None":
+                try:
+                    if not os.path.exists(self.DIRS['TRMMdirName']):
+                        print "Error: TRMM invalid path!"
+                        self.DIRS['TRMMdirName'] = raw_input("> Please enter the location to the raw TRMM netCDF files: \n")
+                except:
+                    pass
+            
+                #check if all the files exisits in the TRMM directory entered
+                test,_ = iomethods.check_for_files(self.DIRS['TRMMdirName'], self.startDateTime, self.endDateTime, 3, 'hour')
+                if test == False:
+                    print "Error with files in the TRMM directory entered. Please check your files before restarting. "
+                    return
             
             try:
                 if not os.path.exists(self.DIRS['CEoriDirName']):
@@ -181,25 +208,7 @@ class UserVariables(object):
             except:
                 print "..."   
 
-            self.startDateTime = data['startDateTime']
-            self.endDateTime = data['endDateTime']
-            #check validity of time
-            while utils.valid_date(self.startDateTime) != True:
-                print "Invalid time entered for startDateTime!"
-    
-            while utils.valid_date(self.endDateTime) != True:
-                print "Invalid time entered for endDateTime!"
-            if (float(self.startDateTime) > float(self.endDateTime)):
-                print "Bad start and end times input! Check the config file. Now using default variables..."
-                return False   
-                
-            #check if all the files exisits in the MERG and TRMM directories entered
-            test,_ = iomethods.check_for_files(self.DIRS['TRMMdirName'], self.startDateTime, self.endDateTime, 3, 'hour')
-            if test == False:
-                print "Error with files in the TRMM directory entered. Please check your files before restarting. "
-                return
-
-            test,self.filelist = iomethods.check_for_files(self.DIRS['TRMMdirName'], self.startDateTime, self.endDateTime, 3, 'hour')
+            test,self.filelist = iomethods.check_for_files(self.DIRS['CEoriDirName'], self.startDateTime, self.endDateTime, 1, 'hour')
 
         except ValueError:
             print "Bad config file, please check that inputs are float values. Now using default variables..."
