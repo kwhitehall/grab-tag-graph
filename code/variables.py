@@ -37,10 +37,6 @@ class UserVariables(object):
         self.INNER_CLOUD_SHIELD_TEMPERATURE = 213   #in K                                                                 
         self.MINIMUM_DURATION = 6    #min number of frames the MCC must exist for (assuming hrly frames, MCCs is 6hrs) 
         self.MAXIMUM_DURATION = 24   #max number of framce the MCC can last for   
-        self.STRUCTURING_ELEMENT = [[0, 1, 0],
-                                       [1, 1, 1],
-                                       [0, 1, 0]
-                                      ]
         self.DIRS = {'mainDirStr': "/directory/to/where/to/store/outputs", \
                      'TRMMdirName':"/directory/to/where/to/TRMM/netCDF/files", \
                      'CEoriDirName': "/directory/to/where/to/MERG/netCDF/files"}
@@ -104,14 +100,14 @@ class UserVariables(object):
                 return False
             
             self.LAT_DISTANCE = float(data['LAT_DISTANCE'])
-            # if (self.LAT_DISTANCE > 111.):
-            #     print "Bad LAT_DISTANCE input! Check the config file. Now using default variables..."
-            #     return False
+            if (self.LAT_DISTANCE > 111. or self.LAT_DISTANCE <= 0.):
+                print "Bad LAT_DISTANCE input! Check the config file. Now using default variables..."
+                return False
             
             self.LON_DISTANCE = float(data['LON_DISTANCE'])
-            # if (self.LON_DISTANCE > 111.):
-            #     print "Bad LON_DISTANCE input! Check the config file. Now using default variables..."
-            #     return False          
+            if (self.LON_DISTANCE > 111. or self.LON_DISTANCE <= 0.):
+                print "Bad LON_DISTANCE input! Check the config file. Now using default variables..."
+                return False          
 
             self.STRUCTURING_ELEMENT = [[0, 1, 0],
                                        [1, 1, 1],
@@ -143,10 +139,10 @@ class UserVariables(object):
             self.MIN_OVERLAP = float(data['MIN_OVERLAP'])
             self.ECCENTRICITY_THRESHOLD_MAX = float(data['ECCENTRICITY_THRESHOLD_MAX'])
             self.ECCENTRICITY_THRESHOLD_MIN = float(data['ECCENTRICITY_THRESHOLD_MIN'])
-            if (self.ECCENTRICITY_THRESHOLD_MAX < 0 or self.ECCENTRICITY_THRESHOLD_MAX > 1):
+            if (self.ECCENTRICITY_THRESHOLD_MAX < 0 or self.ECCENTRICITY_THRESHOLD_MAX > 1.):
                 print "Bad ECCENTRICITY THRESHOLD MAX input. Check config file. Now using default variables..."
                 return False
-            if (self.ECCENTRICITY_THRESHOLD_MIN < 0 or self.ECCENTRICITY_THRESHOLD_MIN > 1):
+            if (self.ECCENTRICITY_THRESHOLD_MIN < 0 or self.ECCENTRICITY_THRESHOLD_MIN > 1.):
         		print "Bad ECCENTRICITY THRESHOLD MIN input. Check config file. Now using default variables..."
         		print False
 
