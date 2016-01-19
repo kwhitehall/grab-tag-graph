@@ -77,7 +77,7 @@ def main():
     TRMMCEdirName = userVariables.DIRS['mainDirStr']+'/TRMMnetcdfCEs'
     CEdirName = userVariables.DIRS['mainDirStr']+'/MERGnetcdfCEs'
 
-    unittestFile = open(userVariables.DIRS['mainDirStr']+'/unittestResults.txt','wb')
+    unittestFile = open(userVariables.DIRS['mainDirStr']+'/textFiles/unittestResults.txt','wb')
     unittestFile.write("\n Timing results for "+userVariables.startDateTime+" to "+userVariables.endDateTime)
 
     #let's go!
