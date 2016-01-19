@@ -1,4 +1,5 @@
 import os
+import subprocess
 import networkx as nx
 import json
 import utils
@@ -37,12 +38,16 @@ class UserVariables(object):
         self.INNER_CLOUD_SHIELD_TEMPERATURE = 213   #in K                                                                 
         self.MINIMUM_DURATION = 6    #min number of frames the MCC must exist for (assuming hrly frames, MCCs is 6hrs) 
         self.MAXIMUM_DURATION = 24   #max number of framce the MCC can last for   
-        self.DIRS = {'mainDirStr': "/directory/to/where/to/store/outputs", \
-                     'TRMMdirName':"/directory/to/where/to/TRMM/netCDF/files", \
-                     'CEoriDirName': "/directory/to/where/to/MERG/netCDF/files"}
-        self.startDateTime = "yyyymmddhhss" 
-        self.endDateTime = "yyyymmddhhss"
+        self.DIRS = {'mainDirStr': "../firstattempt", \
+                     'TRMMdirName':"../datadir/TRMM", \
+                     'CEoriDirName': "../datadir/MERG"}
+        self.startDateTime = "200908310000" #"yyyymmddhhss" 
+        self.endDateTime = "200908230000"
         self.filelist = None
+
+        #check if baselineDataDir.zip is unzipped, if not unzip it
+        if not os.path.exists("../datadir"):
+            subprocess.call('cd ../ ; unzip baselineDataDir.zip', shell=True)
 
 
     def setupJSON(self):
@@ -188,24 +193,28 @@ class UserVariables(object):
                     if not os.path.exists(self.DIRS['TRMMdirName']):
                         print "Error: TRMM invalid path!"
                         self.DIRS['TRMMdirName'] = raw_input("> Please enter the location to the raw TRMM netCDF files: \n")
+
+                    #check if all the files exisits in the TRMM directory entered
+                    test,_ = iomethods.check_for_files(self.DIRS['TRMMdirName'], self.startDateTime, self.endDateTime, 3, 'hour')
+                    if test == False:
+                        print "Error with files in the TRMM directory entered. Please check your files before restarting. "
+                        return
                 except:
                     pass
-            
-                #check if all the files exisits in the TRMM directory entered
-                test,_ = iomethods.check_for_files(self.DIRS['TRMMdirName'], self.startDateTime, self.endDateTime, 3, 'hour')
-                if test == False:
-                    print "Error with files in the TRMM directory entered. Please check your files before restarting. "
-                    return
             
             try:
                 if not os.path.exists(self.DIRS['CEoriDirName']):
                     print "Error! MERG invalid path!"
                     self.DIRS['CEoriDirName'] = raw_input("> Please enter the directory to the MERG netCDF files: \n")
+
+                test,self.filelist = iomethods.check_for_files(self.DIRS['CEoriDirName'], self.startDateTime, self.endDateTime, 1, 'hour')
+                if test == False:
+                    print "Error with files in the MERG directory entered. Please check your files before restarting. "
+                    return
             except:
                 print "..."   
 
-            test,self.filelist = iomethods.check_for_files(self.DIRS['CEoriDirName'], self.startDateTime, self.endDateTime, 1, 'hour')
-
+            
         except ValueError:
             print "Bad config file, please check that inputs are float values. Now using default variables..."
 

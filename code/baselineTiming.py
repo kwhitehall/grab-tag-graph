@@ -33,25 +33,11 @@ def main():
     # utils.preprocessing_merg(rawMERG)
     # ---------------------------------------------------------------------------------
     # ---------------------------------- user inputs --------------------------------------
-    userVariables = variables.define_user_variables()
+    userVariables = variables.define_user_variables(useJSON=False)
     graphVariables = variables.define_graph_variables()
 
     # ---------------------------------- end user inputs --------------------------------------
     # Checks that inputs are ok
-    try:
-        if not os.path.exists(userVariables.DIRS['TRMMdirName']):
-            print "Error: TRMM invalid path!"
-            userVariables.DIRS['TRMMdirName'] = raw_input("> Please enter the location to the raw TRMM netCDF files: \n")
-    except:
-        pass
-
-    try:
-        if not os.path.exists(userVariables.DIRS['CEoriDirName']):
-            print "Error! MERG invalid path!"
-            userVariables.DIRS['CEoriDirName'] = raw_input("> Please enter the directory to the MERG netCDF files: \n")
-    except:
-        print "..."   
-
     #check validity of time
     while utils.valid_date(userVariables.startDateTime) != True:
         print "Invalid time entered for startDateTime!"
@@ -59,17 +45,31 @@ def main():
     while utils.valid_date(userVariables.endDateTime) != True:
         print "Invalid time entered for endDateTime!"
         
-    #check if all the files exisits in the MERG and TRMM directories entered
-    test,_ = iomethods.check_for_files(userVariables.DIRS['TRMMdirName'], userVariables.startDateTime, userVariables.endDateTime, 3, 'hour')
-    if test == False:
-        print "Error with files in the TRMM directory entered. Please check your files before restarting. "
-        return
-    #test,filelist = iomethods.check_for_files(startDateTime, endDateTime, DIRS['CEoriDirName'],1)
-    test,filelist = iomethods.check_for_files(userVariables.DIRS['CEoriDirName'], userVariables.startDateTime, userVariables.endDateTime, 1, 'hour')
+    if not userVariables.DIRS['TRMMdirName'] == "None":
+        try:
+            if not os.path.exists(userVariables.DIRS['TRMMdirName']):
+                print "Error: TRMM invalid path!"
+                userVariables.DIRS['TRMMdirName'] = raw_input("> Please enter the location to the raw TRMM netCDF files: \n")
 
-    if test == False:
-        print "Error with files in the original MERG directory entered. Please check your files before restarting. "
-        return
+            test,_ = iomethods.check_for_files(userVariables.DIRS['TRMMdirName'], userVariables.startDateTime, userVariables.endDateTime, 3, 'hour')
+            if test == False:
+                print "Error with files in the TRMM directory entered. Please check your files before restarting. "
+                return
+        except:
+            pass
+
+    try:
+        if not os.path.exists(userVariables.DIRS['CEoriDirName']):
+            print "Error! MERG invalid path!"
+            userVariables.DIRS['CEoriDirName'] = raw_input("> Please enter the directory to the MERG netCDF files: \n")
+        test,filelist = iomethods.check_for_files(userVariables.DIRS['CEoriDirName'], userVariables.startDateTime, userVariables.endDateTime, 1, 'hour')
+
+        if test == False:
+            print "Error with files in the original MERG directory entered. Please check your files before restarting. "
+            return
+    except:
+        print "..."   
+
     # end checks 
 
     # create main directory and file structure for storing intel
@@ -77,7 +77,7 @@ def main():
     TRMMCEdirName = userVariables.DIRS['mainDirStr']+'/TRMMnetcdfCEs'
     CEdirName = userVariables.DIRS['mainDirStr']+'/MERGnetcdfCEs'
 
-    unittestFile = open(userVariables.DIRS['mainDirStr']+'/unittestResults.txt','wb')
+    unittestFile = open(userVariables.DIRS['mainDirStr']+'/textFiles/unittestResults.txt','wb')
     unittestFile.write("\n Timing results for "+userVariables.startDateTime+" to "+userVariables.endDateTime)
 
     #let's go!
