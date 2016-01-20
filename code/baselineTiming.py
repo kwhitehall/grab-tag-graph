@@ -35,43 +35,8 @@ def main():
     # ---------------------------------- user inputs --------------------------------------
     userVariables = variables.define_user_variables(useJSON=False)
     graphVariables = variables.define_graph_variables()
-
     # ---------------------------------- end user inputs --------------------------------------
-    # Checks that inputs are ok
-    #check validity of time
-    while utils.valid_date(userVariables.startDateTime) != True:
-        print "Invalid time entered for startDateTime!"
-
-    while utils.valid_date(userVariables.endDateTime) != True:
-        print "Invalid time entered for endDateTime!"
-        
-    if not userVariables.DIRS['TRMMdirName'] == "None":
-        try:
-            if not os.path.exists(userVariables.DIRS['TRMMdirName']):
-                print "Error: TRMM invalid path!"
-                userVariables.DIRS['TRMMdirName'] = raw_input("> Please enter the location to the raw TRMM netCDF files: \n")
-
-            test,_ = iomethods.check_for_files(userVariables.DIRS['TRMMdirName'], userVariables.startDateTime, userVariables.endDateTime, 3, 'hour')
-            if test == False:
-                print "Error with files in the TRMM directory entered. Please check your files before restarting. "
-                return
-        except:
-            pass
-
-    try:
-        if not os.path.exists(userVariables.DIRS['CEoriDirName']):
-            print "Error! MERG invalid path!"
-            userVariables.DIRS['CEoriDirName'] = raw_input("> Please enter the directory to the MERG netCDF files: \n")
-        test,filelist = iomethods.check_for_files(userVariables.DIRS['CEoriDirName'], userVariables.startDateTime, userVariables.endDateTime, 1, 'hour')
-
-        if test == False:
-            print "Error with files in the original MERG directory entered. Please check your files before restarting. "
-            return
-    except:
-        print "..."   
-
-    # end checks 
-
+    
     # create main directory and file structure for storing intel
     userVariables.DIRS['mainDirStr'] = iomethods.create_main_directory(userVariables.DIRS['mainDirStr'])
     TRMMCEdirName = userVariables.DIRS['mainDirStr']+'/TRMMnetcdfCEs'
