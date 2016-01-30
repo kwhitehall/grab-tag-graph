@@ -27,7 +27,7 @@ P_TIME = 0
 manager = Manager()
 varsDict = manager.dict()
 
-#Callable object that is passed to the Pool map (so that the find_cloud_elements function can be called many times in parallel) - Added by Gabriel Mel
+# Callable object that is passed to the Pool map (so that the find_cloud_elements function can be called many times in parallel) - Added by Gabriel Mel
 class CeFinder(object):
     '''
 
