@@ -2,7 +2,7 @@ grab-tag-graph (GTG) Introduction
 =================================
 Grab 'em, Tag 'em, Graph 'em (GTG) is a feature detection, evolution and feature characterization algorithm. It was built for the weather/ climate application of identifying mesoscale convective complexes in highly resolved temporal and geospatial remote-sensed datasets and characterizing the features using various data sources. 
 
-The algorithm is implemented in Python. The user provides a set of inputs that define the feature to be identified as well as the smallest feature that could evolve in time to be that larger feature of interest. Data is read from netCDF files into arrays with the dimensions time,latitude,longitude,value. The data is searched for areas of interest that evolved in time to make the feature, and these areas are stored in [Networkx](https://networkx.github.io/) graph objects. The graphs are traversed via graph algorithms such as Dijkstra's shortest path to determine the core feature and the feature. 
+The algorithm is implemented in Python. The user provides a set of inputs that define the feature to be identified as well as the smallest feature that could evolve in time to be that larger feature of interest. Data is read from netCDF files into arrays with the dimensions time,latitude,longitude,value. The data is searched for areas of interest that evolved in time to make the feature, and these areas are stored in [Networkx](https://networkx.github.io/) graph objects. The graphs are traversed via graph algorithms such as Dijkstra's shortest path to determine the core feature and the feature.   
 
 Using GTG
 =========
