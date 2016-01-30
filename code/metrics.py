@@ -101,7 +101,7 @@ def common_feature_size(finalMCCList):
     hist, bin_edges = np.histogram(thisMCCAvg)
     return hist, bin_edges
 #**********************************************************************************************************************
-def create_text_file(finalMCCList, identifier, MAIN_DIRECTORY, OUTER_CLOUD_SHIELD_AREA, TRES):
+def create_text_file(finalMCCList, identifier, userVariables, graphVariables):
     '''
     Purpose::
         Create a text file with information about the MCS
@@ -175,22 +175,22 @@ def create_text_file(finalMCCList, identifier, MAIN_DIRECTORY, OUTER_CLOUD_SHIEL
     maxSpeed = 0.0
 
     if identifier == 1:
-        mcsUserFile = open((MAIN_DIRECTORY + '/textFiles/MCCsUserFile.txt'), 'wb')
-        mcsSummaryFile = open((MAIN_DIRECTORY + '/textFiles/MCCSummary.txt'), 'wb')
-        mcsPostFile = open((MAIN_DIRECTORY + '/textFiles/MCCPostPrecessing.txt'), 'wb')
+        mcsUserFile = open((userVariables.DIRS['mainDirStr'] + '/textFiles/MCCsUserFile.txt'), 'wb')
+        mcsSummaryFile = open((userVariables.DIRS['mainDirStr'] + '/textFiles/MCCSummary.txt'), 'wb')
+        mcsPostFile = open((userVariables.DIRS['mainDirStr'] + '/textFiles/MCCPostPrecessing.txt'), 'wb')
 
     if identifier == 2:
-        mcsUserFile = open((MAIN_DIRECTORY + '/textFiles/MCSsUserFile.txt'), 'wb')
-        mcsSummaryFile = open((MAIN_DIRECTORY + '/textFiles/MCSSummary.txt'), 'wb')
-        mcsPostFile = open((MAIN_DIRECTORY + '/textFiles/MCSPostPrecessing.txt'), 'wb')
+        mcsUserFile = open((userVariables.DIRS['mainDirStr'] + '/textFiles/MCSsUserFile.txt'), 'wb')
+        mcsSummaryFile = open((userVariables.DIRS['mainDirStr'] + '/textFiles/MCSSummary.txt'), 'wb')
+        mcsPostFile = open((userVariables.DIRS['mainDirStr'] + '/textFiles/MCSPostPrecessing.txt'), 'wb')
 
     for eachPath in finalMCCList:
         eachPath.sort(key=lambda nodeID: (len(nodeID.split('C')[0]), nodeID.split('C')[0], nodeID.split('CE')[1]))
         mcsPostFile.write('\n %s' % eachPath)
 
-        startTime = mccSearch.this_dict(eachPath[0])['cloudElementTime']
-        endTime = mccSearch.this_dict(eachPath[-1])['cloudElementTime']
-        duration = (endTime - startTime) + timedelta(hours=TRES)
+        startTime = mccSearch.this_dict(eachPath[0],graphVariables)['cloudElementTime']
+        endTime = mccSearch.this_dict(eachPath[-1],graphVariables)['cloudElementTime']
+        duration = (endTime - startTime) + timedelta(hours=userVariables.TRES)
 
         # convert datatime duration to seconds and add to the total for the average duration of all MCS in finalMCCList
         durations += (duration.total_seconds())
@@ -201,7 +201,7 @@ def create_text_file(finalMCCList, identifier, MAIN_DIRECTORY, OUTER_CLOUD_SHIEL
 
         #get the precip info
         for eachNode in eachPath:
-            thisNode = mccSearch.this_dict(eachNode)
+            thisNode = mccSearch.this_dict(eachNode,graphVariables)
             #set first time min 'fake' values
             if firstTime == True:
                 minCEprecipRate = thisNode['CETRMMmin']
@@ -344,7 +344,7 @@ def create_text_file(finalMCCList, identifier, MAIN_DIRECTORY, OUTER_CLOUD_SHIEL
         mcsUserFile.write('\nEndtime is: %s ' %(str(endTime)))
         mcsUserFile.write('\nLife duration is %s hrs' %(str(duration)))
         mcsUserFile.write('\nTime of maturity is %s ' %(timeMCSMatures))
-        mcsUserFile.write('\nDuration mature stage is: %s ' %durationOfMatureMCC*TRES)
+        mcsUserFile.write('\nDuration mature stage is: %s ' %durationOfMatureMCC*userVariables.TRES)
         mcsUserFile.write('\nAverage area is: %.4f km^2 ' %(averageArea))
         mcsUserFile.write('\nMax area is: %.4f km^2 ' %(maxArea))
         mcsUserFile.write('\nMax area time is: %s ' %(maxAreaTime))
