@@ -33,7 +33,7 @@ def main():
     # utils.preprocessing_merg(rawMERG)
     # ---------------------------------------------------------------------------------
     # ---------------------------------- user inputs --------------------------------------
-    userVariables = variables.define_user_variables(useJSON=False)
+    userVariables = variables.UserVariables(useJSON=False)
     graphVariables = variables.define_graph_variables()
     # ---------------------------------- end user inputs --------------------------------------
     
