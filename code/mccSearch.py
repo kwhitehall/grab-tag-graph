@@ -385,7 +385,7 @@ def find_single_frame_cloud_elements(t,mergImgs,timelist, lat, lon, userVariable
             times.units = 'hours since '+ str(timelist[t])[:-6]
             latitudes = currNetCDFCEData.createVariable('latitude', 'f8', ('lat',))
             longitudes = currNetCDFCEData.createVariable('longitude', 'f8', ('lon',))
-            brightnesstemp = currNetCDFCEData.createVariable('brightnesstemp', 'i16', tempDims)
+            brightnesstemp = currNetCDFCEData.createVariable('brightnesstemp', 'f8', tempDims)
             brightnesstemp.units = 'Kelvin'
             # NETCDF data
             dates = [timelist[t] + timedelta(hours=0)]
@@ -400,7 +400,7 @@ def find_single_frame_cloud_elements(t,mergImgs,timelist, lat, lon, userVariable
             #-----------End most of NETCDF file stuff ------------------------------------
 
             #generate array of zeros for brightness temperature
-            brightnesstemp1 = ma.zeros((1, len(latitudes), len(longitudes))).astype('int16')
+            brightnesstemp1 = ma.zeros((1, len(latitudes), len(longitudes))).astype('f8')
             finalCETRMMvalues = ma.zeros((brightnesstemp.shape))
             #populate cloudElementLatLons by unpacking the original values from loc to get the actual value for lat and lon
             cloudElementNonZeros = cloudElement.nonzero()
@@ -1466,7 +1466,7 @@ def check_criteria(thisCloudElementLatLon, aTemperature,userVariables):
     tempMask = ma.masked_array(criteriaBframe, mask=(criteriaBframe >= aTemperature), fill_value = 0)
 
     #get the actual values that the mask returned
-    criteriaB = ma.zeros((criteriaBframe.shape)).astype('int16')
+    criteriaB = ma.zeros((criteriaBframe.shape)).astype('f8')
     criteriaB[~tempMask.mask] = tempMask[~tempMask.mask]
 
     for _ in xrange(ceCounter):
