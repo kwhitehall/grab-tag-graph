@@ -1477,7 +1477,6 @@ def check_criteria(thisCloudElementLatLon, aTemperature,userVariables):
             loc = ndimage.find_objects(criteriaB)[0]
         except:
             #this would mean that no objects were found meeting criteria B
-            print 'no objects at this temperature!'
             cloudElementArea = 0.0
             continue
             
@@ -1506,7 +1505,7 @@ def check_criteria(thisCloudElementLatLon, aTemperature,userVariables):
 
         allCriteriaB.append((cloudElementArea, cloudElementCriteriaBLatLon))
 
-    return  max(allCriteriaB, key=lambda x:x[0])  
+    return  max(allCriteriaB, key=lambda x:x[0]) if allCriteriaB != [] else cloudElementArea, cloudElementCriteriaBLatLon
 #**********************************************************************************************************************
 def has_merges_or_splits(nodeList,graphVariables):
     '''
