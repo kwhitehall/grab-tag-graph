@@ -81,8 +81,6 @@ class UserVariables(object):
             self.DIRS = {'mainDirStr': "../firstattempt", \
                          'TRMMdirName':"../datadir/TRMM", \
                          'CEoriDirName': "../datadir/MERG"}
-            self.startDateTime = "200908310000" #"yyyymmddhhss" 
-            self.endDateTime = "200908312100"
             self.filelist = None
 
         self.STRUCTURING_ELEMENT = [[0, 1, 0],
