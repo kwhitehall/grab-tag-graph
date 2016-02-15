@@ -39,7 +39,7 @@ def main():
     graphVariables = variables.define_graph_variables()
     # ---------------------------------- end user inputs --------------------------------------
     
-    # create main directory and file structure for storing intel
+    # Create main directory and file structure for storing intel
     userVariables.DIRS['mainDirStr'] = iomethods.create_main_directory(userVariables.DIRS['mainDirStr'])
     TRMMCEdirName = userVariables.DIRS['mainDirStr']+'/TRMMnetcdfCEs'
     CEdirName = userVariables.DIRS['mainDirStr']+'/MERGnetcdfCEs'
@@ -54,7 +54,7 @@ def main():
     print "\n -------------- findCloudElements ----------"
     CEGraph, _ = mccSearch.find_cloud_elements(mergImgs, timeList, LAT, LON, userVariables, graphVariables, userVariables.DIRS['TRMMdirName'])
     # theList = CEGraph.successors(node)
-    # if the TRMMdirName wasnt entered for whatever reason, you can still get the TRMM data this way
+    # If the TRMMdirName wasnt entered for whatever reason, you can still get the TRMM data this way
     # CEGraph = mccSearch.findCloudElements(mergImgs,timeList)
     # allCETRMMList=mccSearch.findPrecipRate(DIRS['TRMMdirName'],timeList)
     # ----------------------------------------------------------------------------------------------
@@ -71,7 +71,7 @@ def main():
     print "creating the MCS userfile ", metrics.create_text_file(MCSList, 2, userVariables, graphVariables)
     plot_menu(MCCList, MCSList, userVariables.DIRS)
 
-    #Let's get outta here! Engage!
+    # Let's get outta here! Engage!
     print ("-"*80)
 # *********************************************************************************************************************
 def plot_menu(MCCList, MCSList, DIRS):
