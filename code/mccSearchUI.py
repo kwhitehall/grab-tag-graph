@@ -14,6 +14,7 @@ import utils
 import plotting
 import metrics
 import iomethods
+import variables
 
 
 def main():
@@ -21,128 +22,55 @@ def main():
 
     CEGraph = nx.DiGraph()
     prunedGraph = nx.DiGraph()
-    MCCList =[]
-    MCSList=[]
-    MCSMCCNodesList =[]
-    allMCSsList =[]
-    allCETRMMList =[]
-    DIRS={}
-    # DIRS={
-    #          mainDirStr= "/directory/to/where/to/store/outputs"
-    #          TRMMdirName = "/directory/to/the/TRMM/netCDF/files"
-    #          CEoriDirName = "/directory/to/the/MERG/netCDF/files"
-    #         }
-    preprocessing = ''
-    rawMERG = ''
-
+    MCCList = []
+    MCSList = []
+    MCSMCCNodesList = []
+    allMCSsList = []
+    allCETRMMList = []
+    
     #for GrADs
     subprocess.call('export DISPLAY=:0.0', shell=True)
 
+    #for first time working with the raw MERG zipped files
+    # rawMERG = "/directory/to/the/raw/MERGfiles"
+    # utils.preprocessing_merg(rawMERG)
+    # ---------------------------------------------------------------------------------
+    # ---------------------------------- user inputs --------------------------------------
+    userVariables = variables.UserVariables(useJSON=False)
+    graphVariables = variables.define_graph_variables()
+    # ---------------------------------- end user inputs --------------------------------------
+    
+    # create main directory and file structure for storing intel
+    userVariables.DIRS['mainDirStr'] = iomethods.create_main_directory(userVariables.DIRS['mainDirStr'])
+    TRMMCEdirName = userVariables.DIRS['mainDirStr']+'/TRMMnetcdfCEs'
+    CEdirName = userVariables.DIRS['mainDirStr']+'/MERGnetcdfCEs'
 
-    print "Running MCCSearch ..... \n"
-    DIRS['mainDirStr'] = raw_input("> Please enter working directory: \n" )   # This is where data created will be stored
-
-    preprocessing = raw_input ("> Do you need to preprocess the MERG files? [y/n]: \n")
-    while preprocessing.lower() != 'n':
-        if preprocessing.lower() == 'y':
-            #get location for raw files
-            rawMERG = raw_input("> Please enter the directory to the RAW MERG (.Z) files: \n")
-            #run preprocessing
-            utils.preprocessing_merg(rawMERG)
-            continue
-        elif preprocessing.lower() == 'n' :
-            pass
-        else:
-            print "Error! Invalid choice "
-            preprocessing = raw_input ("> Do you need to preprocess the MERG files? [y/n]: \n")
-
-
-    #get the location of the MERG and TRMM data
-    DIRS['CEoriDirName'] = raw_input("> Please enter the directory to the MERG netCDF files: \n")
-
-    try:
-        if not os.path.exists(DIRS['CEoriDirName']):
-            print "Error! MERG invalid path!"
-            DIRS['CEoriDirName'] = raw_input("> Please enter the directory to the MERG netCDF files: \n")
-    except:
-        print "..."
-
-
-    DIRS['TRMMdirName'] = raw_input("> Please enter the location to the raw TRMM netCDF files: \n")
-    try:
-        if not os.path.exists(DIRS['TRMMdirName']):
-            print "Error: TRMM invalid path!"
-            DIRS['TRMMdirName'] = raw_input("> Please enter the location to the raw TRMM netCDF files: \n")
-    except:
-        pass
-
-    #get the dates for analysis
-    startDateTime = raw_input("> Please enter the start date and time yyyymmddhrmm: \n")
-    #check validity of time
-    while utils.valid_date(startDateTime) != True:
-        print "Invalid time entered for startDateTime!"
-        startDateTime = raw_input("> Please enter the start date and time yyyymmddhrmm: \n")
-
-    endDateTime = raw_input("> Please enter the end date and time yyyymmddhrmm: \n")
-    while utils.valid_date(endDateTime) != True:
-        print "Invalid time entered for endDateTime!"
-        endDateTime = raw_input("> Please enter the end date and time yyyymmddhrmm: \n")
-
-    #check if all the files exisits in the MERG and TRMM directories entered
-    #test,_ = iomethods.check_for_files(startDateTime, endDateTime, DIRS['TRMMdirName'], 2)
-    test,_ = iomethods.check_for_files(DIRS['TRMMdirName'], startDateTime, endDateTime, 3, 'hour')
-    if test == False:
-        print "Error with files in the original MERG directory entered. Please check your files before restarting. "
-        return
-    #test,filelist = iomethods.check_for_files(startDateTime, endDateTime, DIRS['CEoriDirName'],1)
-    test,filelist = iomethods.check_for_files(DIRS['CEoriDirName'], startDateTime, endDateTime, 1, 'hour')
-
-    if test == False:
-        print "Error with files in the original TRMM directory entered. Please check your files before restarting. "
-        return
-
-    #create main directory and file structure for storing intel
-    DIRS['mainDirStr'] = iomethods.create_main_directory(DIRS['mainDirStr'])
-    TRMMCEdirName = DIRS['mainDirStr']+'/TRMMnetcdfCEs'
-    CEdirName = DIRS['mainDirStr']+'/MERGnetcdfCEs'
-
-    # for doing some postprocessing with the clipped datasets instead of running the full program, e.g.
-    postprocessing = raw_input("> Do you wish to postprocess data? [y/n] \n")
-    while postprocessing.lower() != 'n':
-        if postprocessing.lower() == 'y':
-            option = postprocessing_plot_menu(DIRS)
-            return
-        elif postprocessing.lower() == 'n':
-            pass
-        else:
-            print "\n Invalid option."
-            postprocessing = raw_input("> Do you wish to postprocess data? [y/n] \n")
     # -------------------------------------------------------------------------------------------------
     # Getting started. Make it so number one!
     print ("-"*80)
     print "\t\t Starting the MCCSearch Analysis "
     print ("-"*80)
-    print "\n -------------- Reading MERG and TRMM Data ----------"
-    mergImgs, timeList, LAT, LON = iomethods.read_data(DIRS['CEoriDirName'],'ch4','latitude','longitude', filelist)
+    print "\n -------------- Reading MERG Data ----------"
+    mergImgs, timeList, LAT, LON, userVariables = iomethods.read_data('ch4','latitude','longitude', userVariables)
     print "\n -------------- findCloudElements ----------"
-    CEGraph = mccSearch.find_cloud_elements(mergImgs,timeList,DIRS['mainDirStr'], LAT,LON,DIRS['TRMMdirName'])
+    CEGraph,_ = mccSearch.find_cloud_elements(mergImgs,timeList, LAT, LON, userVariables, graphVariables, userVariables.DIRS['TRMMdirName'])
     #theList = CEGraph.successors(node)
     #if the TRMMdirName wasnt entered for whatever reason, you can still get the TRMM data this way
     # CEGraph = mccSearch.findCloudElements(mergImgs,timeList)
     # allCETRMMList=mccSearch.findPrecipRate(DIRS['TRMMdirName'],timeList)
     # ----------------------------------------------------------------------------------------------
     print "\n -------------- findCloudClusters ----------"
-    prunedGraph = mccSearch.find_cloud_clusters(CEGraph)
+    prunedGraph = mccSearch.find_cloud_clusters(CEGraph,userVariables,graphVariables)
     print "\n -------------- findMCCs ----------"
-    MCCList,MCSList = mccSearch.find_MCC(prunedGraph)
+    MCCList,MCSList = mccSearch.find_MCC(prunedGraph,userVariables,graphVariables)
     #now ready to perform various calculations/metrics
     print ("-"*80)
     print "\n -------------- METRICS ----------"
     print ("-"*80)
-    #some calculations/metrics that work that work
-    print "creating the MCC userfile ", metrics.create_text_file(MCCList,1, DIRS['mainDirStr'], 80000.0, 1)
-    print "creating the MCS userfile ", metrics.create_text_file(MCSList,2, DIRS['mainDirStr'], 80000.0, 1)
-    plot_menu(MCCList, MCSList, DIRS)
+    #some calculations/metrics that work that work 
+    print "creating the MCC userfile ", metrics.create_text_file(MCCList,1, userVariables, graphVariables)
+    print "creating the MCS userfile ", metrics.create_text_file(MCSList,2, userVariables, graphVariables)
+    plot_menu(MCCList, MCSList, userVariables.DIRS)
 
     #Let's get outta here! Engage!
     print ("-"*80)
