@@ -93,7 +93,7 @@ def check_for_files(dirPath, startTime, endTime, tdelta, tRes):
     currFile = startFile
     filelist = []
 
-    # check for files between startTime and endTime
+    # Check for files between startTime and endTime
     while currFile is not endFile:
         if not path.isfile(currFile):
             status = False
@@ -124,8 +124,6 @@ def check_for_files(dirPath, startTime, endTime, tdelta, tRes):
 
     return status, filelist
 # **********************************************************************************************************************
-
-
 def find_time_in_file(myTime, myTimeInFile):
     '''
         Purpose:: To return the file pattern of the time string
@@ -148,8 +146,6 @@ def find_time_in_file(myTime, myTimeInFile):
 
     return currTimeInFile
 # ***********************************************************************************************************************
-
-
 def read_vars(userVariables):
     # for GrADs
     subprocess.call('export DISPLAY=:0.0', shell=True)
@@ -198,8 +194,6 @@ def read_vars(userVariables):
 
     return graphVariables
 # **********************************************************************************************************************
-
-
 def create_main_directory(mainDirStr):
     '''
         Purpose:: To create the main directory for storing information and
@@ -235,8 +229,6 @@ def create_main_directory(mainDirStr):
 
     return MAIN_DIRECTORY
 # **********************************************************************************************************************
-
-
 def read_data(varName, latName, lonName, userVariables, filelist=None):
     '''
         Purpose::
@@ -354,8 +346,6 @@ def read_data(varName, latName, lonName, userVariables, filelist=None):
 
     return inputData, timelist, LAT, LON, userVariables
 # **********************************************************************************************************************
-
-
 def get_model_times(xtimes, timeVarName):
     '''
     Purpose:: Routine to convert from model times ('hours since 1900...', 'days since ...')
@@ -443,8 +433,6 @@ def get_model_times(xtimes, timeVarName):
 
     return times, modelTimeStep
 # **********************************************************************************************************************
-
-
 def get_model_time_step(units, stepSize):
     '''
         Purpose:: To determine the time intervals of input data.
@@ -514,8 +502,6 @@ def get_model_time_step(units, stepSize):
 
     return modelTimeStep
 # **********************************************************************************************************************
-
-
 def decode_time_from_string(timeString):
     '''
        Purpose:: Decodes string into a python datetime object
