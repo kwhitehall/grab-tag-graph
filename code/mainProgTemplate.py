@@ -23,18 +23,18 @@ def main():
     allCETRMMList = []
     DIRS={}
 
-    # for GrADs
+    # For GrADs
     subprocess.call('export DISPLAY=:0.0', shell=True)
 
     userVariables = variables.define_user_variables(useJSON=True)
     graphVariables = variables.define_graph_variables()
 
-    # create main directory and file structure for storing intel
+    # Create main directory and file structure for storing intel
     userVariables.DIRS['mainDirStr'] = iomethods.create_main_directory(userVariables.DIRS['mainDirStr'])
     TRMMCEdirName = userVariables.DIRS['mainDirStr']+'/TRMMnetcdfCEs'
     CEdirName = userVariables.DIRS['mainDirStr']+'/MERGnetcdfCEs'
     
-    # let's go!
+    # Let's go!
     # ----------------------------------CORE GTG STEPS------------------------------------------------
     print "\n -------------- Read MERG Data ----------"
     mergImgs, timeList, LAT, LON, userVariables = iomethods.read_data('ch4', 'latitude', 'longitude', userVariables)
@@ -60,9 +60,9 @@ def main():
     print "MCS List has been acquired ", len(MCSList)
     print ("-"*80)
     # ---------------------------------END CORE GTG STEPS----------------------------------------------
-    # now ready to perform various calculations/metrics
+    # Now ready to perform various calculations/metrics
     print "\n -------------- TESTING METRICS ----------"
-    # some calculations/metrics that work that work
+    # Some calculations/metrics that work that work
     # print "creating the MCC userfile ", metrics.createTextFile(MCCList,1)
     # print "creating the MCS userfile ", metrics.createTextFile(MCSList,2)
     # MCCTimes, tdelta = metrics.temporalAndAreaInfoMetric(MCCList)
@@ -72,7 +72,7 @@ def main():
     # print "Average duration is: ", metrics.averageDuration(MCCTimes), "hrs"
     # print "Average size is: ", metrics.averageFeatureSize(MCCList), "km^2"
 
-    # some plots that work
+    # Some plots that work
     # plotting.plotAccTRMM(MCCList)
     # plotting.displayPrecip(MCCList)
     # plotting.plotAccuInTimeRange('yyyy-mm-dd_hh:mm:ss', 'yyyy-mm-dd_hh:mm:ss')
