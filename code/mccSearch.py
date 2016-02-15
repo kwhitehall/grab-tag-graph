@@ -1116,8 +1116,6 @@ def checked_nodes_MCC(prunedGraph, nodeList, userVariables, graphVariables):
                                                    counterCriteriaAFlag, counterCriteriaBFlag)
     return potentialMCCList
 # **********************************************************************************************************************
-
-
 def update_MCC_list(prunedGraph, potentialMCCList, node, stage, counterCriteriaAFlag, counterCriteriaBFlag):
     '''
     Purpose::
@@ -1299,8 +1297,6 @@ def update_MCC_list(prunedGraph, potentialMCCList, node, stage, counterCriteriaA
 
     return potentialMCCList
 # **********************************************************************************************************************
-
-
 def is_there_a_link(prunedGraph, upOrDown, node, potentialMCCList, whichList):
     '''
     Purpose::
@@ -1354,8 +1350,6 @@ def is_there_a_link(prunedGraph, upOrDown, node, potentialMCCList, whichList):
 
     return thisFlag, index
 # **********************************************************************************************************************
-
-
 def max_extent_and_eccentricity(eachList, userVariables, graphVariables):
     '''
     Purpose::
@@ -1390,8 +1384,6 @@ def max_extent_and_eccentricity(eachList, userVariables, graphVariables):
 
     return maxShieldNode, definiteMCCFlag
 #  **********************************************************************************************************************
-
-
 def find_max_depth_and_min_path(thisPathDistanceAndLength, userVariables):
     '''
     Purpose::
@@ -1434,8 +1426,6 @@ def find_max_depth_and_min_path(thisPathDistanceAndLength, userVariables):
                     minDistanceAndMaxPath = (pathDistance, path)
     return minDistanceAndMaxPath
 # **********************************************************************************************************************
-
-
 def this_dict(thisNode, graphVariables):
     '''
     Purpose::
@@ -1453,8 +1443,6 @@ def this_dict(thisNode, graphVariables):
         if eachdict[1]['uniqueID'] == thisNode:
             return eachdict[1]
 # **********************************************************************************************************************
-
-
 def check_criteria(thisCloudElementLatLon, aTemperature, userVariables):
     '''
     Purpose:: Determine if criteria B is met for a CEGraph
@@ -1536,8 +1524,6 @@ def check_criteria(thisCloudElementLatLon, aTemperature, userVariables):
 
     return max(allCriteriaB, key=lambda x: x[0]) if allCriteriaB != [] else cloudElementArea, cloudElementCriteriaBLatLon
 # **********************************************************************************************************************
-
-
 def has_merges_or_splits(nodeList, graphVariables):
     '''
     Purpose:: Determine if nodes within a path defined from shortest_path splittingNodeDict
@@ -1562,8 +1548,6 @@ def has_merges_or_splits(nodeList, graphVariables):
 
     return mergeList, splitList
 # **********************************************************************************************************************
-
-
 def all_ancestors(path, aNode):
     '''
     Purpose:: Utility script to provide the path leading up to a nodeList
@@ -1587,8 +1571,6 @@ def all_ancestors(path, aNode):
     except:
         return path, numOfParents
 # **********************************************************************************************************************
-
-
 def all_descendants(path, aNode):
     '''
     Purpose:: Utility script to provide the path leading up to a nodeList
@@ -1614,8 +1596,6 @@ def all_descendants(path, aNode):
         # i.e. PRUNED_GRAPH.predecessors(aNode) threw an exception
         return path, numOfChildren
 # **********************************************************************************************************************
-
-
 def add_info_this_dict(thisNode, cloudElementArea, criteriaB, graphVariables):
     '''
     Purpose:: Update original dictionary node with information
@@ -1634,8 +1614,6 @@ def add_info_this_dict(thisNode, cloudElementArea, criteriaB, graphVariables):
             eachdict[1]['CriteriaBLatLon'] = criteriaB
     return
 # **********************************************************************************************************************
-
-
 def add_node_behavior_identifier(thisNode, nodeBehaviorIdentifier, graphVariables):
     '''
     Purpose:: add an identifier to the node dictionary to indicate splitting, merging or neither node
@@ -1653,8 +1631,6 @@ def add_node_behavior_identifier(thisNode, nodeBehaviorIdentifier, graphVariable
                 eachdict[1]['nodeBehaviorIdentifier'] = nodeBehaviorIdentifier
     return
 # **********************************************************************************************************************
-
-
 def add_node_MCS_identifier(thisNode, nodeMCSIdentifier, graphVariables):
     '''
     Purpose:: Add an identifier to the node dictionary to indicate splitting, merging or neither node
@@ -1673,8 +1649,6 @@ def add_node_MCS_identifier(thisNode, nodeMCSIdentifier, graphVariables):
                 eachdict[1]['nodeMCSIdentifier'] = nodeMCSIdentifier
     return
 # **********************************************************************************************************************
-
-
 def update_node_MCS_identifier(thisNode, nodeMCSIdentifier, graphVariables):
     '''
     Purpose:: Update an identifier to the node dictionary to indicate splitting, merging or neither node
@@ -1691,8 +1665,6 @@ def update_node_MCS_identifier(thisNode, nodeMCSIdentifier, graphVariables):
 
     return
 # **********************************************************************************************************************
-
-
 def eccentricity(cloudElementLatLon):
     '''
     Purpose:: Determines the eccentricity (shape) of contiguous boxes
@@ -1738,14 +1710,12 @@ def eccentricity(cloudElementLatLon):
     # Assert(epsilon_0==epsilon)
     return epsilon
 
-
+# **********************************************************************************************************************
 def assert_sameval(n1, n2, n3, n4):
     if(n1 != n2 or n3 != n4):
         bad = 1
     return
 # **********************************************************************************************************************
-
-
 def cloud_element_overlap(currentCELatLons, previousCELatLons, xRes, yRes):
     '''
     Purpose::
