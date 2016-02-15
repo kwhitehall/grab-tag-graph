@@ -24,10 +24,10 @@ def main():
     allCETRMMList = []
     DIRS = {}
 
-    # for GrADs
+    # For GrADs
     subprocess.call('export DISPLAY=:0.0', shell=True)
 
-    # for first time working with the raw MERG zipped files
+    # For first time working with the raw MERG zipped files
     # rawMERG = "/directory/to/the/raw/MERGfiles"
     # utils.preprocessing_merg(rawMERG)
     # ---------------------------------------------------------------------------------
@@ -36,7 +36,7 @@ def main():
     graphVariables = variables.define_graph_variables()
     # ---------------------------------- end user inputs --------------------------------------
     
-    # create main directory and file structure for storing intel
+    # Create main directory and file structure for storing intel
     userVariables.DIRS['mainDirStr'] = iomethods.create_main_directory(userVariables.DIRS['mainDirStr'])
     TRMMCEdirName = userVariables.DIRS['mainDirStr']+'/TRMMnetcdfCEs'
     CEdirName = userVariables.DIRS['mainDirStr']+'/MERGnetcdfCEs'
@@ -44,8 +44,8 @@ def main():
     unittestFile = open(userVariables.DIRS['mainDirStr']+'/textFiles/unittestResults.txt', 'wb')
     unittestFile.write("\n Timing results for "+userVariables.startDateTime+" to "+userVariables.endDateTime)
 
-    # let's go!
-    # time how long it takes to complete reading in the data
+    # Let's go!
+    # Time how long it takes to complete reading in the data
     print "\n Start the timer "
     startTime = time.time()
     print "\n -------------- Read MERG Data ----------"
@@ -119,7 +119,7 @@ def main():
     print "\n Total time to complete finding the MCCs is %g seconds" % (findMCCEnd - findMCCStart)
     unittestFile.write("\n 4. Total time to complete finding the MCCs is %g seconds" % (findMCCEnd - findMCCStart))
     print ("-"*80)
-    # end the timer
+    # End the timer
     endtime = time.time()
     print ("*"*80)
     print "\n The entire evaluation took %g seconds to complete" % (endtime - startTime)
