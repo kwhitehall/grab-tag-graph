@@ -74,8 +74,6 @@ def main():
     #Let's get outta here! Engage!
     print ("-"*80)
 # *********************************************************************************************************************
-
-
 def plot_menu(MCCList, MCSList, DIRS):
     '''
     Purpose:: The flow of plots for the user to choose
@@ -115,8 +113,6 @@ def plot_menu(MCCList, MCSList, DIRS):
         option = display_plot_menu()
     return
 # *********************************************************************************************************************
-
-
 def display_plot_menu():
     '''
     Purpose:: Display the plot Menu Options
@@ -135,8 +131,6 @@ def display_plot_menu():
     option = int(raw_input("> Please enter your option for plots: \n"))
     return option
 # *********************************************************************************************************************
-
-
 def display_postprocessing_plot_menu():
     '''
     Purpose:: Display the plot Menu Options
@@ -156,8 +150,6 @@ def display_postprocessing_plot_menu():
     option = int(raw_input("> Please enter your option for plots: \n"))
     return option
 # *********************************************************************************************************************
-
-
 def postprocessing_plot_menu(DIRS):
     '''
     Purpose:: The flow of plots for the user to choose
