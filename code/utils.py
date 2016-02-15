@@ -109,12 +109,10 @@ def do_regrid(inputGrid, lat, lon, lat2, lon2, order=1, mdi=-999999999):
 
     return outputGrid
 # ******************************************************************
-
-
 def find_nearest(thisArray, value):
     '''
-    Purpose :: to determine the value within an array closes to
-            another value
+    Purpose :: To determine the value within an array closes to
+               another value
 
     Input ::
     Output::
@@ -122,8 +120,6 @@ def find_nearest(thisArray, value):
     idx = (np.abs(thisArray-value)).argmin()
     return thisArray[idx]
 # ******************************************************************
-
-
 def maenumerate(mArray):
     '''
     Purpose::
@@ -145,8 +141,6 @@ def maenumerate(mArray):
         if maskedValue:
             yield index
 # ******************************************************************
-
-
 def preprocessing_merg(mergDirname):
     '''
     Purpose::
@@ -242,8 +236,6 @@ def preprocessing_merg(mergDirname):
     subprocess.call('mv *.gif mergImgs', shell=True)
     return
 #******************************************************************
-
-
 def post_processing_netcdf(dataset, dirName=None):
     '''
 
@@ -477,8 +469,6 @@ def post_processing_netcdf(dataset, dirName=None):
 
     return
 # ******************************************************************
-
-
 def temp_masked_images(imgFilename):
     '''
     Purpose::
@@ -516,8 +506,6 @@ def temp_masked_images(imgFilename):
     subprocess.call(gradscmd, shell=True)
     return
 # ******************************************************************
-
-
 def valid_date(dataString):
     '''
     Input:: Datetime string of format YYYYMMDDHH or YYYYMMDDHHmm.
@@ -547,8 +535,6 @@ def valid_date(dataString):
     return isInputValid
 
 # *********************************************************************************************************************
-
-
 def write_c3_grad_script(origsFile):
     '''
     Input:: a string representing the filename with full path to the GrADS script being created
@@ -569,8 +555,6 @@ def write_c3_grad_script(origsFile):
     subprocess.call('echo "''\'set csmooth on''\'" >> '+origsFile, shell=True)
     return
 #*********************************************************************************************************************
-
-
 def write_c1_grad_script(origsFile):
     '''
     Input:: a string representing the filename with full path to the GrADS script being created
