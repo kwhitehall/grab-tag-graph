@@ -1,22 +1,23 @@
+import json
 import os
 import subprocess
+
 import networkx as nx
-import json
-import utils
-import sys
 
 import iomethods
+import utils
+
 
 class UserVariables(object):
-    # these will be assigned as the user determines which values they would like 
+    # These will be assigned as the user determines which values they would like
     # then the global var's above will be assigned the according to these values
-    def __init__(self, useJSON):#useJSON=False): #self):
+    def __init__(self, useJSON):  # useJSON=False): #self):
         data = None
-        #check if baselineDataDir.zip is unzipped, if not unzip it
+        # Check if baselineDataDir.zip is unzipped, if not unzip it
         if not os.path.exists("../datadir"):
             subprocess.call('cd ../ ; unzip baselineDataDir.zip', shell=True)
         
-        if useJSON == True:
+        if useJSON is True:
             try:
                 with open('../config.json') as f:
                     data = json.load(f)
@@ -45,63 +46,62 @@ class UserVariables(object):
                 self.INNER_CLOUD_SHIELD_TEMPERATURE = float(data['INNER_CLOUD_SHIELD_TEMPERATURE'])
                 self.MINIMUM_DURATION = int(data['MINIMUM_DURATION'])
                 self.MAXIMUM_DURATION = int(data['MAXIMUM_DURATION'])
-                self.LAT_DISTANCE = float(data['LAT_DISTANCE'])   #the avg distance in km for 1deg lat for the region being considered                     
-                self.LON_DISTANCE = float(data['LON_DISTANCE'])    #the avg distance in km for 1deg lon for the region being considered                     
+                self.LAT_DISTANCE = float(data['LAT_DISTANCE'])    # The avg distance in km for 1deg lat for the region being considered
+                self.LON_DISTANCE = float(data['LON_DISTANCE'])    # The avg distance in km for 1deg lon for the region being considered
                 self.DIRS = data['DIRS']  
 
             except IOError, e:
                 print "Config file not found! Using default variables..."
                 return False
         else:
-            self.LATMIN = '5.0'          #min latitude; -ve values in the SH e.g. 5S = -5
-            self.LATMAX = '19.0'         #max latitude; -ve values in the SH e.g. 5S = -5 20.0
-            self.LONMIN = '-5.0'         #min longitude; -ve values in the WH e.g. 59.8W = -59.8 
-            self.LONMAX = '9.0'          #min longitude; -ve values in the WH e.g. 59.8W = -59.8  
-            self.startDateTime = "200908310000" #"yyyymmddhhss" 
+            self.LATMIN = '5.0'          # min latitude; -ve values in the SH e.g. 5S = -5
+            self.LATMAX = '19.0'         # max latitude; -ve values in the SH e.g. 5S = -5 20.0
+            self.LONMIN = '-5.0'         # min longitude; -ve values in the WH e.g. 59.8W = -59.8
+            self.LONMAX = '9.0'          # min longitude; -ve values in the WH e.g. 59.8W = -59.8
+            self.startDateTime = "200908310000"  # "yyyymmddhhss"
             self.endDateTime = "200909302300"
-            self.XRES = 4.0              #x direction spatial resolution in km
-            self.YRES = 4.0              #y direction spatial resolution in km
-            self.TRES = 1                #temporal resolution in hrs
-            self.LAT_DISTANCE = 111.0    #the avg distance in km for 1deg lat for the region being considered                     
-            self.LON_DISTANCE = 111.0    #the avg distance in km for 1deg lon for the region being considered                     
-            self.T_BB_MAX = 243          #warmest temp to allow (-30C to -55C according to Morel and Sensi 2002
-            self.T_BB_MIN = 218          #cooler temp for the center of the system
-            self.CONVECTIVE_FRACTION = 0.90 #the min temp/max temp that would be expected in a CE.. this is highly conservative (only a 10K difference)
-            self.MIN_MCS_DURATION = 3    #minimum time for a MCS to exist
-            self.AREA_MIN = 2400.0       #minimum area for CE criteria in km^2 according to Vila et al. (2008) is 2400
-            self.MIN_OVERLAP = 10000.00  #km^2  see ref from Williams and Houze 1987 and Arnaud et al 1992                            
-            self.ECCENTRICITY_THRESHOLD_MAX = 1.0       #tending to 1 is a circle e.g. hurricane,
-            self.ECCENTRICITY_THRESHOLD_MIN = 0.70      #tending to 0 is a linear e.g. squall line
-            self.OUTER_CLOUD_SHIELD_AREA = 80000.0      #km^2
-            self.INNER_CLOUD_SHIELD_AREA = 30000.0      #km^2
-            self.OUTER_CLOUD_SHIELD_TEMPERATURE = 233   #in K
-            self.INNER_CLOUD_SHIELD_TEMPERATURE = 213   #in K                                                                 
-            self.MINIMUM_DURATION = 6    #min number of frames the MCC must exist for (assuming hrly frames, MCCs is 6hrs) 
-            self.MAXIMUM_DURATION = 24   #max number of framce the MCC can last for   
-            self.DIRS = {'mainDirStr': "../firstattempt", \
-                         'TRMMdirName':"../datadir/TRMM", \
+            self.XRES = 4.0              # x direction spatial resolution in km
+            self.YRES = 4.0              # y direction spatial resolution in km
+            self.TRES = 1                # temporal resolution in hrs
+            self.LAT_DISTANCE = 111.0    # the avg distance in km for 1deg lat for the region being considered
+            self.LON_DISTANCE = 111.0    # the avg distance in km for 1deg lon for the region being considered
+            self.T_BB_MAX = 243          # warmest temp to allow (-30C to -55C according to Morel and Sensi 2002
+            self.T_BB_MIN = 218          # cooler temp for the center of the system
+            self.CONVECTIVE_FRACTION = 0.90  # the min temp/max temp that would be expected in a CE.. this is highly conservative (only a 10K difference)
+            self.MIN_MCS_DURATION = 3    # minimum time for a MCS to exist
+            self.AREA_MIN = 2400.0       # minimum area for CE criteria in km^2 according to Vila et al. (2008) is 2400
+            self.MIN_OVERLAP = 10000.00  # km^2  see ref from Williams and Houze 1987 and Arnaud et al 1992
+            self.ECCENTRICITY_THRESHOLD_MAX = 1.0       # tending to 1 is a circle e.g. hurricane,
+            self.ECCENTRICITY_THRESHOLD_MIN = 0.70      # tending to 0 is a linear e.g. squall line
+            self.OUTER_CLOUD_SHIELD_AREA = 80000.0      # km^2
+            self.INNER_CLOUD_SHIELD_AREA = 30000.0      # km^2
+            self.OUTER_CLOUD_SHIELD_TEMPERATURE = 233   # in K
+            self.INNER_CLOUD_SHIELD_TEMPERATURE = 213   # in K
+            self.MINIMUM_DURATION = 6    # min number of frames the MCC must exist for (assuming hrly frames, MCCs is 6hrs)
+            self.MAXIMUM_DURATION = 24   # max number of frames the MCC can last for
+            self.DIRS = {'mainDirStr': "../firstattempt",
+                         'TRMMdirName': "../datadir/TRMM",
                          'CEoriDirName': "../datadir/MERG"}
             self.filelist = None
 
-        self.STRUCTURING_ELEMENT = [[0, 1, 0],
-                                    [1, 1, 1],
-                                    [0, 1, 0]
-                                    ]   #the matrix for determining the pattern for the contiguous boxes and must                        
-                                        #have same rank of the matrix it is being compared against
-                                        #criteria for determining cloud elements and edges                                  
-        
+        self.STRUCTURING_ELEMENT = [[0, 1, 0],  # The matrix for determining the pattern for the contiguous boxes and must
+                                    [1, 1, 1],  # have same rank of the matrix it is being compared against
+                                    [0, 1, 0]   # criteria for determining cloud elements and edges
+                                    ]
+
         self.check_lats(self.LATMIN, self.LATMAX)
         self.check_lons(self.LONMIN, self.LONMAX)
         self.check_times(self.startDateTime, self.endDateTime)
         self.check_dirs(self.DIRS['CEoriDirName'], self.DIRS['TRMMdirName'])
         self.ir_inputs(self.DIRS['CEoriDirName'], self.startDateTime, self.endDateTime)
         self.trmm_inputs(self.DIRS['TRMMdirName'], self.startDateTime, self.endDateTime)
-        self.setupAll()
+        self.setup_all()
         
     def check_lats(self, LATMIN, LATMAX):
         '''
         Purpose:: check latitude limits
         '''
+
         if (float(self.LATMIN) < -90.):
             print "Bad latmin input! Check the config file. Now using default variables..."
             return False
@@ -120,6 +120,7 @@ class UserVariables(object):
         '''
         Purpose:: check longitude limits
         '''
+
         if (float(self.LONMIN) < -180.):
             print "Bad lonmin input! Check the config file. Now using default variables..."
             return False
@@ -138,6 +139,7 @@ class UserVariables(object):
         '''
         Purpose:: check the dirs
         '''
+
         if not os.path.exists(CEoriDirName):
             print "Error! MERG invalid path!"
             self.CEoriDirName = raw_input("> Please enter the directory to the MERG netCDF files: \n")
@@ -152,7 +154,8 @@ class UserVariables(object):
         '''
         Purpose:: check the times
         '''
-        #check validity of time
+
+        # Check validity of time
         while utils.valid_date(startDateTime) != True:
             print "Invalid time entered for startDateTime!"
         while utils.valid_date(endDateTime) != True:
@@ -166,9 +169,9 @@ class UserVariables(object):
     def trmm_inputs(self, TRMMdirName, startDateTime, endDateTime):
         # Checks that inputs are ok
         if not TRMMdirName == "None":
-            #check if all the files exisits in the TRMM directory entered
-            test,_ = iomethods.check_for_files(TRMMdirName, startDateTime, endDateTime, 3, 'hour')
-            if test == False:
+            # Check if all the files exists in the TRMM directory entered
+            test, _ = iomethods.check_for_files(TRMMdirName, startDateTime, endDateTime, 3, 'hour')
+            if test is False:
                 print "Error with files in the TRMM directory entered. Please check your files before restarting. "
                 return False
     
@@ -176,15 +179,15 @@ class UserVariables(object):
     
     def ir_inputs(self, CEoriDirName, startDateTime, endDateTime):
         try:
-            test,self.filelist = iomethods.check_for_files(CEoriDirName, startDateTime, endDateTime, 1, 'hour')
-            if test == False:
+            test, self.filelist = iomethods.check_for_files(CEoriDirName, startDateTime, endDateTime, 1, 'hour')
+            if test is False:
                 print "Error with files in the MERG directory entered. Please check your files before restarting. "
                 return False
         except:
             print "..." 
         return True
 
-    def setupAll(self):
+    def setup_all(self):
         '''
         Purpose:: to configure the UserVariables
 
@@ -194,6 +197,7 @@ class UserVariables(object):
 
         Assumptions::
         '''
+
         if (self.XRES <= 0):
             print "Bad XRES input! Check the config file. Now using default variables..."
             return False
@@ -229,38 +233,39 @@ class UserVariables(object):
             return False
 
         if (self.AREA_MIN <= 0):
-    		print "Bad AREA_MIN input. Now using default variables..."
-    		return False
+            print "Bad AREA_MIN input. Now using default variables..."
+            return False
 
         if (self.ECCENTRICITY_THRESHOLD_MAX < 0 or self.ECCENTRICITY_THRESHOLD_MAX > 1.):
             print "Bad ECCENTRICITY THRESHOLD MAX input. Check config file. Now using default variables..."
             return False
         
         if (self.ECCENTRICITY_THRESHOLD_MIN < 0 or self.ECCENTRICITY_THRESHOLD_MIN > 1.):
-    		print "Bad ECCENTRICITY THRESHOLD MIN input. Check config file. Now using default variables..."
-    		print False
+            print "Bad ECCENTRICITY THRESHOLD MIN input. Check config file. Now using default variables..."
+            print False
 
         if (self.ECCENTRICITY_THRESHOLD_MIN > self.ECCENTRICITY_THRESHOLD_MAX):
             print "Bad ECCENTRICITY THRESHOLD MIN and MAX input! Check the config file. Now using default variables..."
-            return False;        
+            return False
 
         if (self.INNER_CLOUD_SHIELD_AREA > self.OUTER_CLOUD_SHIELD_AREA):
-    		print "Bad cloud shield areas input. Check config file. Now using default variables..."
-    		return False
+            print "Bad cloud shield areas input. Check config file. Now using default variables..."
+            return False
 
         if (self.INNER_CLOUD_SHIELD_TEMPERATURE > self.OUTER_CLOUD_SHIELD_TEMPERATURE):
-    		print "Bad cloud shield temperatures. Check the config file. Now using default variables..."
-    		return False
+            print "Bad cloud shield temperatures. Check the config file. Now using default variables..."
+            return False
 
         if (self.MINIMUM_DURATION > self.MAXIMUM_DURATION):
             print "Bad MIN and MAX DURATION inputs! Check the config file. Now using default variables..."
-            return False;            
+            return False
 
         return True
-        
+
+
 class GraphVariables(object):
     def __init__(self):
-        self.edgeWeight = [1,2,3]                   # weights for the graph edges
+        self.edgeWeight = [1, 2, 3]                   # weights for the graph edges
         self.CLOUD_ELEMENT_GRAPH = nx.DiGraph()     # graph obj for the CEs meeting criteria
         self.PRUNED_GRAPH = nx.DiGraph()            # graph meeting the CC criteria
         
@@ -275,6 +280,7 @@ def define_graph_variables():
 
     Assumptions::
     '''
+
     graphVars = GraphVariables()
     return graphVars
 
