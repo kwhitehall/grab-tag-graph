@@ -1,46 +1,47 @@
 import glob
 import itertools
-import os
 import json
+import os
 import time
+from datetime import timedelta
+from multiprocessing import Manager
+from multiprocessing import Pool
+
+import networkx as nx
 import numpy as np
 import numpy.ma as ma
-import networkx as nx
-
-from multiprocessing import Pool
-from multiprocessing import Manager
-from datetime import timedelta
 from netCDF4 import Dataset, date2num
 from scipy import ndimage
 
-#GTG modules
+# GTG modules
 import utils
-import plotting
-import variables
 
-NUM_IMAGE_WORKERS = 2 #Number of workers to send off for extracting CE in the independent image frames
+NUM_IMAGE_WORKERS = 2  # Number of workers to send off for extracting CE in the independent image frames
 P_TIME = 0
 
-#------------------------ End GLOBAL VARS -------------------------
-#************************ Begin Functions *************************
-#**********************************************************************************************************************
+# ------------------------ End GLOBAL VARS -------------------------
+# ************************ Begin Functions *************************
+# **********************************************************************************************************************
 manager = Manager()
 varsDict = manager.dict()
+
 
 # Callable object that is passed to the Pool map (so that the find_cloud_elements function can be called many times in parallel) - Added by Gabriel Mel
 class CeFinder(object):
     '''
 
     '''
-    def __init__(self,timelist, userVariables, TRMMdirName=None):
+    def __init__(self, timelist, userVariables, TRMMdirName=None):
         self.timelist = timelist
         self.userVariables = userVariables
         self.TRMMdirName = TRMMdirName
 
-    def __call__(self,t):
-        return find_single_frame_cloud_elements(t,varsDict['images'],self.timelist,\
-            varsDict['lat'],varsDict['lon'],self.userVariables,self.TRMMdirName)    
-#**********************************************************************************************************************
+    def __call__(self, t):
+        return find_single_frame_cloud_elements(t, varsDict['images'], self.timelist,
+                                                varsDict['lat'], varsDict['lon'], self.userVariables, self.TRMMdirName)
+# **********************************************************************************************************************
+
+
 def find_cloud_elements(mergImgs, timelist, lat, lon, userVariables, graphVariables, TRMMdirName=None):
     '''
     Purpose: parallelizes the process to determine the contiguous boxes for a given time in the satellite images 
@@ -65,22 +66,25 @@ def find_cloud_elements(mergImgs, timelist, lat, lon, userVariables, graphVariab
         required according to Vila et al. (2008) is 2400km^2
         therefore, 2400/16 = 150 contiguous squares
     '''
+
     varsDict['images'] = mergImgs
     varsDict['lat'] = lat
     varsDict['lon'] = lon
-    
+
     global LAT
     LAT = lat
     global LON
     LON = lon
-    
+
     p = Pool(NUM_IMAGE_WORKERS)
     image_proc_start = time.time()
-    
+
     results = p.map(CeFinder(timelist, userVariables, TRMMdirName), xrange(mergImgs.shape[0]))
-    
+
     return assemble_graph(results, userVariables, graphVariables)
-#**********************************************************************************************************************
+# **********************************************************************************************************************
+
+
 def assemble_graph(results, userVariables, graphVariables):
     '''
     Purpose:: to build the full graph from all the data being considered. 
@@ -101,109 +105,111 @@ def assemble_graph(results, userVariables, graphVariables):
     
     Assumptions::
     '''
-    
-    totalCEs = 0 
-    totalCEsList = []  
+
+    totalCEs = 0
+    totalCEsList = []
     acceptedCEs = 0
     acceptedCEsList = []
 
-    edgeWeight = [1, 2, 3] #weights for the graph edges
-    cloudElementsJSON = []  #list of the key, value objects associated with a CE in the graph
+    edgeWeight = [1, 2, 3]  # weights for the graph edges
+    cloudElementsJSON = []  # list of the key, value objects associated with a CE in the graph
     seenNode = []
     filenameJSON = userVariables.DIRS['mainDirStr'] + '/textFiles/graphJSON.txt'
 
-    #openfile for storing ALL cloudElement information
+    # openfile for storing ALL cloudElement information
     cloudElementsFile = open((userVariables.DIRS['mainDirStr'] + '/textFiles/cloudElements.txt'), 'wb')
-    #openfile for storing cloudElement information meeting user criteria i.e. MCCs in this case
+    # openfile for storing cloudElement information meeting user criteria i.e. MCCs in this case
     cloudElementsUserFile = open((userVariables.DIRS['mainDirStr'] + '/textFiles/cloudElementsUserFile.txt'), 'w')
-    
+
     for ce in results[0][0]:
         if ce['uniqueID'] not in dict(enumerate(zip(*seenNode))):
             totalCEs += 1
-            graphVariables.CLOUD_ELEMENT_GRAPH.add_node(ce['uniqueID'],ce)
-            seenNode.append(ce['uniqueID'])  
-            cloudElementsUserFile.write('Time is: %s' %(str(ce['cloudElementTime'])))
-            cloudElementsUserFile.write('\nceUniqueID is: %s' %ce['uniqueID'])
-            cloudElementsUserFile.write('\nCenter (lat,lon) is: %s' %ce['cloudElementCenter'])
-            cloudElementsUserFile.write('\nArea is: %.4f km^2' %ce['cloudElementArea'])
-            cloudElementsUserFile.write('\nAverage brightness temperature is: %.4f' %ce['cloudElementBTavg'])
-            cloudElementsUserFile.write('\nMin brightness temperature is: %.4f K' %ce['cloudElementTmin'])
-            cloudElementsUserFile.write('\nMax brightness temperature is: %.4f K' %ce['cloudElementTmax'])
-            cloudElementsUserFile.write('\nBrightness temperature variance is: %.4f K' %ce['cloudElementBTvar'])
-            cloudElementsUserFile.write('\nConvective fraction is: %.4f ' %ce['cloudElementCF'])
-            cloudElementsUserFile.write('\nEccentricity is: %.4f ' %ce['cloudElementEccentricity'])
+            graphVariables.CLOUD_ELEMENT_GRAPH.add_node(ce['uniqueID'], ce)
+            seenNode.append(ce['uniqueID'])
+            cloudElementsUserFile.write('Time is: %s' % (str(ce['cloudElementTime'])))
+            cloudElementsUserFile.write('\nceUniqueID is: %s' % ce['uniqueID'])
+            cloudElementsUserFile.write('\nCenter (lat,lon) is: %s' % ce['cloudElementCenter'])
+            cloudElementsUserFile.write('\nArea is: %.4f km^2' % ce['cloudElementArea'])
+            cloudElementsUserFile.write('\nAverage brightness temperature is: %.4f' % ce['cloudElementBTavg'])
+            cloudElementsUserFile.write('\nMin brightness temperature is: %.4f K' % ce['cloudElementTmin'])
+            cloudElementsUserFile.write('\nMax brightness temperature is: %.4f K' % ce['cloudElementTmax'])
+            cloudElementsUserFile.write('\nBrightness temperature variance is: %.4f K' % ce['cloudElementBTvar'])
+            cloudElementsUserFile.write('\nConvective fraction is: %.4f ' % ce['cloudElementCF'])
+            cloudElementsUserFile.write('\nEccentricity is: %.4f ' % ce['cloudElementEccentricity'])
 
             cloudElementsFile.write(results[0][1])
-    
-    for t in xrange(1,len(results)):
+
+    for t in xrange(1, len(results)):
         currFrameCEs = results[t][0]
         prevFrameCEs = results[t-1][0]
         ceNum = 0
-        
+
         for ce in currFrameCEs:
             if ce['uniqueID'] not in dict(enumerate(zip(*seenNode))):
                 graphVariables.CLOUD_ELEMENT_GRAPH.add_node(ce['uniqueID'], ce)
                 seenNode.append(ce['uniqueID'])
                 edges = []
-                cloudElementsUserFile.write('\n\nTime is: %s' %(str(ce['cloudElementTime'])))
-                cloudElementsUserFile.write('\nceUniqueID is: %s' %ce['uniqueID'])
-                cloudElementsUserFile.write('\nCenter (lat,lon) is: %s' %ce['cloudElementCenter'])
-                cloudElementsUserFile.write('\nArea is: %.4f km^2' %ce['cloudElementArea'])
-                cloudElementsUserFile.write('\nAverage brightness temperature is: %.4f' %ce['cloudElementBTavg'])
-                cloudElementsUserFile.write('\nMin brightness temperature is: %.4f K' %ce['cloudElementTmin'])
-                cloudElementsUserFile.write('\nMax brightness temperature is: %.4f K' %ce['cloudElementTmax'])
-                cloudElementsUserFile.write('\nBrightness temperature variance is: %.4f K' %ce['cloudElementBTvar'])
-                cloudElementsUserFile.write('\nConvective fraction is: %.4f ' %ce['cloudElementCF'])
-                cloudElementsUserFile.write('\nEccentricity is: %.4f ' %ce['cloudElementEccentricity'])
-                
+                cloudElementsUserFile.write('\n\nTime is: %s' % (str(ce['cloudElementTime'])))
+                cloudElementsUserFile.write('\nceUniqueID is: %s' % ce['uniqueID'])
+                cloudElementsUserFile.write('\nCenter (lat,lon) is: %s' % ce['cloudElementCenter'])
+                cloudElementsUserFile.write('\nArea is: %.4f km^2' % ce['cloudElementArea'])
+                cloudElementsUserFile.write('\nAverage brightness temperature is: %.4f' % ce['cloudElementBTavg'])
+                cloudElementsUserFile.write('\nMin brightness temperature is: %.4f K' % ce['cloudElementTmin'])
+                cloudElementsUserFile.write('\nMax brightness temperature is: %.4f K' % ce['cloudElementTmax'])
+                cloudElementsUserFile.write('\nBrightness temperature variance is: %.4f K' % ce['cloudElementBTvar'])
+                cloudElementsUserFile.write('\nConvective fraction is: %.4f ' % ce['cloudElementCF'])
+                cloudElementsUserFile.write('\nEccentricity is: %.4f ' % ce['cloudElementEccentricity'])
+
                 cloudElementsFile.write(results[t][1])
                 totalCEs += 1
-                
+
                 for cloudElementDict in prevFrameCEs:
-                    percentageOverlap, areaOverlap = cloud_element_overlap(ce['cloudElementLatLon'], \
-                        cloudElementDict['cloudElementLatLon'], userVariables.XRES, userVariables.YRES)
+                    percentageOverlap, areaOverlap = cloud_element_overlap(ce['cloudElementLatLon'],
+                                                                           cloudElementDict['cloudElementLatLon'], userVariables.XRES, userVariables.YRES)
 
                     if percentageOverlap >= 0.95:
                         graphVariables.CLOUD_ELEMENT_GRAPH.add_edge(cloudElementDict['uniqueID'], ce['uniqueID'], weight=graphVariables.edgeWeight[0])
                         edges.append(cloudElementDict['uniqueID'])
                         acceptedCEs += 1
-                        
-                    elif percentageOverlap >= 0.90 and percentageOverlap < 0.95 :
+
+                    elif percentageOverlap >= 0.90 and percentageOverlap < 0.95:
                         graphVariables.CLOUD_ELEMENT_GRAPH.add_edge(cloudElementDict['uniqueID'], ce['uniqueID'], weight=graphVariables.edgeWeight[1])
                         edges.append(cloudElementDict['uniqueID'])
                         acceptedCEs += 1
-                        
+
                     elif areaOverlap >= userVariables.MIN_OVERLAP:
                         graphVariables.CLOUD_ELEMENT_GRAPH.add_edge(cloudElementDict['uniqueID'], ce['uniqueID'], weight=graphVariables.edgeWeight[2])
                         edges.append(cloudElementDict['uniqueID'])
                         acceptedCEs += 1
-                
+
                 if edges:
-                    cloudElementsJSON.append({'cloudElement': ce['uniqueID'], 'time':str(ce['cloudElementTime']),\
-                        'area':ce['cloudElementArea'],'Tmax':ce['cloudElementTmax'], 'Tmin':ce['cloudElementTmin'], 'center':ce['cloudElementCenter'], \
-                        'shape':ce['cloudElementEccentricity'], 'cloudElementLatLonBox':ce['cloudElementLatLonBox'],'convective_fraction': ce['cloudElementCF'],'edges':edges })
-        
+                    cloudElementsJSON.append({'cloudElement': ce['uniqueID'], 'time': str(ce['cloudElementTime']),
+                        'area': ce['cloudElementArea'], 'Tmax': ce['cloudElementTmax'], 'Tmin': ce['cloudElementTmin'], 'center': ce['cloudElementCenter'],
+                        'shape': ce['cloudElementEccentricity'], 'cloudElementLatLonBox': ce['cloudElementLatLonBox'], 'convective_fraction': ce['cloudElementCF'], 'edges': edges})
+
         acceptedCEsList.append(acceptedCEs)
         acceptedCEs = 0
         totalCEsList.append(totalCEs)
         totalCEs = 0
 
-    #Close info files
+    # Close info files
     cloudElementsFile.close()
     cloudElementsUserFile.close()
-    
-    #Write to JSON file
+
+    # Write to JSON file
     with open(filenameJSON, 'w+') as f:
-        json.dump(cloudElementsJSON,f)
-    
-    #clean up graph - remove parent and childless nodes
+        json.dump(cloudElementsJSON, f)
+
+    # Clean up graph - remove parent and childless nodes
     outAndInDeg = graphVariables.CLOUD_ELEMENT_GRAPH.degree_iter()
     toRemove = [node[0] for node in outAndInDeg if node[1] < 1]
     graphVariables.CLOUD_ELEMENT_GRAPH.remove_nodes_from(toRemove)
-    
+
     return graphVariables.CLOUD_ELEMENT_GRAPH, (totalCEsList, acceptedCEsList)
-#**********************************************************************************************************************
-def find_single_frame_cloud_elements(t,mergImgs,timelist, lat, lon, userVariables, TRMMdirName=None):
+# **********************************************************************************************************************
+
+
+def find_single_frame_cloud_elements(t, mergImgs, timelist, lat, lon, userVariables, TRMMdirName=None):
     '''
     Purpose:: Determines the contiguous boxes for a given time of the satellite images i.e. each frame
         using scipy ndimage package in a parallelized manner. This function is called by many workers. 
@@ -244,41 +250,41 @@ def find_single_frame_cloud_elements(t,mergImgs,timelist, lat, lon, userVariable
         Assumes we are dealing with MERG data which is 4kmx4km resolved, thus the smallest value
         required according to Vila et al. (2008) is 2400km^2
         therefore, 2400/16 = 150 contiguous squares
-    '''   
+    '''
     single_frame_start = time.time()
 
     global LAT
     LAT = lat
     global LON
     LON = lon
-    
-    # global P_TIME
-    
-    cloudElementsJSON = []  #list of the key, value objects associated with a CE in the graph
-    edges = []     #list of the nodes connected to a given CE
-    latLonBox = [] #list of extreme points for the min fitting box around a CE [lon_min, lat_min, lon_max, lat_max]
-    shape = 0      #max(num of non-zero boxes in lat, num of non-zero boxes in lon) for the CE
-    cf = 0.0       #convective fraction 
-    tmin = 0.0     #IR Tmin for the CE
-    tmax = 0.0     #IR Tmax for the CE
-    varBT = 0.0    #IR variance
-    avgBT = 0.0    #IR average     
 
-    #frame = ma.empty((1, mergImgs.shape[1], mergImgs.shape[2]))
+    # global P_TIME
+
+    cloudElementsJSON = []  # list of the key, value objects associated with a CE in the graph
+    edges = []              # list of the nodes connected to a given CE
+    latLonBox = []          # list of extreme points for the min fitting box around a CE [lon_min, lat_min, lon_max, lat_max]
+    shape = 0               # max(num of non-zero boxes in lat, num of non-zero boxes in lon) for the CE
+    cf = 0.0                # convective fraction
+    tmin = 0.0              # IR Tmin for the CE
+    tmax = 0.0              # IR Tmax for the CE
+    varBT = 0.0             # IR variance
+    avgBT = 0.0             # IR average
+
+    # frame = ma.empty((1, mergImgs.shape[1], mergImgs.shape[2]))
     ceCounter = 0
     frameceCounter = 0
     frameNum = 0
     cloudElementEpsilon = 0.0
     cloudElementDict = {}
-    cloudElementCenter = []     #list with two elements [lat,lon] for the center of a CE
-    prevFrameCEs = []           #list for CEs in previous frame
-    currFrameCEs = []           #list for CEs in current frame
-    cloudElementLat = []        #list for a particular CE's lat values
-    cloudElementLon = []        #list for a particular CE's lon values
-    cloudElementLatLons = []    #list for a particular CE's (lat,lon) values
+    cloudElementCenter = []     # list with two elements [lat,lon] for the center of a CE
+    prevFrameCEs = []           # list for CEs in previous frame
+    currFrameCEs = []           # list for CEs in current frame
+    cloudElementLat = []        # list for a particular CE's lat values
+    cloudElementLon = []        # list for a particular CE's lon values
+    cloudElementLatLons = []    # list for a particular CE's (lat,lon) values
     allCloudElementDicts = []
-   
-    temporalRes = 3 # TRMM data is 3 hourly
+
+    temporalRes = 3  # TRMM data is 3 hourly
     precipTotal = 0.0
     ceTRMMList = []
     precip = []
@@ -290,17 +296,17 @@ def find_single_frame_cloud_elements(t,mergImgs,timelist, lat, lon, userVariable
     nxgrd = len(LON[0, :])
 
     cloudElementsFileString = ''
-    
-    #determine contiguous locations with temeperature below the warmest temp i.e. cloudElements in each frame
-    frame, ceCounter = ndimage.measurements.label(mergImgs[t,:,:], structure=userVariables.STRUCTURING_ELEMENT)
+
+    # Determine contiguous locations with temperature below the warmest temp i.e. cloudElements in each frame
+    frame, ceCounter = ndimage.measurements.label(mergImgs[t, :, :], structure=userVariables.STRUCTURING_ELEMENT)
     frameceCounter = 0
     frameNum = t + 1
 
-    #If other dataset (TRMM) assumed to be a precipitation dataset was entered,
-    #first do the regridding to avoid duplicating this effort
-    #NB in the TRMM files the info is hours since the time thus 00Z file has in 01, 02 and 03 times
+    # If other dataset (TRMM) assumed to be a precipitation dataset was entered,
+    # first do the regridding to avoid duplicating this effort
+    # NB in the TRMM files the info is hours since the time thus 00Z file has in 01, 02 and 03 times
     if TRMMdirName:
-        #------------------TRMM stuff -------------------------------------------------
+        #  ------------------TRMM stuff -------------------------------------------------
         fileDate = ((str(timelist[t])).replace(' ', '')[:-8]).replace('-', '')
         fileHr1 = (str(timelist[t])).replace(' ', '')[-8:-6]
 
@@ -313,7 +319,7 @@ def find_single_frame_cloud_elements(t,mergImgs,timelist, lat, lon, userVariable
         else:
             str(fileHr)
 
-        #open TRMM file for the resolution info and to create the appropriate sized grid
+        # Open TRMM file for the resolution info and to create the appropriate sized grid
         TRMMfileName = TRMMdirName + '/3B42.' + fileDate + '.' + str(fileHr) + '.7A.nc'
 
         TRMMData = Dataset(TRMMfileName, 'r', format='NETCDF4')
@@ -324,65 +330,65 @@ def find_single_frame_cloud_elements(t,mergImgs,timelist, lat, lon, userVariable
         LONTRMM, LATTRMM = np.meshgrid(lonsrawTRMMData, latsrawTRMMData)
 
         precipRateMasked = ma.masked_array(precipRate, mask=(precipRate < 0.0))
-        #---------regrid the TRMM data to the MERG dataset ----------------------------------
-        #regrid using the do_regrid stuff from the Apache OCW
+        # ---------regrid the TRMM data to the MERG dataset ----------------------------------
+        # regrid using the do_regrid stuff from the Apache OCW
         regriddedTRMM = ma.zeros((0, nygrd, nxgrd))
-        regriddedTRMM = utils.do_regrid(precipRateMasked[0, :, :], LATTRMM, LONTRMM, LAT, LON, order=1, \
-                                           mdi=-999999999)
+        regriddedTRMM = utils.do_regrid(precipRateMasked[0, :, :], LATTRMM, LONTRMM, LAT, LON, order=1,
+                                        mdi=-999999999)
         TRMMData.close()
 
-    #for each of the areas identified in the IR data, check to determine valid CEs via an area and T requirement
+    # For each of the areas identified in the IR data, check to determine valid CEs via an area and T requirement
     for count in xrange(ceCounter):
-        #[0] is time dimension. Determine the actual values from the data
-        #loc is a masked array
+        # [0] is time dimension. Determine the actual values from the data
+        # loc is a masked array
         try:
-            loc = ndimage.find_objects(frame==(count+1))[0]
-            
+            loc = ndimage.find_objects(frame == (count+1))[0]
+
         except Exception, e:
             print 'Error is ', e
             continue
 
-        cloudElement = mergImgs[t,:,:][loc]
+        cloudElement = mergImgs[t, :, :][loc]
         labels, _ = ndimage.label(cloudElement)
 
-        #determine the true lats and lons for this particular CE
+        # Determine the true lats and lons for this particular CE
         cloudElementLat = LAT[loc[0], 0]
         cloudElementLon = LON[0, loc[1]]
 
-        #determine number of boxes in this cloudelement
+        # Determine number of boxes in this cloudelement
         numOfBoxes = np.count_nonzero(cloudElement)
         cloudElementArea = numOfBoxes * userVariables.XRES * userVariables.YRES
 
-        #If the area is greater than the area required, or if the area is smaller than the suggested area,
-        #check if it meets a convective fraction requirement consider as CE
+        # If the area is greater than the area required, or if the area is smaller than the suggested area,
+        # check if it meets a convective fraction requirement consider as CE
 
-        if cloudElementArea >= userVariables.AREA_MIN or (cloudElementArea < userVariables.AREA_MIN and \
-                ((ndimage.minimum(cloudElement, labels=labels)) / \
+        if cloudElementArea >= userVariables.AREA_MIN or (cloudElementArea < userVariables.AREA_MIN and
+                    ((ndimage.minimum(cloudElement, labels=labels)) /
                     float((ndimage.maximum(cloudElement, labels=labels)))) < userVariables.CONVECTIVE_FRACTION):
-            
-            #get some time information and labeling info
+
+            # Get some time information and labeling info
             frameceCounter += 1
             ceUniqueID = 'F' + str(frameNum) + 'CE' + str(frameceCounter)
-            #-------------------------------------------------
-            #textfile name for accesing CE data using MATLAB code
+            # -------------------------------------------------
+            # Textfile name for accessing CE data using MATLAB code
             # thisFileName = MAIN_DIRECTORY+'/' + (str(timelist[t])).replace(' ', '_') + ceUniqueID +'.txt'
             # cloudElementsTextFile = open(thisFileName,'w')
-            #-------------------------------------------------
+            # -------------------------------------------------
             # ------ NETCDF File stuff for brightness temp stuff ------------------------------------
             thisFileName = userVariables.DIRS['mainDirStr'] + '/MERGnetcdfCEs/cloudElements' + \
-                            (str(timelist[t])).replace(' ', '_') + ceUniqueID + '.nc'
+                (str(timelist[t])).replace(' ', '_') + ceUniqueID + '.nc'
             currNetCDFCEData = Dataset(thisFileName, 'w', format='NETCDF4')
-            currNetCDFCEData.description = 'Cloud Element '+ ceUniqueID + ' temperature data'
+            currNetCDFCEData.description = 'Cloud Element ' + ceUniqueID + ' temperature data'
             currNetCDFCEData.calendar = 'standard'
             currNetCDFCEData.conventions = 'COARDS'
-            # dimensions
+            # Dimensions
             currNetCDFCEData.createDimension('time', None)
             currNetCDFCEData.createDimension('lat', len(LAT[:, 0]))
             currNetCDFCEData.createDimension('lon', len(LON[0, :]))
-            # variables
+            # Variables
             tempDims = ('time', 'lat', 'lon',)
             times = currNetCDFCEData.createVariable('time', 'f8', ('time',))
-            times.units = 'hours since '+ str(timelist[t])[:-6]
+            times.units = 'hours since ' + str(timelist[t])[:-6]
             latitudes = currNetCDFCEData.createVariable('latitude', 'f8', ('lat',))
             longitudes = currNetCDFCEData.createVariable('longitude', 'f8', ('lon',))
             brightnesstemp = currNetCDFCEData.createVariable('brightnesstemp', 'f8', tempDims)
@@ -397,169 +403,169 @@ def find_single_frame_cloud_elements(t,mergImgs,timelist, lat, lon, userVariable
             latitudes[:] = LAT[:, 0]
             latitudes.units = 'degrees_north'
             latitudes.long_name = 'Latitude'
-            #-----------End most of NETCDF file stuff ------------------------------------
+            # -----------End most of NETCDF file stuff ------------------------------------
 
-            #generate array of zeros for brightness temperature
+            # Generate array of zeros for brightness temperature
             brightnesstemp1 = ma.zeros((1, len(latitudes), len(longitudes))).astype('f8')
-            finalCETRMMvalues = ma.zeros((brightnesstemp.shape))
-            #populate cloudElementLatLons by unpacking the original values from loc to get the actual value for lat and lon
+            finalCETRMMvalues = ma.zeros(brightnesstemp.shape)
+            # Populate cloudElementLatLons by unpacking the original values from loc to get the actual value for lat and lon
             cloudElementNonZeros = cloudElement.nonzero()
             cloudyAreas = np.transpose(cloudElementNonZeros)
-            cloudElementLatLons = np.zeros((cloudyAreas.shape[0],3))
-            cloudElementLatLons[:,0] = cloudElementLat[cloudyAreas[:,0]]
-            cloudElementLatLons[:,1] = cloudElementLon[cloudyAreas[:,1]]
-            cloudElementLatLons[:,2] = cloudElement[cloudElementNonZeros]
+            cloudElementLatLons = np.zeros((cloudyAreas.shape[0], 3))
+            cloudElementLatLons[:, 0] = cloudElementLat[cloudyAreas[:, 0]]
+            cloudElementLatLons[:, 1] = cloudElementLon[cloudyAreas[:, 1]]
+            cloudElementLatLons[:, 2] = cloudElement[cloudElementNonZeros]
             cloudElementLatLons = cloudElementLatLons.tolist()
             cloudElementLatLons = [tuple(l)for l in cloudElementLatLons]
-            
-            #This replaces the loop computation of brightnesstemp1, commented lines are a test
-            brightnesstemp1[0,loc[0],loc[1]] = cloudElement
+
+            # This replaces the loop computation of brightnesstemp1, commented lines are a test
+            brightnesstemp1[0, loc[0], loc[1]] = cloudElement
             brightnesstemp[:] = brightnesstemp1[:]
             currNetCDFCEData.close()
- 
-            #if other dataset (TRMM) assumed to be a precipitation dataset was entered
+
+            # If other dataset (TRMM) assumed to be a precipitation dataset was entered
             if TRMMdirName:
                 # ------ NETCDF File info for writing TRMM CE rainfall ------------------------------------
-                thisFileName = userVariables.DIRS['mainDirStr']+'/TRMMnetcdfCEs/TRMM' + (str(timelist[t])).replace(' ', '_') + ceUniqueID +'.nc'
+                thisFileName = userVariables.DIRS['mainDirStr']+'/TRMMnetcdfCEs/TRMM' + (str(timelist[t])).replace(' ', '_') + ceUniqueID + '.nc'
                 currNetCDFTRMMData = Dataset(thisFileName, 'w', format='NETCDF4')
                 currNetCDFTRMMData.description = 'Cloud Element ' + ceUniqueID + ' precipitation data'
                 currNetCDFTRMMData.calendar = 'standard'
                 currNetCDFTRMMData.conventions = 'COARDS'
-                # dimensions
+                # Dimensions
                 currNetCDFTRMMData.createDimension('time', None)
-                currNetCDFTRMMData.createDimension('lat', len(LAT[:,0]))
-                currNetCDFTRMMData.createDimension('lon', len(LON[0,:]))
+                currNetCDFTRMMData.createDimension('lat', len(LAT[:, 0]))
+                currNetCDFTRMMData.createDimension('lon', len(LON[0, :]))
 
-                # variables
+                # Variables
                 TRMMprecip = ('time', 'lat', 'lon',)
                 times = currNetCDFTRMMData.createVariable('time', 'f8', ('time',))
-                times.units = 'hours since '+ str(timelist[t])[:-6]
+                times.units = 'hours since ' + str(timelist[t])[:-6]
                 latitude = currNetCDFTRMMData.createVariable('latitude', 'f8', ('lat',))
                 longitude = currNetCDFTRMMData.createVariable('longitude', 'f8', ('lon',))
                 rainFallacc = currNetCDFTRMMData.createVariable('precipitation_Accumulation', 'f8', TRMMprecip)
                 rainFallacc.units = 'mm'
 
-                longitude[:] = LON[0,:]
+                longitude[:] = LON[0, :]
                 longitude.units = 'degrees_east'
                 longitude.long_name = 'Longitude'
 
-                latitude[:] = LAT[:,0]
+                latitude[:] = LAT[:, 0]
                 latitude.units = 'degrees_north'
-                latitude.long_name = 'Latitude' 
-                #-----------End most of NETCDF file stuff ------------------------------------
-                chunkToInsert = np.copy(regriddedTRMM[loc[0],loc[1]])
-                #chunkToInsert = regriddedTRMMCopy[loc[0],loc[1]]
-                chunkToInsert[cloudElement==0] = 0
-                finalCETRMMvalues[0,loc[0],loc[1]] = chunkToInsert
-                
-                ceTRMMList = np.zeros((cloudyAreas.shape[0],3))
-                ceTRMMList[:,0] = cloudElementLat[cloudyAreas[:,0]]
-                ceTRMMList[:,1] = cloudElementLon[cloudyAreas[:,1]]
-                ceTRMMList[:,2] = finalCETRMMvalues[0,np.floor(ceTRMMList[:,0]).astype(int),np.floor(ceTRMMList[:,1]).astype(int)]
+                latitude.long_name = 'Latitude'
+                # -----------End most of NETCDF file stuff ------------------------------------
+                chunkToInsert = np.copy(regriddedTRMM[loc[0], loc[1]])
+                # chunkToInsert = regriddedTRMMCopy[loc[0],loc[1]]
+                chunkToInsert[cloudElement == 0] = 0
+                finalCETRMMvalues[0, loc[0], loc[1]] = chunkToInsert
+
+                ceTRMMList = np.zeros((cloudyAreas.shape[0], 3))
+                ceTRMMList[:, 0] = cloudElementLat[cloudyAreas[:, 0]]
+                ceTRMMList[:, 1] = cloudElementLon[cloudyAreas[:, 1]]
+                ceTRMMList[:, 2] = finalCETRMMvalues[0, np.floor(ceTRMMList[:, 0]).astype(int), np.floor(ceTRMMList[:, 1]).astype(int)]
                 ceTRMMList = ceTRMMList.tolist()
                 ceTRMMList = [tuple(l)for l in ceTRMMList]
 
-                #calculate the total precip associated with the feature
+                # Calculate the total precip associated with the feature
                 precipTotal = np.sum(finalCETRMMvalues)
                 rainFallacc[:] = finalCETRMMvalues[:]
                 currNetCDFTRMMData.close()
 
                 TRMMnumOfBoxes = np.count_nonzero(finalCETRMMvalues)
                 TRMMArea = TRMMnumOfBoxes * userVariables.XRES * userVariables.YRES
-                
+
                 try:
                     maxCEprecipRate = np.max(finalCETRMMvalues[np.nonzero(finalCETRMMvalues)])
                     minCEprecipRate = np.min(finalCETRMMvalues[np.nonzero(finalCETRMMvalues)])
                 except:
                     pass
-                
-            #sort cloudElementLatLons by lats
+
+            # Sort cloudElementLatLons by lats
             cloudElementLatLons.sort(key=lambda tup: tup[0])
-            #determine if the cloud element the shape
+            # Determine if the cloud element the shape
             cloudElementEpsilon = eccentricity(cloudElement)
             latCenter, lonCenter = ndimage.measurements.center_of_mass(cloudElement, labels=labels)
-            #latCenter and lonCenter are given according to the particular array defining this CE
-            #so you need to convert this value to the overall domain truth
+            # latCenter and lonCenter are given according to the particular array defining this CE
+            # so you need to convert this value to the overall domain truth
             latCenter = cloudElementLat[round(latCenter)]
             lonCenter = cloudElementLon[round(lonCenter)]
-            
-            #create the latLonBox
+
+            # Create the latLonBox
             latLonBox.append(min(cloudElementLon))
             latLonBox.append(min(cloudElementLat))
             latLonBox.append(max(cloudElementLon))
             latLonBox.append(max(cloudElementLat))
-    
+
             nonEmptyLons = sum(sum(cloudElement) > 0)
             nonEmptyLats = sum(sum(cloudElement.transpose()) > 0)
 
             shape = max(nonEmptyLats, nonEmptyLons)
 
-            cf = (((ndimage.minimum(cloudElement, \
+            cf = (((ndimage.minimum(cloudElement,
                     labels=labels)) / float((ndimage.maximum(cloudElement, labels=labels)))) * 100.0)
             tmin = ndimage.minimum(cloudElement, labels=labels)*1.
             tmax = ndimage.maximum(cloudElement, labels=labels)*1.
-            avgBT =  ndimage.mean(cloudElement, labels=labels)
+            avgBT = ndimage.mean(cloudElement, labels=labels)
             varBT = ndimage.variance(cloudElement, labels=labels)
             cloudElementCenter.append(latCenter)
             cloudElementCenter.append(lonCenter)
-            #populate the dictionary
+            # Populate the dictionary
             if TRMMdirName:
-                cloudElementDict = {'uniqueID': ceUniqueID, 'cloudElementTime': timelist[t],\
-                    'cloudElementLatLon': cloudElementLatLons, 'cloudElementCenter':cloudElementCenter, \
-                    'cloudElementArea':cloudElementArea, 'cloudElementEccentricity':cloudElementEpsilon, \
-                    'cloudElementTmax':tmax, 'cloudElementTmin': tmin, 'cloudElementPrecipTotal':precipTotal,\
-                    'cloudElementLatLonTRMM':ceTRMMList, 'TRMMArea': TRMMArea, 'CETRMMmax':maxCEprecipRate, \
-                    'CETRMMmin':minCEprecipRate, 'cloudElementLatLonBox': latLonBox, 'cloudElementCF':cf,\
-                    'cloudElementBTavg':avgBT, 'cloudElementBTvar':varBT}
+                cloudElementDict = {'uniqueID': ceUniqueID, 'cloudElementTime': timelist[t],
+                    'cloudElementLatLon': cloudElementLatLons, 'cloudElementCenter': cloudElementCenter,
+                    'cloudElementArea': cloudElementArea, 'cloudElementEccentricity': cloudElementEpsilon,
+                    'cloudElementTmax': tmax, 'cloudElementTmin': tmin, 'cloudElementPrecipTotal': precipTotal,
+                    'cloudElementLatLonTRMM': ceTRMMList, 'TRMMArea': TRMMArea, 'CETRMMmax': maxCEprecipRate,
+                    'CETRMMmin': minCEprecipRate, 'cloudElementLatLonBox': latLonBox, 'cloudElementCF': cf,
+                    'cloudElementBTavg': avgBT, 'cloudElementBTvar': varBT}
             else:
-                cloudElementDict = {'uniqueID': ceUniqueID, 'cloudElementTime': timelist[t],\
-                    'cloudElementLatLon': cloudElementLatLons, 'cloudElementCenter':cloudElementCenter, \
-                    'cloudElementArea':cloudElementArea, 'cloudElementEccentricity':cloudElementEpsilon, \
-                    'cloudElementTmax':tmax, 'cloudElementTmin': tmin, 'cloudElementLatLonBox':latLonBox, \
-                    'cloudElementCF':cf, 'cloudElementBTavg':avgBT, 'cloudElementBTvar':varBT}
-   
-            #data to be returned to parent function
+                cloudElementDict = {'uniqueID': ceUniqueID, 'cloudElementTime': timelist[t],
+                    'cloudElementLatLon': cloudElementLatLons, 'cloudElementCenter': cloudElementCenter,
+                    'cloudElementArea': cloudElementArea, 'cloudElementEccentricity': cloudElementEpsilon,
+                    'cloudElementTmax': tmax, 'cloudElementTmin': tmin, 'cloudElementLatLonBox': latLonBox,
+                    'cloudElementCF': cf, 'cloudElementBTavg': avgBT, 'cloudElementBTvar': varBT}
+
+            # Data to be returned to parent function
             allCloudElementDicts.append(cloudElementDict)
         else:
-            #ensure only the non-zero elements are considered
-            #store intel in allCE file
+            # Ensure only the non-zero elements are considered
+            # Store intel in allCE file
             labels, _ = ndimage.label(cloudElement)
-            cloudElementsFileString+=('\n-----------------------------------------------')
-            cloudElementsFileString+=('\n\nTime is: %s' %(str(timelist[t])))
-            cloudElementsFileString+=('\n\nceUniqueID is: %s' %('F' + str(frameNum) + 'CE' + str(00)))
-            
+            cloudElementsFileString += ('\n-----------------------------------------------')
+            cloudElementsFileString += ('\n\nTime is: %s' % (str(timelist[t])))
+            cloudElementsFileString += ('\n\nceUniqueID is: %s' % ('F' + str(frameNum) + 'CE' + str(00)))
+
             cloudElementNonZeros = cloudElement.nonzero()
             cloudyAreas = np.transpose(cloudElementNonZeros)
-            cloudElementLatLons = np.zeros((cloudyAreas.shape[0],3))
-            cloudElementLatLons[:,0] = cloudElementLat[cloudyAreas[:,0]]
-            cloudElementLatLons[:,1] = cloudElementLon[cloudyAreas[:,1]]
-            cloudElementLatLons[:,2] = cloudElement[cloudElementNonZeros]
+            cloudElementLatLons = np.zeros((cloudyAreas.shape[0], 3))
+            cloudElementLatLons[:, 0] = cloudElementLat[cloudyAreas[:, 0]]
+            cloudElementLatLons[:, 1] = cloudElementLon[cloudyAreas[:, 1]]
+            cloudElementLatLons[:, 2] = cloudElement[cloudElementNonZeros]
             cloudElementLatLons = cloudElementLatLons.tolist()
             cloudElementLatLons = [tuple(l)for l in cloudElementLatLons]
 
-            cloudElementsFileString+=('\nLocation of rejected CE (lat,lon) points are: %s' % cloudElementLatLons)
-            #latCenter and lonCenter are given according to the particular array defining this CE
-            #so you need to convert this value to the overall domain truth
+            cloudElementsFileString += ('\nLocation of rejected CE (lat,lon) points are: %s' % cloudElementLatLons)
+            # latCenter and lonCenter are given according to the particular array defining this CE
+            # so you need to convert this value to the overall domain truth
             latCenter, lonCenter = ndimage.measurements.center_of_mass(cloudElement, labels=labels)
             latCenter = cloudElementLat[round(latCenter)]
             lonCenter = cloudElementLon[round(lonCenter)]
-            cloudElementsFileString+=('\nCenter (lat,lon) is: %.2f\t%.2f' % (latCenter, lonCenter))
-            cloudElementsFileString+=('\nNumber of boxes are: %d' % numOfBoxes)
-            cloudElementsFileString+=('\nArea is: %.4f km^2' % (cloudElementArea, ))
-            cloudElementsFileString+=('\nAverage brightness temperature is: %.4f K' % ndimage.mean(cloudElement, \
+            cloudElementsFileString += ('\nCenter (lat,lon) is: %.2f\t%.2f' % (latCenter, lonCenter))
+            cloudElementsFileString += ('\nNumber of boxes are: %d' % numOfBoxes)
+            cloudElementsFileString += ('\nArea is: %.4f km^2' % (cloudElementArea, ))
+            cloudElementsFileString += ('\nAverage brightness temperature is: %.4f K' % ndimage.mean(cloudElement,
                 labels=labels))
-            cloudElementsFileString+=('\nMin brightness temperature is: %.4f K' % ndimage.minimum(cloudElement, \
+            cloudElementsFileString += ('\nMin brightness temperature is: %.4f K' % ndimage.minimum(cloudElement,
                 labels=labels))
-            cloudElementsFileString+=('\nMax brightness temperature is: %.4f K' % ndimage.maximum(cloudElement, \
+            cloudElementsFileString += ('\nMax brightness temperature is: %.4f K' % ndimage.maximum(cloudElement,
                 labels=labels))
-            cloudElementsFileString+=('\nBrightness temperature variance is: %.4f K' \
+            cloudElementsFileString += ('\nBrightness temperature variance is: %.4f K'
                 % ndimage.variance(cloudElement, labels=labels))
-            cloudElementsFileString+=('\nConvective fraction is: %.4f ' % (((ndimage.minimum(cloudElement, \
+            cloudElementsFileString += ('\nConvective fraction is: %.4f ' % (((ndimage.minimum(cloudElement,
                 labels=labels))/float((ndimage.maximum(cloudElement, labels=labels))))*100.0))
-            cloudElementsFileString+=('\nEccentricity is: %.4f ' % (cloudElementEpsilon))
-            cloudElementsFileString+=('\n-----------------------------------------------')
+            cloudElementsFileString += ('\nEccentricity is: %.4f ' % (cloudElementEpsilon))
+            cloudElementsFileString += ('\n-----------------------------------------------')
 
-        #reset list for the next CE
+        # Reset list for the next CE
         cloudElementCenter = []
         cloudElement = []
         cloudElementLat = []
@@ -574,7 +580,9 @@ def find_single_frame_cloud_elements(t,mergImgs,timelist, lat, lon, userVariable
         latLonBox = []
 
     return [allCloudElementDicts, cloudElementsFileString]
-#**********************************************************************************************************************
+# **********************************************************************************************************************
+
+
 def find_precip_rate(TRMMdirName, timelist, userVariables, graphVariables):
     counter = 0
     '''
@@ -595,25 +603,24 @@ def find_precip_rate(TRMMdirName, timelist, userVariables, graphVariables):
     precipTotal = 0.0
 
     os.chdir((userVariables.DIRS['mainDirStr'] + '/MERGnetcdfCEs/'))
-    temporalRes = 3 #3 hours for TRMM
+    temporalRes = 3  # 3 hours for TRMM
 
-    #sort files
+    # Sort files
     files = filter(os.path.isfile, glob.glob('*.nc'))
     files.sort(key=lambda x: os.path.getmtime(x))
-    
 
     for afile in files:
         fullFname = os.path.splitext(afile)[0]
         noFrameExtension = (fullFname.replace('_', '')).split('F')[0]
-        ceUniqueID = 'F' +(fullFname.replace('_', '')).split('F')[1]
+        ceUniqueID = 'F' + (fullFname.replace('_', '')).split('F')[1]
         fileDateTimeChar = (noFrameExtension.replace(':', '')).split('s')[1]
         fileDateTime = fileDateTimeChar.replace('-', '')
         fileDate = fileDateTime[:-6]
         fileHr1 = fileDateTime[-6:-4]
 
         cloudElementData = Dataset(afile, 'r', format='NETCDF4')
-        brightnesstemp1 = cloudElementData.variables['brightnesstemp'][:,:,:]
-        
+        brightnesstemp1 = cloudElementData.variables['brightnesstemp'][:, :, :]
+
         brightnesstemp = np.squeeze(brightnesstemp1, axis=0)
 
         if int(fileHr1) % temporalRes == 0:
@@ -625,14 +632,13 @@ def find_precip_rate(TRMMdirName, timelist, userVariables, graphVariables):
             fileHr = '0' + str(fileHr)
         else:
             str(fileHr)
-        
 
         TRMMfileName = TRMMdirName + '/3B42.' + str(fileDate) + '.'+str(fileHr) + '.7A.nc'
         TRMMData = Dataset(TRMMfileName, 'r', format='NETCDF4')
-        precipRate = TRMMData.variables['pcp'][:,:,:]
+        precipRate = TRMMData.variables['pcp'][:, :, :]
         latsrawTRMMData = TRMMData.variables['latitude'][:]
         lonsrawTRMMData = TRMMData.variables['longitude'][:]
-        lonsrawTRMMData[lonsrawTRMMData > 180] = lonsrawTRMMData[lonsrawTRMMData>180] - 360.
+        lonsrawTRMMData[lonsrawTRMMData > 180] = lonsrawTRMMData[lonsrawTRMMData > 180] - 360.
         LONTRMM, LATTRMM = np.meshgrid(lonsrawTRMMData, latsrawTRMMData)
 
         # TODO: From this point onward 'LAT' and 'LON' are used but undefined.
@@ -641,45 +647,45 @@ def find_precip_rate(TRMMdirName, timelist, userVariables, graphVariables):
         nxgrd = len(LON[0, :])
 
         precipRateMasked = ma.masked_array(precipRate, mask=(precipRate < 0.0))
-        #---------regrid the TRMM data to the MERG dataset ----------------------------------
-        #regrid using the do_regrid stuff from the Apache OCW
+        # ---------regrid the TRMM data to the MERG dataset ----------------------------------
+        # regrid using the do_regrid stuff from the Apache OCW
         regriddedTRMM = ma.zeros((0, nygrd, nxgrd))
-        regriddedTRMM = utils.do_regrid(precipRateMasked[0,:,:], LATTRMM, LONTRMM, LAT, LON, order=1, mdi= -999999999)
-        #----------------------------------------------------------------------------------
+        regriddedTRMM = utils.do_regrid(precipRateMasked[0, :, :], LATTRMM, LONTRMM, LAT, LON, order=1, mdi=-999999999)
+        # ----------------------------------------------------------------------------------
 
         TRMMData.close()
         # ------ NETCDF File stuff ------------------------------------
-        thisFileName = userVariables.DIRS['mainDirStr']+'/TRMMnetcdfCEs/'+ fileDateTime + ceUniqueID  + '.nc'
+        thisFileName = userVariables.DIRS['mainDirStr']+'/TRMMnetcdfCEs/' + fileDateTime + ceUniqueID + '.nc'
         currNetCDFTRMMData = Dataset(thisFileName, 'w', format='NETCDF4')
         currNetCDFTRMMData.description = 'Cloud Element ' + ceUniqueID + ' rainfall data'
         currNetCDFTRMMData.calendar = 'standard'
         currNetCDFTRMMData.conventions = 'COARDS'
         # dimensions
         currNetCDFTRMMData.createDimension('time', None)
-        currNetCDFTRMMData.createDimension('lat', len(LAT[:,0]))
-        currNetCDFTRMMData.createDimension('lon', len(LON[0,:]))
+        currNetCDFTRMMData.createDimension('lat', len(LAT[:, 0]))
+        currNetCDFTRMMData.createDimension('lon', len(LON[0, :]))
         # variables
         TRMMprecip = ('time', 'lat', 'lon',)
         times = currNetCDFTRMMData.createVariable('time', 'f8', ('time',))
-        times.units = 'hours since '+ fileDateTime[:-6]
+        times.units = 'hours since ' + fileDateTime[:-6]
         latitude = currNetCDFTRMMData.createVariable('latitude', 'f8', ('lat',))
         longitude = currNetCDFTRMMData.createVariable('longitude', 'f8', ('lon',))
         rainFallacc = currNetCDFTRMMData.createVariable('precipitation_Accumulation', 'f8', TRMMprecip)
         rainFallacc.units = 'mm'
 
-        longitude[:] = LON[0,:]
+        longitude[:] = LON[0, :]
         longitude.units = 'degrees_east'
         longitude.long_name = 'Longitude'
 
-        latitude[:] = LAT[:,0]
+        latitude[:] = LAT[:, 0]
         latitude.units = 'degrees_north'
         latitude.long_name = 'Latitude'
-        #-----------End most of NETCDF file stuff ------------------------------------
+        # -----------End most of NETCDF file stuff ------------------------------------
 
-        finalCETRMMvalues = ma.zeros((brightnesstemp1.shape))
-        #This block replaces the above commented loop
-        finalCETRMMvalues[0,:,:] = regriddedTRMM
-        finalCETRMMvalues[0,brightnesstemp<=0] = 0
+        finalCETRMMvalues = ma.zeros(brightnesstemp1.shape)
+        # This block replaces the above commented loop
+        finalCETRMMvalues[0, :, :] = regriddedTRMM
+        finalCETRMMvalues[0, brightnesstemp <= 0] = 0
 
         precipTotal = np.sum(finalCETRMMvalues)
         rainFallacc[:] = finalCETRMMvalues
@@ -697,23 +703,23 @@ def find_precip_rate(TRMMdirName, timelist, userVariables, graphVariables):
         except:
             maxCEprecipRate = 0.0
 
-        #add info to CLOUDELEMENTSGRAPH
-        #TODO try block
+        # add info to CLOUDELEMENTSGRAPH
+        # TODO try block
         for eachdict in graphVariables.CLOUD_ELEMENT_GRAPH.nodes(ceUniqueID):
             counter += 1
             if eachdict[1]['uniqueID'] == ceUniqueID:
-                if not 'cloudElementPrecipTotal' in eachdict[1].keys():
+                if 'cloudElementPrecipTotal' not in eachdict[1].keys():
                     eachdict[1]['cloudElementPrecipTotal'] = precipTotal
-                if not 'cloudElementLatLonTRMM' in eachdict[1].keys():
+                if 'cloudElementLatLonTRMM' not in eachdict[1].keys():
                     eachdict[1]['cloudElementLatLonTRMM'] = finalCETRMMvalues
-                if not 'TRMMArea' in eachdict[1].keys():
+                if 'TRMMArea' not in eachdict[1].keys():
                     eachdict[1]['TRMMArea'] = TRMMArea
-                if not 'CETRMMmin' in eachdict[1].keys():
+                if 'CETRMMmin' not in eachdict[1].keys():
                     eachdict[1]['CETRMMmin'] = minCEprecipRate
-                if not 'CETRMMmax' in eachdict[1].keys():
+                if 'CETRMMmax' not in eachdict[1].keys():
                     eachdict[1]['CETRMMmax'] = maxCEprecipRate
 
-        #clean up
+        # Clean up
         precipTotal = 0.0
         latsrawTRMMData = []
         lonsrawTRMMData = []
@@ -721,8 +727,10 @@ def find_precip_rate(TRMMdirName, timelist, userVariables, graphVariables):
         brightnesstemp = []
 
     return allCEnodesTRMMdata
-#**********************************************************************************************************************
-def find_cloud_clusters(CEGraph,userVariables,graphVariables):
+# **********************************************************************************************************************
+
+
+def find_cloud_clusters(CEGraph, userVariables, graphVariables):
     '''
     Purpose:: Determines the cloud clusters properties from the subgraphs in
         the graph i.e. prunes the graph according to the minimum depth
@@ -735,33 +743,33 @@ def find_cloud_clusters(CEGraph,userVariables,graphVariables):
     '''
 
     seenNode = []
-    
+
     cloudClustersFile = open((userVariables.DIRS['mainDirStr'] + '/textFiles/cloudClusters.txt'), 'wb')
 
     for eachNode in CEGraph:
-        #check if the node has been seen before
+        # Check if the node has been seen before
         if eachNode not in dict(enumerate(zip(*seenNode))):
-            #look for all trees associated with node as the root
+            # Look for all trees associated with node as the root
             thisPathDistanceAndLength = nx.single_source_dijkstra(CEGraph, eachNode)
-            #determine the actual shortestPath and minimum depth/length
-            maxDepthAndMinPath = find_max_depth_and_min_path(thisPathDistanceAndLength,userVariables)
+            # Determine the actual shortestPath and minimum depth/length
+            maxDepthAndMinPath = find_max_depth_and_min_path(thisPathDistanceAndLength, userVariables)
             if maxDepthAndMinPath:
                 maxPathLength = maxDepthAndMinPath[0]
                 shortestPath = maxDepthAndMinPath[1]
 
-                #add nodes and paths to PRUNED_GRAPH
+                # Add nodes and paths to PRUNED_GRAPH
                 for i in xrange(len(shortestPath)):
                     if graphVariables.PRUNED_GRAPH.has_node(shortestPath[i]) is False:
                         graphVariables.PRUNED_GRAPH.add_node(shortestPath[i])
 
-                    #add edge if necessary
+                    # Add edge if necessary
                     if i < (len(shortestPath)-1) and graphVariables.PRUNED_GRAPH.has_edge(shortestPath[i], shortestPath[i+1]) is False:
                         prunedGraphEdgeweight = CEGraph.get_edge_data(shortestPath[i], shortestPath[i+1])['weight']
                         graphVariables.PRUNED_GRAPH.add_edge(shortestPath[i], shortestPath[i+1], weight=prunedGraphEdgeweight)
 
-                #note information in a file for consideration later i.e. checking to see if it works
-                cloudClustersFile.write('\nSubtree pathlength is %d and path is %s' %(maxPathLength, shortestPath))
-                #update seenNode info
+                # Note information in a file for consideration later i.e. checking to see if it works
+                cloudClustersFile.write('\nSubtree pathlength is %d and path is %s' % (maxPathLength, shortestPath))
+                # update seenNode info
                 seenNode.append(shortestPath)
 
     print 'pruned graph'
@@ -774,8 +782,10 @@ def find_cloud_clusters(CEGraph,userVariables,graphVariables):
     cloudClustersFile.close()
 
     return graphVariables.PRUNED_GRAPH
-#**********************************************************************************************************************
-def find_MCC(prunedGraph,userVariables,graphVariables):
+# **********************************************************************************************************************
+
+
+def find_MCC(prunedGraph, userVariables, graphVariables):
     '''
     Purpose:: Determines if subtree is a MCC according to Laurent et al 1998 criteria
 
@@ -787,6 +797,7 @@ def find_MCC(prunedGraph,userVariables,graphVariables):
         frames are ordered and are equally distributed in time e.g. hrly satellite images
 
     '''
+
     MCCList = []
     #MCSList = []
     definiteMCC = []
@@ -801,7 +812,7 @@ def find_MCC(prunedGraph,userVariables,graphVariables):
     imgCount = 0
     imgTitle = ''
 
-    #maxShieldNode = ''
+    # maxShieldNode = ''
     orderedPath = []
     treeTraversalList = []
     definiteMCCFlag = False
@@ -809,20 +820,19 @@ def find_MCC(prunedGraph,userVariables,graphVariables):
     aSubGraph = nx.DiGraph()
     #definiteMCSFlag = False
 
-
-    #connected_components is not available for DiGraph, so generate graph as undirected
+    # Connected_components is not available for DiGraph, so generate graph as undirected
     unDirGraph = graphVariables.PRUNED_GRAPH.to_undirected()
     subGraph = nx.connected_component_subgraphs(unDirGraph)
 
-    #for each path in the subgraphs determined
+    # For each path in the subgraphs determined
     for path in subGraph:
-        #definite is a subTree provided the duration is longer than 3 hours
+        # definite is a subTree provided the duration is longer than 3 hours
         if len(path.nodes()) > userVariables.MIN_MCS_DURATION:
             orderedPath = path.nodes()
             orderedPath.sort(key=lambda item: (len(item.split('C')[0]), item.split('C')[0]))
-            #definiteMCS.append(orderedPath)
+            # definiteMCS.append(orderedPath)
 
-            #build back DiGraph for checking purposes/paper purposes
+            # Build back DiGraph for checking purposes/paper purposes
             aSubGraph.add_nodes_from(path.nodes())
             for eachNode in path.nodes():
                 if prunedGraph.predecessors(eachNode):
@@ -833,42 +843,42 @@ def find_MCC(prunedGraph,userVariables,graphVariables):
                     for node in prunedGraph.successors(eachNode):
                         aSubGraph.add_edge(eachNode, node, weight=graphVariables.edgeWeight[0])
             imgTitle = 'CC'+str(imgCount+1)
-            # plotting.draw_graph(aSubGraph, imgTitle, MAIN_DIRECTORY, edgeWeight) #for eachNode in path:
+            # Plotting.draw_graph(aSubGraph, imgTitle, MAIN_DIRECTORY, edgeWeight) #for eachNode in path:
             imgCount += 1
-            #----------end build back ---------------------------------------------
-            mergeList, splitList = has_merges_or_splits(path,graphVariables)
-            #add node behavior regarding neutral, merge, split or both
+            # ----------end build back ---------------------------------------------
+            mergeList, splitList = has_merges_or_splits(path, graphVariables)
+            # Add node behavior regarding neutral, merge, split or both
             for node in path:
                 if node in mergeList and node in splitList:
-                    add_node_behavior_identifier(node, 'B',graphVariables)
-                elif node in mergeList and not node in splitList:
+                    add_node_behavior_identifier(node, 'B', graphVariables)
+                elif node in mergeList and node not in splitList:
                     add_node_behavior_identifier(node, 'M', graphVariables)
-                elif node in splitList and not node in mergeList:
+                elif node in splitList and node not in mergeList:
                     add_node_behavior_identifier(node, 'S', graphVariables)
                 else:
                     add_node_behavior_identifier(node, 'N', graphVariables)
-            #Do the first part of checking for the MCC feature
-            #find the path
+            # Do the first part of checking for the MCC feature
+            # find the path
             treeTraversalList = traverse_tree(aSubGraph, orderedPath[0], [], [])
-            #print 'treeTraversalList is ', treeTraversalList
-            #check the nodes to determine if a MCC on just the area criteria (consecutive nodes meeting the area and temp requirements)
-            MCCList = checked_nodes_MCC(prunedGraph, treeTraversalList, userVariables,graphVariables)
+            # print 'treeTraversalList is ', treeTraversalList
+            # check the nodes to determine if a MCC on just the area criteria (consecutive nodes meeting the area and temp requirements)
+            MCCList = checked_nodes_MCC(prunedGraph, treeTraversalList, userVariables, graphVariables)
             for aDict in MCCList:
                 for eachNode in aDict['fullMCSMCC']:
                     add_node_MCS_identifier(eachNode[0], eachNode[1], graphVariables)
 
-            #do check for if MCCs overlap
+            # o check for if MCCs overlap
             if MCCList:
                 if len(MCCList) > 1:
-                    for count in range(len(MCCList)): #for eachDict in MCCList:
-                        #if there are more than two lists
+                    for count in range(len(MCCList)):  # for eachDict in MCCList:
+                        # if there are more than two lists
                         if count >= 1:
-                            #and the first node in this list
+                            # and the first node in this list
                             eachList = list(x[0] for x in MCCList[count]['possMCCList'])
                             eachList.sort(key=lambda nodeID: (len(nodeID.split('C')[0]), nodeID.split('C')[0]))
                             if eachList:
                                 fNode = eachList[0]
-                                #get the lastNode in the previous possMCC list
+                                # Get the lastNode in the previous possMCC list
                                 eachList = list(x[0] for x in MCCList[(count-1)]['possMCCList'])
                                 eachList.sort(key=lambda nodeID: (len(nodeID.split('C')[0]), nodeID.split('C')[0]))
                                 if eachList:
@@ -876,9 +886,9 @@ def find_MCC(prunedGraph,userVariables,graphVariables):
                                     if lNode in graphVariables.CLOUD_ELEMENT_GRAPH.predecessors(fNode):
                                         for aNode in graphVariables.CLOUD_ELEMENT_GRAPH.predecessors(fNode):
                                             if aNode in eachList and aNode == lNode:
-                                            #if edge_data is equal or less than to the exisitng edge in the tree append one to the other
-                                                if graphVariables.CLOUD_ELEMENT_GRAPH.get_edge_data(aNode,fNode)['weight'] <= \
-                                                        graphVariables.CLOUD_ELEMENT_GRAPH.get_edge_data(lNode,fNode)['weight']:
+                                            # if edge_data is equal or less than to the exisitng edge in the tree append one to the other
+                                                if graphVariables.CLOUD_ELEMENT_GRAPH.get_edge_data(aNode, fNode)['weight'] <= \
+                                                        graphVariables.CLOUD_ELEMENT_GRAPH.get_edge_data(lNode, fNode)['weight']:
                                                     MCCList[count-1]['possMCCList'].extend(MCCList[count]['possMCCList'])
                                                     MCCList[count-1]['fullMCSMCC'].extend(MCCList[count]['fullMCSMCC'])
                                                     MCCList[count-1]['durationAandB'] += MCCList[count]['durationAandB']
@@ -886,16 +896,16 @@ def find_MCC(prunedGraph,userVariables,graphVariables):
                                                     MCCList[count-1]['highestMCCnode'] = MCCList[count]['highestMCCnode']
                                                     MCCList[count-1]['frameNum'] = MCCList[count]['frameNum']
                                                     removeList.append(count)
-                #update the MCCList
+                # Update the MCCList
                 if removeList:
                     for i in removeList:
                         if (len(MCCList) - 1) > i:
                             del MCCList[i]
                             removeList = []
 
-            #check if the nodes also meet the duration criteria and the shape crieria
+            # Check if the nodes also meet the duration criteria and the shape crieria
             for eachDict in MCCList:
-                #order the fullMCSMCC list, then run maximum extent and eccentricity criteria
+                # Order the fullMCSMCC list, then run maximum extent and eccentricity criteria
                 if (eachDict['durationAandB'] * userVariables.TRES) >= userVariables.MINIMUM_DURATION and \
                         (eachDict['durationAandB'] * userVariables.TRES) <= userVariables.MAXIMUM_DURATION:
                     eachList = list(x[0] for x in eachDict['fullMCSMCC'])
@@ -903,10 +913,10 @@ def find_MCC(prunedGraph,userVariables,graphVariables):
                     eachMCCList = list(x[0] for x in eachDict['possMCCList'])
                     eachMCCList.sort(key=lambda nodeID: (len(nodeID.split('C')[0]), nodeID.split('C')[0]))
 
-                    #update the nodemcsidentifer behavior
-                    #find the first element eachMCCList in eachList, and ensure everything ahead of it is indicated as 'I',
-                    #find last element in eachMCCList in eachList and ensure everything after it is indicated as 'D'
-                    #ensure that everything between is listed as 'M'
+                    # Update the nodemcsidentifer behavior
+                    # Find the first element eachMCCList in eachList, and ensure everything ahead of it is indicated as 'I',
+                    # Find last element in eachMCCList in eachList and ensure everything after it is indicated as 'D'
+                    # Ensure that everything between is listed as 'M'
                     for eachNode in eachList[:(eachList.index(eachMCCList[0]))]:
                         add_node_MCS_identifier(eachNode, 'I', graphVariables)
 
@@ -915,21 +925,20 @@ def find_MCC(prunedGraph,userVariables,graphVariables):
                     for eachNode in eachList[(eachList.index(eachMCCList[-1])+1):]:
                         add_node_MCS_identifier(eachNode, 'D', graphVariables)
 
-                    #update definiteMCS list
+                    # update definiteMCS list
                     for eachNode in orderedPath[(orderedPath.index(eachMCCList[-1])+1):]:
                         add_node_MCS_identifier(eachNode, 'D', graphVariables)
 
-                    #run maximum extent and eccentricity criteria
-                    _, definiteMCCFlag = max_extent_and_eccentricity(eachList,userVariables,graphVariables)
-                    #maxExtentNode, definiteMCCFlag = max_extent_and_eccentricity(eachList)
-                    #print 'maxExtentNode, definiteMCCFlag ', maxExtentNode, definiteMCCFlag
-                    if definiteMCCFlag == True:
+                    # run maximum extent and eccentricity criteria
+                    _, definiteMCCFlag = max_extent_and_eccentricity(eachList, userVariables, graphVariables)
+                    # maxExtentNode, definiteMCCFlag = max_extent_and_eccentricity(eachList)
+                    # print 'maxExtentNode, definiteMCCFlag ', maxExtentNode, definiteMCCFlag
+                    if definiteMCCFlag is True:
                         definiteMCC.append(eachList)
-
 
             definiteMCS.append(orderedPath)
 
-            #reset for next subGraph
+            # Reset for next subGraph
             aSubGraph.clear()
             orderedPath = []
             MCCList = []
@@ -937,7 +946,9 @@ def find_MCC(prunedGraph,userVariables,graphVariables):
             #definiteMCSFlag = False
 
     return definiteMCC, definiteMCS
-#**********************************************************************************************************************
+# **********************************************************************************************************************
+
+
 def traverse_tree(subGraph, node, stack, checkedNodes=None):
     '''
     Purpose:: To traverse a tree using a modified depth-first iterative deepening (DFID) search algorithm
@@ -954,6 +965,7 @@ def traverse_tree(subGraph, node, stack, checkedNodes=None):
     Assumptions: frames are ordered and are equally distributed in time e.g. hrly satellite images
 
     '''
+
     if len(checkedNodes) == len(subGraph):
         return checkedNodes
 
@@ -961,7 +973,7 @@ def traverse_tree(subGraph, node, stack, checkedNodes=None):
         stack = []
         checkedNodes.append(node)
 
-    #check one level infront first...if something does exisit, stick it at the front of the stack
+    # Check one level infront first...if something does exisit, stick it at the front of the stack
     upOneLevel = subGraph.predecessors(node)
     downOneLevel = subGraph.successors(node)
     for parent in upOneLevel:
@@ -985,7 +997,9 @@ def traverse_tree(subGraph, node, stack, checkedNodes=None):
             return traverse_tree(subGraph, eachNode, stack, checkedNodes)
 
     return checkedNodes
-#**********************************************************************************************************************
+# **********************************************************************************************************************
+
+
 def checked_nodes_MCC(prunedGraph, nodeList, userVariables, graphVariables):
     '''
     Purpose ::Determine if this path is (or is part of) a MCC and provides
@@ -1004,104 +1018,106 @@ def checked_nodes_MCC(prunedGraph, nodeList, userVariables, graphVariables):
     initiationFlag = False
     maturityFlag = False
     decayFlag = False
-    thisdict = {} #will have the same items as the cloudElementDict
+    thisdict = {}  # Will have the same items as the cloudElementDict
     cloudElementAreaB = 0.0
-    #cloudElementAreaA = 0.0
-    #epsilon = 0.0
-    #frameNum =0
+    # cloudElementAreaA = 0.0
+    # epsilon = 0.0
+    # frameNum =0
     oldNode = ''
     potentialMCCList = []
-    #durationAandB = 0
+    # durationAandB = 0
 
-    #check for if the list contains only one string/node
+    # Check for if the list contains only one string/node
     if type(nodeList) is str:
         oldNode = nodeList
         nodeList = []
         nodeList.append(oldNode)
 
     for node in nodeList:
-        thisdict = this_dict(node,graphVariables)
+        thisdict = this_dict(node, graphVariables)
         counterCriteriaAFlag = False
         counterCriteriaBFlag = False
-        #existingFrameFlag = False
+        # existingFrameFlag = False
 
         if thisdict['cloudElementArea'] >= userVariables.OUTER_CLOUD_SHIELD_AREA:
             counterCriteriaAFlag = True
             initiationFlag = True
             maturityFlag = False
 
-            #check if criteriaA is met
+            # Check if criteriaA is met
             cloudElementAreaA, _ = check_criteria(thisdict['cloudElementLatLon'], userVariables.OUTER_CLOUD_SHIELD_TEMPERATURE, userVariables)
-            #cloudElementAreaA, criteriaA = check_criteria(thisdict['cloudElementLatLon'], OUTER_CLOUD_SHIELD_TEMPERATURE)
-            #TODO: calcuate the eccentricity at this point and read over????or create a new field in the dict
+            # cloudElementAreaA, criteriaA = check_criteria(thisdict['cloudElementLatLon'], OUTER_CLOUD_SHIELD_TEMPERATURE)
+            # TODO: calculate the eccentricity at this point and read over????or create a new field in the dict
 
             if cloudElementAreaA >= userVariables.OUTER_CLOUD_SHIELD_AREA:
-                #check if criteriaB is met
-                cloudElementAreaB, criteriaB = check_criteria(thisdict['cloudElementLatLon'], userVariables.INNER_CLOUD_SHIELD_TEMPERATURE,userVariables)
+                # Check if criteriaB is met
+                cloudElementAreaB, criteriaB = check_criteria(thisdict['cloudElementLatLon'], userVariables.INNER_CLOUD_SHIELD_TEMPERATURE, userVariables)
 
-                #if Criteria A and B have been met, then the MCC is initiated, i.e. store node as potentialMCC
+                # If Criteria A and B have been met, then the MCC is initiated, i.e. store node as potentialMCC
                 if cloudElementAreaB >= userVariables.INNER_CLOUD_SHIELD_AREA:
-                    #TODO: add another field to the dictionary for the OUTER_AREA_SHIELD area
+                    # TODO: add another field to the dictionary for the OUTER_AREA_SHIELD area
                     counterCriteriaBFlag = True
-                    #append this information on to the dictionary
-                    add_info_this_dict(node, cloudElementAreaB, criteriaB,graphVariables)
+                    # Append this information on to the dictionary
+                    add_info_this_dict(node, cloudElementAreaB, criteriaB, graphVariables)
                     initiationFlag = False
                     maturityFlag = True
                     stage = 'M'
-                    potentialMCCList = update_MCC_list(prunedGraph, potentialMCCList, node, stage,\
-                                         counterCriteriaAFlag, counterCriteriaBFlag)
+                    potentialMCCList = update_MCC_list(prunedGraph, potentialMCCList, node, stage,
+                                                       counterCriteriaAFlag, counterCriteriaBFlag)
                 else:
-                    #criteria B failed
+                    # Criteria B failed
                     counterCriteriaBFlag = False
-                    if initiationFlag == True:
+                    if initiationFlag is True:
                         stage = 'I'
-                        potentialMCCList = update_MCC_list(prunedGraph, potentialMCCList, node, stage,\
-                                             counterCriteriaAFlag, counterCriteriaBFlag)
+                        potentialMCCList = update_MCC_list(prunedGraph, potentialMCCList, node, stage,
+                                                           counterCriteriaAFlag, counterCriteriaBFlag)
 
-                    elif (initiationFlag == False and maturityFlag == True) or decayFlag == True:
+                    elif (initiationFlag is False and maturityFlag is True) or decayFlag is True:
                         decayFlag = True
                         maturityFlag = False
                         stage = 'D'
-                        potentialMCCList = update_MCC_list(prunedGraph, potentialMCCList, node, stage,\
-                                             counterCriteriaAFlag, counterCriteriaBFlag)
+                        potentialMCCList = update_MCC_list(prunedGraph, potentialMCCList, node, stage,
+                                                           counterCriteriaAFlag, counterCriteriaBFlag)
             else:
-                #criteria A failed
+                # Criteria A failed
                 counterCriteriaAFlag = False
                 counterCriteriaBFlag = False
-                #add as a CE before or after the main feature
-                if initiationFlag == True or (initiationFlag == False and maturityFlag == True):
+                # Add as a CE before or after the main feature
+                if initiationFlag is True or (initiationFlag is False and maturityFlag is True):
                     stage = 'I'
-                    potentialMCCList = update_MCC_list(prunedGraph, potentialMCCList, node, stage,\
-                                         counterCriteriaAFlag, counterCriteriaBFlag)
-                elif (initiationFlag == False and maturityFlag == False) or decayFlag == True:
+                    potentialMCCList = update_MCC_list(prunedGraph, potentialMCCList, node, stage,
+                                                       counterCriteriaAFlag, counterCriteriaBFlag)
+                elif (initiationFlag is False and maturityFlag is False) or decayFlag is True:
                     stage = 'D'
                     decayFlag = True
-                    potentialMCCList = update_MCC_list(prunedGraph, potentialMCCList, node, stage,\
-                                         counterCriteriaAFlag, counterCriteriaBFlag)
-                elif (initiationFlag == False and maturityFlag == False and decayFlag == False):
+                    potentialMCCList = update_MCC_list(prunedGraph, potentialMCCList, node, stage,
+                                                       counterCriteriaAFlag, counterCriteriaBFlag)
+                elif (initiationFlag is False and maturityFlag is False and decayFlag is False):
                     stage = 'I'
-                    potentialMCCList = update_MCC_list(prunedGraph, potentialMCCList, node, stage,\
-                                         counterCriteriaAFlag, counterCriteriaBFlag)
+                    potentialMCCList = update_MCC_list(prunedGraph, potentialMCCList, node, stage,
+                                                       counterCriteriaAFlag, counterCriteriaBFlag)
         else:
-            #criteria A failed
+            # Criteria A failed
             counterCriteriaAFlag = False
             counterCriteriaBFlag = False
-            #add as a CE before or after the main feature
-            if initiationFlag == True or (initiationFlag == False and maturityFlag == True):
+            # Add as a CE before or after the main feature
+            if initiationFlag is True or (initiationFlag is False and maturityFlag is True):
                 stage = 'I'
-                potentialMCCList = update_MCC_list(prunedGraph, potentialMCCList, node, stage,\
-                                     counterCriteriaAFlag, counterCriteriaBFlag)
-            elif (initiationFlag == False and maturityFlag == False) or decayFlag == True:
+                potentialMCCList = update_MCC_list(prunedGraph, potentialMCCList, node, stage,
+                                                   counterCriteriaAFlag, counterCriteriaBFlag)
+            elif (initiationFlag is False and maturityFlag is False) or decayFlag is True:
                 stage = 'D'
                 decayFlag = True
-                potentialMCCList = update_MCC_list(prunedGraph, potentialMCCList, node, stage,\
-                                     counterCriteriaAFlag, counterCriteriaBFlag)
-            elif (initiationFlag == False and maturityFlag == False and decayFlag == False):
+                potentialMCCList = update_MCC_list(prunedGraph, potentialMCCList, node, stage,
+                                                   counterCriteriaAFlag, counterCriteriaBFlag)
+            elif (initiationFlag is False and maturityFlag is False and decayFlag is False):
                 stage = 'I'
-                potentialMCCList = update_MCC_list(prunedGraph, potentialMCCList, node, stage,\
-                                     counterCriteriaAFlag, counterCriteriaBFlag)
+                potentialMCCList = update_MCC_list(prunedGraph, potentialMCCList, node, stage,
+                                                   counterCriteriaAFlag, counterCriteriaBFlag)
     return potentialMCCList
-#**********************************************************************************************************************
+# **********************************************************************************************************************
+
+
 def update_MCC_list(prunedGraph, potentialMCCList, node, stage, counterCriteriaAFlag, counterCriteriaBFlag):
     '''
     Purpose::
@@ -1120,6 +1136,7 @@ def update_MCC_list(prunedGraph, potentialMCCList, node, stage, counterCriteriaA
              dictionary = {'possMCCList':[(node,'I')], 'fullMCSMCC':[(node,'I')], 'CounterCriteriaA': CounterCriteriaA, 'durationAandB': durationAandB}
 
     '''
+
     existingFrameFlag = False
     #existingMCSFrameFlag = False
     predecessorsFlag = False
@@ -1130,33 +1147,32 @@ def update_MCC_list(prunedGraph, potentialMCCList, node, stage, counterCriteriaA
 
     frameNum = int((node.split('CE')[0]).split('F')[1])
     if potentialMCCList == []:
-        #list empty
+        # List empty
         stage = 'I'
-        if counterCriteriaAFlag == True and counterCriteriaBFlag == True:
-            potentialMCCList.append({'possMCCList':[(node,stage)], 'fullMCSMCC':[(node,stage)], 'CounterCriteriaA': 1,\
-                 'durationAandB': 1, 'highestMCCnode':node, 'frameNum':frameNum})
-        elif counterCriteriaAFlag == True and counterCriteriaBFlag == False:
-            potentialMCCList.append({'possMCCList':[], 'fullMCSMCC':[(node, stage)], 'CounterCriteriaA': 1,\
-                 'durationAandB': 0, 'highestMCCnode':'', 'frameNum':0})
-        elif counterCriteriaAFlag == False and counterCriteriaBFlag == False:
-            potentialMCCList.append({'possMCCList':[], 'fullMCSMCC':[(node, stage)], 'CounterCriteriaA': 0,\
-                 'durationAandB': 0, 'highestMCCnode':'', 'frameNum':0})
+        if counterCriteriaAFlag is True and counterCriteriaBFlag is True:
+            potentialMCCList.append({'possMCCList': [(node, stage)], 'fullMCSMCC': [(node, stage)], 'CounterCriteriaA': 1,
+                 'durationAandB': 1, 'highestMCCnode': node, 'frameNum': frameNum})
+        elif counterCriteriaAFlag is True and counterCriteriaBFlag is False:
+            potentialMCCList.append({'possMCCList': [], 'fullMCSMCC': [(node, stage)], 'CounterCriteriaA': 1,
+                 'durationAandB': 0, 'highestMCCnode': '', 'frameNum': 0})
+        elif counterCriteriaAFlag is False and counterCriteriaBFlag is False:
+            potentialMCCList.append({'possMCCList': [], 'fullMCSMCC': [(node, stage)], 'CounterCriteriaA': 0,
+                 'durationAandB': 0, 'highestMCCnode': '', 'frameNum': 0})
     else:
-        #list not empty
+        # List not empty
         predecessorsFlag, index = is_there_a_link(prunedGraph, 1, node, potentialMCCList, 1)
-        if predecessorsFlag == True:
+        if predecessorsFlag is True:
             for eachNode in potentialMCCList[index]['possMCCList']:
-                if int((eachNode[0].split('CE')[0]).split('F')[1]) == frameNum :
+                if int((eachNode[0].split('CE')[0]).split('F')[1]) == frameNum:
                     existingFrameFlag = True
-            #this MUST come after the check for the existing frame
-            if counterCriteriaAFlag == True and counterCriteriaBFlag == True:
+            # This MUST come after the check for the existing frame
+            if counterCriteriaAFlag is True and counterCriteriaBFlag is True:
                 stage = 'M'
                 potentialMCCList[index]['possMCCList'].append((node, stage))
                 potentialMCCList[index]['fullMCSMCC'].append((node, stage))
 
-
-            if existingFrameFlag == False:
-                if counterCriteriaAFlag == True and counterCriteriaBFlag == True:
+            if existingFrameFlag is False:
+                if counterCriteriaAFlag is True and counterCriteriaBFlag is True:
                     stage = 'M'
                     potentialMCCList[index]['CounterCriteriaA'] += 1
                     potentialMCCList[index]['durationAandB'] += 1
@@ -1165,37 +1181,37 @@ def update_MCC_list(prunedGraph, potentialMCCList, node, stage, counterCriteriaA
                         potentialMCCList[index]['highestMCCnode'] = node
                     return potentialMCCList
 
-                #if this frameNum doesn't exist and this frameNum is less than the MCC node max frame Num (including 0), then append to fullMCSMCC list
+                # If this frameNum doesn't exist and this frameNum is less than the MCC node max frame Num (including 0), then append to fullMCSMCC list
                 if frameNum > potentialMCCList[index]['frameNum'] or potentialMCCList[index]['frameNum'] == 0:
                     stage = 'I'
-                    if counterCriteriaAFlag == True and counterCriteriaBFlag == False:
-                        potentialMCCList.append({'possMCCList':[], 'fullMCSMCC':[(node, stage)], 'CounterCriteriaA': 1,\
-                             'durationAandB': 0, 'highestMCCnode':'', 'frameNum':0})
+                    if counterCriteriaAFlag is True and counterCriteriaBFlag is False:
+                        potentialMCCList.append({'possMCCList': [], 'fullMCSMCC': [(node, stage)], 'CounterCriteriaA': 1,
+                             'durationAandB': 0, 'highestMCCnode': '', 'frameNum': 0})
                         return potentialMCCList
-                    elif counterCriteriaAFlag == False and counterCriteriaBFlag == False:
-                        potentialMCCList.append({'possMCCList':[], 'fullMCSMCC':[(node, stage)], 'CounterCriteriaA': 0,\
-                             'durationAandB': 0, 'highestMCCnode':'', 'frameNum':0})
+                    elif counterCriteriaAFlag is False and counterCriteriaBFlag is False:
+                        potentialMCCList.append({'possMCCList': [], 'fullMCSMCC': [(node, stage)], 'CounterCriteriaA': 0,
+                             'durationAandB': 0, 'highestMCCnode': '', 'frameNum': 0})
                         return potentialMCCList
 
-            #if predecessor and this frame number already exist in the MCC list, add the current node to the fullMCSMCC list
-            if existingFrameFlag == True:
-                if counterCriteriaAFlag == True and counterCriteriaBFlag == False:
+            # If predecessor and this frame number already exist in the MCC list, add the current node to the fullMCSMCC list
+            if existingFrameFlag is True:
+                if counterCriteriaAFlag is True and counterCriteriaBFlag is False:
                     potentialMCCList[index]['fullMCSMCC'].append((node, stage))
                     potentialMCCList[index]['CounterCriteriaA'] += 1
                     return potentialMCCList
-                if counterCriteriaAFlag == False:
+                if counterCriteriaAFlag is False:
                     potentialMCCList[index]['fullMCSMCC'].append((node, stage))
                     return potentialMCCList
 
-        if predecessorsFlag == False:
+        if predecessorsFlag is False:
             successorsFlag, index = is_there_a_link(prunedGraph, 2, node, potentialMCCList, 2)
 
-            if successorsFlag == True:
+            if successorsFlag is True:
                 for eachNode in potentialMCCList[index]['possMCCList']:
                     if int((eachNode[0].split('CE')[0]).split('F')[1]) == frameNum:
                         existingFrameFlag = True
 
-                if counterCriteriaAFlag == True and counterCriteriaBFlag == True:
+                if counterCriteriaAFlag is True and counterCriteriaBFlag is True:
                     stage = 'M'
                     potentialMCCList[index]['possMCCList'].append((node, stage))
                     potentialMCCList[index]['fullMCSMCC'].append((node, stage))
@@ -1204,34 +1220,33 @@ def update_MCC_list(prunedGraph, potentialMCCList, node, stage, counterCriteriaA
                         potentialMCCList[index]['highestMCCnode'] = node
                     return potentialMCCList
 
-
-                if existingFrameFlag == False:
+                if existingFrameFlag is False:
                     if stage == 'M':
                         stage = 'D'
-                    if counterCriteriaAFlag == True and counterCriteriaBFlag == True:
+                    if counterCriteriaAFlag is True and counterCriteriaBFlag is True:
                         potentialMCCList[index]['CounterCriteriaA'] += 1
                         potentialMCCList[index]['durationAandB'] += 1
-                    elif counterCriteriaAFlag == True:
+                    elif counterCriteriaAFlag is True:
                         potentialMCCList[index]['CounterCriteriaA'] += 1
-                    elif counterCriteriaAFlag == False:
+                    elif counterCriteriaAFlag is False:
                         potentialMCCList[index]['fullMCSMCC'].append((node, stage))
                         return potentialMCCList
-    #if predecessor and this frame number already exist in the MCC list, add the current node to the fullMCSMCC list
+    # If predecessor and this frame number already exist in the MCC list, add the current node to the fullMCSMCC list
                 else:
-                    if counterCriteriaAFlag == True and counterCriteriaBFlag == False:
+                    if counterCriteriaAFlag is True and counterCriteriaBFlag is False:
                         potentialMCCList[index]['fullMCSMCC'].append((node, stage))
                         potentialMCCList[index]['CounterCriteriaA'] += 1
                         return potentialMCCList
-                    if counterCriteriaAFlag == False:
+                    if counterCriteriaAFlag is False:
                         potentialMCCList[index]['fullMCSMCC'].append((node, stage))
                         return potentialMCCList
 
-        #if this node isn't connected to exisiting MCCs check if it is connected to exisiting MCSs ...
-        if predecessorsFlag == False and successorsFlag == False:
+        # If this node isn't connected to existing MCCs check if it is connected to existing MCSs ...
+        if predecessorsFlag is False and successorsFlag is False:
             stage = 'I'
             predecessorsMCSFlag, index = is_there_a_link(prunedGraph, 1, node, potentialMCCList, 2)
-            if predecessorsMCSFlag == True:
-                if counterCriteriaAFlag == True and counterCriteriaBFlag == True:
+            if predecessorsMCSFlag is True:
+                if counterCriteriaAFlag is True and counterCriteriaBFlag is True:
                     potentialMCCList[index]['possMCCList'].append((node, 'M'))
                     potentialMCCList[index]['fullMCSMCC'].append((node, 'M'))
                     potentialMCCList[index]['durationAandB'] += 1
@@ -1241,17 +1256,17 @@ def update_MCC_list(prunedGraph, potentialMCCList, node, stage, counterCriteriaA
                     return potentialMCCList
 
                 if potentialMCCList[index]['frameNum'] == 0 or frameNum <= potentialMCCList[index]['frameNum']:
-                    if counterCriteriaAFlag == True and counterCriteriaBFlag == False:
+                    if counterCriteriaAFlag is True and counterCriteriaBFlag is False:
                         potentialMCCList[index]['fullMCSMCC'].append((node, stage))
                         potentialMCCList[index]['CounterCriteriaA'] += 1
                         return potentialMCCList
-                    elif counterCriteriaAFlag == False:
+                    elif counterCriteriaAFlag is False:
                         potentialMCCList[index]['fullMCSMCC'].append((node, stage))
                         return potentialMCCList
             else:
                 successorsMCSFlag, index = is_there_a_link(prunedGraph, 2, node, potentialMCCList, 2)
-                if successorsMCSFlag == True:
-                    if counterCriteriaAFlag == True and counterCriteriaBFlag == True:
+                if successorsMCSFlag is True:
+                    if counterCriteriaAFlag is True and counterCriteriaBFlag is True:
                         potentialMCCList[index]['possMCCList'].append((node, 'M'))
                         potentialMCCList[index]['fullMCSMCC'].append((node, 'M'))
                         potentialMCCList[index]['durationAandB'] += 1
@@ -1260,31 +1275,32 @@ def update_MCC_list(prunedGraph, potentialMCCList, node, stage, counterCriteriaA
                             potentialMCCList[index]['highestMCCnode'] = node
                         return potentialMCCList
 
-
                     if potentialMCCList[index]['frameNum'] == 0 or frameNum <= potentialMCCList[index]['frameNum']:
-                        if counterCriteriaAFlag == True and counterCriteriaBFlag == False:
+                        if counterCriteriaAFlag is True and counterCriteriaBFlag is False:
                             potentialMCCList[index]['fullMCSMCC'].append((node, stage))
                             potentialMCCList[index]['CounterCriteriaA'] += 1
                             return potentialMCCList
-                        elif counterCriteriaAFlag == False:
+                        elif counterCriteriaAFlag is False:
                             potentialMCCList[index]['fullMCSMCC'].append((node, stage))
                             return potentialMCCList
 
-            #if this node isn't connected to existing MCCs or MCSs, create a new one ...
-            if predecessorsFlag == False and predecessorsMCSFlag == False and successorsFlag == False and\
-                     successorsMCSFlag == False:
-                if counterCriteriaAFlag == True and counterCriteriaBFlag == True:
-                    potentialMCCList.append({'possMCCList':[(node, stage)], 'fullMCSMCC':[(node, stage)],\
-                         'CounterCriteriaA': 1, 'durationAandB': 1, 'highestMCCnode':node, 'frameNum':frameNum})
-                elif counterCriteriaAFlag == True and counterCriteriaBFlag == False:
-                    potentialMCCList.append({'possMCCList':[], 'fullMCSMCC':[(node, stage)], 'CounterCriteriaA': 1,\
-                         'durationAandB': 0, 'highestMCCnode':'', 'frameNum':0})
-                elif counterCriteriaAFlag == False and counterCriteriaBFlag == False:
-                    potentialMCCList.append({'possMCCList':[], 'fullMCSMCC':[(node, stage)], 'CounterCriteriaA': 0,\
-                         'durationAandB': 0, 'highestMCCnode':'', 'frameNum':0})
+            # If this node isn't connected to existing MCCs or MCSs, create a new one ...
+            if predecessorsFlag is False and predecessorsMCSFlag is False and successorsFlag is False and\
+               successorsMCSFlag is False:
+                if counterCriteriaAFlag is True and counterCriteriaBFlag is True:
+                    potentialMCCList.append({'possMCCList': [(node, stage)], 'fullMCSMCC': [(node, stage)],
+                         'CounterCriteriaA': 1, 'durationAandB': 1, 'highestMCCnode': node, 'frameNum': frameNum})
+                elif counterCriteriaAFlag is True and counterCriteriaBFlag is False:
+                    potentialMCCList.append({'possMCCList': [], 'fullMCSMCC': [(node, stage)], 'CounterCriteriaA': 1,
+                         'durationAandB': 0, 'highestMCCnode': '', 'frameNum': 0})
+                elif counterCriteriaAFlag is False and counterCriteriaBFlag is False:
+                    potentialMCCList.append({'possMCCList': [], 'fullMCSMCC': [(node, stage)], 'CounterCriteriaA': 0,
+                         'durationAandB': 0, 'highestMCCnode': '', 'frameNum': 0})
 
     return potentialMCCList
-#**********************************************************************************************************************
+# **********************************************************************************************************************
+
+
 def is_there_a_link(prunedGraph, upOrDown, node, potentialMCCList, whichList):
     '''
     Purpose::
@@ -1302,6 +1318,7 @@ def is_there_a_link(prunedGraph, upOrDown, node, potentialMCCList, whichList):
         index: an integer representing the location in the potentialMCCList where thisFlag occurs
 
     '''
+
     thisFlag = False
     index = -1
     checkList = ''
@@ -1310,23 +1327,23 @@ def is_there_a_link(prunedGraph, upOrDown, node, potentialMCCList, whichList):
     elif whichList == 2:
         checkList = 'fullMCSMCC'
 
-    #check parents
+    # Check parents
     if upOrDown == 1:
         for aNode in prunedGraph.predecessors(node):
-            #reset the index counter for this node search through potentialMCCList
+            # Reset the index counter for this node search through potentialMCCList
             index = -1
             for mccDict in potentialMCCList:
                 index += 1
                 if aNode in list(x[0] for x in mccDict[checkList]):
                     thisFlag = True
-                    #get out of looping so as to avoid the flag being written over when another node in the predecesor 
-                    #list is checked
+                    # Get out of looping so as to avoid the flag being written over when another node in the predecessor
+                    # list is checked
                     return thisFlag, index
 
-    #check children
+    # Check children
     if upOrDown == 2:
         for aNode in prunedGraph.successors(node):
-            #reset the index counter for this node search through potentialMCCList
+            # Reset the index counter for this node search through potentialMCCList
             index = -1
             for mccDict in potentialMCCList:
                 index += 1
@@ -1336,8 +1353,10 @@ def is_there_a_link(prunedGraph, upOrDown, node, potentialMCCList, whichList):
                     return thisFlag, index
 
     return thisFlag, index
-#**********************************************************************************************************************
-def max_extent_and_eccentricity(eachList,userVariables,graphVariables):
+# **********************************************************************************************************************
+
+
+def max_extent_and_eccentricity(eachList, userVariables, graphVariables):
     '''
     Purpose::
         Perform the final check for MCC based on maximum extent and eccentricity criteria
@@ -1350,27 +1369,30 @@ def max_extent_and_eccentricity(eachList,userVariables,graphVariables):
         definiteMCCFlag: a boolean indicating that the MCC has met all requirements
 
     '''
+
     maxShieldNode = ''
     maxShieldArea = 0.0
-    #maxShieldEccentricity = 0.0
+    # maxShieldEccentricity = 0.0
     definiteMCCFlag = False
 
     if eachList:
         for eachNode in eachList:
-            if (this_dict(eachNode,graphVariables)['nodeMCSIdentifier'] == 'M' or this_dict(eachNode,graphVariables)['nodeMCSIdentifier'] == 'D') and\
-                    this_dict(eachNode,graphVariables)['cloudElementArea'] > maxShieldArea:
+            if (this_dict(eachNode, graphVariables)['nodeMCSIdentifier'] == 'M' or this_dict(eachNode, graphVariables)['nodeMCSIdentifier'] == 'D') and\
+                    this_dict(eachNode, graphVariables)['cloudElementArea'] > maxShieldArea:
                 maxShieldNode = eachNode
-                maxShieldArea = this_dict(eachNode,graphVariables)['cloudElementArea']
+                maxShieldArea = this_dict(eachNode, graphVariables)['cloudElementArea']
 
-        #maxShieldEccentricity = this_dict(maxShieldNode)['cloudElementEccentricity']
-        if this_dict(maxShieldNode,graphVariables)['cloudElementEccentricity'] >= userVariables.ECCENTRICITY_THRESHOLD_MIN and \
-                this_dict(maxShieldNode,graphVariables)['cloudElementEccentricity'] <= userVariables.ECCENTRICITY_THRESHOLD_MAX:
-            #criteria met
+        # maxShieldEccentricity = this_dict(maxShieldNode)['cloudElementEccentricity']
+        if this_dict(maxShieldNode, graphVariables)['cloudElementEccentricity'] >= userVariables.ECCENTRICITY_THRESHOLD_MIN and \
+                this_dict(maxShieldNode, graphVariables)['cloudElementEccentricity'] <= userVariables.ECCENTRICITY_THRESHOLD_MAX:
+            # Criteria met
             definiteMCCFlag = True
 
     return maxShieldNode, definiteMCCFlag
-#**********************************************************************************************************************
-def find_max_depth_and_min_path(thisPathDistanceAndLength,userVariables):
+#  **********************************************************************************************************************
+
+
+def find_max_depth_and_min_path(thisPathDistanceAndLength, userVariables):
     '''
     Purpose::
         To determine the maximum depth and min path for the headnode
@@ -1385,33 +1407,36 @@ def find_max_depth_and_min_path(thisPathDistanceAndLength,userVariables):
         tuple of the max pathLength and min pathDistance as a tuple (like what was input)
             minDistanceAndMaxPath = ({distance},{path})
     '''
+
     maxPathLength = 0
     minPath = 0
 
-    #maxPathLength for the node in question
-    maxPathLength = max(len (values) for values in thisPathDistanceAndLength[1].values())
+    # maxPathLength for the node in question
+    maxPathLength = max(len(values) for values in thisPathDistanceAndLength[1].values())
 
-    #if the duration is shorter then the min MCS length, then don't store!
-    if maxPathLength < userVariables.MIN_MCS_DURATION: #MINIMUM_DURATION :
+    # If the duration is shorter then the min MCS length, then don't store!
+    if maxPathLength < userVariables.MIN_MCS_DURATION:  # MINIMUM_DURATION:
         minDistanceAndMaxPath = ()
 
-    #else find the min path and max depth
+    # else find the min path and max depth
     else:
-        #max path distance for the node in question
+        # Max path distance for the node in question
         minPath = max(values for values in thisPathDistanceAndLength[0].values())
 
-        #check to determine the shortest path from the longest paths returned
+        # Check to determine the shortest path from the longest paths returned
         for pathDistance, path in itertools.izip(thisPathDistanceAndLength[0].values(), thisPathDistanceAndLength[1].values()):
             pathLength = len(path)
-            #if pathLength is the same as the maxPathLength, then look the pathDistance to determine if the min
+            # If pathLength is the same as the maxPathLength, then look the pathDistance to determine if the min
             if pathLength == maxPathLength:
                 if pathDistance <= minPath:
                     minPath = pathLength
-                    #store details if absolute minPath and deepest
+                    # Store details if absolute minPath and deepest
                     minDistanceAndMaxPath = (pathDistance, path)
     return minDistanceAndMaxPath
-#**********************************************************************************************************************
-def this_dict(thisNode,graphVariables):
+# **********************************************************************************************************************
+
+
+def this_dict(thisNode, graphVariables):
     '''
     Purpose::
         Return dictionary from graph if node exist in tree
@@ -1423,11 +1448,14 @@ def this_dict(thisNode,graphVariables):
         eachdict[1]: a dictionary representing the info associated with thisNode from the graph
 
     '''
+
     for eachdict in graphVariables.CLOUD_ELEMENT_GRAPH.nodes(thisNode):
         if eachdict[1]['uniqueID'] == thisNode:
             return eachdict[1]
-#**********************************************************************************************************************
-def check_criteria(thisCloudElementLatLon, aTemperature,userVariables):
+# **********************************************************************************************************************
+
+
+def check_criteria(thisCloudElementLatLon, aTemperature, userVariables):
     '''
     Purpose:: Determine if criteria B is met for a CEGraph
 
@@ -1437,51 +1465,52 @@ def check_criteria(thisCloudElementLatLon, aTemperature,userVariables):
     Returns:: cloudElementArea: a floating-point number representing the area in the array that meet the criteria 
 
     '''
+
     cloudElementCriteriaBLatLon = []
 
     _, ceCounter = ndimage.measurements.label(thisCloudElementLatLon, structure=userVariables.STRUCTURING_ELEMENT)
 
     allCriteriaB = []
 
-    #determine min and max values in lat and lon, then use this to generate teh array from LAT,LON meshgrid
-    
+    # Determine min and max values in lat and lon, then use this to generate teh array from LAT,LON meshgrid
+
     minLat = min(x[0] for x in thisCloudElementLatLon)
     maxLat = max(x[0] for x in thisCloudElementLatLon)
     minLon = min(x[1] for x in thisCloudElementLatLon)
     maxLon = max(x[1] for x in thisCloudElementLatLon)
 
-    minLatIndex = np.argmax(LAT[:,0] == minLat)
-    maxLatIndex = np.argmax(LAT[:,0] == maxLat)
-    minLonIndex = np.argmax(LON[0,:] == minLon)
-    maxLonIndex = np.argmax(LON[0,:] == maxLon)
+    minLatIndex = np.argmax(LAT[:, 0] == minLat)
+    maxLatIndex = np.argmax(LAT[:, 0] == maxLat)
+    minLonIndex = np.argmax(LON[0, :] == minLon)
+    maxLonIndex = np.argmax(LON[0, :] == maxLon)
 
     criteriaBframe = ma.zeros(((abs(maxLatIndex - minLatIndex)+1), (abs(maxLonIndex - minLonIndex)+1)))
 
     for x in thisCloudElementLatLon:
-        #to store the values of the subset in the new array, remove the minLatIndex and minLonindex from the
-        #index given in the original array to get the indices for the new array
-        criteriaBframe[(np.argmax(LAT[:,0] == x[0]) - minLatIndex), (np.argmax(LON[0,:] == x[1]) - minLonIndex)] = x[2]
+        # To store the values of the subset in the new array, remove the minLatIndex and minLonindex from the
+        # index given in the original array to get the indices for the new array
+        criteriaBframe[(np.argmax(LAT[:, 0] == x[0]) - minLatIndex), (np.argmax(LON[0, :] == x[1]) - minLonIndex)] = x[2]
 
-    #keep only those values < aTemperature
-    tempMask = ma.masked_array(criteriaBframe, mask=(criteriaBframe >= aTemperature), fill_value = 0)
+    # Keep only those values < aTemperature
+    tempMask = ma.masked_array(criteriaBframe, mask=(criteriaBframe >= aTemperature), fill_value=0)
 
-    #get the actual values that the mask returned
-    criteriaB = ma.zeros((criteriaBframe.shape)).astype('f8')
+    # Get the actual values that the mask returned
+    criteriaB = ma.zeros(criteriaBframe.shape).astype('f8')
     criteriaB[~tempMask.mask] = tempMask[~tempMask.mask]
 
     for _ in xrange(ceCounter):
-        #[0] is time dimension. Determine the actual values from the data
-        #loc is a masked array
-        #***** returns elements down then across thus (6,4) is 6 arrays deep of size 4
+        # [0] is time dimension. Determine the actual values from the data
+        # loc is a masked array
+        # ***** returns elements down then across thus (6,4) is 6 arrays deep of size 4
         try:
             loc = ndimage.find_objects(criteriaB)[0]
         except:
-            #this would mean that no objects were found meeting criteria B
+            # This would mean that no objects were found meeting criteria B
             cloudElementArea = 0.0
             continue
-            
+
         try:
-            cloudElementCriteriaB = ma.zeros((criteriaB.shape))
+            cloudElementCriteriaB = ma.zeros(criteriaB.shape)
             cloudElementCriteriaB = criteriaB[loc]
         except:
             print 'YIKESS'
@@ -1490,46 +1519,51 @@ def check_criteria(thisCloudElementLatLon, aTemperature,userVariables):
 
         cloudElementCriteriaBNonZeros = cloudElementCriteriaB.nonzero()
         cloudElement = np.transpose(cloudElementCriteriaBNonZeros)
-        cloudElementCriteriaBLatLon = np.zeros((cloudElement.shape[0],3))
-        cloudElementCriteriaBLatLon[:,0] = LAT[cloudElement[:,1],0]
-        cloudElementCriteriaBLatLon[:,1] = LON[0,cloudElement[:,2]]
-        cloudElementCriteriaBLatLon[:,2] = cloudElementCriteriaB[cloudElementCriteriaBNonZeros]
+        cloudElementCriteriaBLatLon = np.zeros((cloudElement.shape[0], 3))
+        cloudElementCriteriaBLatLon[:, 0] = LAT[cloudElement[:, 1], 0]
+        cloudElementCriteriaBLatLon[:, 1] = LON[0, cloudElement[:, 2]]
+        cloudElementCriteriaBLatLon[:, 2] = cloudElementCriteriaB[cloudElementCriteriaBNonZeros]
         cloudElementCriteriaBLatLon = cloudElementCriteriaBLatLon.tolist()
         cloudElementCriteriaBLatLon = [tuple(l)for l in cloudElementCriteriaBLatLon]
-        
+
         cloudElementArea = np.count_nonzero(cloudElementCriteriaB) * userVariables.XRES * userVariables.YRES
-        
+
         tempMask = []
         criteriaB = []
         cloudElementCriteriaB = []
 
         allCriteriaB.append((cloudElementArea, cloudElementCriteriaBLatLon))
 
-    return  max(allCriteriaB, key=lambda x:x[0]) if allCriteriaB != [] else cloudElementArea, cloudElementCriteriaBLatLon
-#**********************************************************************************************************************
-def has_merges_or_splits(nodeList,graphVariables):
+    return max(allCriteriaB, key=lambda x: x[0]) if allCriteriaB != [] else cloudElementArea, cloudElementCriteriaBLatLon
+# **********************************************************************************************************************
+
+
+def has_merges_or_splits(nodeList, graphVariables):
     '''
     Purpose:: Determine if nodes within a path defined from shortest_path splittingNodeDict
     Inputs:: nodeList: list of strings representing the nodes from a path
     Returns:: splitList: a list of strings representing all the nodes in the path that split
         mergeList: a list of strings representing all the nodes in the path that merged
     '''
+
     mergeList = []
     splitList = []
 
-    for node,numParents in graphVariables.PRUNED_GRAPH.in_degree(nodeList).items():
+    for node, numParents in graphVariables.PRUNED_GRAPH.in_degree(nodeList).items():
         if numParents > 1:
             mergeList.append(node)
 
     for node, numChildren in graphVariables.PRUNED_GRAPH.out_degree(nodeList).items():
         if numChildren > 1:
             splitList.append(node)
-    #sort
+    # Sort
     splitList.sort(key=lambda item: (len(item.split('C')[0]), item.split('C')[0]))
     mergeList.sort(key=lambda item: (len(item.split('C')[0]), item.split('C')[0]))
 
     return mergeList, splitList
-#**********************************************************************************************************************
+# **********************************************************************************************************************
+
+
 def all_ancestors(path, aNode):
     '''
     Purpose:: Utility script to provide the path leading up to a nodeList
@@ -1552,7 +1586,9 @@ def all_ancestors(path, aNode):
             return path, numOfParents
     except:
         return path, numOfParents
-#**********************************************************************************************************************
+# **********************************************************************************************************************
+
+
 def all_descendants(path, aNode):
     '''
     Purpose:: Utility script to provide the path leading up to a nodeList
@@ -1572,12 +1608,14 @@ def all_descendants(path, aNode):
             return all_descendants(path, thisNode)
         else:
             path = path + aNode
-            #i.e. PRUNED_GRAPH.predecessors(aNode) is empty
+            # i.e. PRUNED_GRAPH.predecessors(aNode) is empty
             return path, numOfChildren
     except:
-        #i.e. PRUNED_GRAPH.predecessors(aNode) threw an exception
+        # i.e. PRUNED_GRAPH.predecessors(aNode) threw an exception
         return path, numOfChildren
-#**********************************************************************************************************************
+# **********************************************************************************************************************
+
+
 def add_info_this_dict(thisNode, cloudElementArea, criteriaB, graphVariables):
     '''
     Purpose:: Update original dictionary node with information
@@ -1589,12 +1627,15 @@ def add_info_this_dict(thisNode, cloudElementArea, criteriaB, graphVariables):
     Returns:: None
 
     '''
+
     for eachdict in graphVariables.CLOUD_ELEMENT_GRAPH.nodes(thisNode):
         if eachdict[1]['uniqueID'] == thisNode:
             eachdict[1]['CriteriaBArea'] = cloudElementArea
             eachdict[1]['CriteriaBLatLon'] = criteriaB
     return
-#**********************************************************************************************************************
+# **********************************************************************************************************************
+
+
 def add_node_behavior_identifier(thisNode, nodeBehaviorIdentifier, graphVariables):
     '''
     Purpose:: add an identifier to the node dictionary to indicate splitting, merging or neither node
@@ -1608,27 +1649,32 @@ def add_node_behavior_identifier(thisNode, nodeBehaviorIdentifier, graphVariable
     '''
     for eachdict in graphVariables.CLOUD_ELEMENT_GRAPH.nodes(thisNode):
         if eachdict[1]['uniqueID'] == thisNode:
-            if not 'nodeBehaviorIdentifier' in eachdict[1].keys():
+            if 'nodeBehaviorIdentifier' not in eachdict[1].keys():
                 eachdict[1]['nodeBehaviorIdentifier'] = nodeBehaviorIdentifier
     return
-#**********************************************************************************************************************
+# **********************************************************************************************************************
+
+
 def add_node_MCS_identifier(thisNode, nodeMCSIdentifier, graphVariables):
     '''
     Purpose:: Add an identifier to the node dictionary to indicate splitting, merging or neither node
 
     Inputs:: thisNode: a string representing the unique ID of a node
-        nodeMCSIdentifier: a string representing the stage of the MCS lifecyle  'I' for Initiation, 'M' for Maturity,
+        nodeMCSIdentifier: a string representing the stage of the MCS lifecycle  'I' for Initiation, 'M' for Maturity,
         'D' for Decay
 
     Returns:: None
 
     '''
+
     for eachdict in graphVariables.CLOUD_ELEMENT_GRAPH.nodes(thisNode):
         if eachdict[1]['uniqueID'] == thisNode:
-            if not 'nodeMCSIdentifier' in eachdict[1].keys():
+            if 'nodeMCSIdentifier' not in eachdict[1].keys():
                 eachdict[1]['nodeMCSIdentifier'] = nodeMCSIdentifier
     return
-#**********************************************************************************************************************
+# **********************************************************************************************************************
+
+
 def update_node_MCS_identifier(thisNode, nodeMCSIdentifier, graphVariables):
     '''
     Purpose:: Update an identifier to the node dictionary to indicate splitting, merging or neither node
@@ -1644,7 +1690,9 @@ def update_node_MCS_identifier(thisNode, nodeMCSIdentifier, graphVariables):
             eachdict[1]['nodeMCSIdentifier'] = nodeMCSIdentifier
 
     return
-#**********************************************************************************************************************
+# **********************************************************************************************************************
+
+
 def eccentricity(cloudElementLatLon):
     '''
     Purpose:: Determines the eccentricity (shape) of contiguous boxes
@@ -1659,43 +1707,45 @@ def eccentricity(cloudElementLatLon):
 
     epsilon = 0.0
 
-    #nonEmptyLons = sum(sum(cloudElementLatLon) > 0)
-    #nonEmptyLats = sum(sum(cloudElementLatLon.transpose()) > 0)
-    
-    #I think this is what's wanted
+    # nonEmptyLons = sum(sum(cloudElementLatLon) > 0)
+    # nonEmptyLats = sum(sum(cloudElementLatLon.transpose()) > 0)
+
+    # I think this is what's wanted
     sh = cloudElementLatLon.shape
     nonEmptyLons = sh[1]
     nonEmptyLats = sh[0]
-    
 
-    lonEigenvalues = 1.0 * nonEmptyLats / (nonEmptyLons + 0.001) #for long oval on y axis
-    latEigenvalues = 1.0 * nonEmptyLons / (nonEmptyLats + 0.001) #for long oval on x-axs
+    lonEigenvalues = 1.0 * nonEmptyLats / (nonEmptyLons + 0.001)  # for long oval on y axis
+    latEigenvalues = 1.0 * nonEmptyLons / (nonEmptyLats + 0.001)  # for long oval on x-axs
     epsilon = min(latEigenvalues, lonEigenvalues)
 
     #     THIS LOOP APPEARS TO BE UNNECESSARY
-    #loop over all lons and determine longest (non-zero) col
-    #loop over all lats and determine longest (non-zero) row
-    #sh = cloudElementLatLon.shape
+    # Loop over all lons and determine longest (non-zero) col
+    # Loop over all lats and determine longest (non-zero) row
+    # sh = cloudElementLatLon.shape
 
 #    for _ in cloudElementLatLon:
 #        assign a matrix to determine the legit values
 #
 #        nonEmptyLons = sum(sum(cloudElementLatLon) > 0)
 #        nonEmptyLats = sum(sum(cloudElementLatLon.transpose()) > 0)
-        #assert_sameval(nonEmptyLons,sh[1],nonEmptyLats,sh[0])
+#        assert_sameval(nonEmptyLons,sh[1],nonEmptyLats,sh[0])
 
 #        lonEigenvalues = 1.0 * nonEmptyLats / (nonEmptyLons + 0.001) #for long oval on y axis
 #        latEigenvalues = 1.0 * nonEmptyLons / (nonEmptyLats + 0.001) #for long oval on x-axs
 #        epsilon = min(latEigenvalues, lonEigenvalues)
 
-    #assert(epsilon_0==epsilon)
+    # Assert(epsilon_0==epsilon)
     return epsilon
 
-def assert_sameval(n1,n2,n3,n4):
-    if(n1!=n2 or n3!=n4):
+
+def assert_sameval(n1, n2, n3, n4):
+    if(n1 != n2 or n3 != n4):
         bad = 1
     return
-#**********************************************************************************************************************
+# **********************************************************************************************************************
+
+
 def cloud_element_overlap(currentCELatLons, previousCELatLons, xRes, yRes):
     '''
     Purpose::
@@ -1719,18 +1769,18 @@ def cloud_element_overlap(currentCELatLons, previousCELatLons, xRes, yRes):
     percentageOverlap = 0.0
     areaOverlap = 0.0
 
-    #remove the temperature from the tuples for currentCELatLons and previousCELatLons then check for overlap
+    # Remove the temperature from the tuples for currentCELatLons and previousCELatLons then check for overlap
     latlonprev = [(x[0], x[1]) for x in previousCELatLons]
     latloncurr = [(x[0], x[1]) for x in currentCELatLons]
 
-    #find overlap
+    # Find overlap
     count = len(list(set(latloncurr) & set(latlonprev)))
 
-    #find area overlap
+    # Find area overlap
     areaOverlap = count * xRes * yRes
 
-    #find percentage
+    # Find percentage
     percentageOverlap = max(((count * 1.0) / (len(latloncurr) * 1.0)), ((count * 1.0) / (len(latlonprev) * 1.0)))
 
     return percentageOverlap, areaOverlap
-#**********************************************************************************************************************
+# **********************************************************************************************************************
