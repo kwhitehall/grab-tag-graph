@@ -70,7 +70,7 @@ def main():
     # print "longest duration is: ", metrics.longestDuration(MCCTimes), "hrs"
     # print "shortest duration is: ", metrics.shortestDuration(MCCTimes), "hrs"
     # print "Average duration is: ", metrics.averageDuration(MCCTimes), "hrs"
-    # print "Average size is: ", mmetrics.averageFeatureSize(MCCList), "km^2"
+    # print "Average size is: ", metrics.averageFeatureSize(MCCList), "km^2"
 
     # some plots that work
     # plotting.plotAccTRMM(MCCList)
