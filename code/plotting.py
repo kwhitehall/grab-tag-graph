@@ -18,8 +18,6 @@ import mccSearch
 
 
 # **********************************************************************************************************************
-
-
 def draw_graph(thisGraph, graphTitle, MAIN_DIRECTORY, edgeWeight=None):
     '''
     Purpose:: Utility function to draw graph in the hierachial format
@@ -60,8 +58,6 @@ def draw_graph(thisGraph, graphTitle, MAIN_DIRECTORY, edgeWeight=None):
     os.chdir((MAIN_DIRECTORY+'/'))
     subprocess.call('rm test.dot', shell=True)
 # **********************************************************************************************************************
-
-
 def display_size(finalMCCList, MAIN_DIRECTORY):
     '''
     Purpose:: To create a figure showing the area verse time for each MCS
@@ -140,8 +136,6 @@ def display_size(finalMCCList, MAIN_DIRECTORY):
             count += 1
     return
 # **********************************************************************************************************************
-
-
 def display_precip(finalMCCList, MAIN_DIRECTORY):
     '''
     Purpose:: To create a figure showing the precip rate verse time for each MCS
@@ -239,8 +233,6 @@ def display_precip(finalMCCList, MAIN_DIRECTORY):
             firstTime = True
     return
 # **********************************************************************************************************************
-
-
 def plot_accu_in_time_range(starttime, endtime, MAIN_DIRECTORY, tRes):
     '''
     Purpose:: Create accumulated precip plot within a time range given using all CEs
@@ -372,8 +364,6 @@ def plot_accu_in_time_range(starttime, endtime, MAIN_DIRECTORY, tRes):
 
     return
 # **********************************************************************************************************************
-
-
 def plot_accu_TRMM(finalMCCList, MAIN_DIRECTORY):
     '''
     Purpose:: (1) generate a file with the accumulated precipitation for the MCS (2) generate the appropriate image
@@ -502,8 +492,6 @@ def plot_accu_TRMM(finalMCCList, MAIN_DIRECTORY):
 
     return
 # **********************************************************************************************************************
-
-
 def plot_histogram(precip, aTitle, imgFilename, xlabel, ylabel, numBins):
     '''
     Purpose:: To create plots (histograms) of the data entered in aList
@@ -541,8 +529,6 @@ def plot_histogram(precip, aTitle, imgFilename, xlabel, ylabel, numBins):
 
     return
 # **********************************************************************************************************************
-
-
 def plot_precip_histograms(finalMCCList, MAIN_DIRECTORY):
     '''
     Purpose:: To create plots (histograms) of the each TRMMnetcdfCEs files
@@ -622,8 +608,6 @@ def plot_precip_histograms(finalMCCList, MAIN_DIRECTORY):
 # **********************************************************************************************************************
 #           PLOTTING UTIL SCRIPTS
 # **********************************************************************************************************************
-
-
 def to_percent(y, position):
     '''
     Purpose::
@@ -631,8 +615,6 @@ def to_percent(y, position):
     '''
     return str(100*y) + '%'
 # **********************************************************************************************************************
-
-
 def colorbar_index(ncolors, nlabels, cmap):
     '''
     Purpose::
@@ -657,8 +639,6 @@ def colorbar_index(ncolors, nlabels, cmap):
     return
 
 # **********************************************************************************************************************
-
-
 def cmap_discretize(cmap, N):
     '''
     Taken from: http://stackoverflow.com/questions/18704353/correcting-matplotlib-colorbar-ticks
