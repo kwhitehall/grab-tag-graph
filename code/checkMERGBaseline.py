@@ -12,9 +12,7 @@ def main():
     output_diff = "../../outputDiffs"
     check_merg_file_differences(inputs_one, inputs_two, output_diff)
 
-# *********************************************************************************************************************
-
-
+#*********************************************************************************************************************
 def check_merg_file_differences(baselinePath1, baselinePath2,  outputDir):
     '''
         Purpose:: To compare MERG files cloud elements from two directories
@@ -77,7 +75,7 @@ def check_merg_file_differences(baselinePath1, baselinePath2,  outputDir):
         file_one = '%s/%s' % (baselinePath1, dir1Filenames[i])
         file_two = '%s/%s' % (baselinePath2, dir2Filenames[i])
 
-        # open the two files and diff the arrays
+        # Open the two files and diff the arrays
         file1 = Dataset(file_one, 'r', format='NETCDF4')
         file1Data = file1.variables['brightnesstemp'][:, :, :]
 
