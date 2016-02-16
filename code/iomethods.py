@@ -1,34 +1,32 @@
-
 import glob
-import numpy.ma as ma
-import numpy as np
-import networkx as nx
+import os
 import re
 import string
-import os
-import sys
-import time
 import subprocess
-
-from netCDF4 import Dataset
+import sys
 from datetime import timedelta, datetime
 from os import path
+
+import numpy as np
+import numpy.ma as ma
+from netCDF4 import Dataset
 
 import utils
 import variables
 
+
 def check_for_files(dirPath, startTime, endTime, tdelta, tRes):
     '''
-        Purpose:: To ensure all the files between the starttime and endTime
+        Purpose:: To ensure all the files between the startTime and endTime
                   exist in the directory supplied
 
         Input:: dirPath: a string representing the path to the files
 
-                startTime: a string representing the starttime.
-                    Must have atleast yyyymm
+                startTime: a string representing the startTime.
+                    Must have at least yyyymm
 
                 endTime: a string representing the endTime
-                    Must have atleast yyyymm
+                    Must have at least yyyymm
 
                 tdelta: an integer representing the time between files
 
@@ -41,6 +39,7 @@ def check_for_files(dirPath, startTime, endTime, tdelta, tRes):
         Assumptions:: the filename contains the time
 
     '''
+
     filelist = []
     filenamePattern = ''
     startFile = ''
@@ -68,8 +67,7 @@ def check_for_files(dirPath, startTime, endTime, tdelta, tRes):
     filelist = filter(path.isfile, glob.glob((dirPath+'/*.nc')))
     filelist.sort()
 
-
-    #check for the filename pattern
+    # check for the filename pattern
     for eachPart in re.split(r'[_,-,.,/]', re.split(r'.nc', path.basename(filelist[0]))[0]):
         tokenCounter += 1
         if tokenCounter == 1:
@@ -77,25 +75,25 @@ def check_for_files(dirPath, startTime, endTime, tdelta, tRes):
         if eachPart.isdigit():
             if len(eachPart) >= 6:
                 hasDelimiter = True
-                startTimeInFile += eachPart +'*'
+                startTimeInFile += eachPart + '*'
             elif eachPart in startTime:
-                startTimeInFile += eachPart +'*'
+                startTimeInFile += eachPart + '*'
 
     if hasDelimiter is False:
         fileDate = int(re.search(r'\d+', re.split(r'.nc', path.basename(filelist[0]))[0]).group())
         filenamePattern = re.split(str(fileDate), path.basename(filelist[0]))[0]
 
-    startFile = glob.glob(dirPath+'/'+filenamePattern +'*'+startTimeInFile)[0]
+    startFile = glob.glob(dirPath+'/'+filenamePattern + '*' + startTimeInFile)[0]
     endTimeInFile = find_time_in_file(endTime, startTimeInFile)
-    #print("filenamePattern: "+filenamePattern)
-    #print("endTimeInFile: "+endTimeInFile)
-    #print(dirPath+'/'+filenamePattern + '*'+endTimeInFile+'*')
+    # print("filenamePattern: "+filenamePattern)
+    # print("endTimeInFile: "+endTimeInFile)
+    # print(dirPath+'/'+filenamePattern + '*'+endTimeInFile+'*')
     endFile = glob.glob(dirPath+'/'+filenamePattern + '*'+endTimeInFile+'*')[0]
 
     currFile = startFile
     filelist = []
 
-    #check for files between startTime and endTime
+    # Check for files between startTime and endTime
     while currFile is not endFile:
         if not path.isfile(currFile):
             status = False
@@ -125,7 +123,7 @@ def check_for_files(dirPath, startTime, endTime, tdelta, tRes):
             currFile = glob.glob(dirPath+'/'+filenamePattern+'*'+currTimeInFile+'*')[0]
 
     return status, filelist
-#**********************************************************************************************************************
+# **********************************************************************************************************************
 def find_time_in_file(myTime, myTimeInFile):
     '''
         Purpose:: To return the file pattern of the time string
@@ -147,9 +145,9 @@ def find_time_in_file(myTime, myTimeInFile):
             lastPos += len(eachPart)
 
     return currTimeInFile
-#***********************************************************************************************************************
+# ***********************************************************************************************************************
 def read_vars(userVariables):
-    #for GrADs
+    # for GrADs
     subprocess.call('export DISPLAY=:0.0', shell=True)
 
     graphVariables = variables.define_graph_variables()
@@ -170,25 +168,24 @@ def read_vars(userVariables):
     except:
         print "..."   
 
-    #check validity of time
+    # check validity of time
     while utils.valid_date(userVariables.startDateTime) != True:
         print "Invalid time entered for startDateTime!"
 
     while utils.valid_date(userVariables.endDateTime) != True:
         print "Invalid time entered for endDateTime!"
         
-    #check if all the files exisits in the MERG and TRMM directories entered
-    test,_ = check_for_files(userVariables.DIRS['TRMMdirName'], userVariables.startDateTime, userVariables.endDateTime, 3, 'hour')
-    if test == False:
+    # check if all the files exisits in the MERG and TRMM directories entered
+    test, _ = check_for_files(userVariables.DIRS['TRMMdirName'], userVariables.startDateTime, userVariables.endDateTime, 3, 'hour')
+    if test is False:
         print "Error with files in the TRMM directory entered. Please check your files before restarting. "
         return
     
-    test,userVariables.filelist = check_for_files(userVariables.DIRS['CEoriDirName'], userVariables.startDateTime, userVariables.endDateTime, 1, 'hour')
+    test, userVariables.filelist = check_for_files(userVariables.DIRS['CEoriDirName'], userVariables.startDateTime, userVariables.endDateTime, 1, 'hour')
 
-    if test == False:
+    if test is False:
         print "Error with files in the original MERG directory entered. Please check your files before restarting. "
         return
-    
 
     # create main directory and file structure for storing intel
     userVariables.DIRS['mainDirStr'] = create_main_directory(userVariables.DIRS['mainDirStr'])
@@ -196,7 +193,7 @@ def read_vars(userVariables):
     CEdirName = userVariables.DIRS['mainDirStr']+'/MERGnetcdfCEs'
 
     return graphVariables
-#**********************************************************************************************************************
+# **********************************************************************************************************************
 def create_main_directory(mainDirStr):
     '''
         Purpose:: To create the main directory for storing information and
@@ -215,12 +212,12 @@ def create_main_directory(mainDirStr):
     global MAIN_DIRECTORY
 
     MAIN_DIRECTORY = mainDirStr
-    #if directory doesnt exist, create it
+    # if directory doesnt exist, create it
     if not os.path.exists(MAIN_DIRECTORY):
         os.makedirs(MAIN_DIRECTORY)
 
     os.chdir((MAIN_DIRECTORY))
-    #create the subdirectories
+    # create the subdirectories
     try:
         os.makedirs('images')
         os.makedirs('textFiles')
@@ -228,10 +225,10 @@ def create_main_directory(mainDirStr):
         os.makedirs('TRMMnetcdfCEs')
     except:
         print 'Directory exists already!!!'
-        #TODO: some nice way of prompting if it is ok to continue...or just leave
+        # TODO: some nice way of prompting if it is ok to continue...or just leave
 
     return MAIN_DIRECTORY
-#**********************************************************************************************************************
+# **********************************************************************************************************************
 def read_data(varName, latName, lonName, userVariables, filelist=None):
     '''
         Purpose::
@@ -263,17 +260,15 @@ def read_data(varName, latName, lonName, userVariables, filelist=None):
 
     filelistInstructions = userVariables.DIRS['CEoriDirName']+'/*'
     
-    if filelist == None and userVariables.filelist == None:
+    if filelist is None and userVariables.filelist is None:
         userVariables.filelist = glob.glob(filelistInstructions)
         
     userVariables.filelist.sort()
-    
 
     inputData = []
     timelist = []
     time2store = None
     tempMaskedValueNp = []
-
 
     nfiles = len(userVariables.filelist)
 
@@ -289,7 +284,7 @@ def read_data(varName, latName, lonName, userVariables, filelist=None):
         alllonsraw = tmp.variables[lonName][:]
         alllonsraw[alllonsraw > 180] = alllonsraw[alllonsraw > 180] - 360.  # convert to -180,180 if necessary
 
-        #get the lat/lon info data (different resolution)
+        # Get the lat/lon info data (different resolution)
         latminNETCDF = utils.find_nearest(alllatsraw, float(userVariables.LATMIN))
         latmaxNETCDF = utils.find_nearest(alllatsraw, float(userVariables.LATMAX))
         lonminNETCDF = utils.find_nearest(alllonsraw, float(userVariables.LONMIN))
@@ -299,7 +294,7 @@ def read_data(varName, latName, lonName, userVariables, filelist=None):
         lonminIndex = (np.where(alllonsraw == lonminNETCDF))[0][0]
         lonmaxIndex = (np.where(alllonsraw == lonmaxNETCDF))[0][0]
 
-        #subsetting the data
+        # Subsetting the data
         latsraw = alllatsraw[latminIndex: latmaxIndex]
         lonsraw = alllonsraw[lonminIndex:lonmaxIndex]
 
@@ -307,42 +302,41 @@ def read_data(varName, latName, lonName, userVariables, filelist=None):
 
         latsraw = []
         lonsraw = []
-        tmp.close
+        tmp.close()
 
     for files in userVariables.filelist:
         try:
             thisFile = Dataset(files, 'r', format='NETCDF4')
-            #clip the dataset according to user lat,lon coordinates
-            #mask the data and fill with zeros for later
+            # clip the dataset according to user lat,lon coordinates
+            # mask the data and fill with zeros for later
             tempRaw = thisFile.variables[varName][:, latminIndex:latmaxIndex, lonminIndex:lonmaxIndex].astype('int16')
             tempMask = ma.masked_array(tempRaw, mask=(tempRaw > userVariables.T_BB_MAX), fill_value=0)
-            #get the actual values that the mask returned
-            #tempMaskedValueOld = ma.zeros((tempRaw.shape)).astype('int16')
+            # get the actual values that the mask returned
+            # tempMaskedValueOld = ma.zeros((tempRaw.shape)).astype('int16')
 
-            #innerLoopStart = time.time()
-            #for index, value in utils.maenumerate(tempMask):
+            # innerLoopStart = time.time()
+            # for index, value in utils.maenumerate(tempMask):
             #    timeIndex, latIndex, lonIndex = index
             #    tempMaskedValueOld[timeIndex, latIndex, lonIndex] = value
-            #totalLoopTime+= time.time()-innerLoopStart
+            # totalLoopTime+= time.time()-innerLoopStart
             
-            #This replaces the loop computation of tempMaskedValueOld above.
+            # This replaces the loop computation of tempMaskedValueOld above.
             tempMaskedValue = tempMask
             tempMaskedValue[tempMask.mask] = 0
-            #Mini unit test of the non-loop version vers loop version. To use, 
-            # uncomment the loop immediatel above
-            #assert(np.array_equal(tempMaskedValue,tempMaskedValueOld))
-            
+            # Mini unit test of the non-loop version vers loop version. To use,
+            # uncomment the loop immediately above
+            # assert(np.array_equal(tempMaskedValue,tempMaskedValueOld))
 
             xtimes = thisFile.variables[timeName]
 
-            #convert this time to a python datastring
+            # convert this time to a python datastring
             time2store, _ = get_model_times(xtimes, timeName)
 
-            #extend instead of append because get_model_times returns a list already and we don't
-            #want a list of list
+            # extend instead of append because get_model_times returns a list already and we don't
+            # want a list of list
             timelist.extend(time2store)
             inputData.extend(tempMaskedValue)
-            thisFile.close
+            thisFile.close()
             thisFile = None
 
         except:
@@ -350,8 +344,8 @@ def read_data(varName, latName, lonName, userVariables, filelist=None):
 
     inputData = ma.array(inputData)
 
-    return inputData, timelist, LAT, LON,userVariables
-#**********************************************************************************************************************
+    return inputData, timelist, LAT, LON, userVariables
+# **********************************************************************************************************************
 def get_model_times(xtimes, timeVarName):
     '''
     Purpose:: Routine to convert from model times ('hours since 1900...', 'days since ...')
@@ -396,10 +390,10 @@ def get_model_times(xtimes, timeVarName):
 
     for xtime in xtimes[:]:
 
-        #TODO: This casting may cause problems for data that is hourly with more than one timestep in it
+        # TODO: This casting may cause problems for data that is hourly with more than one timestep in it
         xtime = int(xtime)
 
-        if xtime%10 != 0:
+        if xtime % 10 != 0:
             xtime = 1
 
         if units == 'minutes':
@@ -407,7 +401,7 @@ def get_model_times(xtimes, timeVarName):
             newTime = baseTime + dt
         elif units == 'hours':
             dt = timedelta(hours=int(xtime))
-            newTime = baseTime + dt# timedelta(hours=int(xtime))
+            newTime = baseTime + dt  # timedelta(hours=int(xtime))
         elif units == 'days':
             dt = timedelta(days=xtime)
             newTime = baseTime + dt
@@ -438,7 +432,7 @@ def get_model_times(xtimes, timeVarName):
         raise
 
     return times, modelTimeStep
-#**********************************************************************************************************************
+# **********************************************************************************************************************
 def get_model_time_step(units, stepSize):
     '''
         Purpose:: To determine the time intervals of input data.
@@ -466,7 +460,7 @@ def get_model_time_step(units, stepSize):
             raise Exception('model data time step interval exceeds the max time interval (annual)', units, stepSize)
 
     elif units == 'hours':
-        #TODO: need a check for fractional hrs and only one hr i.e. stepSize=0 e.g. with MERG data
+        # TODO: need a check for fractional hrs and only one hr i.e. stepSize=0 e.g. with MERG data
         if stepSize == 0 or stepSize == 1:
             modelTimeStep = 'hourly'
         elif stepSize == 24:
@@ -507,7 +501,7 @@ def get_model_time_step(units, stepSize):
         raise Exception(errorMessage)
 
     return modelTimeStep
-#**********************************************************************************************************************
+# **********************************************************************************************************************
 def decode_time_from_string(timeString):
     '''
        Purpose:: Decodes string into a python datetime object
@@ -536,6 +530,6 @@ def decode_time_from_string(timeString):
 
     print 'Error decoding time string: string does not match a predefined time format'
     return 0
-    #**********************************************************************************************************************
+    # **********************************************************************************************************************
 
 
