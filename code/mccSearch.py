@@ -9,6 +9,7 @@ import networkx as nx
 
 from multiprocessing import Pool
 from multiprocessing import Manager
+from multiprocessing.managers import BaseManager
 from datetime import timedelta
 from netCDF4 import Dataset, date2num
 from scipy import ndimage
@@ -18,12 +19,34 @@ import utils
 import plotting
 import variables
 
+PROXY_ARRAY = None
 NUM_IMAGE_WORKERS = 2 #Number of workers to send off for extracting CE in the independent image frames
 P_TIME = 0
 
 #------------------------ End GLOBAL VARS -------------------------
 #************************ Begin Functions *************************
 #**********************************************************************************************************************
+class MaskedArrayWrapper:
+    def __init__(self):
+        self.userVariables = None
+
+    def populate(self, userVariables):
+        self.userVariables = userVariables
+
+    def grab_label(self, t):
+        return ndimage.measurements.label(PROXY_ARRAY[t,:,:], structure=self.userVariables.STRUCTURING_ELEMENT)
+
+    def get_slice(self, t, loc):
+        return PROXY_ARRAY[t,:,:][loc]
+
+class MawManager(BaseManager):
+        pass
+
+MawManager.register("Maw", MaskedArrayWrapper)
+mawManager = MawManager()
+mawManager.start()
+arrayProxy = mawManager.Maw()
+
 manager = Manager()
 varsDict = manager.dict()
 
@@ -38,7 +61,7 @@ class CeFinder(object):
         self.TRMMdirName = TRMMdirName
 
     def __call__(self,t):
-        return find_single_frame_cloud_elements(t,varsDict['images'],self.timelist,\
+        return find_single_frame_cloud_elements(t,arrayProxy,self.timelist,\
             varsDict['lat'],varsDict['lon'],self.userVariables,self.TRMMdirName)    
 #**********************************************************************************************************************
 def find_cloud_elements(mergImgs, timelist, lat, lon, userVariables, graphVariables, TRMMdirName=None):
@@ -65,7 +88,11 @@ def find_cloud_elements(mergImgs, timelist, lat, lon, userVariables, graphVariab
         required according to Vila et al. (2008) is 2400km^2
         therefore, 2400/16 = 150 contiguous squares
     '''
-    varsDict['images'] = mergImgs
+
+    global PROXY_ARRAY
+    PROXY_ARRAY = mergImgs
+
+    arrayProxy.populate(userVariables)
     varsDict['lat'] = lat
     varsDict['lon'] = lon
     
@@ -292,7 +319,8 @@ def find_single_frame_cloud_elements(t,mergImgs,timelist, lat, lon, userVariable
     cloudElementsFileString = ''
     
     #determine contiguous locations with temeperature below the warmest temp i.e. cloudElements in each frame
-    frame, ceCounter = ndimage.measurements.label(mergImgs[t,:,:], structure=userVariables.STRUCTURING_ELEMENT)
+    #frame, ceCounter = ndimage.measurements.label(mergImgs[t,:,:], structure=userVariables.STRUCTURING_ELEMENT)
+    frame, ceCounter = mergImgs.grab_label(t)
     frameceCounter = 0
     frameNum = t + 1
 
@@ -342,7 +370,8 @@ def find_single_frame_cloud_elements(t,mergImgs,timelist, lat, lon, userVariable
             print 'Error is ', e
             continue
 
-        cloudElement = mergImgs[t,:,:][loc]
+        #cloudElement = mergImgs[t,:,:][loc]
+        cloudElement = mergImgs.get_slice(t, loc)
         labels, _ = ndimage.label(cloudElement)
 
         #determine the true lats and lons for this particular CE
