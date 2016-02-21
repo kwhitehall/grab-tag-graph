@@ -52,7 +52,7 @@ class UserVariables(object):
 
             except IOError, e:
                 print "Config file not found! Using default variables..."
-                return False
+
         else:
             self.LATMIN = '5.0'          # min latitude; -ve values in the SH e.g. 5S = -5
             self.LATMAX = '19.0'         # max latitude; -ve values in the SH e.g. 5S = -5 20.0

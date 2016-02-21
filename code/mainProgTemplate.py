@@ -21,7 +21,7 @@ def main():
     MCSMCCNodesList = []
     allMCSsList = []
     allCETRMMList = []
-    DIRS={}
+    DIRS = {}
 
     # For GrADs
     subprocess.call('export DISPLAY=:0.0', shell=True)

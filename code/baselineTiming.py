@@ -102,7 +102,6 @@ def main():
     unittestFile.write("\n 3. Total time to complete finding the cloud clusters is %g seconds" % (findCloudClustersEnd - findCloudClustersStart))
     print "\n The CEGraph nodes are: %s " % CEGraph.nodes()
     unittestFile.write("\n The CEGraph nodes are: %s " % CEGraph.nodes())
-    # GABE: Added for testing with checkMERGBaseline
     print "\n The pruned graph nodes are: %s " % prunedGraph.nodes()
     unittestFile.write("\n\n The pruned graph nodes are: %s " % prunedGraph.nodes())
      
@@ -120,10 +119,10 @@ def main():
     unittestFile.write("\n 4. Total time to complete finding the MCCs is %g seconds" % (findMCCEnd - findMCCStart))
     print ("-"*80)
     # End the timer
-    endtime = time.time()
+    endTime = time.time()
     print ("*"*80)
-    print "\n The entire evaluation took %g seconds to complete" % (endtime - startTime)
-    unittestFile.write("\n The entire evaluation took %g seconds to complete" % (endtime - startTime))
+    print "\n The entire evaluation took %g seconds to complete" % (endTime - startTime)
+    unittestFile.write("\n The entire evaluation took %g seconds to complete" % (endTime - startTime))
     unittestFile.write("\n ----------------------------------------------------------------")
     unittestFile.write("\n Number of cloud elements found is: %d" % CEGraph.number_of_nodes())
     unittestFile.write("\n Number of edges (with the cloud elements) found is: %d" % CEGraph.number_of_edges())

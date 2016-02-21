@@ -613,13 +613,7 @@ def write_c1_grad_script(origsFile):
     subprocess.call('echo "''\'    set c_cols = \'c_cols''\'" >> '+origsFile, shell=True)
     subprocess.call('echo "''\'return''\'" >> '+origsFile, shell=True)
 
-
-
-
-
 # *********************************************************************************************************************
-
-
 
 
 # ******************************************************************

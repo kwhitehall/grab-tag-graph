@@ -71,7 +71,6 @@ def check_merg_file_differences(baselinePath1, baselinePath2,  outputDir):
     # 2. Check the content of each pair of similarly names files using nco ncdiff
     print 'checking the content \n'
     for i in xrange(len(dir1Filenames)):
-        # print ('-'*80)
         file_one = '%s/%s' % (baselinePath1, dir1Filenames[i])
         file_two = '%s/%s' % (baselinePath2, dir2Filenames[i])
 

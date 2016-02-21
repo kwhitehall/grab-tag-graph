@@ -29,32 +29,32 @@ def draw_graph(thisGraph, graphTitle, MAIN_DIRECTORY, edgeWeight=None):
 
     Returns:: None
 
-    Generates:: a plot of the thisGraph
+    Generates:: A plot of the thisGraph
 
     '''
 
     imgFilename = MAIN_DIRECTORY + '/images/' + graphTitle + '.gif'
     fig = plt.figure(facecolor='white', figsize=(16, 12))
 
-    edge95 = [(u, v) for (u, v, d) in thisGraph.edges(data=True) if d['weight'] == edgeWeight[0]]
-    edge90 = [(u, v) for (u, v, d) in thisGraph.edges(data=True) if d['weight'] == edgeWeight[1]]
-    edegeOverlap = [(u, v) for (u, v, d) in thisGraph.edges(data=True) if d['weight'] == edgeWeight[2]]
+    edge95 = [(u,v) for (u,v,d) in thisGraph.edges(data=True) if d['weight'] == edgeWeight[0]]
+    edge90 = [(u,v) for (u,v,d) in thisGraph.edges(data=True) if d['weight'] == edgeWeight[1]]
+    edgeOverlap = [(u,v) for (u,v,d) in thisGraph.edges(data=True) if d['weight'] == edgeWeight[2]]
 
     nx.write_dot(thisGraph, 'test.dot')
     plt.title(graphTitle)
     pos = nx.graphviz_layout(thisGraph, prog='dot')
-    # draw graph in parts
+    # Draw graph in parts
     # nodes
     nx.draw_networkx_nodes(thisGraph, pos, with_labels=True, arrows=False)
     # edges
     nx.draw_networkx_edges(thisGraph, pos, edgelist=edge95, alpha=0.5, arrows=False)
     nx.draw_networkx_edges(thisGraph, pos, edgelist=edge90, edge_color='b', style='dashed', arrows=False)
-    nx.draw_networkx_edges(thisGraph, pos, edgelist=edegeOverlap, edge_color='y', style='dashed', arrows=False)
+    nx.draw_networkx_edges(thisGraph, pos, edgelist=edgeOverlap, edge_color='y', style='dashed', arrows=False)
     # labels
     nx.draw_networkx_labels(thisGraph, pos, arrows=False)
     plt.axis('off')
     plt.savefig(imgFilename, facecolor=fig.get_facecolor(), transparent=True)
-    #do some clean up...and ensuring that we are in the right dir
+    # Do some clean up...and ensure that we are in the right dir
     os.chdir((MAIN_DIRECTORY+'/'))
     subprocess.call('rm test.dot', shell=True)
 # **********************************************************************************************************************
@@ -67,7 +67,7 @@ def display_size(finalMCCList, MAIN_DIRECTORY):
 
     Returns:: None
 
-    Generates:: a plot with the area contribution of each node in a feature in the list
+    Generates:: A plot with the area contribution of each node in a feature in the list
 
     '''
     timeList = []
@@ -77,12 +77,12 @@ def display_size(finalMCCList, MAIN_DIRECTORY):
     maxArea = 0.0
     eachNode = {}
 
-    # for each node in the list, get the area information from the dictionary
+    # For each node in the list, get the area information from the dictionary
     # in the graph and calculate the area
 
     if finalMCCList:
         for eachMCC in finalMCCList:
-            # get the info from the node
+            # Get the info from the node
             for node in eachMCC:
                 eachNode = mccSearch.this_dict(node)
                 timeList.append(eachNode['cloudElementTime'])
@@ -92,7 +92,7 @@ def display_size(finalMCCList, MAIN_DIRECTORY):
                 if eachNode['cloudElementArea'] > maxArea:
                     maxArea = eachNode['cloudElementArea']
 
-            #sort and remove duplicates
+            # Sort and remove duplicates
             timeList = list(set(timeList))
             timeList.sort()
             tdelta = timeList[1] - timeList[0]
@@ -101,13 +101,13 @@ def display_size(finalMCCList, MAIN_DIRECTORY):
             timeList.insert(0, starttime)
             timeList.append(endtime)
 
-            # plot info
+            # Plot info
             plt.close('all')
             title = 'Area distribution of the MCC over somewhere'
-            fig = plt.figure(facecolor='white', figsize=(18, 10))
-            fig, ax = plt.subplots(1, facecolor='white', figsize=(10, 10))
+            fig = plt.figure(facecolor='white', figsize=(18,10))
+            fig, ax = plt.subplots(1, facecolor='white', figsize=(10,10))
 
-            # the data
+            # The data
             for node in eachMCC:
                 eachNode = mccSearch.this_dict(node)
                 if eachNode['cloudElementArea'] < 80000:
@@ -117,7 +117,7 @@ def display_size(finalMCCList, MAIN_DIRECTORY):
                 else:
                     ax.plot(eachNode['cloudElementTime'], eachNode['cloudElementArea'], 'ro', markersize=30)
 
-            #axes and labels
+            # Axes and labels
             maxArea += 1000.00
             ax.set_xlim(starttime, endtime)
             ax.set_ylim(minArea, maxArea)
@@ -131,7 +131,7 @@ def display_size(finalMCCList, MAIN_DIRECTORY):
             imgFilename = MAIN_DIRECTORY+'/images/' + str(count)+'MCS.gif'
             plt.savefig(imgFilename, facecolor=fig.get_facecolor(), transparent=True)
 
-            # if time in not already in the time list, append it
+            # If time in not already in the time list, append it
             timeList = []
             count += 1
     return
@@ -166,7 +166,7 @@ def display_precip(finalMCCList, MAIN_DIRECTORY):
     xStart = 0.0
     yStart = 0.0
 
-    # for each node in the list, get the area information from the dictionary
+    # For each node in the list, get the area information from the dictionary
     # in the graph and calculate the area
     if finalMCCList:
         for eachMCC in finalMCCList:
@@ -185,7 +185,7 @@ def display_precip(finalMCCList, MAIN_DIRECTORY):
 
                 firstTime = False
 
-            #convert the timeList[] to list of floats
+            # Convert the timeList[] to list of floats
             for i in xrange(len(timeList)):
                 colorBarTime.append(time.mktime(timeList[i].timetuple()))
 
@@ -205,7 +205,7 @@ def display_precip(finalMCCList, MAIN_DIRECTORY):
             colorBarTime.sort()
             cb = colorbar_index(ncolors=len(colorBarTime), nlabels=colorBarTime, cmap=cmap)
 
-            # axes and labels
+            # Axes and labels
             ax.set_xlabel('Degrees Longtude', fontsize=12)
             ax.set_ylabel('Degrees Latitude', fontsize=12)
             ax.set_title(title)
@@ -422,12 +422,12 @@ def plot_accu_TRMM(finalMCCList, MAIN_DIRECTORY):
         accuTRMMData.description = 'Accumulated precipitation data'
         accuTRMMData.calendar = 'standard'
         accuTRMMData.conventions = 'COARDS'
-        # dimensions
+        # Dimensions
         accuTRMMData.createDimension('time', None)
         accuTRMMData.createDimension('lat', nygrdTRMM)
         accuTRMMData.createDimension('lon', nxgrdTRMM)
 
-        # variables
+        # Variables
         TRMMprecip = ('time', 'lat', 'lon',)
         times = accuTRMMData.createVariable('time', 'f8', ('time',))
         times.units = 'hours since ' + str(thisNode['cloudElementTime']).replace(' ', '_')[:-6]

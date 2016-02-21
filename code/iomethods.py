@@ -67,7 +67,7 @@ def check_for_files(dirPath, startTime, endTime, tdelta, tRes):
     filelist = filter(path.isfile, glob.glob((dirPath+'/*.nc')))
     filelist.sort()
 
-    # check for the filename pattern
+    # Check for the filename pattern
     for eachPart in re.split(r'[_,-,.,/]', re.split(r'.nc', path.basename(filelist[0]))[0]):
         tokenCounter += 1
         if tokenCounter == 1:
@@ -85,9 +85,6 @@ def check_for_files(dirPath, startTime, endTime, tdelta, tRes):
 
     startFile = glob.glob(dirPath+'/'+filenamePattern + '*' + startTimeInFile)[0]
     endTimeInFile = find_time_in_file(endTime, startTimeInFile)
-    # print("filenamePattern: "+filenamePattern)
-    # print("endTimeInFile: "+endTimeInFile)
-    # print(dirPath+'/'+filenamePattern + '*'+endTimeInFile+'*')
     endFile = glob.glob(dirPath+'/'+filenamePattern + '*'+endTimeInFile+'*')[0]
 
     currFile = startFile
@@ -168,14 +165,14 @@ def read_vars(userVariables):
     except:
         print "..."   
 
-    # check validity of time
+    # Check validity of time
     while utils.valid_date(userVariables.startDateTime) != True:
         print "Invalid time entered for startDateTime!"
 
     while utils.valid_date(userVariables.endDateTime) != True:
         print "Invalid time entered for endDateTime!"
         
-    # check if all the files exisits in the MERG and TRMM directories entered
+    # Check if all the files exisits in the MERG and TRMM directories entered
     test, _ = check_for_files(userVariables.DIRS['TRMMdirName'], userVariables.startDateTime, userVariables.endDateTime, 3, 'hour')
     if test is False:
         print "Error with files in the TRMM directory entered. Please check your files before restarting. "
@@ -187,7 +184,7 @@ def read_vars(userVariables):
         print "Error with files in the original MERG directory entered. Please check your files before restarting. "
         return
 
-    # create main directory and file structure for storing intel
+    # Create main directory and file structure for storing intel
     userVariables.DIRS['mainDirStr'] = create_main_directory(userVariables.DIRS['mainDirStr'])
     TRMMCEdirName = userVariables.DIRS['mainDirStr']+'/TRMMnetcdfCEs'
     CEdirName = userVariables.DIRS['mainDirStr']+'/MERGnetcdfCEs'
@@ -197,14 +194,14 @@ def read_vars(userVariables):
 def create_main_directory(mainDirStr):
     '''
         Purpose:: To create the main directory for storing information and
-            the subdirectories for storing information
+                  the subdirectories for storing information
 
         Input:: mainDir: string representing the directory for where all
                 information generated from the program are to be stored
 
         Returns:: None
 
-        Outputs:: a file structure where data generated from GTG will be stored
+        Outputs:: A file structure where data generated from GTG will be stored
 
         Assumptions:: The user running the program can write at mainDirStr
 
@@ -212,12 +209,12 @@ def create_main_directory(mainDirStr):
     global MAIN_DIRECTORY
 
     MAIN_DIRECTORY = mainDirStr
-    # if directory doesnt exist, create it
+    # If directory doesn't exist, create it
     if not os.path.exists(MAIN_DIRECTORY):
         os.makedirs(MAIN_DIRECTORY)
 
     os.chdir((MAIN_DIRECTORY))
-    # create the subdirectories
+    # Create the subdirectories
     try:
         os.makedirs('images')
         os.makedirs('textFiles')
@@ -272,7 +269,7 @@ def read_data(varName, latName, lonName, userVariables, filelist=None):
 
     nfiles = len(userVariables.filelist)
 
-    # Crash nicely if there are no netcdf files
+    # Crash nicely if there are no netCDF files
     if nfiles == 0:
         print 'Error: no files in this directory! Exiting elegantly'
         sys.exit()
@@ -307,37 +304,27 @@ def read_data(varName, latName, lonName, userVariables, filelist=None):
     for files in userVariables.filelist:
         try:
             thisFile = Dataset(files, 'r', format='NETCDF4')
-            # clip the dataset according to user lat,lon coordinates
-            # mask the data and fill with zeros for later
+            # Clip the dataset according to user lat, lon coordinates
+            # Mask the data and fill with zeros for later
             tempRaw = thisFile.variables[varName][:, latminIndex:latmaxIndex, lonminIndex:lonmaxIndex].astype('int16')
             tempMask = ma.masked_array(tempRaw, mask=(tempRaw > userVariables.T_BB_MAX), fill_value=0)
-            # get the actual values that the mask returned
-            # tempMaskedValueOld = ma.zeros((tempRaw.shape)).astype('int16')
+            # Get the actual values that the mask returned
 
-            # innerLoopStart = time.time()
-            # for index, value in utils.maenumerate(tempMask):
-            #    timeIndex, latIndex, lonIndex = index
-            #    tempMaskedValueOld[timeIndex, latIndex, lonIndex] = value
-            # totalLoopTime+= time.time()-innerLoopStart
-            
-            # This replaces the loop computation of tempMaskedValueOld above.
+            # timeIndex, latIndex, lonIndex = index
+
             tempMaskedValue = tempMask
             tempMaskedValue[tempMask.mask] = 0
-            # Mini unit test of the non-loop version vers loop version. To use,
-            # uncomment the loop immediately above
-            # assert(np.array_equal(tempMaskedValue,tempMaskedValueOld))
 
             xtimes = thisFile.variables[timeName]
 
-            # convert this time to a python datastring
+            # Convert this time to a python datastring
             time2store, _ = get_model_times(xtimes, timeName)
 
-            # extend instead of append because get_model_times returns a list already and we don't
+            # Extend instead of append because get_model_times returns a list already and we don't
             # want a list of list
             timelist.extend(time2store)
             inputData.extend(tempMaskedValue)
             thisFile.close()
-            thisFile = None
 
         except:
             print 'bad file! ', files
@@ -408,7 +395,7 @@ def get_model_times(xtimes, timeVarName):
         elif units == 'months':
             # NB. adding months in python is complicated as month length varies and hence ambiguous.+
             # Perform date arithmetic manually
-            #  Assumption: the base_date will usually be the first of the month
+            # Assumption: the base_date will usually be the first of the month
             #              NB. this method will fail if the base time is on the 29th or higher day of month
             #                      -as can't have, e.g. Feb 31st.
             newMonth = int(baseTime.month + xtime % 12)
@@ -436,13 +423,13 @@ def get_model_times(xtimes, timeVarName):
 def get_model_time_step(units, stepSize):
     '''
         Purpose:: To determine the time intervals of input data.
-                  Levaraged from Apache OCW
+                  Leveraged from Apache OCW
 
         Inputs:: units: a string representing the time units found in the file metadata
                  stepSize: an integer representing the time interval found in the file's metadata
 
         Returns:: modelTimeStep: a string representing the step interval in the
-                 dataset e.g. 'hourly', 'daily', etc.
+                  dataset e.g. 'hourly', 'daily', etc.
     '''
 
     if units == 'minutes':

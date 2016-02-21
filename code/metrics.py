@@ -202,7 +202,7 @@ def create_text_file(finalMCCList, identifier, userVariables, graphVariables):
 
         # Get the precip info
         for eachNode in eachPath:
-            thisNode = mccSearch.this_dict(eachNode ,graphVariables)
+            thisNode = mccSearch.this_dict(eachNode, graphVariables)
             # Set first time min 'fake' values
             if firstTime is True:
                 minCEprecipRate = thisNode['CETRMMmin']
