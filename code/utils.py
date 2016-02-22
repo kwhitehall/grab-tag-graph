@@ -1,13 +1,13 @@
-from datetime import datetime
 import glob
 import itertools
 import os
 import re
 import subprocess
+from datetime import datetime
 
-from netCDF4 import Dataset
 import numpy as np
 import numpy.ma as ma
+from netCDF4 import Dataset
 from scipy.ndimage import map_coordinates
 
 
@@ -38,7 +38,7 @@ def do_regrid(inputGrid, lat, lon, lat2, lon2, order=1, mdi=-999999999):
     loni = lon2.ravel()
     lati = lat2.ravel()
 
-    loni = loni.copy() # NB. it won't run unless you do this...
+    loni = loni.copy()  # NB. it won't run unless you do this...
     lati = lati.copy()
 
     # Now, we'll set points outside the boundaries to lie along an edge
@@ -50,8 +50,7 @@ def do_regrid(inputGrid, lat, lon, lat2, lon2, order=1, mdi=-999999999):
     lati[lati > lat.max()] = lat.max()
     lati[lati < lat.min()] = lat.min()
 
-
-    # We need to convert these to (float) indicies
+    # We need to convert these to (float) indices
     #   (xi should range from 0 to (nx - 1), etc)
     loni = (nlon - 1) * (loni - lon.min()) / (lon.max() - lon.min())
 
@@ -93,14 +92,14 @@ def do_regrid(inputGrid, lat, lon, lat2, lon2, order=1, mdi=-999999999):
 
     # Set values to missing data outside of original domain
     outputGrid = ma.masked_array(outputGrid, mask=np.logical_or(np.logical_or(lat2 >= lat.max(),
-                                                              lat2 <= lat.min()),
-                                                np.logical_or(lon2 <= lon.min(),
-                                                              lon2 >= lon.max())))
+                                                                lat2 <= lat.min()),
+                                                                np.logical_or(lon2 <= lon.min(),
+                                                                lon2 >= lon.max())))
 
     # Make second map using nearest neighbour interpolation -use this to determine locations with MDI and mask these
     qmdi = np.zeros_like(inputGrid)
-    qmdi[inputGrid.mask == True] = 1.
-    qmdi[inputGrid.mask == False] = 0.
+    qmdi[inputGrid.mask is True] = 1.
+    qmdi[inputGrid.mask is False] = 0.
     qmdiR = map_coordinates(qmdi, [lati, loni], order=order)
     qmdiR = qmdiR.reshape([nlat2, nlon2])
     mdimask = (qmdiR != 0.0)
@@ -109,18 +108,18 @@ def do_regrid(inputGrid, lat, lon, lat2, lon2, order=1, mdi=-999999999):
     outputGrid.mask = np.logical_or(mdimask, outputGrid.mask)
 
     return outputGrid
-#******************************************************************
+# ******************************************************************
 def find_nearest(thisArray, value):
     '''
-    Purpose :: to determine the value within an array closes to
-            another value
+    Purpose :: To determine the value within an array closes to
+               another value
 
     Input ::
     Output::
     '''
     idx = (np.abs(thisArray-value)).argmin()
     return thisArray[idx]
-#******************************************************************
+# ******************************************************************
 def maenumerate(mArray):
     '''
     Purpose::
@@ -137,11 +136,11 @@ def maenumerate(mArray):
     '''
 
     mask = ~mArray.mask.ravel()
-    #beware yield fast, but generates a type called "generate" that does not allow for array methods
+    # Beware yield fast, but generates a type called "generate" that does not allow for array methods
     for index, maskedValue in itertools.izip(np.ndenumerate(mArray), mask):
         if maskedValue:
             yield index
-#******************************************************************
+# ******************************************************************
 def preprocessing_merg(mergDirname):
     '''
     Purpose::
@@ -166,18 +165,18 @@ def preprocessing_merg(mergDirname):
     os.chdir((mergDirname+'/'))
     imgFilename = ''
 
-    #Just incase the X11 server is giving problems
+    # Just incase the X11 server is giving problems
     subprocess.call('export DISPLAY=:0.0', shell=True)
 
     for files in glob.glob("*-pixel"):
-    #for files in glob.glob("*.Z"):
+        # For files in glob.glob("*.Z"):
         fname = os.path.splitext(files)[0]
 
-        #unzip it
-        #bash_cmd = 'gunzip ' + files
-        #subprocess.call(bash_cmd, shell=True)
+        # Unzip it
+        # bash_cmd = 'gunzip ' + files
+        # subprocess.call(bash_cmd, shell=True)
 
-        #determine the time from the filename
+        # Determine the time from the filename
         ftime = re.search('\_(.*)\_', fname).group(1)
 
         year = ftime[0:4]
@@ -185,26 +184,26 @@ def preprocessing_merg(mergDirname):
         day = ftime[6:8]
         hour = ftime[8:10]
 
-        digitMonthToStringMap = {'01' : 'Jan',
-                                 '02' : 'Feb',
-                                 '03' : 'Mar',
-                                 '04' : 'Apr',
-                                 '05' : 'May',
-                                 '06' : 'Jun',
-                                 '07' : 'Jul',
-                                 '08' : 'Aug',
-                                 '09' : 'Sep',
-                                 '10' : 'Oct',
-                                 '11' : 'Nov',
-                                 '12' : 'Dec'
-                                }
+        digitMonthToStringMap = {'01': 'Jan',
+                                 '02': 'Feb',
+                                 '03': 'Mar',
+                                 '04': 'Apr',
+                                 '05': 'May',
+                                 '06': 'Jun',
+                                 '07': 'Jul',
+                                 '08': 'Aug',
+                                 '09': 'Sep',
+                                 '10': 'Oct',
+                                 '11': 'Nov',
+                                 '12': 'Dec'
+                                 }
 
         month = digitMonthToStringMap[digitMonth]
 
         subprocess.call('rm merg.ctl', shell=True)
         subprocess.call('touch merg.ctl', shell=True)
-        replaceExpDset = 'echo DSET ' + fname +' >> merg.ctl'
-        replaceExpTdef = 'echo TDEF 99999 LINEAR '+hour+'z'+day+month+year +' 30mn' +' >> merg.ctl'
+        replaceExpDset = 'echo DSET ' + fname + ' >> merg.ctl'
+        replaceExpTdef = 'echo TDEF 99999 LINEAR '+hour+'z'+day+month+year + ' 30mn' + ' >> merg.ctl'
         subprocess.call(replaceExpDset, shell=True)
         subprocess.call('echo "OPTIONS yrev little_endian template" >> merg.ctl', shell=True)
         subprocess.call('echo "UNDEF  330" >> merg.ctl', shell=True)
@@ -217,22 +216,22 @@ def preprocessing_merg(mergDirname):
         subprocess.call('echo "ch4  1  -1,40,1,-1 IR BT  (add  "75" to this value)" >> merg.ctl', shell=True)
         subprocess.call('echo "ENDVARS" >> merg.ctl', shell=True)
 
-        #generate the lats4D command for GrADS
+        # Generate the lats4D command for GrADS
         #lats4D = 'lats4d -v -q -lat '+LATMIN + ' ' +LATMAX +' -lon ' +LONMIN +' ' +LONMAX +' -time '+hour+'Z'+day+month+year + ' -func @+75 ' + '-i merg.ctl' + ' -o ' + fname
 
         #lats4D = 'lats4d -v -q -lat -40 -15 -lon 10 40 -time '+hour+'Z'+day+month+year + ' -func @+75 ' + '-i merg.ctl' + ' -o ' + fname
         #lats4D = 'lats4d -v -q -lat -5 40 -lon -90 60 -func @+75 ' + '-i merg.ctl' + ' -o ' + fname
 
         #gradscmd = 'grads -blc ' + '\'' +lats4D + '\''
-        #run grads and lats4d command
+        # Run grads and lats4d command
         #subprocess.call(gradscmd, shell=True)
         imgFilename = hour+'Z'+day+month+year+'.gif'
         temp_masked_images(imgFilename)
 
-    #when all the files have benn converted, mv the netcdf files
-    #subprocess.call('mkdir mergNETCDF', shell=True)
-    #subprocess.call('mv *.nc mergNETCDF', shell=True)
-    #mv all images
+    # When all the files have benn converted, mv the netcdf files
+    # subprocess.call('mkdir mergNETCDF', shell=True)
+    # subprocess.call('mv *.nc mergNETCDF', shell=True)
+    # mv all images
     subprocess.call('mkdir mergImgs', shell=True)
     subprocess.call('mv *.gif mergImgs', shell=True)
     return
@@ -272,7 +271,7 @@ def post_processing_netcdf(dataset, dirName=None):
     var = ''
     firstTime = True
     lineNum = 1
-    #Just incase the X11 server is giving problems
+    # Just incase the X11 server is giving problems
     subprocess.call('export DISPLAY=:0.0', shell=True)
 
     prevFrameNum = 0
@@ -310,8 +309,7 @@ def post_processing_netcdf(dataset, dirName=None):
         sologsFile = coreDir+"/infrared.gs"
         lineNum = 32
 
-
-    #sort files
+    # Sort files
     os.chdir((dirName+'/'))
     try:
         os.makedirs('ctlFiles')
@@ -330,14 +328,14 @@ def post_processing_netcdf(dataset, dirName=None):
         if dataset == 1 or dataset == 2:
             frameNum = int((fnameNoExtension.split('CE')[0]).split('00F')[1])
 
-        #create the ctlFile
+        # Create the ctlFile
         ctlFile1 = dirName+'/ctlFiles/'+fnameNoExtension + '.ctl'
-        #the ctl file
-        subprocessCall = 'rm ' +ctlFile1
+        # The ctl file
+        subprocessCall = 'rm ' + ctlFile1
         subprocess.call(subprocessCall, shell=True)
         subprocessCall = 'touch '+ctlFile1
         subprocess.call(subprocessCall, shell=True)
-        lineToWrite = 'echo DSET ' + dirName+'/'+fnameNoExtension+'.nc' +' >>' + ctlFile1
+        lineToWrite = 'echo DSET ' + dirName+'/'+fnameNoExtension+'.nc' + ' >>' + ctlFile1
         subprocess.call(lineToWrite, shell=True)
         lineToWrite = 'echo DTYPE netcdf >> '+ctlFile1
         subprocess.call(lineToWrite, shell=True)
@@ -347,7 +345,7 @@ def post_processing_netcdf(dataset, dirName=None):
         subprocess.call(lineToWrite, shell=True)
         fname = dirName+'/'+fnameNoExtension+'.nc'
         if os.path.isfile(fname):
-            #open NetCDF file add info to the accu
+            # Open NetCDF file add info to the accu
             print "opening file ", fname
             fileData = Dataset(fname, 'r', format='NETCDF4')
             lats = fileData.variables['latitude'][:]
@@ -356,9 +354,9 @@ def post_processing_netcdf(dataset, dirName=None):
             nygrd = len(latData[:, 0])
             nxgrd = len(lonData[0, :])
             fileData.close()
-        lineToWrite = 'echo XDEF '+ str(nxgrd) + ' LINEAR ' + str(min(lons)) +' '+ str((max(lons)-min(lons))/nxgrd) +' >> ' +ctlFile1
+        lineToWrite = 'echo XDEF ' + str(nxgrd) + ' LINEAR ' + str(min(lons)) + ' ' + str((max(lons)-min(lons))/nxgrd) + ' >> ' + ctlFile1
         subprocess.call(lineToWrite, shell=True)
-        lineToWrite = 'echo YDEF '+ str(nygrd)+' LINEAR  ' + str(min(lats)) + ' ' + str((max(lats)-min(lats))/nygrd) +' >> '+ctlFile1
+        lineToWrite = 'echo YDEF ' + str(nygrd)+' LINEAR  ' + str(min(lats)) + ' ' + str((max(lats)-min(lats))/nygrd) + ' >> '+ctlFile1
         subprocess.call(lineToWrite, shell=True)
         lineToWrite = 'echo ZDEF   01 LEVELS 1 >> '+ctlFile1
         subprocess.call(lineToWrite, shell=True)
@@ -373,14 +371,14 @@ def post_processing_netcdf(dataset, dirName=None):
         lineToWrite = 'echo  >>  '+ctlFile1
         subprocess.call(lineToWrite, shell=True)
 
-        #create plot of just that data
-        subprocessCall = 'cp '+ origsFile+' '+sologsFile
+        # Create plot of just that data
+        subprocessCall = 'cp ' + origsFile+' '+sologsFile
         subprocess.call(subprocessCall, shell=True)
 
         imgFilename = fnameNoExtension + '.gif'
 
-        displayCmd = '\''+'d '+ var+'\''+'\n'
-        newFileCmd = '\''+'open '+ ctlFile1+'\''+'\n'
+        displayCmd = '\''+'d ' + var+'\''+'\n'
+        newFileCmd = '\''+'open ' + ctlFile1+'\''+'\n'
         colorbarCmd = '\''+'run cbarn'+'\''+'\n'
         printimCmd = '\''+'printim '+MAINDIRECTORY+'/images/'+imgFilename+' x800 y600 white\''+'\n'
         quitCmd = '\''+'quit'+'\''+'\n'
@@ -388,27 +386,27 @@ def post_processing_netcdf(dataset, dirName=None):
         gradsScript = open(sologsFile, 'r+')
         lines1 = gradsScript.readlines()
         gradsScript.seek(0)
-        lines1.insert((1), newFileCmd)
+        lines1.insert(1, newFileCmd)
         lines1.insert((lineNum+1), displayCmd)
         lines1.insert((lineNum+2), colorbarCmd)
         lines1.insert((lineNum+3), printimCmd)
         lines1.insert((lineNum + 4), quitCmd)
         gradsScript.writelines(lines1)
         gradsScript.close()
-        #run the script
-        runGrads = 'run '+ sologsFile
-        gradscmd = 'grads -blc ' + '\'' +runGrads + '\''+'\n'
+        # Run the script
+        runGrads = 'run ' + sologsFile
+        gradscmd = 'grads -blc ' + '\'' + runGrads + '\''+'\n'
         subprocess.call(gradscmd, shell=True)
 
         if dataset == 1 or dataset == 2:
 
-            #TODO: for either dataset 1 or 2, write write_c3_grad_script and then use the for loop to gen the line to add at the end to display
-            #at the end, run the GrADS script
+            # TODO: for either dataset 1 or 2, write write_c3_grad_script and then use the for loop to gen the line to add at the end to display
+            # at the end, run the GrADS script
 
-            if prevFrameNum != frameNum and firstTime == False:
-                #counter for number of files (and for appending info to lines)
+            if prevFrameNum != frameNum and firstTime is False:
+                # Counter for number of files (and for appending info to lines)
                 count = 0
-                subprocessCall = 'cp '+ origsFile+ ' '+gsFile
+                subprocessCall = 'cp ' + origsFile + ' '+gsFile
                 subprocess.call(subprocessCall, shell=True)
                 for fileName in frameList:
                     if count == 0:
@@ -422,10 +420,10 @@ def post_processing_netcdf(dataset, dirName=None):
                         imgFilename = fnameNoExtension.split('CE')[0] + '.gif'
                         ctlFile1 = dirName+'/ctlFiles/'+fnameNoExtension + '.ctl'
 
-                        #build cs.gs script will all the CE ctl files and the appropriate display command
+                        # Build cs.gs script will all the CE ctl files and the appropriate display command
                         newVar = var+'.'+ceNumber
-                        newDisplayCmd = '\''+'d '+ newVar+'\''+'\n'
-                        newFileCmd = '\''+'open '+ ctlFile1+'\''+'\n'
+                        newDisplayCmd = '\''+'d ' + newVar+'\''+'\n'
+                        newFileCmd = '\''+'open ' + ctlFile1+'\''+'\n'
                         gradsScript = open(gsFile, 'r+')
                         lines1 = gradsScript.readlines()
                         gradsScript.seek(0)
@@ -447,15 +445,15 @@ def post_processing_netcdf(dataset, dirName=None):
                 gradsScript.writelines(lines1)
                 gradsScript.close()
 
-                #run the script
-                runGrads = 'run '+ gsFile
-                gradscmd = 'grads -blc ' + '\'' +runGrads + '\''+'\n'
+                # Run the script
+                runGrads = 'run ' + gsFile
+                gradscmd = 'grads -blc ' + '\'' + runGrads + '\''+'\n'
                 subprocess.call(gradscmd, shell=True)
 
-                #remove the file data stuff
+                # Remove the file data stuff
                 subprocessCall = 'cd '+dirName
 
-                #reset the list for the next frame
+                # Reset the list for the next frame
                 fileList = frameList
                 frameList = []
                 for thisFile in fileList:
@@ -470,7 +468,7 @@ def post_processing_netcdf(dataset, dirName=None):
                 firstTime = False
 
     return
-#******************************************************************
+# ******************************************************************
 def temp_masked_images(imgFilename):
     '''
     Purpose::
@@ -501,13 +499,13 @@ def temp_masked_images(imgFilename):
     subprocess.call('echo "''\'set gxout shaded''\'" >> temp_masked_images.gs', shell=True)
     subprocess.call('echo "''\'d ch4+75''\'" >> temp_masked_images.gs', shell=True)
     subprocess.call('echo "''\'run cbarn''\'" >> temp_masked_images.gs', shell=True)
-    subprocess.call('echo "''\'draw title Masked Temp @ '+imgFilename +'\'" >> temp_masked_images.gs', shell=True)
-    subprocess.call('echo "''\'printim '+imgFilename +' x1000 y800''\'" >> temp_masked_images.gs', shell=True)
+    subprocess.call('echo "''\'draw title Masked Temp @ ' + imgFilename + '\'" >> temp_masked_images.gs', shell=True)
+    subprocess.call('echo "''\'printim ' + imgFilename + ' x1000 y800''\'" >> temp_masked_images.gs', shell=True)
     subprocess.call('echo "''\'quit''\'" >> temp_masked_images.gs', shell=True)
     gradscmd = 'grads -blc ' + '\'run temp_masked_images.gs''\''
     subprocess.call(gradscmd, shell=True)
     return
-#******************************************************************
+# ******************************************************************
 def valid_date(dataString):
     '''
     Input:: Datetime string of format YYYYMMDDHH or YYYYMMDDHHmm.
@@ -536,7 +534,7 @@ def valid_date(dataString):
 
     return isInputValid
 
-#*********************************************************************************************************************
+# *********************************************************************************************************************
 def write_c3_grad_script(origsFile):
     '''
     Input:: a string representing the filename with full path to the GrADS script being created
@@ -615,18 +613,12 @@ def write_c1_grad_script(origsFile):
     subprocess.call('echo "''\'    set c_cols = \'c_cols''\'" >> '+origsFile, shell=True)
     subprocess.call('echo "''\'return''\'" >> '+origsFile, shell=True)
 
+# *********************************************************************************************************************
 
 
-
-
-#*********************************************************************************************************************
-
-
-
-
-#******************************************************************
-# DEPRICATED FUNCTIONS
-#******************************************************************
+# ******************************************************************
+# DEPRECATED FUNCTIONS
+# ******************************************************************
 # def find_time(curryr, currmm, currdd, currhr):
 #     '''
 #     Purpose:: To determine the new yr, mm, dd, hr
