@@ -6,12 +6,52 @@ import time
 import sys
 import subprocess
 
+from multiprocessing.managers import BaseManager
+
 import networkx as nx
 
 import iomethods
 import mccSearch
 import utils
 import variables
+
+class MaskedArrayWrapper:
+    def __init__(self):
+    	self.mergImgs = None
+        self.timeList = None
+        self.LAT = None
+        self.LON = None
+        self.userVariables = None
+
+    def read_data(self, varName, latName, lonName, userVariables, filelist=None):
+    	self.mergImgs, self.timeList, self.LAT, self.LON, self.userVariables = iomethods.read_data(varName, latName, lonName, userVariables, filelist)    	
+
+    def get_shape(self, i):
+    	return self.mergImgs.shape[i]
+
+    def grab_label(self, t):
+        return ndimage.measurements.label(PROXY_ARRAY[t,:,:], structure=self.userVariables.STRUCTURING_ELEMENT)
+
+    def get_slice(self, t, loc):
+        return PROXY_ARRAY[t,:,:][loc]
+
+    def get_time_list(self):
+    	return self.timeList
+
+    def get_lat(self):
+    	return self.LAT
+
+    def get_lon(self):
+    	return self.LON
+
+    def get_user_variables(self):
+    	return self.userVariables
+
+class MawManager(BaseManager):
+        pass
+
+MawManager.register("Maw", MaskedArrayWrapper)
+mawManager = MawManager()
 
 def main():
     sys.setrecursionlimit(5000)
@@ -33,7 +73,7 @@ def main():
     # utils.preprocessing_merg(rawMERG)
     # ---------------------------------------------------------------------------------
     # ---------------------------------- user inputs --------------------------------------
-    userVariables = variables.UserVariables(useJSON=False)
+    userVariables = variables.UserVariables(useJSON=True)
     graphVariables = variables.define_graph_variables()
     # ---------------------------------- end user inputs --------------------------------------
     
@@ -45,6 +85,10 @@ def main():
     unittestFile = open(userVariables.DIRS['mainDirStr']+'/textFiles/unittestResults.txt','wb')
     unittestFile.write("\n Timing results for "+userVariables.startDateTime+" to "+userVariables.endDateTime)
 
+    # Start proxy to data
+    mawManager.start()
+    proxy = mawManager.Maw()
+
     #let's go!
     # time how long it takes to complete reading in the data
     print "\n Start the timer "
@@ -52,7 +96,10 @@ def main():
     print "\n -------------- Read MERG Data ----------"
     print "\n Start the timer for the data ingest process"
     readMergStart = time.time()
-    mergImgs, timeList, LAT, LON, userVariables = iomethods.read_data('ch4','latitude','longitude', userVariables)
+
+    # Tell proxy to read in data
+    proxy.read_data('ch4','latitude','longitude', userVariables)
+    
     readMergEnd = time.time()
     print "\n End the timer for the data ingest process"
     print "\n Total time to complete data ingest is %g seconds"%(readMergEnd - readMergStart)
@@ -63,8 +110,8 @@ def main():
     print "\n Start the timer for findCloudElements process"
     findCEsStart = time.time()
     print "\n Using both MERG and TRMM simultaneously "
-    #CEGraph = mccSearch.find_cloud_elements(mergImgs,timeList,userVariables.DIRS['mainDirStr'], LAT,LON,userVariables, graphVariables, userVariables.DIRS['TRMMdirName'])
-    CEGraph,_ = mccSearch.find_cloud_elements(mergImgs,timeList, LAT, LON, userVariables, graphVariables, userVariables.DIRS['TRMMdirName'])
+    #CEGraph,_ = mccSearch.find_cloud_elements(mergImgs,timeList, LAT, LON, userVariables, graphVariables, userVariables.DIRS['TRMMdirName'])
+    CEGraph,_ = mccSearch.find_cloud_elements(proxy, graphVariables)
     findCEsEnd = time.time()
     print "\n Number of cloud elements found is: ", CEGraph.number_of_nodes()
     print "\n End the timer for findCloudElements process"
@@ -95,7 +142,7 @@ def main():
     print "\n -------------- TESTING findCloudClusters ----------"
     print "\n Start the timer for findCloudClusters process"
     findCloudClustersStart = time.time()
-    prunedGraph = mccSearch.find_cloud_clusters(CEGraph,userVariables,graphVariables)
+    prunedGraph = mccSearch.find_cloud_clusters(CEGraph,proxy.get_user_variables(),graphVariables)
     print "The number of nodes in the prunedGraph is: ", prunedGraph.number_of_nodes()
     findCloudClustersEnd = time.time()
     print "\n End the timer for the findCloudClusters process"
@@ -112,7 +159,7 @@ def main():
     print "\n -------------- TESTING findMCCs ----------"
     print "\n Start the timer for the findMCCs process"
     findMCCStart = time.time()
-    MCCList,MCSList = mccSearch.find_MCC(prunedGraph,userVariables,graphVariables)
+    MCCList,MCSList = mccSearch.find_MCC(prunedGraph,proxy.get_user_variables(),graphVariables)
     print "\n MCC List has been acquired ", len(MCCList)
     print "\n MCS List has been acquired ", len(MCSList)
     findMCCEnd = time.time()

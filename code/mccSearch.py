@@ -9,7 +9,6 @@ import networkx as nx
 
 from multiprocessing import Pool
 from multiprocessing import Manager
-from multiprocessing.managers import BaseManager
 from datetime import timedelta
 from netCDF4 import Dataset, date2num
 from scipy import ndimage
@@ -19,31 +18,12 @@ import utils
 import plotting
 import variables
 
-PROXY_ARRAY = None
 NUM_IMAGE_WORKERS = 2 #Number of workers to send off for extracting CE in the independent image frames
 P_TIME = 0
 
 #------------------------ End GLOBAL VARS -------------------------
 #************************ Begin Functions *************************
 #**********************************************************************************************************************
-class MaskedArrayWrapper:
-    def __init__(self):
-        self.userVariables = None
-
-    def populate(self, userVariables):
-        self.userVariables = userVariables
-
-    def grab_label(self, t):
-        return ndimage.measurements.label(PROXY_ARRAY[t,:,:], structure=self.userVariables.STRUCTURING_ELEMENT)
-
-    def get_slice(self, t, loc):
-        return PROXY_ARRAY[t,:,:][loc]
-
-class MawManager(BaseManager):
-        pass
-
-MawManager.register("Maw", MaskedArrayWrapper)
-mawManager = MawManager()
 
 manager = Manager()
 varsDict = manager.dict()
@@ -53,16 +33,17 @@ class CeFinder(object):
     '''
 
     '''
-    def __init__(self,timelist, userVariables, TRMMdirName=None):
-        self.timelist = timelist
-        self.userVariables = userVariables
+    def __init__(self, proxy, TRMMdirName=None):
+        self.proxy = proxy
+        self.timelist = proxy.get_time_list()
+        self.userVariables = proxy.get_user_variables()
         self.TRMMdirName = TRMMdirName
 
     def __call__(self,t):
-        return find_single_frame_cloud_elements(t,varsDict['images'],self.timelist,\
+        return find_single_frame_cloud_elements(t,self.proxy,self.timelist,\
             varsDict['lat'],varsDict['lon'],self.userVariables,self.TRMMdirName)    
 #**********************************************************************************************************************
-def find_cloud_elements(mergImgs, timelist, lat, lon, userVariables, graphVariables, TRMMdirName=None):
+def find_cloud_elements(proxy, graphVariables, TRMMdirName=None):
     '''
     Purpose: parallelizes the process to determine the contiguous boxes for a given time in the satellite images 
              i.e. each frame using scipy ndimage package
@@ -87,28 +68,19 @@ def find_cloud_elements(mergImgs, timelist, lat, lon, userVariables, graphVariab
         therefore, 2400/16 = 150 contiguous squares
     '''
 
-    global PROXY_ARRAY
-    PROXY_ARRAY = mergImgs
-
-    mawManager.start()
-    arrayProxy = mawManager.Maw()
-
-    arrayProxy.populate(userVariables)
-    varsDict['lat'] = lat
-    varsDict['lon'] = lon
-    varsDict['images'] = arrayProxy
-
     global LAT
-    LAT = lat
+    LAT = proxy.get_lat()
     global LON
-    LON = lon
+    LON = proxy.get_lon()
+
+    varsDict['lat'] = LAT
+    varsDict['lon'] = LON
     
     p = Pool(NUM_IMAGE_WORKERS)
     image_proc_start = time.time()
+    results = p.map(CeFinder(proxy, TRMMdirName), xrange(proxy.get_shape(0)))
 
-    results = p.map(CeFinder(timelist, userVariables, TRMMdirName), xrange(mergImgs.shape[0]))
-
-    return assemble_graph(results, userVariables, graphVariables)
+    return assemble_graph(results, proxy.get_user_variables(), graphVariables)
 #**********************************************************************************************************************
 def assemble_graph(results, userVariables, graphVariables):
     '''
@@ -232,7 +204,7 @@ def assemble_graph(results, userVariables, graphVariables):
     
     return graphVariables.CLOUD_ELEMENT_GRAPH, (totalCEsList, acceptedCEsList)
 #**********************************************************************************************************************
-def find_single_frame_cloud_elements(t,mergImgs,timelist, lat, lon, userVariables, TRMMdirName=None):
+def find_single_frame_cloud_elements(t,proxy,timelist, lat, lon, userVariables, TRMMdirName=None):
     '''
     Purpose:: Determines the contiguous boxes for a given time of the satellite images i.e. each frame
         using scipy ndimage package in a parallelized manner. This function is called by many workers. 
@@ -322,7 +294,7 @@ def find_single_frame_cloud_elements(t,mergImgs,timelist, lat, lon, userVariable
     
     #determine contiguous locations with temeperature below the warmest temp i.e. cloudElements in each frame
     #frame, ceCounter = ndimage.measurements.label(mergImgs[t,:,:], structure=userVariables.STRUCTURING_ELEMENT)
-    frame, ceCounter = mergImgs.grab_label(t)
+    frame, ceCounter = proxy.grab_label(t)
     frameceCounter = 0
     frameNum = t + 1
 
@@ -373,7 +345,7 @@ def find_single_frame_cloud_elements(t,mergImgs,timelist, lat, lon, userVariable
             continue
 
         #cloudElement = mergImgs[t,:,:][loc]
-        cloudElement = mergImgs.get_slice(t, loc)
+        cloudElement = proxy.get_slice(t, loc)
         labels, _ = ndimage.label(cloudElement)
 
         #determine the true lats and lons for this particular CE
