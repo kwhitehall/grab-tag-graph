@@ -59,7 +59,7 @@ class UserVariables(object):
             self.LONMIN = '-5.0'         # min longitude; -ve values in the WH e.g. 59.8W = -59.8
             self.LONMAX = '9.0'          # min longitude; -ve values in the WH e.g. 59.8W = -59.8
             self.startDateTime = "200908310000"  # "yyyymmddhhss"
-            self.endDateTime = "200909302300"
+            self.endDateTime = "200908312100"
             self.XRES = 4.0              # x direction spatial resolution in km
             self.YRES = 4.0              # y direction spatial resolution in km
             self.TRES = 1                # temporal resolution in hrs

@@ -85,7 +85,7 @@ def check_for_files(dirPath, startTime, endTime, tdelta, tRes):
 
     startFile = glob.glob(dirPath+'/'+filenamePattern + '*' + startTimeInFile)[0]
     endTimeInFile = find_time_in_file(endTime, startTimeInFile)
-    endFile = glob.glob(dirPath+'/'+filenamePattern + '*'+endTimeInFile+'*')[0]
+    endFile = glob.glob(dirPath+'/'+filenamePattern + '*' + endTimeInFile + '*')[0]
 
     currFile = startFile
     filelist = []
