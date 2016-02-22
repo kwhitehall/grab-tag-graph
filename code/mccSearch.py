@@ -44,8 +44,6 @@ class MawManager(BaseManager):
 
 MawManager.register("Maw", MaskedArrayWrapper)
 mawManager = MawManager()
-mawManager.start()
-arrayProxy = mawManager.Maw()
 
 manager = Manager()
 varsDict = manager.dict()
@@ -61,7 +59,7 @@ class CeFinder(object):
         self.TRMMdirName = TRMMdirName
 
     def __call__(self,t):
-        return find_single_frame_cloud_elements(t,arrayProxy,self.timelist,\
+        return find_single_frame_cloud_elements(t,varsDict['images'],self.timelist,\
             varsDict['lat'],varsDict['lon'],self.userVariables,self.TRMMdirName)    
 #**********************************************************************************************************************
 def find_cloud_elements(mergImgs, timelist, lat, lon, userVariables, graphVariables, TRMMdirName=None):
@@ -92,10 +90,14 @@ def find_cloud_elements(mergImgs, timelist, lat, lon, userVariables, graphVariab
     global PROXY_ARRAY
     PROXY_ARRAY = mergImgs
 
+    mawManager.start()
+    arrayProxy = mawManager.Maw()
+
     arrayProxy.populate(userVariables)
     varsDict['lat'] = lat
     varsDict['lon'] = lon
-    
+    varsDict['images'] = arrayProxy
+
     global LAT
     LAT = lat
     global LON
@@ -103,9 +105,9 @@ def find_cloud_elements(mergImgs, timelist, lat, lon, userVariables, graphVariab
     
     p = Pool(NUM_IMAGE_WORKERS)
     image_proc_start = time.time()
-    
+
     results = p.map(CeFinder(timelist, userVariables, TRMMdirName), xrange(mergImgs.shape[0]))
-    
+
     return assemble_graph(results, userVariables, graphVariables)
 #**********************************************************************************************************************
 def assemble_graph(results, userVariables, graphVariables):
@@ -278,7 +280,7 @@ def find_single_frame_cloud_elements(t,mergImgs,timelist, lat, lon, userVariable
     LAT = lat
     global LON
     LON = lon
-    
+
     # global P_TIME
     
     cloudElementsJSON = []  #list of the key, value objects associated with a CE in the graph
