@@ -651,7 +651,7 @@ def read_binary_data(userVariables):
     for files in userVariables.filelist:
         try:
                 bLON, bLAT, t = read_MERG_pixel_file(files)
-
+    
                 inputList.extend(t)
                 print t.shape
                 if len(inputList) == 2:
