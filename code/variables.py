@@ -81,7 +81,8 @@ class UserVariables(object):
             self.MAXIMUM_DURATION = 24   # max number of frames the MCC can last for
             self.DIRS = {'mainDirStr': "../firstattempt",
                          'TRMMdirName': "../datadir/TRMM",
-                         'CEoriDirName': "../datadir/MERG"}
+                         'CEoriDirName': "../datadir/MERG",
+                         'MERGBinaryDirName': "../datadir/MERGBinary"}
             self.filelist = None
 
         self.STRUCTURING_ELEMENT = [[0, 1, 0],  # The matrix for determining the pattern for the contiguous boxes and must

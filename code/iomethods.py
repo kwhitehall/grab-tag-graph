@@ -4,12 +4,13 @@ import re
 import string
 import subprocess
 import sys
+import math
 from datetime import timedelta, datetime
 from os import path
 
 import numpy as np
 import numpy.ma as ma
-from netCDF4 import Dataset
+import netCDF4
 
 import utils
 import variables
@@ -256,6 +257,7 @@ def read_data(varName, latName, lonName, userVariables, filelist=None):
     timeName = 'time'
 
     filelistInstructions = userVariables.DIRS['CEoriDirName']+'/*'
+    print filelistInstructions
     
     if filelist is None and userVariables.filelist is None:
         userVariables.filelist = glob.glob(filelistInstructions)
@@ -268,6 +270,7 @@ def read_data(varName, latName, lonName, userVariables, filelist=None):
     tempMaskedValueNp = []
 
     nfiles = len(userVariables.filelist)
+    print nfiles
 
     # Crash nicely if there are no netCDF files
     if nfiles == 0:
@@ -275,7 +278,7 @@ def read_data(varName, latName, lonName, userVariables, filelist=None):
         sys.exit()
     else:
         # Open the first file in the list to read in lats, lons and generate the  grid for comparison
-        tmp = Dataset(userVariables.filelist[0], 'r+', format='NETCDF4')
+        tmp = netCDF4.Dataset(userVariables.filelist[0], 'r+', format='NETCDF4')
 
         alllatsraw = tmp.variables[latName][:]
         alllonsraw = tmp.variables[lonName][:]
@@ -303,7 +306,7 @@ def read_data(varName, latName, lonName, userVariables, filelist=None):
 
     for files in userVariables.filelist:
         try:
-            thisFile = Dataset(files, 'r', format='NETCDF4')
+            thisFile = netCDF4.Dataset(files, 'r', format='NETCDF4')
             # Clip the dataset according to user lat, lon coordinates
             # Mask the data and fill with zeros for later
             tempRaw = thisFile.variables[varName][:, latminIndex:latmaxIndex, lonminIndex:lonmaxIndex].astype('int16')
@@ -518,5 +521,153 @@ def decode_time_from_string(timeString):
     print 'Error decoding time string: string does not match a predefined time format'
     return 0
     # **********************************************************************************************************************
+def write_np_array_to_ncdf(lon, lat, t, fileName, dirName):
+    '''
+        Purpose:: Convert a numPy array to netCDF
+
+        Inputs:: lon: a string representing the time units found in the file metadata
+                 lat: an integer representing the time interval found in the file's metadata
+                 t: A 3 dimensional numPy array holding temperatures in Kelvin.
+                    The first dimension is time and the second and third dimensions are longitude/latitude
+                 fileName: The name of the file to be written to
+                 dirName: Path to the directory to be written to
+        Returns:: None. It writes to a netCDF file with extension .nc
+    '''
+
+    ncdf = netCDF4.Dataset(dirName + '/' + fileName + '.nc', "w", format="NETCDF4")
+    ncdf.Conventions = "COARDS"  # Set global attributes
+    ncdf.calendar = "standard"
+    ncdf.comments = "File"
+    ncdf.model = "geos/das"
+    ncdf.center = "gsfc"
+
+    time = ncdf.createDimension("time", None)  # Create and set dimensions
+    longitude = ncdf.createDimension("longitude", size=9896)
+    latitude = ncdf.createDimension("latitude", size=3298)
+
+    longitudeVariable = ncdf.createVariable("longitude", "double", dimensions=("longitude",))  # Create and set variables
+    longitudeVariable.units = "degrees_east"                                                   # and their local attributes
+    longitudeVariable.long_name = "Longitude"
+
+    latitudeVariable = ncdf.createVariable("latitude", "double", dimensions=("latitude",))
+    latitudeVariable.units = "degrees_north"
+    latitudeVariable.long_name = "Latitude"
+
+    timeVariable = ncdf.createVariable("time", "double", dimensions=("time",))
+
+    ch4Variable = ncdf.createVariable("ch4", np.float, dimensions=("time","latitude","longitude",))
+    ch4Variable.comments = "Unknown1 variable comment"
+    ch4Variable.long_name = "IR BT (add 75 to this value)"
+    ch4Variable.units = ""
+    ch4Variable.grid_name = "grid01"
+    ch4Variable.grid_type = "linear"
+    ch4Variable.level_description = "Earth surface"
+    ch4Variable.time_statistic = "instantaneous"
+    ch4Variable.missing_value = float(330)
+
+    mergFileName = fileName  # Parse file name to get date and time to set as an attribute of timeVariable
+    year = mergFileName[5:9]    # Fix this later to use the functions in iomethods
+    month = mergFileName[9:11]
+    day = mergFileName[11:13]
+    hour = mergFileName[13:15]
+
+    timeVariable.units = "hours since " + year + "-" + month + "-" + day + " " + hour
+
+    longitudeVariable[:] = lon  # Assign numPy arrays to netCDF variables
+    latitudeVariable[:] = lat
+    ch4Variable[:,:,:] = t
+
+    ncdf.close()
+
+
+def read_MERG_pixel_file(path, shape=(2, 3298, 9896), offset=75.):
+    '''
+    Read MERG brightness temperature from binary file. Thanks to Brian Wilson for this contribution.
+    File contains two large arrays (2 time epochs: on the hour and the half hour)
+    of temperature (Kelvin) as an unsigned integer byte, offset by 75 so it will fit in the 0-255 range.
+    For documentation, see http://www.cpc.ncep.noaa.gov/products/global_precip/html/README.
+    '''
+    f = open(path, 'rb')
+    x = np.fromfile(f, dtype=np.uint8, count=-1)       # count=-1 means read entire file
+    f.close()
+
+    t = x.astype(np.float).reshape(shape)
+    t += offset
+
+    lon = np.arange(0.0182, 360., 0.036378335, dtype=np.float)
+
+    lat = np.arange(59.982, -60., -0.036383683, dtype=np.float)
+
+    return lon, lat, t
+
+# **********************************************************************************************************************
+
+def read_binary_data(varName, latName, lonName, userVariables, filelist=None):
+    '''
+        Purpose::
+            Read gridded data into (t, lat, lon) arrays for processing
+
+        Inputs::
+            varName: a string representing the variable name to use from the file
+            latName: a string representing the latitude from the file's metadata
+            lonName: a string representing the longitude from the file's metadata
+            userVariables:
+            filelist (optional): a list of strings representing the filenames between the start and end dates provided
+
+        Returns:
+
+        Outputs::
+            A list containing numpy arrays (t, lon, lat)
+
+        Assumptions::
+            (1) All the files requested to extract data are from the same instrument/model, and thus have the same
+            metadata properties (varName, latName, lonName) as entered
+            (2) Assumes rectilinear grids for input datasets i.e. lat, lon will be 1D arrays
+    '''
+
+    global LAT
+    global LON
+
+    filelistInstructions = userVariables.DIRS['MERGBinaryName']+'/*'
+
+    if filelist == None and userVariables.filelist == None:
+        userVariables.filelist = glob.glob(filelistInstructions)
+
+    userVariables.filelist.sort()
+
+    inputList = []
+    timeList = []
+    tList = []
+    bLONList = []
+    bLATList = []
+    t = np.array()
+    bLON = np.array()
+    bLAT = np.array()
+
+    nfiles = len(userVariables.filelist)
+
+    # Crash if there are no binary files
+    if nfiles == 0:
+        print 'Error: No files in this directory! Exiting elegantly'
+        sys.exit()
+
+    for files in userVariables.filelist:
+        try:
+                bLON, bLAT, t = read_MERG_pixel_file(userVariables.DIRS['MERGBinaryDirName'] + files)
+                LON, LAT = np.meshgrid(bLON, bLAT)
+
+                tList.extend(t)
+
+        except:
+            print 'bad file! ', files
+
+    return inputList, timeList, LAT, LON, userVariables
+
+
+if __name__ == '__main__':
+    user = variables.UserVariables(useJSON=False)
+    lon, lat, t = read_MERG_pixel_file(user.DIRS['MERGBinaryDirName'] + '/merg_2006091100_4km-pixel')  # Testing for 1 file
+    write_np_array_to_ncdf(lon, lat, t, 'merg_2006091100_4km-pixel', user.DIRS['MERGBinaryDirName'])
+
 
 
