@@ -615,6 +615,18 @@ def write_c1_grad_script(origsFile):
 
 # *********************************************************************************************************************
 
+def time_in_range(start, end, x):
+    '''
+    Return true if x is in the range [start, end]
+    Code taken from Stackoverflow @ http://stackoverflow.com/questions/10747974/how-to-check-if-the-current-time-is-in-range-in-python
+    by author - Dietrich Epp
+
+    '''
+    if start <= end:
+        return start <= x <= end
+    else:
+        return start <= x or x <= end
+
 
 # ******************************************************************
 # DEPRECATED FUNCTIONS

@@ -94,8 +94,8 @@ class UserVariables(object):
         self.check_lons(self.LONMIN, self.LONMAX)
         self.check_times(self.startDateTime, self.endDateTime)
         self.check_dirs(self.DIRS['CEoriDirName'], self.DIRS['TRMMdirName'])
-        self.ir_inputs(self.DIRS['CEoriDirName'], self.startDateTime, self.endDateTime)
-        self.trmm_inputs(self.DIRS['TRMMdirName'], self.startDateTime, self.endDateTime)
+        #self.ir_inputs(self.DIRS['CEoriDirName'], self.startDateTime, self.endDateTime)
+        #self.trmm_inputs(self.DIRS['TRMMdirName'], self.startDateTime, self.endDateTime)
         self.setup_all()
         
     def check_lats(self, LATMIN, LATMAX):

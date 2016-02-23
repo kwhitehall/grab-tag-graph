@@ -15,6 +15,28 @@ import netCDF4
 import utils
 import variables
 
+def get_fileList_for_binaries(dirPath, startTime, endTime):
+    '''
+
+    '''
+
+    fileList = glob.glob(dirPath+'/*-pixel')
+    fileList.sort()
+
+    newFileList = []
+
+    for file in fileList:
+        dateFromFileName = [token for token in file.split('_') if token.isdigit()]  # Parse date from MERG binary file name
+
+        dateAsDateTime = datetime.strptime(dateFromFileName[0], '%Y%m%d%H')
+        start = datetime.strptime(startTime, '%Y%m%d%H%S')  # Convert start and end times to datetimes to compare with
+        end = datetime.strptime(endTime, '%Y%m%d%H%S')      # the current file's time
+
+        if utils.time_in_range(start, end, dateAsDateTime):
+            newFileList.append(file)
+
+    return newFileList
+
 
 def check_for_files(dirPath, startTime, endTime, tdelta, tRes):
     '''
@@ -79,6 +101,8 @@ def check_for_files(dirPath, startTime, endTime, tdelta, tRes):
                 startTimeInFile += eachPart + '*'
             elif eachPart in startTime:
                 startTimeInFile += eachPart + '*'
+
+    print startTimeInFile
 
     if hasDelimiter is False:
         fileDate = int(re.search(r'\d+', re.split(r'.nc', path.basename(filelist[0]))[0]).group())
@@ -173,7 +197,7 @@ def read_vars(userVariables):
     while utils.valid_date(userVariables.endDateTime) != True:
         print "Invalid time entered for endDateTime!"
         
-    # Check if all the files exisits in the MERG and TRMM directories entered
+    # Check if all the files exists in the MERG and TRMM directories entered
     test, _ = check_for_files(userVariables.DIRS['TRMMdirName'], userVariables.startDateTime, userVariables.endDateTime, 3, 'hour')
     if test is False:
         print "Error with files in the TRMM directory entered. Please check your files before restarting. "
@@ -257,7 +281,6 @@ def read_data(varName, latName, lonName, userVariables, filelist=None):
     timeName = 'time'
 
     filelistInstructions = userVariables.DIRS['CEoriDirName']+'/*'
-    print filelistInstructions
     
     if filelist is None and userVariables.filelist is None:
         userVariables.filelist = glob.glob(filelistInstructions)
@@ -602,47 +625,21 @@ def read_MERG_pixel_file(path, shape=(2, 3298, 9896), offset=75.):
 
 # **********************************************************************************************************************
 
-def read_binary_data(varName, latName, lonName, userVariables, filelist=None):
+def read_binary_data(userVariables):
     '''
-        Purpose::
-            Read gridded data into (t, lat, lon) arrays for processing
 
-        Inputs::
-            varName: a string representing the variable name to use from the file
-            latName: a string representing the latitude from the file's metadata
-            lonName: a string representing the longitude from the file's metadata
-            userVariables:
-            filelist (optional): a list of strings representing the filenames between the start and end dates provided
-
-        Returns:
-
-        Outputs::
-            A list containing numpy arrays (t, lon, lat)
-
-        Assumptions::
-            (1) All the files requested to extract data are from the same instrument/model, and thus have the same
-            metadata properties (varName, latName, lonName) as entered
-            (2) Assumes rectilinear grids for input datasets i.e. lat, lon will be 1D arrays
     '''
 
     global LAT
     global LON
 
-    filelistInstructions = userVariables.DIRS['MERGBinaryName']+'/*'
-
-    if filelist == None and userVariables.filelist == None:
-        userVariables.filelist = glob.glob(filelistInstructions)
+    userVariables.filelist = get_fileList_for_binaries(userVariables.DIRS['MERGBinaryDirName'],
+                                                       userVariables.startDateTime, userVariables.endDateTime)
 
     userVariables.filelist.sort()
 
     inputList = []
     timeList = []
-    tList = []
-    bLONList = []
-    bLATList = []
-    t = np.array()
-    bLON = np.array()
-    bLAT = np.array()
 
     nfiles = len(userVariables.filelist)
 
@@ -653,10 +650,12 @@ def read_binary_data(varName, latName, lonName, userVariables, filelist=None):
 
     for files in userVariables.filelist:
         try:
-                bLON, bLAT, t = read_MERG_pixel_file(userVariables.DIRS['MERGBinaryDirName'] + files)
-                LON, LAT = np.meshgrid(bLON, bLAT)
+                bLON, bLAT, t = read_MERG_pixel_file(files)
 
-                tList.extend(t)
+                inputList.extend(t)
+                print t.shape
+                if len(inputList) == 2:
+                    LON, LAT = np.meshgrid(bLON, bLAT)
 
         except:
             print 'bad file! ', files
@@ -666,8 +665,11 @@ def read_binary_data(varName, latName, lonName, userVariables, filelist=None):
 
 if __name__ == '__main__':
     user = variables.UserVariables(useJSON=False)
-    lon, lat, t = read_MERG_pixel_file(user.DIRS['MERGBinaryDirName'] + '/merg_2006091100_4km-pixel')  # Testing for 1 file
-    write_np_array_to_ncdf(lon, lat, t, 'merg_2006091100_4km-pixel', user.DIRS['MERGBinaryDirName'])
+    read_binary_data(user)
+
+
+    #lon, lat, t = read_MERG_pixel_file(user.DIRS['MERGBinaryDirName'] + '/merg_2009083110_4km-pixel')  # Testing for 1 file
+    #write_np_array_to_ncdf(lon, lat, t, 'merg_2009083110_4km-pixel', user.DIRS['MERGBinaryDirName'])
 
 
 
