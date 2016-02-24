@@ -17,6 +17,7 @@ from scipy import ndimage
 import utils
 import plotting
 import variables
+import resource
 
 NUM_IMAGE_WORKERS = 2 #Number of workers to send off for extracting CE in the independent image frames
 P_TIME = 0
@@ -67,18 +68,19 @@ def find_cloud_elements(proxy, graphVariables, TRMMdirName=None):
         required according to Vila et al. (2008) is 2400km^2
         therefore, 2400/16 = 150 contiguous squares
     '''
-
     global LAT
     LAT = proxy.get_lat()
     global LON
     LON = proxy.get_lon()
 
-    varsDict['lat'] = LAT
-    varsDict['lon'] = LON
-    
+    varsDict['lat'] = proxy.get_lat()
+    varsDict['lon'] = proxy.get_lon()
+
     p = Pool(NUM_IMAGE_WORKERS)
     image_proc_start = time.time()
     results = p.map(CeFinder(proxy, TRMMdirName), xrange(proxy.get_shape(0)))
+    p.close()
+    p.join()
 
     return assemble_graph(results, proxy.get_user_variables(), graphVariables)
 #**********************************************************************************************************************
