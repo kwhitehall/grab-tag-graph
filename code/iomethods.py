@@ -307,7 +307,7 @@ def read_data(varName, latName, lonName, userVariables, filelist=None):
 
         latsraw = []
         lonsraw = []
-        tmp.close
+        tmp.close()
 
     for files in userVariables.filelist:
         try:
@@ -342,7 +342,7 @@ def read_data(varName, latName, lonName, userVariables, filelist=None):
             #want a list of list
             timelist.extend(time2store)
             inputData.extend(tempMaskedValue)
-            thisFile.close
+            thisFile.close()
             thisFile = None
 
         except:
