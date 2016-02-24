@@ -30,10 +30,10 @@ class MaskedArrayWrapper:
     	return self.mergImgs.shape[i]
 
     def grab_label(self, t):
-        return ndimage.measurements.label(PROXY_ARRAY[t,:,:], structure=self.userVariables.STRUCTURING_ELEMENT)
+        return ndimage.measurements.label(self.mergImgs[t,:,:], structure=self.userVariables.STRUCTURING_ELEMENT)
 
     def get_slice(self, t, loc):
-        return PROXY_ARRAY[t,:,:][loc]
+        return self.mergImgs[t,:,:][loc]
 
     def get_time_list(self):
     	return self.timeList
