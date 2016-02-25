@@ -28,5 +28,6 @@
     "T_BB_MIN": 218, 
     "YRES": 4.0, 
     "XRES": 4.0, 
-    "TRES": 1
+    "TRES": 1,
+    "numProcs":2
 }

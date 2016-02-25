@@ -48,7 +48,8 @@ class UserVariables(object):
                 self.MAXIMUM_DURATION = int(data['MAXIMUM_DURATION'])
                 self.LAT_DISTANCE = float(data['LAT_DISTANCE'])    # The avg distance in km for 1deg lat for the region being considered
                 self.LON_DISTANCE = float(data['LON_DISTANCE'])    # The avg distance in km for 1deg lon for the region being considered
-                self.DIRS = data['DIRS']  
+                self.DIRS = data['DIRS'] 
+                self.numProcs = data['numProcs'] 
 
             except IOError, e:
                 print "Config file not found! Using default variables..."
@@ -83,6 +84,8 @@ class UserVariables(object):
                          'TRMMdirName': "../datadir/TRMM",
                          'CEoriDirName': "../datadir/MERG"}
             self.filelist = None
+            self.numProcs = 2 # Number of workers to send off for extracting CE in the independent image frames
+
 
         self.STRUCTURING_ELEMENT = [[0, 1, 0],  # The matrix for determining the pattern for the contiguous boxes and must
                                     [1, 1, 1],  # have same rank of the matrix it is being compared against
