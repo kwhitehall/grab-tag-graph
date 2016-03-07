@@ -335,7 +335,7 @@ def read_data(varName, latName, lonName, userVariables, fileType, filelist=None)
                 inputData.extend(tempMaskedValue)
                 thisFile.close()
             except:
-                print 'bad file! ', files
+                print 'bad file! ', files   # TODO Add masking logic to binary files
 
         elif fileType == 'binary': # TODO Add logic to add time2store to timelist
             try:                   # Can't use the above lines because it comes from a netCDF time variable
