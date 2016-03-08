@@ -81,7 +81,7 @@ class UserVariables(object):
             self.MAXIMUM_DURATION = 24   # max number of frames the MCC can last for
             self.DIRS = {'mainDirStr': "../firstattempt",
                          'TRMMdirName': "../datadir/TRMM",
-                         'CEoriDirName': "../datadir/MERGBinary"
+                         'CEoriDirName': "../datadir/MERG"
                          }
             self.filelist = None
 

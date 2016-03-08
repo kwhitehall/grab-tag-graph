@@ -17,9 +17,12 @@ import variables
 
 def get_fileList_for_binaries(dirPath, startTime, endTime):
     '''
+        Input::
+        Output::
+        Assumptions::
     '''
-
-    fileList = glob.glob(dirPath+'/*-pixel')
+    fileString = os.path.join(dirPath, '*-pixel')
+    fileList = glob.glob(fileString)
     fileList.sort()
 
     newFileList = []
@@ -31,9 +34,12 @@ def get_fileList_for_binaries(dirPath, startTime, endTime):
         dateFromFileName = [token for token in file.split('_') if token.isdigit()]  # Parse date from MERG binary file name
 
         dateAsDateTime = datetime.strptime(dateFromFileName[0], '%Y%m%d%H')
-        if (start <= end) and (start <= dateAsDateTime <= end):
+        if start <= end and start <= dateAsDateTime <= end:
+            newFileList.append(file)
+        elif start <= dateAsDateTime or dateAsDateTime <= end:
             newFileList.append(file)
 
+    print len(newFileList)
     return newFileList
 
 
@@ -525,7 +531,7 @@ def decode_time_from_string(timeString):
     print 'Error decoding time string: string does not match a predefined time format'
     return 0
     # **********************************************************************************************************************
-def write_np_array_to_ncdf(lon, lat, inputData, fileName, dirName):
+def write_np_array_to_ncdf(lon, lat, inputData, fileName, dirName, globalAttrDict, dimensionsDict, variablesDict):
     '''
         Purpose:: Convert a numPy array to netCDF
         Inputs:: lon: A string representing the time units found in the file metadata
@@ -537,36 +543,18 @@ def write_np_array_to_ncdf(lon, lat, inputData, fileName, dirName):
         Returns:: None. It writes to a netCDF file with extension .nc
     '''
 
-    ncdf = netCDF4.Dataset(dirName + '/' + fileName + '.nc', "w", format="NETCDF4")
-    ncdf.Conventions = "COARDS"  # Set global attributes
-    ncdf.calendar = "standard"
-    ncdf.comments = "File"
-    ncdf.model = "geos/das"
-    ncdf.center = "gsfc"
+    newFilePath = os.path.join(dirName, fileName + '.nc')
+    ncdf = netCDF4.Dataset(newFilePath, "w", format="NETCDF4")  # TODO fix filename and dirname
 
-    time = ncdf.createDimension("time", None)  # Create and set dimensions
-    longitude = ncdf.createDimension("longitude", size=9896)
-    latitude = ncdf.createDimension("latitude", size=3298)
+    ncdf.setncatts(globalAttrDict)
 
-    longitudeVariable = ncdf.createVariable("longitude", "double", dimensions=("longitude",))  # Create and set variables
-    longitudeVariable.units = "degrees_east"                                                   # and their local attributes
-    longitudeVariable.long_name = "Longitude"
+    for name, size in dimensionsDict.iteritems():
+        ncdf.createDimension(name, size)
 
-    latitudeVariable = ncdf.createVariable("latitude", "double", dimensions=("latitude",))
-    latitudeVariable.units = "degrees_north"
-    latitudeVariable.long_name = "Latitude"
-
-    timeVariable = ncdf.createVariable("time", "double", dimensions=("time",))
-
-    ch4Variable = ncdf.createVariable("ch4", np.float, dimensions=("time","latitude","longitude",))
-    ch4Variable.comments = "Unknown1 variable comment"
-    ch4Variable.long_name = "IR BT (add 75 to this value)"
-    ch4Variable.units = ""
-    ch4Variable.grid_name = "grid01"
-    ch4Variable.grid_type = "linear"
-    ch4Variable.level_description = "Earth surface"
-    ch4Variable.time_statistic = "instantaneous"
-    ch4Variable.missing_value = float(330)
+    for name, variableInformation in variablesDict.iteritems():
+        dataType, dimensions, attributes = variableInformation
+        ncdf.createVariable(name, dataType, dimensions)
+        ncdf.variables[name].setncatts(attributes)
 
     mergFileName = fileName  # Parse file name to get date and time to set as an attribute of timeVariable
     year = mergFileName[5:9]    # Fix this later to use the functions in iomethods
@@ -574,11 +562,11 @@ def write_np_array_to_ncdf(lon, lat, inputData, fileName, dirName):
     day = mergFileName[11:13]
     hour = mergFileName[13:15]
 
-    timeVariable.units = "hours since " + year + "-" + month + "-" + day + " " + hour
+    # timeVariable.units = "hours since " + year + "-" + month + "-" + day + " " + hour
 
-    longitudeVariable[:] = lon  # Assign numPy arrays to netCDF variables
-    latitudeVariable[:] = lat
-    ch4Variable[:,:,:] = inputData
+    ncdf.variables['longitude'][:] = lon  # Assign numPy arrays to netCDF variables
+    ncdf.variables['latitude'][:] = lat
+    ncdf.variables['ch4'][:,:,:] = inputData
 
     ncdf.close()
 
@@ -600,11 +588,10 @@ def read_MERG_pixel_file(path, shape=(2, 3298, 9896), offset=75.):
         Assumption::The binary file was unmodified when downloaded. The shape tuple that is hardcoded in the parameter
                     will always be the same unless the data in the documentation above changes.
 
-
     '''
     pixel_file = open(path, 'rb')
-    pixel_file_array = np.fromfile(pixel_file, dtype=np.uint8, count=-1)       # count=-1 means read entire file
-    temperatures = pixel_file_array.astype(np.float).reshape(shape)
+    pixel_array = np.fromfile(pixel_file, dtype=np.uint8, count=-1)  # count=-1 means read entire file
+    temperatures = pixel_array.astype(np.float).reshape(shape)
     temperatures += offset
 
     lon = np.arange(0.0182, 360., 0.036378335, dtype=np.float)
@@ -615,9 +602,28 @@ def read_MERG_pixel_file(path, shape=(2, 3298, 9896), offset=75.):
 
 # **********************************************************************************************************************
 
-if __name__ == '__main__':
-    print "Hello"
+if __name__ == '__main__':  # Testing for write_np_array_to_ncdf
 
-    # user = variables.UserVariables(useJSON=False)
-    #write_np_array_to_ncdf(lon, lat, t, 'merg_2009083110_4km-pixel', user.DIRS['MERGBinaryDirName'])
+    user = variables.UserVariables(useJSON=False)
+    lon, lat, temperatures = read_MERG_pixel_file('/home/caocampb/PycharmProjects/grab-tag-graph/datadir/MERG/merg_2006091100_4km-pixel')
+
+    globalAttrDict = {"Conventions": "COARDS", "calendar": "standard", "comments": "File", "model": "geos/das",
+                      "center": "gsfc"}
+
+    dimensionsDict = {"time": None, "longitude": 9896, "latitude": 3298}
+
+    #  Key: name of the variable  Value: 3-Tuple containing data related to the variable. Namely the data type, dimension(s), and
+    #  attributes. Dimensions is a 2-tuple, attributes is a dictionary
+    variablesDict = {"longitude": ("double", ("longitude",), {"units": "degrees_east", "long_name": "Longitude"}),
+                     "latitude": ("double", ("latitude",), {"units": "degrees_north", "lat_name": "Latitude"}),
+                     "time": ("double", ("time",), {}),
+                     "ch4": ("float", ("time", "latitude", "longitude",),
+                             {"long_name": "IR BT (add 75 to this value)", "level_description": "Earth surface",
+                              "time_statistic": "instantaneous", "missing_value": float(330)})
+                     }
+
+    write_np_array_to_ncdf(lon, lat, temperatures, 'mergFile', user.DIRS['CEoriDirName'], globalAttrDict,
+                          dimensionsDict, variablesDict)
+    files = get_fileList_for_binaries(user.DIRS['CEoriDirName'], user.startDateTime, user.endDateTime)
+
 
