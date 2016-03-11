@@ -284,11 +284,9 @@ def read_data(varName, latName, lonName, userVariables, fileType, filelist=None)
     time2store = None
     tempMaskedValueNp = []
 
-    numberOfFiles = len(userVariables.filelist)
-
     # Crash nicely if there are no netCDF files
-    if numberOfFiles == 0:
-        print 'Error: no files in this directory! Exiting elegantly'
+    if len(userVariables.filelist) == 0:
+        print 'Error: no files found'
         sys.exit()
 
     if fileType == 'netCDF':
@@ -302,7 +300,7 @@ def read_data(varName, latName, lonName, userVariables, fileType, filelist=None)
     elif fileType == 'binary':
         alllatsraw, alllonsraw, _ = read_MERG_pixel_file(userVariables.filelist[0])
 
-        # Get the lat/lon info data (different resolution)
+    # Get the lat/lon info data (different resolution)
     latminNETCDF = utils.find_nearest(alllatsraw, float(userVariables.LATMIN))
     latmaxNETCDF = utils.find_nearest(alllatsraw, float(userVariables.LATMAX))
     lonminNETCDF = utils.find_nearest(alllonsraw, float(userVariables.LONMIN))
@@ -348,7 +346,7 @@ def read_data(varName, latName, lonName, userVariables, fileType, filelist=None)
                 print 'bad file! ', files   # TODO Add masking logic to binary files
 
         elif fileType == 'binary':  # TODO Add logic to add time2store to timelist
-            try:                   # Can't use the above lines because it comes from a netCDF time variable
+            try:                    # Can't use the above lines because it comes from a netCDF time variable
                 _, _, temperatures = read_MERG_pixel_file(files)
 
                 inputData.extend(temperatures)
@@ -537,14 +535,21 @@ def decode_time_from_string(timeString):
     # **********************************************************************************************************************
 def write_np_array_to_ncdf(lon, lat, inputData, fileName, dirName, globalAttrDict, dimensionsDict, variablesDict):
     '''
-        Purpose:: Convert a numPy array to netCDF
+        Purpose:: Write temperature data from a numPy array to netCDF
         Inputs:: lon: A numPy array with longitudes from 0 to 360 degrees
-                 lat: a numPy array from
-                 t: A 3 dimensional numPy array holding temperatures in Kelvin.
+                 lat: a numPy array with latitudes from -60 to 60 degrees
+                 inputData: A 3 dimensional numPy array holding temperatures in Kelvin.
                     The first dimension is time and the second and third dimensions are longitude/latitude
-                 fileName: The name of the file to be written to
+                 fileName: The name of the file where the data was read in earlier
                  dirName: Path to the directory to be written to
+                 globalAttrDict: A dictionary with key: name of the attribute, value: description of the attribute
+                 dimensionsDict: A dictionary with key: name of the dimension, value: size of the dimension
+                 variablesDict: A dictionary with key: name, value: 3-tuple where
+                                the first value is the name of the variable.
+                                the second value is a n-tuple with the names of dimensions of the variable
+                                the third value is a dictionary with key: name of the attribute, value: description of the attribute
         Returns:: None. It writes to a netCDF file with extension .nc
+        Assumptions:: fileName is in the format: merg_YYYYMMDDHH_4km-pixel
 
     '''
 
