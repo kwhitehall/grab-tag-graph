@@ -312,20 +312,19 @@ def read_data(varName, latName, lonName, userVariables, fileType):
         if fileType == 'netCDF':
             try:
                 thisFile = netCDF4.Dataset(file, 'r', format='NETCDF4')
+
                 # Clip the dataset according to user lat, lon coordinates
                 # Mask the data and fill with zeros for later
                 tempRaw = thisFile.variables[varName][:, latminIndex:latmaxIndex, lonminIndex:lonmaxIndex].astype('int16')
                 tempMask = ma.masked_array(tempRaw, mask=(tempRaw > userVariables.T_BB_MAX), fill_value=0)
                 # Get the actual values that the mask returned
 
-                # timeIndex, latIndex, lonIndex = index
-
                 tempMaskedValue = tempMask
                 tempMaskedValue[tempMask.mask] = 0
 
                 xtimes = thisFile.variables[timeName]
 
-                # Convert this time to a python datastring
+                # Convert this time to a python datestring
                 time2store, _ = get_model_times(xtimes, timeName)
 
                 # Extend instead of append because get_model_times returns a list and we don't want a list of list
@@ -342,7 +341,7 @@ def read_data(varName, latName, lonName, userVariables, fileType):
                 dateFromFileName = [token for token in file.split('_') if token.isdigit()]  # Parse date from MERG binary file name
                 dateAsDateTime = datetime.strptime(dateFromFileName[0], '%Y%m%d%H')
 
-                timelist.extend(dateAsDateTime)
+                timelist.append(dateAsDateTime)
                 outputData.extend(temperatures)
 
             except:
@@ -598,6 +597,8 @@ def read_MERG_pixel_file(path, shape=(2, 3298, 9896), offset=75.):
 
     lon = np.arange(0.0182, 360., 0.036378335, dtype=np.float)
     lat = np.arange(59.982, -60., -0.036383683, dtype=np.float)
+    
+    pixel_file.close()
 
     return lon, lat, temperatures
 
