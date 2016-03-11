@@ -597,7 +597,7 @@ def read_MERG_pixel_file(path, shape=(2, 3298, 9896), offset=75.):
 
     lon = np.arange(0.0182, 360., 0.036378335, dtype=np.float)
     lat = np.arange(59.982, -60., -0.036383683, dtype=np.float)
-    
+
     pixel_file.close()
 
     return lon, lat, temperatures
