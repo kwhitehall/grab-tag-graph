@@ -566,15 +566,12 @@ def write_np_array_to_ncdf(lon, lat, inputData, fileName, dirName, globalAttrDic
         ncdf.createVariable(nameOfVariable, dataType, dimensions)
         ncdf.variables[nameOfVariable].setncatts(attributes)
 
-    mergFileName = fileName  # Parse file name to get date and time to set as an attribute of timeVariable
-    year = mergFileName[5:9]    # Fix this later to use the functions in iomethods
-    month = mergFileName[9:11]
-    day = mergFileName[11:13]
-    hour = mergFileName[13:15]
+    dateFromFileName = [token for token in file.split('_') if token.isdigit()]  # Parse date from MERG binary file name
+    dateAsDateTime = datetime.strptime(dateFromFileName[0], '%Y%m%d%H')
+    ncdf.variables['time'].setncattr('units', 'hours since ' + str(dateAsDateTime.year) + '-' + str(dateAsDateTime.month) +
+                                     '-' + str(dateAsDateTime.day) + ' ' + str(dateAsDateTime.hour))
 
-    # timeVariable.units = "hours since " + year + "-" + month + "-" + day + " " + hour
-
-    ncdf.variables['longitude'][:] = lon  # Assign numPy arrays to netCDF variables
+    ncdf.variables['longitude'][:] = lon
     ncdf.variables['latitude'][:] = lat
     ncdf.variables['ch4'][:,:,:] = inputData
 
