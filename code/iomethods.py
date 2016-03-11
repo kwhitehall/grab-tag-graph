@@ -18,7 +18,8 @@ import variables
 def get_fileList_for_binaries(dirPath, startTime, endTime):
     '''
         Purpose:: There are two kinds of files in the MERG directory. One has files in binary form, and the other in
-                  netCDF. This function is to get only the files that are in between the startTime and endTime.
+                  netCDF. This function is to get only the files that are in between the startTime and endTime that are
+                  in binary format.
         Input:: dirPath: Path to where the binary MERG files are.
                 startTime: The cutoff for the earliest files you want
                 endTime: The cutoff for the latest files you want
@@ -38,8 +39,8 @@ def get_fileList_for_binaries(dirPath, startTime, endTime):
 
     for file in fileList:
         dateFromFileName = [token for token in file.split('_') if token.isdigit()]  # Parse date from MERG binary file name
-
         dateAsDateTime = datetime.strptime(dateFromFileName[0], '%Y%m%d%H')
+
         if start <= end and start <= dateAsDateTime <= end:
             newFileList.append(file)
         elif start <= dateAsDateTime or dateAsDateTime <= end:
@@ -246,7 +247,7 @@ def create_main_directory(mainDirStr):
 
     return MAIN_DIRECTORY
 # **********************************************************************************************************************
-def read_data(varName, latName, lonName, userVariables, fileType, filelist=None):
+def read_data(varName, latName, lonName, userVariables, fileType):
     '''
         Purpose::
             Read gridded data into (t, lat, lon) arrays for processing
@@ -254,32 +255,22 @@ def read_data(varName, latName, lonName, userVariables, fileType, filelist=None)
             varName: a string representing the variable name to use from the file
             latName: a string representing the latitude from the file's metadata
             lonName: a string representing the longitude from the file's metadata
-            userVariables:
-            filelist (optional): a list of strings representing the filenames between the start and end dates provided
+            userVariables: a UserVariables object
             fileType: a string representing whether we want to read either a netCDF file or a binary file.
         Outputs::
             A 3D masked array (t,lat,lon) with only the variables which meet the minimum temperature
-            criteria for each frame
+            criteria for each frame if the fileType is netCDF
+            If the fileType is binary, then the data is only masked by latitude/longitude ranges and not by temperature
         Assumptions::
             (1) All the files requested to extract data are from the same instrument/model, and thus have the same
             metadata properties (varName, latName, lonName) as entered
             (2) Assumes rectilinear grids for input datasets i.e. lat, lon will be 1D arrays
     '''
 
-    timeName = 'time'
-
-    if fileType == 'binary':      # TODO Remove call to get_filelist_for_binary by merging it with the function "check_for_times"
+    if fileType == 'binary':
         userVariables.filelist = get_fileList_for_binaries(userVariables.DIRS['CEoriDirName'], userVariables.startDateTime,
                                                            userVariables.endDateTime)
-
-    filelistInstructions = userVariables.DIRS['CEoriDirName']+'/*'
-
-    if filelist is None and userVariables.filelist is None:
-        userVariables.filelist = glob.glob(filelistInstructions)
-
-    userVariables.filelist.sort()
-
-    inputData = []
+    outputData = []
     timelist = []
     time2store = None
     tempMaskedValueNp = []
@@ -311,16 +302,16 @@ def read_data(varName, latName, lonName, userVariables, fileType, filelist=None)
     lonmaxIndex = (np.where(alllonsraw == lonmaxNETCDF))[0][0]
 
     # Subsetting the data
-
     latsraw = alllatsraw[latminIndex:latmaxIndex]
     lonsraw = alllonsraw[lonminIndex:lonmaxIndex]
 
     LON, LAT = np.meshgrid(lonsraw, latsraw)
 
-    for files in userVariables.filelist:
+    timeName = 'time'
+    for file in userVariables.filelist:
         if fileType == 'netCDF':
             try:
-                thisFile = netCDF4.Dataset(files, 'r', format='NETCDF4')
+                thisFile = netCDF4.Dataset(file, 'r', format='NETCDF4')
                 # Clip the dataset according to user lat, lon coordinates
                 # Mask the data and fill with zeros for later
                 tempRaw = thisFile.variables[varName][:, latminIndex:latmaxIndex, lonminIndex:lonmaxIndex].astype('int16')
@@ -337,26 +328,29 @@ def read_data(varName, latName, lonName, userVariables, fileType, filelist=None)
                 # Convert this time to a python datastring
                 time2store, _ = get_model_times(xtimes, timeName)
 
-                # Extend instead of append because get_model_times returns a list already and we don't
-                # want a list of list
+                # Extend instead of append because get_model_times returns a list and we don't want a list of list
                 timelist.extend(time2store)
-                inputData.extend(tempMaskedValue)
+                outputData.extend(tempMaskedValue)
                 thisFile.close()
             except:
-                print 'bad file! ', files   # TODO Add masking logic to binary files
+                print 'bad file! ', file   # TODO Add masking logic to binary files
 
-        elif fileType == 'binary':  # TODO Add logic to add time2store to timelist
-            try:                    # Can't use the above lines because it comes from a netCDF time variable
-                _, _, temperatures = read_MERG_pixel_file(files)
+        elif fileType == 'binary':
+            try:
+                _, _, temperatures = read_MERG_pixel_file(file)
 
-                inputData.extend(temperatures)
+                dateFromFileName = [token for token in file.split('_') if token.isdigit()]  # Parse date from MERG binary file name
+                dateAsDateTime = datetime.strptime(dateFromFileName[0], '%Y%m%d%H')
+
+                timelist.extend(dateAsDateTime)
+                outputData.extend(temperatures)
 
             except:
-                print 'bad file! ', files
+                print 'bad file! ', file
 
-    inputData = ma.array(inputData)
+    outputData = ma.array(outputData)
 
-    return inputData, timelist, LAT, LON, userVariables
+    return outputData, timelist, LAT, LON, userVariables
 # **********************************************************************************************************************
 def get_model_times(xtimes, timeVarName):
     '''
@@ -591,7 +585,7 @@ def read_MERG_pixel_file(path, shape=(2, 3298, 9896), offset=75.):
                 Offset - The temperatures were scaled to fit into 1-byte by subtracting 75, so the offset is used to
                          add 75 back to each temperature.
         Output:: lon - A numPy array containing longitudes from 0 to 360 degrees
-                 lat - A numpy array containting latitudes from 60 to -60 degrees
+                 lat - A numpy array containing latitudes from 60 to -60 degrees
 
         Assumption::The binary file was unmodified when downloaded. The shape tuple that is hardcoded in the parameter
                     will always be the same unless the data changes.
@@ -624,13 +618,14 @@ if __name__ == '__main__':  # Testing for write_np_array_to_ncdf
     variablesDict = {"longitude": ("double", ("longitude",), {"units": "degrees_east", "long_name": "Longitude"}),
                      "latitude": ("double", ("latitude",), {"units": "degrees_north", "lat_name": "Latitude"}),
                      "time": ("double", ("time",), {}),
-                     "ch4": ("float", ("time", "latitude", "longitude",),
+                     "ch4": ("float",
+                             ("time", "latitude", "longitude",),
                              {"long_name": "IR BT (add 75 to this value)", "level_description": "Earth surface",
                               "time_statistic": "instantaneous", "missing_value": float(330)})
                      }
 
     write_np_array_to_ncdf(lon, lat, temperatures, 'mergFile', user.DIRS['CEoriDirName'], globalAttrDict,
-                          dimensionsDict, variablesDict)
+                           dimensionsDict, variablesDict)
 
 
 
