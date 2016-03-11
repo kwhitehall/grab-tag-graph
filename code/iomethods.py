@@ -17,9 +17,15 @@ import variables
 
 def get_fileList_for_binaries(dirPath, startTime, endTime):
     '''
-        Input::
-        Output::
-        Assumptions::
+        Purpose:: There are two kinds of files in the MERG directory. One has files in binary form, and the other in
+                  netCDF. This function is to get only the files that are in between the startTime and endTime.
+        Input:: dirPath: Path to where the binary MERG files are.
+                startTime: The cutoff for the earliest files you want
+                endTime: The cutoff for the latest files you want
+        Output:: A list of a path to files that are between
+        Assumptions:: startTime and endTime are in the format YYYYMMDDHHSS
+                      The filename always ends with -pixel
+                      The date is included in the file name, with the format YYYYMMDDHH
     '''
     fileString = os.path.join(dirPath, '*-pixel')
     fileList = glob.glob(fileString)
@@ -250,9 +256,7 @@ def read_data(varName, latName, lonName, userVariables, fileType, filelist=None)
             lonName: a string representing the longitude from the file's metadata
             userVariables:
             filelist (optional): a list of strings representing the filenames between the start and end dates provided
-            fileType: a string representing whether we want to read either netCDF or a binary file. Either way, they
-                       get converted into a numPy array for later processing.
-        Returns:
+            fileType: a string representing whether we want to read either a netCDF file or a binary file.
         Outputs::
             A 3D masked array (t,lat,lon) with only the variables which meet the minimum temperature
             criteria for each frame
@@ -343,7 +347,7 @@ def read_data(varName, latName, lonName, userVariables, fileType, filelist=None)
             except:
                 print 'bad file! ', files   # TODO Add masking logic to binary files
 
-        elif fileType == 'binary': # TODO Add logic to add time2store to timelist
+        elif fileType == 'binary':  # TODO Add logic to add time2store to timelist
             try:                   # Can't use the above lines because it comes from a netCDF time variable
                 _, _, temperatures = read_MERG_pixel_file(files)
 
@@ -534,27 +538,28 @@ def decode_time_from_string(timeString):
 def write_np_array_to_ncdf(lon, lat, inputData, fileName, dirName, globalAttrDict, dimensionsDict, variablesDict):
     '''
         Purpose:: Convert a numPy array to netCDF
-        Inputs:: lon: A string representing the time units found in the file metadata
-                 lat: An integer representing the time interval found in the file's metadata
+        Inputs:: lon: A numPy array with longitudes from 0 to 360 degrees
+                 lat: a numPy array from
                  t: A 3 dimensional numPy array holding temperatures in Kelvin.
                     The first dimension is time and the second and third dimensions are longitude/latitude
                  fileName: The name of the file to be written to
                  dirName: Path to the directory to be written to
         Returns:: None. It writes to a netCDF file with extension .nc
+
     '''
 
     newFilePath = os.path.join(dirName, fileName + '.nc')
-    ncdf = netCDF4.Dataset(newFilePath, "w", format="NETCDF4")  # TODO fix filename and dirname
+    ncdf = netCDF4.Dataset(newFilePath, "w", format="NETCDF4")
 
-    ncdf.setncatts(globalAttrDict)
+    ncdf.setncatts(globalAttrDict)  # Set global attributes, dimensions, and variables respectively.
 
-    for name, size in dimensionsDict.iteritems():
-        ncdf.createDimension(name, size)
+    for nameOfDimension, size in dimensionsDict.iteritems():
+        ncdf.createDimension(nameOfDimension, size)
 
-    for name, variableInformation in variablesDict.iteritems():
+    for nameOfVariable, variableInformation in variablesDict.iteritems():
         dataType, dimensions, attributes = variableInformation
-        ncdf.createVariable(name, dataType, dimensions)
-        ncdf.variables[name].setncatts(attributes)
+        ncdf.createVariable(nameOfVariable, dataType, dimensions)
+        ncdf.variables[nameOfVariable].setncatts(attributes)
 
     mergFileName = fileName  # Parse file name to get date and time to set as an attribute of timeVariable
     year = mergFileName[5:9]    # Fix this later to use the functions in iomethods
@@ -583,10 +588,11 @@ def read_MERG_pixel_file(path, shape=(2, 3298, 9896), offset=75.):
                 Shape - The shape we want the data to be in
                 Offset - The temperatures were scaled to fit into 1-byte by subtracting 75, so the offset is used to
                          add 75 back to each temperature.
-        Output:: Lon - A numPy array containing longitudes from
-        Returns::
+        Output:: lon - A numPy array containing longitudes from 0 to 360 degrees
+                 lat - A numpy array containting latitudes from 60 to -60 degrees
+
         Assumption::The binary file was unmodified when downloaded. The shape tuple that is hardcoded in the parameter
-                    will always be the same unless the data in the documentation above changes.
+                    will always be the same unless the data changes.
 
     '''
     pixel_file = open(path, 'rb')
@@ -595,7 +601,6 @@ def read_MERG_pixel_file(path, shape=(2, 3298, 9896), offset=75.):
     temperatures += offset
 
     lon = np.arange(0.0182, 360., 0.036378335, dtype=np.float)
-
     lat = np.arange(59.982, -60., -0.036383683, dtype=np.float)
 
     return lon, lat, temperatures
@@ -613,7 +618,7 @@ if __name__ == '__main__':  # Testing for write_np_array_to_ncdf
     dimensionsDict = {"time": None, "longitude": 9896, "latitude": 3298}
 
     #  Key: name of the variable  Value: 3-Tuple containing data related to the variable. Namely the data type, dimension(s), and
-    #  attributes. Dimensions is a 2-tuple, attributes is a dictionary
+    #  attributes. Data type is a string. Dimensions is a tuple, attributes is a dictionary
     variablesDict = {"longitude": ("double", ("longitude",), {"units": "degrees_east", "long_name": "Longitude"}),
                      "latitude": ("double", ("latitude",), {"units": "degrees_north", "lat_name": "Latitude"}),
                      "time": ("double", ("time",), {}),
@@ -624,6 +629,6 @@ if __name__ == '__main__':  # Testing for write_np_array_to_ncdf
 
     write_np_array_to_ncdf(lon, lat, temperatures, 'mergFile', user.DIRS['CEoriDirName'], globalAttrDict,
                           dimensionsDict, variablesDict)
-    files = get_fileList_for_binaries(user.DIRS['CEoriDirName'], user.startDateTime, user.endDateTime)
+
 
 

@@ -51,7 +51,7 @@ def main():
     print "\n -------------- Read MERG Data ----------"
     print "\n Start the timer for the data ingest process"
     readMergStart = time.time()
-    mergImgs, timeList, LAT, LON, userVariables = iomethods.read_data('ch4', 'latitude', 'longitude', userVariables)
+    mergImgs, timeList, LAT, LON, userVariables = iomethods.read_data('ch4', 'latitude', 'longitude', userVariables, fileType='netCDF')
     readMergEnd = time.time()
     print "\n End the timer for the data ingest process"
     print "\n Total time to complete data ingest is %g seconds" % (readMergEnd - readMergStart)
