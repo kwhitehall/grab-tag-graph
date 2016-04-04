@@ -528,10 +528,19 @@ def decode_time_from_string(timeString):
     print 'Error decoding time string: string does not match a predefined time format'
     return 0
     # **********************************************************************************************************************
-def write_np_array_to_ncdf(lonDict, latDict, timeDict, ch4Dict, fileName, dirName, globalAttrDict, dimensionsDict, variablesDict):
+def write_MERG_pixel_to_ncdf(lonDict, latDict, timeDict, ch4Dict, fileName, dirName, globalAttrDict, dimensionsDict):
     '''
-        Purpose:: Write temperature data from a numPy array to netCDF
-        Inputs::
+        Purpose:: Write temperature data from specific NumPy arrays to netCDF format. See the method
+                  read_MERG_pixel_file to see how the data is arranged.
+        Inputs:: lonDict, latDict, timeDict, ch4Dict - dictionaries with
+                     string keys of 'name', 'dataType', and 'dimensions' and their corresponding data as values.
+                     The other key: value pairs are the variable's attributes, except for the last pair which is the
+                     data associated with the variable.
+                 globalAttrDict is a dictionary where the key is a string that represents the name of the global attribute
+                    and the value is the description of the global attribute.
+                 dimensionsDict is a dictionary where the key is a string that represents the name of the dimension
+                    and the value is either an integer representing the size or none to represent an unlimited dimension
+
         Returns:: None. It writes to a netCDF file with extension .nc
         Assumptions:: fileName is in the format: merg_YYYYMMDDHH_4km-pixel
 
@@ -540,7 +549,7 @@ def write_np_array_to_ncdf(lonDict, latDict, timeDict, ch4Dict, fileName, dirNam
     newFilePath = os.path.join(dirName, fileName + '.nc')
     ncdf = netCDF4.Dataset(newFilePath, "w", format="NETCDF4")
 
-    ncdf.setncatts(globalAttrDict)  # Set global attributes, dimensions, and variables respectively.
+    ncdf.setncatts(globalAttrDict)  # Set global attributes, dimensions, and lastly, each variable
 
     for nameOfDimension, size in dimensionsDict.iteritems():
         ncdf.createDimension(nameOfDimension, size)
@@ -610,6 +619,7 @@ def read_MERG_pixel_file(path, shape=(2, 3298, 9896), offset=75.):
 if __name__ == '__main__':  # Testing for write_np_array_to_ncdf
 
     user = variables.UserVariables(useJSON=False)
+
     lon, lat, temperatures = read_MERG_pixel_file('/home/caocampb/PycharmProjects/grab-tag-graph/datadir/MERG/merg_2006091100_4km-pixel')
 
     lonDict = {"name": "longitude", "dataType": "double", "dimensions": ("longitude",), "units": "degrees_east", "long_name": "Longitude", "values": lon}
@@ -627,8 +637,8 @@ if __name__ == '__main__':  # Testing for write_np_array_to_ncdf
 
     dimensionsDict = {"time": None, "longitude": 9896, "latitude": 3298}
 
-    write_np_array_to_ncdf(lonDict, latDict, timeDict, ch4Dict, 'mergFile', user.DIRS['CEoriDirName'], globalAttrDict,
-                           dimensionsDict)
+    write_MERG_pixel_to_ncdf(lonDict, latDict, timeDict, ch4Dict, 'mergFile', user.DIRS['CEoriDirName'], globalAttrDict,
+                             dimensionsDict)
 
 
 
