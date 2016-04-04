@@ -553,10 +553,19 @@ def write_np_array_to_ncdf(lonDict, latDict, timeDict, ch4Dict, fileName, dirNam
     ncdf.variables[latDict['name']].setncattr('units', latDict['units'])
     ncdf.variables[latDict['name']].setncattr('long_name', latDict['long_name'])
 
+    ncdf.createVariable(timeDict['name'], timeDict['dataType'], timeDict['dimensions'])
+
     dateFromFileName = [token for token in file.split('_') if token.isdigit()]  # Parse date from MERG binary file name
     dateAsDateTime = datetime.strptime(dateFromFileName[0], '%Y%m%d%H')         # then set attribute for 'time'
+
     ncdf.variables['time'].setncattr('units', 'hours since ' + str(dateAsDateTime.year) + '-' + str(dateAsDateTime.month) +
                                      '-' + str(dateAsDateTime.day) + ' ' + str(dateAsDateTime.hour))
+
+    ncdf.createVariable(ch4Dict['name'], ch4Dict['dataType'], ch4Dict['dimensions'])
+    ncdf.variables[ch4Dict['name']].setncattr('units', latDict['units'])
+    ncdf.variables[ch4Dict['name']].setncattr('long_name', latDict['long_name'])
+    ncdf.variables[ch4Dict['name']].setncattr('time_statistic', latDict['time_statistic'])
+    ncdf.variables[ch4Dict['name']].setncattr('missing_value', latDict['missing_value'])
 
     ncdf.variables['longitude'][:] = lonDict['values']
     ncdf.variables['latitude'][:] = latDict['values']
@@ -621,13 +630,7 @@ if __name__ == '__main__':  # Testing for write_np_array_to_ncdf
     write_np_array_to_ncdf(lonDict, latDict, timeDict, ch4Dict, 'mergFile', user.DIRS['CEoriDirName'], globalAttrDict,
                            dimensionsDict)
 
-    globalAttrDict = {"Conventions": "COARDS", "calendar": "standard", "comments": "File", "model": "geos/das",
-                      "center": "gsfc"}
 
-    dimensionsDict = {"time": None, "longitude": 9896, "latitude": 3298}
-
-    write_np_array_to_ncdf(lonDict, latDict, timeDict, ch4Dict, 'mergFile', user.DIRS['CEoriDirName'], globalAttrDict,
-                           dimensionsDict)
 
 
 
