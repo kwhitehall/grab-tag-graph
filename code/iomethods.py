@@ -336,16 +336,13 @@ def read_data(varName, latName, lonName, userVariables, fileType):
             try:
                 _, _, temperatures = read_MERG_pixel_file(file)
 
-                latLonMask = np.ones_like(temperatures, dtype=bool) # Mask temperatures that aren't within lat, lon range
-                latLonMask[:, latminIndex:latmaxIndex, lonminIndex:lonmaxIndex] = 0
-
-                temperaturesMaskedByLatLon = ma.masked_array(temperatures, latLonMask)
+                temperatures = temperatures[:, latminIndex:latmaxIndex, lonminIndex:lonmaxIndex]
 
                 dateFromFileName = [token for token in file.split('_') if token.isdigit()]  # Parse date from MERG binary file name
                 dateAsDateTime = datetime.strptime(dateFromFileName[0], '%Y%m%d%H')
 
                 timelist.append(dateAsDateTime)
-                outputData.extend(temperaturesMaskedByLatLon)
+                outputData.extend(temperatures)
             except:
                 print 'bad file!', file
 
