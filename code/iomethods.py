@@ -273,7 +273,7 @@ def read_data(varName, latName, lonName, userVariables, fileType):
     outputData = []
     timelist = []
 
-    # Crash nicely if there are no netCDF files
+    # Crash nicely if there are no files
     if len(userVariables.filelist) == 0:
         print 'Error: no files found'
         sys.exit()
@@ -529,14 +529,17 @@ def write_MERG_pixel_to_ncdf(lonDict, latDict, timeDict, ch4Dict, fileName, dirN
     '''
         Purpose:: Write temperature data from specific NumPy arrays to netCDF format. See the method
                   read_MERG_pixel_file to see how the data is arranged.
-        Inputs:: lonDict, latDict, timeDict, ch4Dict - dictionaries with
-                     string keys of 'name', 'dataType', and 'dimensions' and their corresponding data as values.
+
+        Inputs:: lonDict, latDict, timeDict, ch4Dict are all dictionaries with
+                     string keys of 'name', 'dataType', and 'dimensions' and their corresponding data as the value.
                      The other key: value pairs are the variable's attributes, except for the last pair which is the
                      data associated with the variable.
                  globalAttrDict is a dictionary where the key is a string that represents the name of the global attribute
                     and the value is the description of the global attribute.
                  dimensionsDict is a dictionary where the key is a string that represents the name of the dimension
                     and the value is either an integer representing the size or none to represent an unlimited dimension
+                 fileName is a string representing what you want to name the newly created file
+                 dirName is a string representing where you want to place the newly created file
 
         Returns:: None. It writes to a netCDF file with extension .nc
         Assumptions:: fileName is in the format: merg_YYYYMMDDHH_4km-pixel
