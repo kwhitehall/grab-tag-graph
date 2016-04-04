@@ -602,6 +602,48 @@ def read_MERG_pixel_file(path, shape=(2, 3298, 9896), offset=75.):
 
     return lon, lat, temperatures
 
+
+# TODO this seems to be unnecessary but I'll leave it for now just in case
+# FORMAT_DEFS = {
+#     "trmm" :
+#         {
+#             "longitude" : "longitude",
+#             "latitude" : "latitude",
+#             "data_variable" : "pcp"
+#         },
+#     "mtsat" :
+#         {
+#             "longitude": "longitude",
+#             "latitude": "latitude",
+#             "data_variable": "albedo"
+#         }
+# }
+
+def read_netCDF_to_array(filename, variable_to_extract, min_lat, max_lat, min_lon, max_lon,
+                         min_t, max_t):
+
+    dataset = netCDF4.Dataset(filename, 'r', format='NETCDF4')
+
+    extracted_variable = dataset.variables[variable_to_extract][:, :, :]
+    lats_list = dataset.variables['latitude'][:]
+    lons_list = dataset.variables['longitude'][:]
+
+    # Reformatting longitude format to [-180, 180]
+    # TODO is this necessary and correctly done?
+    lons_list[lons_list > 180] = lons_list[lons_list > 180] - 360.
+
+    # TODO rearrange variables? is it necessary? Are we even going to have files with more than one timestamp?
+
+    # TODO verify lat/lon is represented in dataset
+
+    # TODO verify time range is represented in dataset.
+    # This might be a problem, some data has no time encoded. Are we supposed to
+    # scan a folder? Assume from filenames?
+
+    dataset.close()
+
+    return ma.masked_array(extracted_variable)
+
 # **********************************************************************************************************************
 
 if __name__ == '__main__':  # Testing for write_np_array_to_ncdf
