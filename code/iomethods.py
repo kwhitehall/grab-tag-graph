@@ -634,7 +634,8 @@ def read_netCDF_to_array(filename, variable_to_extract, min_lat, max_lat, min_lo
 
     # TODO rearrange variables? is it necessary? Are we even going to have files with more than one timestamp?
 
-    # TODO verify lat/lon is represented in dataset
+    if not verify_lat_lon (lats_list, lons_list, min_lat, max_lat, min_lon, max_lon):
+      return None
 
     # TODO verify time range is represented in dataset.
     # This might be a problem, some data has no time encoded. Are we supposed to
@@ -643,6 +644,11 @@ def read_netCDF_to_array(filename, variable_to_extract, min_lat, max_lat, min_lo
     dataset.close()
 
     return ma.masked_array(extracted_variable)
+
+
+def verify_lat_lon (lats_list, lons_list, min_lat, max_lat, min_lon, max_lon):
+  return min (lats_list) >= min_lat and min (lons_list) >= min_lon and\
+   max (lats_list) <= max_lat and max (lons_list) <= max_lon;
 
 # **********************************************************************************************************************
 
