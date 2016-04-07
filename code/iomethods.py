@@ -15,6 +15,8 @@ import netCDF4
 import utils
 import variables
 
+import re
+
 def get_fileList_for_binaries(dirPath, startTime, endTime):
     '''
         Purpose:: There are two kinds of files in the MERG directory. One has files in binary form, and the other in
@@ -616,22 +618,28 @@ def read_MERG_pixel_file(path, shape=(2, 3298, 9896), offset=75.):
 
 
 # TODO this seems to be unnecessary but I'll leave it for now just in case
-# FORMAT_DEFS = {
-#     "trmm" :
-#         {
-#             "longitude" : "longitude",
-#             "latitude" : "latitude",
-#             "data_variable" : "pcp"
-#         },
-#     "mtsat" :
-#         {
-#             "longitude": "longitude",
-#             "latitude": "latitude",
-#             "data_variable": "albedo"
-#         }
-# }
+FORMAT_DEFS = {
+    "trmm" :
+        {
+            "longitude" : "longitude",
+            "latitude" : "latitude",
+            "data_variable" : "pcp",
+            "date_regex": re.compile("([0-9]{4})([0-9]{2})([0-9]{2})\\.([0-9]{2})")
+        },
+    "mtsat" :
+        {
+            "longitude": "longitude",
+            "latitude": "latitude",
+            "data_variable": "albedo",
+            "date_regex": re.compile("([0-9]{4})([0-9]{2})([0-9]{2})_([0-9]{2})([0-9]{2})")
+        },
+    "wrf":
+        {
+            "date_regex": re.compile("([0-9]{4})-([0-9]{2})-([0-9]{2})_([0-9]{2})-([0-9]{2})-([0-9]{2})")
+        }
+}
 
-def read_netCDF_to_array(filename, variable_to_extract, min_lat, max_lat, min_lon, max_lon,
+def read_netCDF_to_array(filename, filetype, variable_to_extract, min_lat, max_lat, min_lon, max_lon,
                          min_t, max_t):
 
     dataset = netCDF4.Dataset(filename, 'r', format='NETCDF4')
@@ -650,6 +658,11 @@ def read_netCDF_to_array(filename, variable_to_extract, min_lat, max_lat, min_lo
       return None
 
     # TODO verify time range is represented in dataset.
+
+    date_match_group = FORMAT_DEFS[filetype].date_regex.match(filename)
+    date_numbers = [int(num) for num in date_match_group.groups()[1:]]
+    date = datetime.datetime(*date_numbers)
+
     # This might be a problem, some data has no time encoded. Are we supposed to
     # scan a folder? Assume from filenames?
 
