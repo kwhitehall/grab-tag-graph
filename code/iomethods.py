@@ -657,14 +657,12 @@ def read_netCDF_to_array(filename, filetype, variable_to_extract, min_lat, max_l
     if not verify_lat_lon (lats_list, lons_list, min_lat, max_lat, min_lon, max_lon):
       return None
 
-    # TODO verify time range is represented in dataset.
-
+    # Verifying time range
     date_match_group = FORMAT_DEFS[filetype].date_regex.match(filename)
     date_numbers = [int(num) for num in date_match_group.groups()[1:]]
     date = datetime.datetime(*date_numbers)
-
-    # This might be a problem, some data has no time encoded. Are we supposed to
-    # scan a folder? Assume from filenames?
+    if not (min_t <= date <= max_t):
+        return None
 
     dataset.close()
 
