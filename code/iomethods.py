@@ -654,8 +654,7 @@ def read_netCDF_to_array(filename, filetype, variable_to_extract, min_lat, max_l
 
     # TODO rearrange variables? is it necessary? Are we even going to have files with more than one timestamp?
 
-    if not verify_lat_lon (lats_list, lons_list, min_lat, max_lat, min_lon, max_lon):
-      return None
+    lats_list, lons_list = trim_lat_lon (lats_list, lons_list, min_lat, max_lat, min_lon, max_lon)
 
     # Verifying time range
     date_match_group = FORMAT_DEFS[filetype].date_regex.match(filename)
@@ -669,9 +668,16 @@ def read_netCDF_to_array(filename, filetype, variable_to_extract, min_lat, max_l
     return ma.masked_array(extracted_variable)
 
 
-def verify_lat_lon (lats_list, lons_list, min_lat, max_lat, min_lon, max_lon):
-  return min (lats_list) >= min_lat and min (lons_list) >= min_lon and\
-   max (lats_list) <= max_lat and max (lons_list) <= max_lon
+def trim_lat_lon (lats_list, lons_list, min_lat, max_lat, min_lon, max_lon):
+  # If already in range, do nothing.
+  if min (lats_list) >= min_lat and min (lons_list) >= min_lon and\
+   max (lats_list) <= max_lat and max (lons_list) <= max_lon:
+   return lats_list, lons_list
+  
+  # Trim data to be within range
+  lats_list = [i for i in lats_list if i >= min_lat and i <= max_lat]
+  lons_list = [i for i in lons_list if i >= min_lon and i <= max_lon]
+  return lats_list, lons_list
 
 # **********************************************************************************************************************
 
