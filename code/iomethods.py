@@ -648,7 +648,7 @@ def read_netCDF_to_array(filename, variable_to_extract, min_lat, max_lat, min_lo
 
 def verify_lat_lon (lats_list, lons_list, min_lat, max_lat, min_lon, max_lon):
   return min (lats_list) >= min_lat and min (lons_list) >= min_lon and\
-   max (lats_list) <= max_lat and max (lons_list) <= max_lon;
+   max (lats_list) <= max_lat and max (lons_list) <= max_lon
 
 # **********************************************************************************************************************
 
