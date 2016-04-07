@@ -639,12 +639,12 @@ FORMAT_DEFS = {
         }
 }
 
-def read_netCDF_to_array(filename, filetype, variable_to_extract, min_lat, max_lat, min_lon, max_lon,
+def read_netCDF_to_array(filepath, filetype, variable_to_extract, min_lat, max_lat, min_lon, max_lon,
                          min_t, max_t):
 
-    dataset = netCDF4.Dataset(filename, 'r', format='NETCDF4')
+    dataset = netCDF4.Dataset(filepath, 'r', format='NETCDF4')
 
-    extracted_variable = dataset.variables[variable_to_extract][:, :, :]
+    extracted_variable = dataset.variables[variable_to_extract][:, :]
     lats_list = dataset.variables['latitude'][:]
     lons_list = dataset.variables['longitude'][:]
 
@@ -656,10 +656,12 @@ def read_netCDF_to_array(filename, filetype, variable_to_extract, min_lat, max_l
 
     lats_list, lons_list = trim_lat_lon (lats_list, lons_list, min_lat, max_lat, min_lon, max_lon)
 
+
+    filename = path.basename(filepath)
     # Verifying time range
-    date_match_group = FORMAT_DEFS[filetype].date_regex.match(filename)
-    date_numbers = [int(num) for num in date_match_group.groups()[1:]]
-    date = datetime.datetime(*date_numbers)
+    date_match_group = FORMAT_DEFS[filetype]["date_regex"].search(filename)
+    date_numbers = [int(num) for num in date_match_group.groups()]
+    date = datetime(*date_numbers)
     if not (min_t <= date <= max_t):
         return None
 
