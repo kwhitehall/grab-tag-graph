@@ -649,7 +649,12 @@ FORMAT_DEFS = {
 def read_netCDF_to_array(filepath, filetype, variable_to_extract, min_lat, max_lat, min_lon, max_lon,
                          min_t, max_t):
     '''
-        TODO add documentation
+        Purpose::
+
+        Input::
+        Output::
+
+        Assumption::
     '''
 
     dataset = netCDF4.Dataset(filepath, 'r', format='NETCDF4')
@@ -663,9 +668,9 @@ def read_netCDF_to_array(filepath, filetype, variable_to_extract, min_lat, max_l
     lats_data = dataset.variables[FORMAT_DEFS[filetype]["latitude"]]
     lons_data = dataset.variables[FORMAT_DEFS[filetype]["longitude"]]
 
-    # Grabing list of latitudes and longitudes
+    # Grabbing list of latitudes and longitudes
     if filetype is "wrf":
-        # TODO slicing assumes dimentions are always in this order : u'Time', u'south_north', u'west_east'
+        # TODO slicing assumes dimensions are always in this order : u'Time', u'south_north', u'west_east'
         # TODO check if this is true
         lats_list = lats_data[0,:,0]
         lons_list = lons_data[0,0,:]
@@ -691,14 +696,13 @@ def read_netCDF_to_array(filepath, filetype, variable_to_extract, min_lat, max_l
         string_times = ["".join(x) for x in dataset.variables["Times"][:]]
         times = [decode_time_from_string(x) for x in string_times]
 
-    # Verifying requested area and times are available
+    # TODO verify and trim times
+    # TODO refactor out verification and trimming  maybe?
+    # Verifying and trimming coordinates
     if min(lats_list) > min_lat or min(lons_list) > min_lon or \
             max(lats_list) < max_lat or max(lons_list) < max_lon:
         raise RuntimeError("Area requested is outside of file data range")
-    if min(times) > min_t or max(times) < max_t:
-        raise RuntimeError("Time slice requested is outside of file data range")
 
-    # Trimming data according to requested area and times
     trimmed_lats_indices = [i for i in range(len(lats_list))
                         if lats_list[i] >= min_lat and lats_list[i] <= max_lat]
     trimmed_lats_start = trimmed_lats_indices[0]
@@ -709,27 +713,29 @@ def read_netCDF_to_array(filepath, filetype, variable_to_extract, min_lat, max_l
     trimmed_lons_start = trimmed_lons_indices[0]
     trimmed_lons_end = trimmed_lons_indices[-1] + 1
 
-    trimmed_time_indices = [i for i in range(len(times))
-                        if times >= min_t and times <= max_t]
-    trimmed_time_start = trimmed_time_indices[0]
-    trimmed_time_end = trimmed_time_indices[-1] + 1
-
 
     trimmed_lats = lats_list[trimmed_lats_start:trimmed_lats_end]
     trimmed_lons = lons_list[trimmed_lons_start:trimmed_lons_end]
-    trimmed_times = times[trimmed_time_start: trimmed_time_end]
-
-    trimmed_data = extracted_variable[trimmed_time_start: trimmed_time_end,
-                                      trimmed_lats_start:trimmed_lats_end,
-                                      trimmed_lons_start:trimmed_lons_end]
-
+    trimmed_data = extracted_variable[:,trimmed_lats_start:trimmed_lats_end,
+                                        trimmed_lons_start:trimmed_lons_end]
 
     dataset.close()
 
-    return ma.masked_array(trimmed_data), trimmed_times, trimmed_lats, trimmed_lons
+    return ma.masked_array(trimmed_data), times, trimmed_lats, trimmed_lons
 
 
 # **********************************************************************************************************************
+if __name__ == '__main__':
+    minDate = datetime(2005, 1, 1)
+    maxDate = datetime(2007, 1, 1)
+
+    trimmed_data, times, trimmed_lats, trimmed_lons = read_netCDF_to_array('/home/campbell/Desktop/TRMM Sample/3B42.20060911.00.7A.nc', 'trmm', 'irp', 10, 15
+                         , 10, 15, minDate, maxDate)
+
+    print trimmed_data
+    print times
+    print trimmed_lats
+    print trimmed_lons
 
 
 
