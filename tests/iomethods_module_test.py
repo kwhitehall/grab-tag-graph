@@ -13,7 +13,7 @@ def test_read_MERG_and_write_MERG():
     '''
     user = variables.UserVariables(useJSON=False)
 
-    lon, lat, temperatures = iomethods.read_MERG_pixel_file('../datadir/MERG/merg_2006091100_4km-pixel')
+    lon, lat, temperatures = iomethods.read_MERG_pixel_file('../datadir/MERG/merg_2009083100_4km-pixel.nc')
 
     lonDict = {"name": "longitude", "dataType": "double", "dimensions": ("longitude",), "units": "degrees_east", "long_name": "Longitude", "values": lon}
 
@@ -34,7 +34,7 @@ def test_read_MERG_and_write_MERG():
     iomethods.write_MERG_pixel_to_ncdf(lonDict, latDict, timeDict, ch4Dict, 'merg_2006091100_4km-pixel', user.DIRS['CEoriDirName'], globalAttrDict,
                              dimensionsDict)
 
-if __name__ == 'main':
+if __name__ == '__main__':
     test_read_MERG_and_write_MERG()
 
 
