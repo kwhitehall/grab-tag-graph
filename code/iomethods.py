@@ -663,9 +663,6 @@ def read_netCDF_to_array(filepath, filetype, variable_to_extract, min_lat, max_l
     lats_data = dataset.variables[FORMAT_DEFS[filetype]["latitude"]]
     lons_data = dataset.variables[FORMAT_DEFS[filetype]["longitude"]]
 
-    # Reformatting longitude format to [-180, 180]
-    lons_list[lons_list > 180] = lons_list[lons_list > 180] - 360.
-
     # Grabing list of latitudes and longitudes
     if filetype is "wrf":
         # TODO slicing assumes dimentions are always in this order : u'Time', u'south_north', u'west_east'
@@ -675,6 +672,9 @@ def read_netCDF_to_array(filepath, filetype, variable_to_extract, min_lat, max_l
     else:
         lats_list = lats_data[:]
         lons_list = lons_data[:]
+
+    # Reformatting longitude format to [-180, 180]
+    lons_list[lons_list > 180] = lons_list[lons_list > 180] - 360.
 
     # Grabbing list of times
     time_dict = FORMAT_DEFS[filetype]["time_handling"]
