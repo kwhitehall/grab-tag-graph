@@ -645,6 +645,8 @@ def read_netCDF_to_array(filepath, filetype, variable_to_extract, min_lat, max_l
     dataset = netCDF4.Dataset(filepath, 'r', format='NETCDF4')
 
     extracted_variable = dataset.variables[variable_to_extract][:, :]
+    if extracted_variable.ndim is 2: # adding time dimension to 2D data
+        extracted_variable = extracted_variable[np.newaxis, :, :]
 
     lats_data = dataset.variables[FORMAT_DEFS[filetype]["latitude"]]
     lons_data = dataset.variables[FORMAT_DEFS[filetype]["longitude"]]
@@ -667,6 +669,7 @@ def read_netCDF_to_array(filepath, filetype, variable_to_extract, min_lat, max_l
     # TODO rearrange variables? is it necessary? Are we even going to have files with more than one timestamp?
 
     lats_list, lons_list = trim_lat_lon (lats_list, lons_list, min_lat, max_lat, min_lon, max_lon)
+
 
 
     filename = path.basename(filepath)
