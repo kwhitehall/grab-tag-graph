@@ -323,7 +323,7 @@ def read_data(varName, latName, lonName, userVariables, fileType):
                 xtimes = thisFile.variables[timeName]
 
                 # Convert this time to a python datestring
-                time2store, _ = get_model_times(xtimes, timeName)
+                time2store, _ = get_model_times(xtimes)
 
                 # Extend instead of append because get_model_times returns a list and we don't want a list of list
                 timelist.extend(time2store)
@@ -350,20 +350,20 @@ def read_data(varName, latName, lonName, userVariables, fileType):
 
     return outputData, timelist, LAT, LON, userVariables
 # **********************************************************************************************************************
-def get_model_times(xtimes, timeVarName):
+def get_model_times(xtimes):
     '''
     Purpose:: Routine to convert from model times ('hours since 1900...', 'days since ...')
     into a python datetime structure. Leveraged from Apache OCW
     Inputs::
-        modelFile: a string representing the path to the model file you want to
-        extract the times list and modelTimeStep from
-        timeVarName: a string representing the name of the time variable in the model file
+        xtimes: a netcdf4.variable object with the times, encoded with the
+            described model time format.
     Returns::
         times: a list of python datetime objects describing model data times
         modelTimeStep: a string representing the time step found in the file e.g.
         'hourly','daily','monthly','annual'
     Outputs:: None
-    Assumptions:: None
+    Assumptions:: Assumes the units are described in the variable's "units"
+        attribute as a string.
     '''
 
     timeFormat = xtimes.units
@@ -621,19 +621,31 @@ FORMAT_DEFS = {
         {
             "longitude" : "longitude",
             "latitude" : "latitude",
-            "filename_time_regex": re.compile("([0-9]{4})([0-9]{2})([0-9]{2})\\.([0-9]{2})")
+
+            "time_handling": {
+                "method": "get_model_times",
+                "variable": "time"
+            }
         },
     "mtsat" :
         {
             "longitude": "longitude",
             "latitude": "latitude",
-            "filename_time_regex": re.compile("([0-9]{4})([0-9]{2})([0-9]{2})_([0-9]{2})([0-9]{2})")
+
+            "time_handling": {
+                "method" :"filename_time_regex",
+                "regex_object": re.compile("([0-9]{4})([0-9]{2})([0-9]{2})_([0-9]{2})([0-9]{2})")
+            }
         },
     "wrf":
         {
             "longitude": "XLONG",
             "latitude": "XLAT",
-            "filename_time_regex": re.compile("([0-9]{4})-([0-9]{2})-([0-9]{2})_([0-9]{2})-([0-9]{2})-([0-9]{2})")
+
+            "time_handling": {
+                "method": "filename_time_regex",
+                "regex_object": re.compile("([0-9]{4})-([0-9]{2})-([0-9]{2})_([0-9]{2})-([0-9]{2})-([0-9]{2})")
+            }
         }
 }
 
@@ -658,15 +670,18 @@ def read_netCDF_to_array(filepath, filetype, variable_to_extract, min_lat, max_l
         lats_list = lats_data[:]
         lons_list = lons_data[:]
 
-
-    if "filename_time_regex" in FORMAT_DEFS[filetype]:
+    time_dict = FORMAT_DEFS[filetype]["time_handling"]
+    if time_dict["method"] is "filename_time_regex":
         filename = path.basename(filepath)
 
         # Verifying time range
-        time_match_group = FORMAT_DEFS[filetype]["time_regex"].search(filename)
+        time_match_group = time_dict["regex_object"].search(filename)
         time_numbers = [int(num) for num in time_match_group.groups()]
         time = datetime(*time_numbers)
         times = [time]
+    elif time_dict["method"] is "get_model_times":
+        times = get_model_times(dataset.variables[time_dict["variable"]])
+
 
 
 
