@@ -14,6 +14,7 @@ import netCDF4
 import utils
 import variables
 
+
 def get_fileList_for_binaries(dirPath, startTime, endTime):
     '''
         Purpose:: There are two kinds of files in the MERG directory. One has files in binary form, and the other in
