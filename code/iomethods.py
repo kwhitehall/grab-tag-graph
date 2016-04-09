@@ -663,7 +663,8 @@ def read_netCDF_to_array(filepath, filetype, variable_to_extract, min_lat, max_l
     # Reformatting longitude format to [-180, 180]
     lons_list[lons_list > 180] = lons_list[lons_list > 180] - 360.
 
-
+    # TODO verify and trim times
+    # TODO verification and triming out maybe?
     if min(lats_list) > min_lat or min(lons_list) > min_lon or \
             max(lats_list) < max_lat or max(lons_list) < max_lon:
         raise RuntimeError("Area requested is outside of file data range")
@@ -689,6 +690,8 @@ def read_netCDF_to_array(filepath, filetype, variable_to_extract, min_lat, max_l
     # Verifying time range
     # TODO    obtain datetimes for all positions in the time dimension when
     # TODO    there is more than one timestamp inside file
+    # TODO    Theres some helper functions that parse the time higher up in this
+    # TODO    same file
     date_match_group = FORMAT_DEFS[filetype]["date_regex"].search(filename)
     date_numbers = [int(num) for num in date_match_group.groups()]
     date = datetime(*date_numbers)
@@ -702,7 +705,6 @@ def read_netCDF_to_array(filepath, filetype, variable_to_extract, min_lat, max_l
 
 
 # **********************************************************************************************************************
-
 
 
 
