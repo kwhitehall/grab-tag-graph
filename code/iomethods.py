@@ -514,6 +514,8 @@ def decode_time_from_string(timeString):
             myTime = datetime.strptime(timeString, '%Y-%m-%d %H')
         elif datetime.strptime(timeString, '%Y-%m-%d %H%M'):
             myTime = datetime.strptime(timeString, '%Y-%m-%d %H%M')
+        elif datetime.strptime(timeString, '%Y-%m-%d %H%M'):
+            myTime = datetime.strptime(timeString, '%Y-%m-%d_%H:%M:%S')
         return myTime
 
     except ValueError:
@@ -639,8 +641,7 @@ FORMAT_DEFS = {
             "latitude": "XLAT",
 
             "time_handling": {
-                "method": "filename_time_regex",
-                "regex_object": re.compile("([0-9]{4})-([0-9]{2})-([0-9]{2})_([0-9]{2})-([0-9]{2})-([0-9]{2})")
+                "method": "string_times"
             }
         }
 }
@@ -648,18 +649,24 @@ FORMAT_DEFS = {
 def read_netCDF_to_array(filepath, filetype, variable_to_extract, min_lat, max_lat, min_lon, max_lon,
                          min_t, max_t):
     '''
-
+        TODO add documentation
     '''
 
     dataset = netCDF4.Dataset(filepath, 'r', format='NETCDF4')
 
     extracted_variable = dataset.variables[variable_to_extract][:, :]
-    if extracted_variable.ndim is 2: # adding time dimension to 2D data
+
+    # adding time dimension to 2D data formats
+    if extracted_variable.ndim is 2:
         extracted_variable = extracted_variable[np.newaxis, :, :]
 
     lats_data = dataset.variables[FORMAT_DEFS[filetype]["latitude"]]
     lons_data = dataset.variables[FORMAT_DEFS[filetype]["longitude"]]
 
+    # Reformatting longitude format to [-180, 180]
+    lons_list[lons_list > 180] = lons_list[lons_list > 180] - 360.
+
+    # Grabing list of latitudes and longitudes
     if filetype is "wrf":
         # TODO slicing assumes dimentions are always in this order : u'Time', u'south_north', u'west_east'
         # TODO check if this is true
@@ -669,35 +676,25 @@ def read_netCDF_to_array(filepath, filetype, variable_to_extract, min_lat, max_l
         lats_list = lats_data[:]
         lons_list = lons_data[:]
 
+    # Grabbing list of times
     time_dict = FORMAT_DEFS[filetype]["time_handling"]
     if time_dict["method"] is "filename_time_regex":
         filename = path.basename(filepath)
 
-        # Verifying time range
         time_match_group = time_dict["regex_object"].search(filename)
         time_numbers = [int(num) for num in time_match_group.groups()]
         time = datetime(*time_numbers)
         times = [time]
     elif time_dict["method"] is "get_model_times":
         times = get_model_times(dataset.variables[time_dict["variable"]])
+    elif time_dict["method"] is "string_times":
+        string_times = ["".join(x) for x in dataset.variables["Times"][:]]
+        times = [decode_time_from_string(x) for x in string_times]
 
-
-
-
-    # TODO    obtain datetimes for all positions in the time dimension when
-    # TODO    there is more than one timestamp inside file
-    # TODO    Theres some helper functions that parse the time higher up in this
-    # TODO    same file
-
-
-    if not (min_t <= date <= max_t):
-        return None
-
-    # Reformatting longitude format to [-180, 180]
-    lons_list[lons_list > 180] = lons_list[lons_list > 180] - 360.
 
     # TODO verify and trim times
-    # TODO verification and triming out maybe?
+    # TODO refactor out verification and trimming  maybe?
+    # Verifying and trimming coordinates
     if min(lats_list) > min_lat or min(lons_list) > min_lon or \
             max(lats_list) < max_lat or max(lons_list) < max_lon:
         raise RuntimeError("Area requested is outside of file data range")
@@ -717,8 +714,6 @@ def read_netCDF_to_array(filepath, filetype, variable_to_extract, min_lat, max_l
     trimmed_lons = lons_list[trimmed_lons_start:trimmed_lons_end]
     trimmed_data = extracted_variable[:,trimmed_lats_start:trimmed_lats_end,
                                         trimmed_lons_start:trimmed_lons_end]
-
-
 
 
     dataset.close()
