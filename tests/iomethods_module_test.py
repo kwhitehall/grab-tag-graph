@@ -5,6 +5,7 @@ sys.path.insert(0, '/home/caocampb/PycharmProjects/grab-tag-graph/code/')
 import iomethods
 import variables
 
+
 def test_read_MERG_and_write_MERG():
     '''
         Purpose:: Tests the functions 'read_MERG_pixel_file' and 'write_MERG_pixel_to_ncdf' from iomethods.py as a whole
