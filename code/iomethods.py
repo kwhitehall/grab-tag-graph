@@ -621,19 +621,19 @@ FORMAT_DEFS = {
         {
             "longitude" : "longitude",
             "latitude" : "latitude",
-            "date_regex": re.compile("([0-9]{4})([0-9]{2})([0-9]{2})\\.([0-9]{2})")
+            "filename_time_regex": re.compile("([0-9]{4})([0-9]{2})([0-9]{2})\\.([0-9]{2})")
         },
     "mtsat" :
         {
             "longitude": "longitude",
             "latitude": "latitude",
-            "date_regex": re.compile("([0-9]{4})([0-9]{2})([0-9]{2})_([0-9]{2})([0-9]{2})")
+            "filename_time_regex": re.compile("([0-9]{4})([0-9]{2})([0-9]{2})_([0-9]{2})([0-9]{2})")
         },
     "wrf":
         {
             "longitude": "XLONG",
             "latitude": "XLAT",
-            "date_regex": re.compile("([0-9]{4})-([0-9]{2})-([0-9]{2})_([0-9]{2})-([0-9]{2})-([0-9]{2})")
+            "filename_time_regex": re.compile("([0-9]{4})-([0-9]{2})-([0-9]{2})_([0-9]{2})-([0-9]{2})-([0-9]{2})")
         }
 }
 
@@ -659,6 +659,25 @@ def read_netCDF_to_array(filepath, filetype, variable_to_extract, min_lat, max_l
         lons_list = lons_data[:]
 
 
+    if "filename_time_regex" in FORMAT_DEFS[filetype]:
+        filename = path.basename(filepath)
+
+        # Verifying time range
+        time_match_group = FORMAT_DEFS[filetype]["time_regex"].search(filename)
+        time_numbers = [int(num) for num in time_match_group.groups()]
+        time = datetime(*time_numbers)
+        times = [time]
+
+
+
+    # TODO    obtain datetimes for all positions in the time dimension when
+    # TODO    there is more than one timestamp inside file
+    # TODO    Theres some helper functions that parse the time higher up in this
+    # TODO    same file
+
+
+    if not (min_t <= date <= max_t):
+        return None
 
     # Reformatting longitude format to [-180, 180]
     lons_list[lons_list > 180] = lons_list[lons_list > 180] - 360.
@@ -686,22 +705,12 @@ def read_netCDF_to_array(filepath, filetype, variable_to_extract, min_lat, max_l
                                         trimmed_lons_start:trimmed_lons_end]
 
 
-    filename = path.basename(filepath)
-    # Verifying time range
-    # TODO    obtain datetimes for all positions in the time dimension when
-    # TODO    there is more than one timestamp inside file
-    # TODO    Theres some helper functions that parse the time higher up in this
-    # TODO    same file
-    date_match_group = FORMAT_DEFS[filetype]["date_regex"].search(filename)
-    date_numbers = [int(num) for num in date_match_group.groups()]
-    date = datetime(*date_numbers)
-    if not (min_t <= date <= max_t):
-        return None
+
 
     dataset.close()
 
 
-    return ma.masked_array(trimmed_data), [date], trimmed_lats, trimmed_lons
+    return ma.masked_array(trimmed_data), times, trimmed_lats, trimmed_lons
 
 
 # **********************************************************************************************************************
