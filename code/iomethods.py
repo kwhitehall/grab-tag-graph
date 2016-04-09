@@ -108,8 +108,6 @@ def check_for_files(dirPath, startTime, endTime, tdelta, tRes):
             elif eachPart in startTime:
                 startTimeInFile += eachPart + '*'
 
-    print startTimeInFile
-
     if hasDelimiter is False:
         fileDate = int(re.search(r'\d+', re.split(r'.nc', path.basename(filelist[0]))[0]).group())
         filenamePattern = re.split(str(fileDate), path.basename(filelist[0]))[0]
