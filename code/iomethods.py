@@ -4,7 +4,6 @@ import re
 import string
 import subprocess
 import sys
-import math
 from datetime import timedelta, datetime
 from os import path
 
@@ -105,8 +104,6 @@ def check_for_files(dirPath, startTime, endTime, tdelta, tRes):
                 startTimeInFile += eachPart + '*'
             elif eachPart in startTime:
                 startTimeInFile += eachPart + '*'
-
-    print startTimeInFile
 
     if hasDelimiter is False:
         fileDate = int(re.search(r'\d+', re.split(r'.nc', path.basename(filelist[0]))[0]).group())
@@ -314,7 +311,7 @@ def read_data(varName, latName, lonName, userVariables, fileType):
                 # Clip the dataset according to user lat, lon coordinates
                 # Mask the data and fill with zeros for later
                 tempRaw = thisFile.variables[varName][:, latminIndex:latmaxIndex, lonminIndex:lonmaxIndex].astype('int16')
-                tempMask = ma.masked_array(tempRaw, mask=(tempRaw > userVariables.T_BB_MAX), fill_value=0)
+                tempMask = ma.masked_array(tempRaw, mask=(tempRaw > userVariables.T_BB_MAX), fill_value=-999)
                 # Get the actual values that the mask returned
 
                 tempMaskedValue = tempMask
@@ -411,7 +408,7 @@ def get_model_times(xtimes, timeVarName):
             #              NB. this method will fail if the base time is on the 29th or higher day of month
             #                      -as can't have, e.g. Feb 31st.
             newMonth = int(baseTime.month + xtime % 12)
-            newYear = int(math.floor(baseTime.year + xtime / 12.))
+            newYear = int(baseTime.year + xtime / 12.)
             newTime = datetime.datetime(newYear, newMonth, baseTime.day, baseTime.hour, baseTime.second, 0)
         elif units == 'years':
             dt = datetime.timedelta(years=xtime)
@@ -538,7 +535,7 @@ def write_MERG_pixel_to_ncdf(lonDict, latDict, timeDict, ch4Dict, fileName, dirN
                     and the value is the description of the global attribute.
                  dimensionsDict is a dictionary where the key is a string that represents the name of the dimension
                     and the value is either an integer representing the size or none to represent an unlimited dimension
-                 fileName is a string representing what you want to name the newly created file
+                 fileName is a string representing the fileName where you got the data from
                  dirName is a string representing where you want to place the newly created file
 
         Returns:: None. It writes to a netCDF file with extension .nc
@@ -564,17 +561,16 @@ def write_MERG_pixel_to_ncdf(lonDict, latDict, timeDict, ch4Dict, fileName, dirN
 
     ncdf.createVariable(timeDict['name'], timeDict['dataType'], timeDict['dimensions'])
 
-    dateFromFileName = [token for token in file.split('_') if token.isdigit()]  # Parse date from MERG binary file name
+    dateFromFileName = [token for token in newFilePath.split('_') if token.isdigit()]  # Parse date from MERG binary file name
     dateAsDateTime = datetime.strptime(dateFromFileName[0], '%Y%m%d%H')         # then set attribute for 'time'
 
     ncdf.variables['time'].setncattr('units', 'hours since ' + str(dateAsDateTime.year) + '-' + str(dateAsDateTime.month) +
                                      '-' + str(dateAsDateTime.day) + ' ' + str(dateAsDateTime.hour))
 
     ncdf.createVariable(ch4Dict['name'], ch4Dict['dataType'], ch4Dict['dimensions'])
-    ncdf.variables[ch4Dict['name']].setncattr('units', latDict['units'])
-    ncdf.variables[ch4Dict['name']].setncattr('long_name', latDict['long_name'])
-    ncdf.variables[ch4Dict['name']].setncattr('time_statistic', latDict['time_statistic'])
-    ncdf.variables[ch4Dict['name']].setncattr('missing_value', latDict['missing_value'])
+    ncdf.variables[ch4Dict['name']].setncattr('long_name', ch4Dict['long_name'])
+    ncdf.variables[ch4Dict['name']].setncattr('time_statistic', ch4Dict['time_statistic'])
+    ncdf.variables[ch4Dict['name']].setncattr('missing_value', ch4Dict['missing_value'])
 
     ncdf.variables['longitude'][:] = lonDict['values']
     ncdf.variables['latitude'][:] = latDict['values']
@@ -633,6 +629,9 @@ def read_MERG_pixel_file(path, shape=(2, 3298, 9896), offset=75.):
 
 def read_netCDF_to_array(filename, variable_to_extract, min_lat, max_lat, min_lon, max_lon,
                          min_t, max_t):
+    '''
+
+    '''
 
     dataset = netCDF4.Dataset(filename, 'r', format='NETCDF4')
 
@@ -658,29 +657,7 @@ def read_netCDF_to_array(filename, variable_to_extract, min_lat, max_lat, min_lo
 
 # **********************************************************************************************************************
 
-if __name__ == '__main__':  # Testing for write_np_array_to_ncdf
 
-    user = variables.UserVariables(useJSON=False)
-
-    lon, lat, temperatures = read_MERG_pixel_file('/home/caocampb/PycharmProjects/grab-tag-graph/datadir/MERG/merg_2006091100_4km-pixel')
-
-    lonDict = {"name": "longitude", "dataType": "double", "dimensions": ("longitude",), "units": "degrees_east", "long_name": "Longitude", "values": lon}
-
-    latDict = {"name": "latitude", "dataType": "double", "dimensions": ("latitude",), "units": "degrees_north", "long_name": "Latitude", "values": lat}
-
-    timeDict = {"name": "time", "dataType": "float", "dimensions": ("time",)}
-
-    ch4Dict = {"name": "ch4", "dataType": "float", "dimensions": ("time", "latitude", "longitude"), "long_name": "IR BT (add 75 to this value)",
-                                                                                                    "time_statistic": "instantaneous",
-                                                                                                    "missing_value": float(330)}
-
-    globalAttrDict = {"Conventions": "COARDS", "calendar": "standard", "comments": "File", "model": "geos/das",
-                      "center": "gsfc"}
-
-    dimensionsDict = {"time": None, "longitude": 9896, "latitude": 3298}
-
-    write_MERG_pixel_to_ncdf(lonDict, latDict, timeDict, ch4Dict, 'mergFile', user.DIRS['CEoriDirName'], globalAttrDict,
-                             dimensionsDict)
 
 
 
