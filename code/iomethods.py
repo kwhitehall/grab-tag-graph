@@ -668,12 +668,32 @@ def read_netCDF_to_array(filepath, filetype, variable_to_extract, min_lat, max_l
 
     # TODO rearrange variables? is it necessary? Are we even going to have files with more than one timestamp?
 
-    lats_list, lons_list = trim_lat_lon (lats_list, lons_list, min_lat, max_lat, min_lon, max_lon)
 
+    if min(lats_list) > min_lat or min(lons_list) > min_lon or \
+            max(lats_list) < max_lat or max(lons_list) < max_lon:
+        raise RuntimeError("Area requested is outside of file data range")
+
+    trimmed_lats_indices = [i for i in range(len(lats_list))
+                        if lats_list[i] >= min_lat and lats_list[i] <= max_lat]
+    trimmed_lats_start = trimmed_lats_indices[0]
+    trimmed_lats_end = trimmed_lats_indices[-1]
+
+    trimmed_lons_indices = [i for i in range(len(lons_list))
+                        if lons_list[i] >= min_lon and lons_list[i] <= max_lon]
+    trimmed_lons_start = trimmed_lons_indices[0]
+    trimmed_lons_end = trimmed_lons_indices[-1]
+
+
+    trimmed_lats = lats_list[trimmed_lats_start:trimmed_lats_end]
+    trimmed_lons = lons_list[trimmed_lons_start:trimmed_lons_end]
+    trimmed_data = extracted_variable[:,trimmed_lats_start:trimmed_lats_end,
+                                        trimmed_lons_start:trimmed_lons_end]
 
 
     filename = path.basename(filepath)
     # Verifying time range
+    # TODO    obtain datetimes for all positions in the time dimension when
+    # TODO    there is more than one timestamp inside file
     date_match_group = FORMAT_DEFS[filetype]["date_regex"].search(filename)
     date_numbers = [int(num) for num in date_match_group.groups()]
     date = datetime(*date_numbers)
@@ -682,23 +702,8 @@ def read_netCDF_to_array(filepath, filetype, variable_to_extract, min_lat, max_l
 
     dataset.close()
 
-    return ma.masked_array(extracted_variable)
+    return ma.masked_array(trimmed_data), [date], trimmed_lats, trimmed_lons
 
-
-def trim_lat_lon (lats_list, lons_list, min_lat, max_lat, min_lon, max_lon):
-  # If already in range, do nothing.
-  if min (lats_list) >= min_lat and min (lons_list) >= min_lon and max (lats_list) <= max_lat and max (lons_list) <= max_lon:
-   return lats_list, lons_list
-  
-  # Trim the data to be within specified range
-  lats_list = [i for i in lats_list if i >= min_lat and i <= max_lat]
-  lons_list = [i for i in lons_list if i >= min_lon and i <= max_lon]
-
-  # If either is empty, throw an error because one or both had no intersection with given range.
-  if not lats_list or not lons_list:
-    raise RuntimeError ('Latitude and/or Longitude given is not in specified range!')
-
-  return lats_list, lons_list
 
 # **********************************************************************************************************************
 
