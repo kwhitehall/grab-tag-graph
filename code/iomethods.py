@@ -623,18 +623,18 @@ FORMAT_DEFS = {
         {
             "longitude" : "longitude",
             "latitude" : "latitude",
-            "data_variable" : "pcp",
             "date_regex": re.compile("([0-9]{4})([0-9]{2})([0-9]{2})\\.([0-9]{2})")
         },
     "mtsat" :
         {
             "longitude": "longitude",
             "latitude": "latitude",
-            "data_variable": "albedo",
             "date_regex": re.compile("([0-9]{4})([0-9]{2})([0-9]{2})_([0-9]{2})([0-9]{2})")
         },
     "wrf":
         {
+            "longitude": "XLONG",
+            "latitude": "XLAT",
             "date_regex": re.compile("([0-9]{4})-([0-9]{2})-([0-9]{2})_([0-9]{2})-([0-9]{2})-([0-9]{2})")
         }
 }
@@ -645,8 +645,20 @@ def read_netCDF_to_array(filepath, filetype, variable_to_extract, min_lat, max_l
     dataset = netCDF4.Dataset(filepath, 'r', format='NETCDF4')
 
     extracted_variable = dataset.variables[variable_to_extract][:, :]
-    lats_list = dataset.variables['latitude'][:]
-    lons_list = dataset.variables['longitude'][:]
+
+    lats_data = dataset.variables[FORMAT_DEFS[filetype]["latitude"]]
+    lons_data = dataset.variables[FORMAT_DEFS[filetype]["longitude"]]
+
+    if filetype is "wrf":
+        # TODO slicing assumes dimentions are always in this order : u'Time', u'south_north', u'west_east'
+        # TODO check if this is true
+        lats_list = lats_data[0,:,0]
+        lons_list = lons_data[0,0,:]
+    else:
+        lats_list = lats_data[:]
+        lons_list = lons_data[:]
+
+
 
     # Reformatting longitude format to [-180, 180]
     # TODO is this necessary and correctly done?
@@ -700,8 +712,6 @@ if __name__ == '__main__':  # Testing for write_np_array_to_ncdf
 
     write_MERG_pixel_to_ncdf(lonDict, latDict, timeDict, ch4Dict, 'mergFile', user.DIRS['CEoriDirName'], globalAttrDict,
                              dimensionsDict)
-
-
 
 
 
