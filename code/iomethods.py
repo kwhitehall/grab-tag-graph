@@ -4,7 +4,6 @@ import re
 import string
 import subprocess
 import sys
-import math
 from datetime import timedelta, datetime
 from os import path
 
@@ -14,8 +13,6 @@ import netCDF4
 
 import utils
 import variables
-
-import re
 
 def get_fileList_for_binaries(dirPath, startTime, endTime):
     '''
@@ -411,7 +408,7 @@ def get_model_times(xtimes, timeVarName):
             #              NB. this method will fail if the base time is on the 29th or higher day of month
             #                      -as can't have, e.g. Feb 31st.
             newMonth = int(baseTime.month + xtime % 12)
-            newYear = int(math.floor(baseTime.year + xtime / 12.))
+            newYear = int(baseTime.year + xtime / 12.)
             newTime = datetime.datetime(newYear, newMonth, baseTime.day, baseTime.hour, baseTime.second, 0)
         elif units == 'years':
             dt = datetime.timedelta(years=xtime)
@@ -538,7 +535,7 @@ def write_MERG_pixel_to_ncdf(lonDict, latDict, timeDict, ch4Dict, fileName, dirN
                     and the value is the description of the global attribute.
                  dimensionsDict is a dictionary where the key is a string that represents the name of the dimension
                     and the value is either an integer representing the size or none to represent an unlimited dimension
-                 fileName is a string representing what you want to name the newly created file
+                 fileName is a string representing the fileName where you got the data from
                  dirName is a string representing where you want to place the newly created file
 
         Returns:: None. It writes to a netCDF file with extension .nc
@@ -564,17 +561,16 @@ def write_MERG_pixel_to_ncdf(lonDict, latDict, timeDict, ch4Dict, fileName, dirN
 
     ncdf.createVariable(timeDict['name'], timeDict['dataType'], timeDict['dimensions'])
 
-    dateFromFileName = [token for token in file.split('_') if token.isdigit()]  # Parse date from MERG binary file name
+    dateFromFileName = [token for token in newFilePath.split('_') if token.isdigit()]  # Parse date from MERG binary file name
     dateAsDateTime = datetime.strptime(dateFromFileName[0], '%Y%m%d%H')         # then set attribute for 'time'
 
     ncdf.variables['time'].setncattr('units', 'hours since ' + str(dateAsDateTime.year) + '-' + str(dateAsDateTime.month) +
                                      '-' + str(dateAsDateTime.day) + ' ' + str(dateAsDateTime.hour))
 
     ncdf.createVariable(ch4Dict['name'], ch4Dict['dataType'], ch4Dict['dimensions'])
-    ncdf.variables[ch4Dict['name']].setncattr('units', latDict['units'])
-    ncdf.variables[ch4Dict['name']].setncattr('long_name', latDict['long_name'])
-    ncdf.variables[ch4Dict['name']].setncattr('time_statistic', latDict['time_statistic'])
-    ncdf.variables[ch4Dict['name']].setncattr('missing_value', latDict['missing_value'])
+    ncdf.variables[ch4Dict['name']].setncattr('long_name', ch4Dict['long_name'])
+    ncdf.variables[ch4Dict['name']].setncattr('time_statistic', ch4Dict['time_statistic'])
+    ncdf.variables[ch4Dict['name']].setncattr('missing_value', ch4Dict['missing_value'])
 
     ncdf.variables['longitude'][:] = lonDict['values']
     ncdf.variables['latitude'][:] = latDict['values']
@@ -639,6 +635,9 @@ FORMAT_DEFS = {
 
 def read_netCDF_to_array(filepath, filetype, variable_to_extract, min_lat, max_lat, min_lon, max_lon,
                          min_t, max_t):
+    '''
+
+    '''
 
     dataset = netCDF4.Dataset(filepath, 'r', format='NETCDF4')
 
@@ -699,10 +698,7 @@ def read_netCDF_to_array(filepath, filetype, variable_to_extract, min_lat, max_l
         return None
 
     dataset.close()
-
-
     return ma.masked_array(trimmed_data), [date], trimmed_lats, trimmed_lons
-
 
 # **********************************************************************************************************************
 
