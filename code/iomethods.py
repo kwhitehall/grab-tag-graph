@@ -691,14 +691,14 @@ def read_netCDF_to_array(filepath, filetype, variable_to_extract, min_lat, max_l
         string_times = ["".join(x) for x in dataset.variables["Times"][:]]
         times = [decode_time_from_string(x) for x in string_times]
 
-
-    # TODO verify and trim times
-    # TODO refactor out verification and trimming  maybe?
-    # Verifying and trimming coordinates
+    # Verifying requested area and times are available
     if min(lats_list) > min_lat or min(lons_list) > min_lon or \
             max(lats_list) < max_lat or max(lons_list) < max_lon:
         raise RuntimeError("Area requested is outside of file data range")
+    if min(times) > min_t or max(times) < max_t:
+        raise RuntimeError("Time slice requested is outside of file data range")
 
+    # Trimming data according to requested area and times
     trimmed_lats_indices = [i for i in range(len(lats_list))
                         if lats_list[i] >= min_lat and lats_list[i] <= max_lat]
     trimmed_lats_start = trimmed_lats_indices[0]
@@ -709,16 +709,24 @@ def read_netCDF_to_array(filepath, filetype, variable_to_extract, min_lat, max_l
     trimmed_lons_start = trimmed_lons_indices[0]
     trimmed_lons_end = trimmed_lons_indices[-1] + 1
 
+    trimmed_time_indices = [i for i in range(len(times))
+                        if times >= min_t and times <= max_t]
+    trimmed_time_start = trimmed_time_indices[0]
+    trimmed_time_end = trimmed_time_indices[-1] + 1
+
 
     trimmed_lats = lats_list[trimmed_lats_start:trimmed_lats_end]
     trimmed_lons = lons_list[trimmed_lons_start:trimmed_lons_end]
-    trimmed_data = extracted_variable[:,trimmed_lats_start:trimmed_lats_end,
-                                        trimmed_lons_start:trimmed_lons_end]
+    trimmed_times = times[trimmed_time_start: trimmed_time_end]
+
+    trimmed_data = extracted_variable[trimmed_time_start: trimmed_time_end,
+                                      trimmed_lats_start:trimmed_lats_end,
+                                      trimmed_lons_start:trimmed_lons_end]
 
 
     dataset.close()
 
-    return ma.masked_array(trimmed_data), times, trimmed_lats, trimmed_lons
+    return ma.masked_array(trimmed_data), trimmed_times, trimmed_lats, trimmed_lons
 
 
 # **********************************************************************************************************************
