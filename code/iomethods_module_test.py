@@ -1,3 +1,5 @@
+import iomethods.py
+
 if __name__ == '__main__':  # Testing for write_np_array_to_ncdf
 
     user = variables.UserVariables(useJSON=False)
