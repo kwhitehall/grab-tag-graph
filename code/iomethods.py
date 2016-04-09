@@ -108,8 +108,6 @@ def check_for_files(dirPath, startTime, endTime, tdelta, tRes):
             elif eachPart in startTime:
                 startTimeInFile += eachPart + '*'
 
-    print startTimeInFile
-
     if hasDelimiter is False:
         fileDate = int(re.search(r'\d+', re.split(r'.nc', path.basename(filelist[0]))[0]).group())
         filenamePattern = re.split(str(fileDate), path.basename(filelist[0]))[0]
@@ -701,6 +699,7 @@ def read_netCDF_to_array(filepath, filetype, variable_to_extract, min_lat, max_l
         return None
 
     dataset.close()
+
 
     return ma.masked_array(trimmed_data), [date], trimmed_lats, trimmed_lons
 
