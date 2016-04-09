@@ -661,10 +661,7 @@ def read_netCDF_to_array(filepath, filetype, variable_to_extract, min_lat, max_l
 
 
     # Reformatting longitude format to [-180, 180]
-    # TODO is this necessary and correctly done?
     lons_list[lons_list > 180] = lons_list[lons_list > 180] - 360.
-
-    # TODO rearrange variables? is it necessary? Are we even going to have files with more than one timestamp?
 
 
     if min(lats_list) > min_lat or min(lons_list) > min_lon or \
