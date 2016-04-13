@@ -595,6 +595,7 @@ def read_MERG_pixel_file(path, shape=(2, 3298, 9896), offset=75.):
                          add 75 back to each temperature.
         Output:: lon - A numPy array containing longitudes from 0 to 360 degrees
                  lat - A numpy array containing latitudes from 60 to -60 degrees
+                 temperatures - A numPy array containing temperature data in Kelvin for a certain lat/lon range
 
         Assumption::The binary file was unmodified when downloaded. The shape tuple that is hardcoded in the parameter
                     will always be the same unless the data changes.
@@ -709,7 +710,7 @@ def read_netCDF_to_array(filepath, filetype, variable_to_extract, min_lat, max_l
         times = [decode_time_from_string(x) for x in string_times]
 
     # TODO verify and trim times
-    # TODO refactor out verification and trimming  maybe?
+    # TODO refactor out verification and trimming maybe?
     # Verifying and trimming coordinates
     if min(lats_list) > min_lat or min(lons_list) > min_lon or \
             max(lats_list) < max_lat or max(lons_list) < max_lon:
