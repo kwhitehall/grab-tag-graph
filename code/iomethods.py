@@ -613,8 +613,6 @@ def read_MERG_pixel_file(path, shape=(2, 3298, 9896), offset=75.):
 
     return lon, lat, temperatures
 
-
-# TODO this seems to be unnecessary but I'll leave it for now just in case
 FORMAT_DEFS = {
     "trmm" :
         {
@@ -647,26 +645,32 @@ FORMAT_DEFS = {
         }
 }
 
-def read_netCDF_to_array(filepath, filetype, variable_to_extract, min_lat, max_lat, min_lon, max_lon,
-                         min_t, max_t):
+def read_netCDF_to_array(filepath, filetype, variable_to_extract, min_t, max_t, min_lat, max_lat, min_lon, max_lon):
     '''
-        Purpose:: Extract the data from a netCDF file (from various sources). More specifically, one variable's data
-                  that's passed in as a string.
+        Purpose:: Extract the data from a single variable on a netCDF file (from a supported source). The user specifies a
+         slice of the data in three dimensions: time, latitude, and longitude. The function returns the data points
+         inside this slice. If the slice goes outside of the boundaries of the data available in the file (i.e. if the requested
+         3D slice spans a space outside the boundaries of the data file), an exception is thrown.
+
 
         Input:: filePath: path to the netCDF file
-                filetype: string that says where the data source is from (trmm, mtsat, wrf etc.)
-                variable_to_extract: a variable
-                min_lat: minimum latitude (these 4 variables are used for keeping data in range and trimming if necessary)
-                max_lat: maximum latitude ---- --- ------- ---- -- -----
-                min_lon: minimum longitude ---- --- ------- ---- -- -----
-                max_lon: maximum longitude ---- --- ------- ---- -- -----
-        Output:: trimmed_data: Masked numPy array that contains data from the specified variable
-                 trimmed_lon: numpy array of longitudes within the specified range
-                 trimmed_lat: numpy array of latittudes within the specified range
-                 times:
+                filetype: string containing the data source (used to infer the structure, supported: "trmm", "mtsat", wrf")
+                variable_to_extract: the name of the netCDF variable to be returned
+                min_t: time of the earliest boundary of the slice request
+                max_t: time of the latest boundary of the slice request
+                min_lat: latitude of the southern boundary of the slice request
+                max_lat: latitude of the northern boundary of the slice request
+                min_lon: longitude of the western boundary of the slice request
+                max_lon: longitude of the eastern boundary of the slice request
+
+        Output:: trimmed_data: Masked numPy 3D array ([time, lat, lon]) that contains the data requested.
+                 trimmed_times: list of all positions in the time dimension (in 'datetime' object format)
+                 trimmed_lat: numpy array of all positions in the latitude dimension
+                 trimmed_lon: numpy array of all positions in the longitude dimension
+
 
         Assumption(s):: The variable has only 2 or 3 dimensions. If it has 2, then a third dimension is added.
-                        The variable has the dimensions: [time,] latitude, and longitude
+                        The variable has the dimensions: [time,] latitude, and longitude, in that order
 
     '''
 
@@ -751,8 +755,8 @@ if __name__ == '__main__':
     maxDate = datetime(2007, 1, 1)
 
     trimmed_data, times, trimmed_lats, trimmed_lons = read_netCDF_to_array('/home/campbell/Desktop/TRMM Sample/3B42.20060911.00.7A.nc',
-                                                                           'trmm', 'irp', 10, 15
-                                                                           , 10, 15, minDate, maxDate)
+                                                                           'trmm', 'irp', minDate, maxDate, 10, 15
+                                                                           , 10, 15)
 
     print trimmed_data
     print times
