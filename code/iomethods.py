@@ -716,19 +716,19 @@ def read_netCDF_to_array(filepath, filetype, variable_to_extract, min_lat, max_l
         raise RuntimeError("Area requested is outside of file data range")
 
     trimmed_lats_indices = [i for i in range(len(lats_list))
-                        if lats_list[i] >= min_lat and lats_list[i] <= max_lat]
+                            if lats_list[i] >= min_lat and lats_list[i] <= max_lat]
     trimmed_lats_start = trimmed_lats_indices[0]
-    trimmed_lats_end = trimmed_lats_indices[-1] + 1
+    trimmed_lats_end = trimmed_lats_indices[-1]
 
     trimmed_lons_indices = [i for i in range(len(lons_list))
-                        if lons_list[i] >= min_lon and lons_list[i] <= max_lon]
+                            if lons_list[i] >= min_lon and lons_list[i] <= max_lon]
     trimmed_lons_start = trimmed_lons_indices[0]
-    trimmed_lons_end = trimmed_lons_indices[-1] + 1
+    trimmed_lons_end = trimmed_lons_indices[-1]
 
-    trimmed_lats = lats_list[trimmed_lats_start:trimmed_lats_end]
-    trimmed_lons = lons_list[trimmed_lons_start:trimmed_lons_end]
-    trimmed_data = extracted_variable[:,trimmed_lats_start:trimmed_lats_end,
-                                        trimmed_lons_start:trimmed_lons_end]
+    trimmed_lats = lats_list[trimmed_lats_start:trimmed_lats_end + 1]
+    trimmed_lons = lons_list[trimmed_lons_start:trimmed_lons_end + 1]
+    trimmed_data = extracted_variable[:,trimmed_lats_start:trimmed_lats_end + 1,
+                                        trimmed_lons_start:trimmed_lons_end + 1]
 
     dataset.close()
 
@@ -741,8 +741,9 @@ if __name__ == '__main__':
     minDate = datetime(2005, 1, 1)
     maxDate = datetime(2007, 1, 1)
 
-    trimmed_data, times, trimmed_lats, trimmed_lons = read_netCDF_to_array('/home/campbell/Desktop/TRMM Sample/3B42.20060911.00.7A.nc', 'trmm', 'irp', 10, 15
-                                                                            , 10, 15, minDate, maxDate)
+    trimmed_data, times, trimmed_lats, trimmed_lons = read_netCDF_to_array('/home/campbell/Desktop/TRMM Sample/3B42.20060911.00.7A.nc',
+                                                                           'trmm', 'irp', 10, 15
+                                                                           , 10, 15, minDate, maxDate)
 
     print trimmed_data
     print times
