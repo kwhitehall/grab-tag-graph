@@ -13,7 +13,7 @@ def test_read_MERG_and_write_MERG():
     '''
     user = variables.UserVariables(useJSON=False)
 
-    lon, lat, temperatures = iomethods.read_MERG_pixel_file('../datadir/MERG/merg_2009083100_4km-pixel.nc')
+    lon, lat, temperatures = iomethods.read_MERG_pixel_file('../datadir/MERG/merg_2006091100_4km-pixel')
 
     lonDict = {"name": "longitude", "dataType": "double", "dimensions": ("longitude",), "units": "degrees_east", "long_name": "Longitude", "values": lon}
 
