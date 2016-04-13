@@ -738,11 +738,12 @@ def read_netCDF_to_array(filepath, filetype, variable_to_extract, min_lat, max_l
 
 # **********************************************************************************************************************
 if __name__ == '__main__':
+    # Test for TRMM file, extracting the 'irp' variable
     minDate = datetime(2005, 1, 1)
     maxDate = datetime(2007, 1, 1)
 
     trimmed_data, times, trimmed_lats, trimmed_lons = read_netCDF_to_array('/home/campbell/Desktop/TRMM Sample/3B42.20060911.00.7A.nc', 'trmm', 'irp', 10, 15
-                         , 10, 15, minDate, maxDate)
+                                                                            , 10, 15, minDate, maxDate)
 
     print trimmed_data
     print times
