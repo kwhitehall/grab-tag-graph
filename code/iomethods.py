@@ -649,12 +649,24 @@ FORMAT_DEFS = {
 def read_netCDF_to_array(filepath, filetype, variable_to_extract, min_lat, max_lat, min_lon, max_lon,
                          min_t, max_t):
     '''
-        Purpose::
+        Purpose:: Extract the data from a netCDF file (from various sources). More specifically, one variable's data
+                  that's passed in as a string.
 
-        Input::
-        Output::
+        Input:: filePath: path to the netCDF file
+                filetype: string that says where the data source is from (trmm, mtsat, wrf etc.)
+                variable_to_extract: a variable
+                min_lat:
+                max_lat:
+                min_lon:
+                max_lon:
+        Output:: trimmed_data:
+                 trimmed_lon:
+                 trimmed_lat:
+                 times:
 
-        Assumption::
+        Assumption(s):: The variable has only 2 or 3 dimensions. If it has 2, then a third dimension is added.
+                        The variable has the dimensions: latitude, and longitude
+
     '''
 
     dataset = netCDF4.Dataset(filepath, 'r', format='NETCDF4')
