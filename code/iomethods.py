@@ -655,13 +655,13 @@ def read_netCDF_to_array(filepath, filetype, variable_to_extract, min_lat, max_l
         Input:: filePath: path to the netCDF file
                 filetype: string that says where the data source is from (trmm, mtsat, wrf etc.)
                 variable_to_extract: a variable
-                min_lat:
-                max_lat:
-                min_lon:
-                max_lon:
-        Output:: trimmed_data:
-                 trimmed_lon:
-                 trimmed_lat:
+                min_lat: minimum latitude (these 4 variables are used for keeping data in range and trimming if necessary)
+                max_lat: maximum latitude ---- --- ------- ---- -- -----
+                min_lon: minimum longitude ---- --- ------- ---- -- -----
+                max_lon: maximum longitude ---- --- ------- ---- -- -----
+        Output:: trimmed_data: Masked numPy array that contains data from the specified variable
+                 trimmed_lon: numpy array of longitudes within the specified range
+                 trimmed_lat: numpy array of latittudes within the specified range
                  times:
 
         Assumption(s):: The variable has only 2 or 3 dimensions. If it has 2, then a third dimension is added.
@@ -724,7 +724,6 @@ def read_netCDF_to_array(filepath, filetype, variable_to_extract, min_lat, max_l
                         if lons_list[i] >= min_lon and lons_list[i] <= max_lon]
     trimmed_lons_start = trimmed_lons_indices[0]
     trimmed_lons_end = trimmed_lons_indices[-1] + 1
-
 
     trimmed_lats = lats_list[trimmed_lats_start:trimmed_lats_end]
     trimmed_lons = lons_list[trimmed_lons_start:trimmed_lons_end]
