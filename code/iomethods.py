@@ -13,7 +13,7 @@ import netCDF4
 import utils
 import variablespath
 
-def get_fileList_for_binaries(dirPath, startTime, endTime):
+def _get_fileList_for_binaries(dirPath, startTime, endTime):
     '''
         Purpose:: There are two kinds of files in the MERG directory. One has files in binary form, and the other in
                   netCDF. This function is to get only the files that are in between the startTime and endTime that are
@@ -48,7 +48,7 @@ def get_fileList_for_binaries(dirPath, startTime, endTime):
     return newFileList
 
 
-def check_for_files(dirPath, startTime, endTime, tdelta, tRes):
+def _check_for_files(dirPath, startTime, endTime, tdelta, tRes):
     '''
         Purpose:: To ensure all the files between the startTime and endTime
                   exist in the directory supplied
@@ -109,7 +109,7 @@ def check_for_files(dirPath, startTime, endTime, tdelta, tRes):
         filenamePattern = re.split(str(fileDate), os.path.basename(filelist[0]))[0]
 
     startFile = glob.glob(dirPath+'/'+filenamePattern + '*' + startTimeInFile)[0]
-    endTimeInFile = find_time_in_file(endTime, startTimeInFile)
+    endTimeInFile = _find_time_in_file(endTime, startTimeInFile)
     endFile = glob.glob(dirPath+'/'+filenamePattern + '*' + endTimeInFile + '*')[0]
 
     currFile = startFile
@@ -129,24 +129,24 @@ def check_for_files(dirPath, startTime, endTime, tdelta, tRes):
 
         if 'month' in tRes:
             currFileTime += timedelta(days=31*tdelta)
-            currTimeInFile = find_time_in_file(currFileTime.strftime('%Y%m'), startTimeInFile)
+            currTimeInFile = _find_time_in_file(currFileTime.strftime('%Y%m'), startTimeInFile)
             currFile = glob.glob(dirPath+'/'+filenamePattern+'*'+currTimeInFile+'*')[0]
         if 'day' in tRes:
             currFileTime += timedelta(days=tdelta)
-            currTimeInFile = find_time_in_file(currFileTime.strftime('%Y%m%d'), startTimeInFile)
+            currTimeInFile = _find_time_in_file(currFileTime.strftime('%Y%m%d'), startTimeInFile)
             currFile = glob.glob(dirPath+'/'+filenamePattern+'*'+currTimeInFile+'*')[0]
         if 'hour' in tRes:
             currFileTime += timedelta(hours=tdelta)
-            currTimeInFile = find_time_in_file(currFileTime.strftime('%Y%m%d%H'), startTimeInFile)
+            currTimeInFile = _find_time_in_file(currFileTime.strftime('%Y%m%d%H'), startTimeInFile)
             currFile = glob.glob(dirPath+'/'+filenamePattern+'*'+currTimeInFile+'*')[0]
         if 'minute' in tRes:
             currFileTime += timedelta(minutes=tdelta)
-            currTimeInFile = find_time_in_file(currFileTime.strftime('%Y%m%d%H%M'), startTimeInFile)
+            currTimeInFile = _find_time_in_file(currFileTime.strftime('%Y%m%d%H%M'), startTimeInFile)
             currFile = glob.glob(dirPath+'/'+filenamePattern+'*'+currTimeInFile+'*')[0]
 
     return status, filelist
 # **********************************************************************************************************************
-def find_time_in_file(myTime, myTimeInFile):
+def _find_time_in_file(myTime, myTimeInFile):
     '''
         Purpose:: To return the file pattern of the time string
         Inputs:: myTime: a string in time format representing the time
@@ -195,25 +195,25 @@ def read_vars(userVariables):
         print "Invalid time entered for endDateTime!"
 
     # Check if all the files exists in the MERG and TRMM directories entered
-    test, _ = check_for_files(userVariables.DIRS['TRMMdirName'], userVariables.startDateTime, userVariables.endDateTime, 3, 'hour')
+    test, _ = _check_for_files(userVariables.DIRS['TRMMdirName'], userVariables.startDateTime, userVariables.endDateTime, 3, 'hour')
     if test is False:
         print "Error with files in the TRMM directory entered. Please check your files before restarting. "
         return
 
-    test, userVariables.filelist = check_for_files(userVariables.DIRS['CEoriDirName'], userVariables.startDateTime, userVariables.endDateTime, 1, 'hour')
+    test, userVariables.filelist = _check_for_files(userVariables.DIRS['CEoriDirName'], userVariables.startDateTime, userVariables.endDateTime, 1, 'hour')
 
     if test is False:
         print "Error with files in the original MERG directory entered. Please check your files before restarting. "
         return
 
     # Create main directory and file structure for storing intel
-    userVariables.DIRS['mainDirStr'] = create_main_directory(userVariables.DIRS['mainDirStr'])
+    userVariables.DIRS['mainDirStr'] = _create_main_directory(userVariables.DIRS['mainDirStr'])
     TRMMCEdirName = userVariables.DIRS['mainDirStr']+'/TRMMnetcdfCEs'
     CEdirName = userVariables.DIRS['mainDirStr']+'/MERGnetcdfCEs'
 
     return graphVariables
 # **********************************************************************************************************************
-def create_main_directory(mainDirStr):
+def _create_main_directory(mainDirStr):
     '''
         Purpose:: To create the main directory for storing information and
                   the subdirectories for storing information
@@ -264,7 +264,7 @@ def read_data(varName, latName, lonName, userVariables, fileType):
     '''
 
     if fileType == 'binary':
-        userVariables.filelist = get_fileList_for_binaries(userVariables.DIRS['CEoriDirName'], userVariables.startDateTime,
+        userVariables.filelist = _get_fileList_for_binaries(userVariables.DIRS['CEoriDirName'], userVariables.startDateTime,
                                                            userVariables.endDateTime)
     outputData = []
     timelist = []
@@ -283,7 +283,7 @@ def read_data(varName, latName, lonName, userVariables, fileType):
 
         tmp.close()
     elif fileType == 'binary':
-        alllatsraw, alllonsraw, _ = read_MERG_pixel_file(userVariables.filelist[0])
+        alllatsraw, alllonsraw, _ = _read_MERG_pixel_file(userVariables.filelist[0])
 
     # Get the lat/lon info data (different resolution)
     latminNETCDF = utils.find_nearest(alllatsraw, float(userVariables.LATMIN))
@@ -319,7 +319,7 @@ def read_data(varName, latName, lonName, userVariables, fileType):
                 xtimes = thisFile.variables[timeName]
 
                 # Convert this time to a python datestring
-                time2store, _ = get_model_times(xtimes)
+                time2store, _ = _get_model_times(xtimes)
 
                 # Extend instead of append because get_model_times returns a list and we don't want a list of list
                 timelist.extend(time2store)
@@ -346,7 +346,7 @@ def read_data(varName, latName, lonName, userVariables, fileType):
 
     return outputData, timelist, LAT, LON, userVariables
 # **********************************************************************************************************************
-def get_model_times(xtimes):
+def _get_model_times(xtimes):
     '''
     Purpose:: Routine to convert from model times ('hours since 1900...', 'days since ...')
     into a python datetime structure. Leveraged from Apache OCW
@@ -379,7 +379,7 @@ def get_model_times(xtimes):
             break
 
     baseTimeString = string.lstrip(timeFormat[sinceLoc:])
-    baseTime = decode_time_from_string(baseTimeString)
+    baseTime = _decode_time_from_string(baseTimeString)
 
     times = []
 
@@ -421,14 +421,14 @@ def get_model_times(xtimes):
         else:
             timeStepLength = int(xtimes[1] - xtimes[0] + 1.e-12)
 
-        modelTimeStep = get_model_time_step(units, timeStepLength)
+        modelTimeStep = _get_model_time_step(units, timeStepLength)
 
     except:
         raise
 
     return times, modelTimeStep
 # **********************************************************************************************************************
-def get_model_time_step(units, stepSize):
+def _get_model_time_step(units, stepSize):
     '''
         Purpose:: To determine the time intervals of input data.
                   Leveraged from Apache OCW
@@ -495,7 +495,7 @@ def get_model_time_step(units, stepSize):
 
     return modelTimeStep
 # **********************************************************************************************************************
-def decode_time_from_string(timeString):
+def _decode_time_from_string(timeString):
     '''
        Purpose:: Decodes string into a python datetime object
        Inputs:: timeString: a string representing a date/time
@@ -580,7 +580,7 @@ def write_MERG_pixel_to_ncdf(lonDict, latDict, timeDict, ch4Dict, fileName, dirN
     ncdf.close()
 
 
-def read_MERG_pixel_file(filepath, shape=(2, 3298, 9896), offset=75.): #change variable name "path" to something else
+def _read_MERG_pixel_file(filepath, shape=(2, 3298, 9896), offset=75.): #change variable name "path" to something else
     '''
         Purpose:: Read MERG brightness temperature from binary file. Thanks to Brian Wilson for this contribution.
                   File contains two large arrays (2 time epochs: on the hour and the half hour)
@@ -645,7 +645,7 @@ FORMAT_DEFS = {
 }
 
 
-def check_Bounds(lats_list, lons_list, min_lat, max_lat, min_lon, max_lon, times, min_t, max_t):
+def _check_Bounds(lats_list, lons_list, min_lat, max_lat, min_lon, max_lon, times, min_t, max_t):
     '''
         Purpose:: Refactor the checking of bounds in a different function. Pass in a variable object isntead of passing
         in a bunch of single value variables
@@ -719,13 +719,13 @@ def read_netCDF_to_array(filepath, filetype, variable_to_extract, min_t, max_t, 
         time = datetime(*time_numbers)
         times = [time]
     elif time_dict["method"] is "get_model_times":
-        times = get_model_times(dataset.variables[time_dict["variable"]])
+        times = _get_model_times(dataset.variables[time_dict["variable"]])
     elif time_dict["method"] is "string_times":
         string_times = ["".join(x) for x in dataset.variables["Times"][:]]
-        times = [decode_time_from_string(x) for x in string_times]
+        times = [_decode_time_from_string(x) for x in string_times]
 
     # Verifying requested area and times are available
-    if not check_Bounds(lats_list, lons_list, min_lat, max_lat, min_lon, max_lon, times, min_t, max_t):
+    if not _check_Bounds(lats_list, lons_list, min_lat, max_lat, min_lon, max_lon, times, min_t, max_t):
         raise RuntimeError("Time slice or Area requested is outside of file data range")
 
     # Trimming data according to requested area and times
