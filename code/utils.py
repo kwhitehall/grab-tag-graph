@@ -111,14 +111,18 @@ def do_regrid(inputGrid, lat, lon, lat2, lon2, order=1, mdi=-999999999):
 # ******************************************************************
 def find_nearest(thisArray, value):
     '''
-    Purpose :: To determine the value within an array closes to
+    Purpose :: To determine the value within an array closest to
                another value
 
     Input ::
+        thisArray: Array to be searched
+        value: anchor value to base the search on.
     Output::
+        nearestValue: value from thisArray which is closest to the input value
     '''
     idx = (np.abs(thisArray-value)).argmin()
-    return thisArray[idx]
+    nearestValue = thisArray[idx]
+    return nearestValue
 # ******************************************************************
 def maenumerate(mArray):
     '''
