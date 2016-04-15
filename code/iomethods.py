@@ -644,6 +644,20 @@ FORMAT_DEFS = {
         }
 }
 
+
+def check_Bounds(lats_list, lons_list, min_lat, max_lat, min_lon, max_lon, times, min_t, max_t):
+    '''
+        Purpose:: Refactor the checking of bounds in a different function. Pass in a variable object isntead of passing
+        in a bunch of single value variables
+    '''
+    if min(lats_list) > min_lat or min(lons_list) > min_lon or \
+            max(lats_list) < max_lat or max(lons_list) < max_lon:
+        return False
+    if min(times) > min_t or max(times) < max_t:
+        return False
+        
+    return True
+
 def read_netCDF_to_array(filepath, filetype, variable_to_extract, min_t, max_t, min_lat, max_lat, min_lon, max_lon):
     '''
         Purpose:: Extract the data from a single variable on a netCDF file (from a supported source). The user specifies a
@@ -711,11 +725,8 @@ def read_netCDF_to_array(filepath, filetype, variable_to_extract, min_t, max_t, 
         times = [decode_time_from_string(x) for x in string_times]
 
     # Verifying requested area and times are available
-    if min(lats_list) > min_lat or min(lons_list) > min_lon or \
-            max(lats_list) < max_lat or max(lons_list) < max_lon:
-        raise RuntimeError("Area requested is outside of file data range")
-    if min(times) > min_t or max(times) < max_t:
-        raise RuntimeError("Time slice requested is outside of file data range")
+    if not check_Bounds(lats_list, lons_list, min_lat, max_lat, min_lon, max_lon, times, min_t, max_t):
+        raise RuntimeError("Time slice or Area requested is outside of file data range")
 
     # Trimming data according to requested area and times
     trimmed_lats_indices = [i for i in range(len(lats_list))
