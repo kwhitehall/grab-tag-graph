@@ -116,7 +116,7 @@ def find_nearest(thisArray, value):
 
     Input ::
         thisArray: Array to be searched
-        value: anchor value to base the search on.
+        value: anchor value to base the search on
     Output::
         nearestValue: value from thisArray which is closest to the input value
     '''
