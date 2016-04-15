@@ -5,14 +5,13 @@ import string
 import subprocess
 import sys
 from datetime import timedelta, datetime
-from os import path
 
 import numpy as np
 import numpy.ma as ma
 import netCDF4
 
 import utils
-import variables
+import variablespath
 
 def get_fileList_for_binaries(dirPath, startTime, endTime):
     '''
@@ -90,11 +89,11 @@ def check_for_files(dirPath, startTime, endTime, tdelta, tRes):
         currFileTime = datetime.strptime(startTime[:12], '%Y%m%d%H%m')
         tRes = 'minute'
 
-    filelist = filter(path.isfile, glob.glob((dirPath+'/*.nc')))
+    filelist = filter(os.path.isfile, glob.glob((dirPath+'/*.nc')))
     filelist.sort()
 
     # Check for the filename pattern
-    for eachPart in re.split(r'[_,-,.,/]', re.split(r'.nc', path.basename(filelist[0]))[0]):
+    for eachPart in re.split(r'[_,-,.,/]', re.split(r'.nc', os.path.basename(filelist[0]))[0]):
         tokenCounter += 1
         if tokenCounter == 1:
             filenamePattern += eachPart
@@ -106,8 +105,8 @@ def check_for_files(dirPath, startTime, endTime, tdelta, tRes):
                 startTimeInFile += eachPart + '*'
 
     if hasDelimiter is False:
-        fileDate = int(re.search(r'\d+', re.split(r'.nc', path.basename(filelist[0]))[0]).group())
-        filenamePattern = re.split(str(fileDate), path.basename(filelist[0]))[0]
+        fileDate = int(re.search(r'\d+', re.split(r'.nc', os.path.basename(filelist[0]))[0]).group())
+        filenamePattern = re.split(str(fileDate), os.path.basename(filelist[0]))[0]
 
     startFile = glob.glob(dirPath+'/'+filenamePattern + '*' + startTimeInFile)[0]
     endTimeInFile = find_time_in_file(endTime, startTimeInFile)
@@ -118,7 +117,7 @@ def check_for_files(dirPath, startTime, endTime, tdelta, tRes):
 
     # Check for files between startTime and endTime
     while currFile is not endFile:
-        if not path.isfile(currFile):
+        if not os.path.isfile(currFile):
             status = False
             return status, filelist
         else:
@@ -581,7 +580,7 @@ def write_MERG_pixel_to_ncdf(lonDict, latDict, timeDict, ch4Dict, fileName, dirN
     ncdf.close()
 
 
-def read_MERG_pixel_file(path, shape=(2, 3298, 9896), offset=75.):
+def read_MERG_pixel_file(filepath, shape=(2, 3298, 9896), offset=75.): #change variable name "path" to something else
     '''
         Purpose:: Read MERG brightness temperature from binary file. Thanks to Brian Wilson for this contribution.
                   File contains two large arrays (2 time epochs: on the hour and the half hour)
@@ -601,7 +600,7 @@ def read_MERG_pixel_file(path, shape=(2, 3298, 9896), offset=75.):
                     will always be the same unless the data changes.
 
     '''
-    pixel_file = open(path, 'rb')
+    pixel_file = open(filepath, 'rb')
     pixel_array = np.fromfile(pixel_file, dtype=np.uint8, count=-1)  # count=-1 means read entire file
     temperatures = pixel_array.astype(np.float).reshape(shape)
     temperatures += offset
@@ -699,7 +698,7 @@ def read_netCDF_to_array(filepath, filetype, variable_to_extract, min_t, max_t, 
     # Grabbing list of times
     time_dict = FORMAT_DEFS[filetype]["time_handling"]
     if time_dict["method"] is "filename_time_regex":
-        filename = path.basename(filepath)
+        filename = os.path.basename(filepath)
 
         time_match_group = time_dict["regex_object"].search(filename)
         time_numbers = [int(num) for num in time_match_group.groups()]
