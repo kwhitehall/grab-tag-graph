@@ -81,7 +81,8 @@ class UserVariables(object):
             self.MAXIMUM_DURATION = 24   # max number of frames the MCC can last for
             self.DIRS = {'mainDirStr': "../firstattempt",
                          'TRMMdirName': "../datadir/TRMM",
-                         'CEoriDirName': "../datadir/MERG"}
+                         'CEoriDirName': "../datadir/MERG"
+                         }
             self.filelist = None
 
         self.STRUCTURING_ELEMENT = [[0, 1, 0],  # The matrix for determining the pattern for the contiguous boxes and must
@@ -93,10 +94,10 @@ class UserVariables(object):
         self.check_lons(self.LONMIN, self.LONMAX)
         self.check_times(self.startDateTime, self.endDateTime)
         self.check_dirs(self.DIRS['CEoriDirName'], self.DIRS['TRMMdirName'])
-        self.ir_inputs(self.DIRS['CEoriDirName'], self.startDateTime, self.endDateTime)
-        self.trmm_inputs(self.DIRS['TRMMdirName'], self.startDateTime, self.endDateTime)
+        #self.ir_inputs(self.DIRS['CEoriDirName'], self.startDateTime, self.endDateTime)
+        #self.trmm_inputs(self.DIRS['TRMMdirName'], self.startDateTime, self.endDateTime)
         self.setup_all()
-        
+
     def check_lats(self, LATMIN, LATMAX):
         '''
         Purpose:: check latitude limits
@@ -108,12 +109,12 @@ class UserVariables(object):
 
         if (float(self.LATMAX) > 90.):
             print "Bad latmax input! Check the config file. Now using default variables..."
-            return False   
+            return False
 
         if (float(self.LATMIN) > float(self.LATMAX)):
             print 'LATMIN >= LATMAX; Reversing the latitude', self.LATMIN
             return False
-        
+
         return True
 
     def check_lons(self, LONMIN, LONMAX):
@@ -175,9 +176,9 @@ class UserVariables(object):
             if test is False:
                 print "Error with files in the TRMM directory entered. Please check your files before restarting. "
                 return False
-    
+
         return True
-    
+
     def ir_inputs(self, CEoriDirName, startDateTime, endDateTime):
         try:
             test, self.filelist = iomethods.check_for_files(CEoriDirName, startDateTime, endDateTime, 1, 'hour')
@@ -185,28 +186,25 @@ class UserVariables(object):
                 print "Error with files in the MERG directory entered. Please check your files before restarting. "
                 return False
         except:
-            print "..." 
+            print "..."
         return True
 
     def setup_all(self):
         '''
         Purpose:: to configure the UserVariables
-
         Inputs::
-
         Outputs::
-
         Assumptions::
         '''
 
         if (self.XRES <= 0):
             print "Bad XRES input! Check the config file. Now using default variables..."
             return False
-        
+
         if (self.YRES <= 0):
             print "Bad YRES input! Check the config file. Now using default variables..."
             return False
-        
+
         if (self.TRES <= 0):
             print "Bad TRES input! Check the config file. Now using default variables..."
             return False
@@ -214,10 +212,10 @@ class UserVariables(object):
         if (self.LAT_DISTANCE > 111. or self.LAT_DISTANCE <= 0.):
             print "Bad LAT_DISTANCE input! Check the config file. Now using default variables..."
             return False
-        
+
         if (self.LON_DISTANCE > 111. or self.LON_DISTANCE <= 0.):
             print "Bad LON_DISTANCE input! Check the config file. Now using default variables..."
-            return False          
+            return False
 
         if (self.T_BB_MIN > self.T_BB_MAX):
             print "Bad TBBMIN and MAX input! Check the config file. Switching max and min..."
@@ -240,7 +238,7 @@ class UserVariables(object):
         if (self.ECCENTRICITY_THRESHOLD_MAX < 0 or self.ECCENTRICITY_THRESHOLD_MAX > 1.):
             print "Bad ECCENTRICITY THRESHOLD MAX input. Check config file. Now using default variables..."
             return False
-        
+
         if (self.ECCENTRICITY_THRESHOLD_MIN < 0 or self.ECCENTRICITY_THRESHOLD_MIN > 1.):
             print "Bad ECCENTRICITY THRESHOLD MIN input. Check config file. Now using default variables..."
             print False
@@ -269,20 +267,16 @@ class GraphVariables(object):
         self.edgeWeight = [1, 2, 3]                   # weights for the graph edges
         self.CLOUD_ELEMENT_GRAPH = nx.DiGraph()     # graph obj for the CEs meeting criteria
         self.PRUNED_GRAPH = nx.DiGraph()            # graph meeting the CC criteria
-        
+
 
 def define_graph_variables():
     '''
     Purpose:: to assign the data for the GraphVariables
-
     Inputs:: None
-
-    Outputs:: a Graphvariables instance 
-
+    Outputs:: a Graphvariables instance
     Assumptions::
     '''
 
     graphVars = GraphVariables()
     return graphVars
-
 
