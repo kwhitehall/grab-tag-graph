@@ -11,7 +11,7 @@ import numpy.ma as ma
 import netCDF4
 
 import utils
-import variablespath
+import variables
 
 def _get_fileList_for_binaries(dirPath, startTime, endTime):
     '''
