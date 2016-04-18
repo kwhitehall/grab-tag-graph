@@ -6,7 +6,7 @@ import iomethods
 import variables
 import numpy as np
 
-def test_read_MERG_and_write_MERG():
+def test_read_merg_and_write_merg():
     '''
         Purpose:: Tests the functions '_read_merg_file' and '_write_MERG_pixel_to_ncdf' from iomethods.py as a whole
         Notes:: Change the sys.path.insert(...) argument above to the path where iomethods.py is located
@@ -17,6 +17,7 @@ def test_read_MERG_and_write_MERG():
 
     lon, lat, temperatures = iomethods._read_merg_file('../datadir/MERG/merg_2006091100_4km-pixel', shape=(2, 3298, 9896), offset=75.)
 
+    # Generate lon and lat coordinates
     lon = np.arange(0.0182, 360., 0.036378335, dtype=np.float)
     lat = np.arange(59.982, -60., -0.036383683, dtype=np.float)
 
@@ -40,6 +41,6 @@ def test_read_MERG_and_write_MERG():
                              dimensionsDict)
 
 if __name__ == '__main__':
-    test_read_MERG_and_write_MERG()
+    test_read_merg_and_write_merg()
 
 

@@ -283,7 +283,6 @@ def read_data(varName, latName, lonName, userVariables, fileType):
 
         tmp.close()
     elif fileType == 'binary':
-        data = _read_merg_file(userVariables.filelist[0], shape=(2, 3298, 9896), offset=75.)
         alllatsraw = np.arange(59.982, -60., -0.036383683, dtype=np.float)
         alllonsraw = np.arange(0.0182, 360., 0.036378335, dtype=np.float)
 
@@ -584,30 +583,24 @@ def write_MERG_pixel_to_ncdf(lonDict, latDict, timeDict, ch4Dict, fileName, dirN
     ncdf.close()
 
 
-def _read_merg_file(filepath, shape, offset): #change variable name "path" to something else
+def _read_merg_file(filepath, shape, offset):
     '''
         Purpose:: Read merg data from a binary file.
-                  File contains two large arrays (2 time epochs: on the hour and the half hour)
-                  of temperature (Kelvin) as an unsigned integer byte, offset by 75 so it will fit in the 0-255 range.
 
-                  For documentation, see http://www.cpc.ncep.noaa.gov/products/global_precip/html/README
-
-        Input:: filepath - The path to the MERG binary file
+        Input:: filepath - The path to the merg binary file
                 Shape - The shape we want the data to be in
-                Offset - Data is sometimes scaled to fit into 1-byte by subtracting 75, so add back the offset
+                Offset - Data is sometimes scaled to fit by reducing the value, so add it back if necessary
 
         Output:: data - A numPy array containing data from a merg file
 
-        Assumption:: The binary file was unmodified when downloaded.
-
     '''
 
-    pixelFile = open(filepath, 'rb')
-    pixelArray = np.fromfile(pixelFile, dtype=np.uint8, count=-1)  # count=-1 means read entire file
-    data = pixelArray.astype(np.float).reshape(shape)
+    mergFile = open(filepath, 'rb')
+    mergArray = np.fromfile(mergFile, dtype=np.uint8, count=-1)  # count=-1 means read entire file
+    data = mergArray.astype(np.float).reshape(shape)
     data += offset
 
-    pixelFile.close()
+    mergFile.close()
 
     return data
 
