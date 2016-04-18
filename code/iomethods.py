@@ -677,9 +677,9 @@ def read_netCDF_to_array(filepath, filetype, variableToExtract, minT, maxT, minL
                 maxLon: longitude of the eastern boundary of the slice request
 
         Output:: trimmedData: Masked numPy 3D array ([time, lat, lon]) that contains the data requested.
-                 trimmed_times: list of all positions in the time dimension (in 'datetime' object format)
-                 trimmed_lat: numpy array of all positions in the latitude dimension
-                 trimmed_lon: numpy array of all positions in the longitude dimension
+                 trimmedTimes: list of all positions in the time dimension (in 'datetime' object format)
+                 trimmedLat: numpy array of all positions in the latitude dimension
+                 trimmedLon: numpy array of all positions in the longitude dimension
 
 
         Assumption(s):: The variable has only 2 or 3 dimensions. If it has 2, then a third dimension is added.
