@@ -600,15 +600,15 @@ def _read_MERG_pixel_file(filepath, shape=(2, 3298, 9896), offset=75.): #change 
                     will always be the same unless the data changes.
 
     '''
-    pixel_file = open(filepath, 'rb')
-    pixel_array = np.fromfile(pixel_file, dtype=np.uint8, count=-1)  # count=-1 means read entire file
-    temperatures = pixel_array.astype(np.float).reshape(shape)
+    pixelFile = open(filepath, 'rb')
+    pixelArray = np.fromfile(pixelFile, dtype=np.uint8, count=-1)  # count=-1 means read entire file
+    temperatures = pixelArray.astype(np.float).reshape(shape)
     temperatures += offset
 
     lon = np.arange(0.0182, 360., 0.036378335, dtype=np.float)
     lat = np.arange(59.982, -60., -0.036383683, dtype=np.float)
 
-    pixel_file.close()
+    pixelFile.close()
 
     return lon, lat, temperatures
 
@@ -645,20 +645,20 @@ FORMAT_DEFS = {
 }
 
 
-def _check_Bounds(lats_list, lons_list, min_lat, max_lat, min_lon, max_lon, times, min_t, max_t):
+def _check_Bounds(latsList, lonsList, minLat, maxLat, minLon, maxLon, times, minT, maxT):
     '''
         Purpose:: Refactor the checking of bounds in a different function. Pass in a variable object isntead of passing
         in a bunch of single value variables
     '''
-    if min(lats_list) > min_lat or min(lons_list) > min_lon or \
-            max(lats_list) < max_lat or max(lons_list) < max_lon:
+    if min(latsList) > minLat or min(lonsList) > minLon or \
+            max(latsList) < maxLat or max(lonsList) < maxLon:
         return False
-    if min(times) > min_t or max(times) < max_t:
+    if min(times) > minT or max(times) < maxT:
         return False
         
     return True
 
-def read_netCDF_to_array(filepath, filetype, variable_to_extract, min_t, max_t, min_lat, max_lat, min_lon, max_lon):
+def read_netCDF_to_array(filepath, filetype, variableToExtract, minT, maxT, minLat, maxLat, minLon, maxLon):
     '''
         Purpose:: Extract the data from a single variable on a netCDF file (from a supported source). The user specifies a
          slice of the data in three dimensions: time, latitude, and longitude. The function returns the data points
@@ -668,15 +668,15 @@ def read_netCDF_to_array(filepath, filetype, variable_to_extract, min_t, max_t, 
 
         Input:: filePath: path to the netCDF file
                 filetype: string containing the data source (used to infer the structure, supported: "trmm", "mtsat", wrf")
-                variable_to_extract: the name of the netCDF variable to be returned
-                min_t: time of the earliest boundary of the slice request
-                max_t: time of the latest boundary of the slice request
-                min_lat: latitude of the southern boundary of the slice request
-                max_lat: latitude of the northern boundary of the slice request
-                min_lon: longitude of the western boundary of the slice request
-                max_lon: longitude of the eastern boundary of the slice request
+                variableToExtract: the name of the netCDF variable to be returned
+                minT: time of the earliest boundary of the slice request
+                maxT: time of the latest boundary of the slice request
+                minLat: latitude of the southern boundary of the slice request
+                maxLat: latitude of the northern boundary of the slice request
+                minLon: longitude of the western boundary of the slice request
+                maxLon: longitude of the eastern boundary of the slice request
 
-        Output:: trimmed_data: Masked numPy 3D array ([time, lat, lon]) that contains the data requested.
+        Output:: trimmedData: Masked numPy 3D array ([time, lat, lon]) that contains the data requested.
                  trimmed_times: list of all positions in the time dimension (in 'datetime' object format)
                  trimmed_lat: numpy array of all positions in the latitude dimension
                  trimmed_lon: numpy array of all positions in the longitude dimension
@@ -689,73 +689,73 @@ def read_netCDF_to_array(filepath, filetype, variable_to_extract, min_t, max_t, 
 
     dataset = netCDF4.Dataset(filepath, 'r', format='NETCDF4')
 
-    extracted_variable = dataset.variables[variable_to_extract][:, :]
+    extractedVariable = dataset.variables[variableToExtract][:, :]
 
     # adding time dimension to 2D data formats
-    if extracted_variable.ndim is 2:
-        extracted_variable = extracted_variable[np.newaxis, :, :]
+    if extractedVariable.ndim is 2:
+        extractedVariable = extractedVariable[np.newaxis, :, :]
 
-    lats_data = dataset.variables[FORMAT_DEFS[filetype]["latitude"]]
-    lons_data = dataset.variables[FORMAT_DEFS[filetype]["longitude"]]
+    latsData = dataset.variables[FORMAT_DEFS[filetype]["latitude"]]
+    lonsData = dataset.variables[FORMAT_DEFS[filetype]["longitude"]]
 
     # Grabbing list of latitudes and longitudes
     if filetype is "wrf":
-        lats_list = lats_data[0,:,0]
-        lons_list = lons_data[0,0,:]
+        latsList = latsData[0,:,0]
+        lonsList = lonsData[0,0,:]
     else:
-        lats_list = lats_data[:]
-        lons_list = lons_data[:]
+        latsList = latsData[:]
+        lonsList = lonsData[:]
 
     # Reformatting longitude format to [-180, 180]
-    lons_list[lons_list > 180] = lons_list[lons_list > 180] - 360.
+    lonsList[lonsList > 180] = lonsList[lonsList > 180] - 360.
 
     # Grabbing list of times
-    time_dict = FORMAT_DEFS[filetype]["time_handling"]
-    if time_dict["method"] is "filename_time_regex":
+    timeDict = FORMAT_DEFS[filetype]["time_handling"]
+    if timeDict["method"] is "filename_time_regex":
         filename = os.path.basename(filepath)
 
-        time_match_group = time_dict["regex_object"].search(filename)
-        time_numbers = [int(num) for num in time_match_group.groups()]
-        time = datetime(*time_numbers)
+        timeMatchGroup = timeDict["regex_object"].search(filename)
+        timeNumbers = [int(num) for num in timeMatchGroup.groups()]
+        time = datetime(*timeNumbers)
         times = [time]
-    elif time_dict["method"] is "get_model_times":
-        times = _get_model_times(dataset.variables[time_dict["variable"]])
-    elif time_dict["method"] is "string_times":
-        string_times = ["".join(x) for x in dataset.variables["Times"][:]]
-        times = [_decode_time_from_string(x) for x in string_times]
+    elif timeDict["method"] is "get_model_times":
+        times = _get_model_times(dataset.variables[timeDict["variable"]])
+    elif timeDict["method"] is "string_times":
+        stringTimes = ["".join(x) for x in dataset.variables["Times"][:]]
+        times = [_decode_time_from_string(x) for x in stringTimes]
 
     # Verifying requested area and times are available
-    if not _check_Bounds(lats_list, lons_list, min_lat, max_lat, min_lon, max_lon, times, min_t, max_t):
+    if not _check_Bounds(latsList, lonsList, minLat, maxLat, minLon, maxLon, times, minT, maxT):
         raise RuntimeError("Time slice or Area requested is outside of file data range")
 
     # Trimming data according to requested area and times
-    trimmed_lats_indices = [i for i in range(len(lats_list))
-                            if lats_list[i] >= min_lat and lats_list[i] <= max_lat]
-    trimmed_lats_start = trimmed_lats_indices[0]
-    trimmed_lats_end = trimmed_lats_indices[-1]
+    trimmedLatsIndices = [i for i in range(len(latsList))
+                            if latsList[i] >= minLat and latsList[i] <= maxLat]
+    trimmedLatsStart = trimmedLatsIndices[0]
+    trimmedLatsEnd = trimmedLatsIndices[-1]
 
-    trimmed_lons_indices = [i for i in range(len(lons_list))
-                            if lons_list[i] >= min_lon and lons_list[i] <= max_lon]
-    trimmed_lons_start = trimmed_lons_indices[0]
-    trimmed_lons_end = trimmed_lons_indices[-1]
+    trimmedLonsIndices = [i for i in range(len(lonsList))
+                            if lonsList[i] >= minLon and lonsList[i] <= maxLon]
+    trimmedLonsStart = trimmedLonsIndices[0]
+    trimmedLonsEnd = trimmedLonsIndices[-1]
 
-    trimmed_time_indices = [i for i in range(len(times))
-                            if times >= min_t and times <= max_t]
-    trimmed_time_start = trimmed_time_indices[0]
-    trimmed_time_end = trimmed_time_indices[-1]
+    trimmedTimeIndices = [i for i in range(len(times))
+                            if times >= minT and times <= maxT]
+    trimmedTimeStart = trimmedTimeIndices[0]
+    trimmedTimeEnd = trimmedTimeIndices[-1]
 
 
 
-    trimmed_lats = lats_list[trimmed_lats_start:trimmed_lats_end + 1]
-    trimmed_lons = lons_list[trimmed_lons_start:trimmed_lons_end + 1]
-    trimmed_times = times[trimmed_time_start: trimmed_time_end + 1]
-    trimmed_data = extracted_variable[trimmed_time_start:trimmed_time_end + 1,
-                                      trimmed_lats_start:trimmed_lats_end + 1,
-                                      trimmed_lons_start:trimmed_lons_end + 1]
+    trimmedLats = latsList[trimmedLatsStart:trimmedLatsEnd + 1]
+    trimmedLons = lonsList[trimmedLonsStart:trimmedLonsEnd + 1]
+    trimmedTimes = times[trimmedTimeStart: trimmedTimeEnd + 1]
+    trimmedData = extractedVariable[trimmedTimeStart:trimmedTimeEnd + 1,
+                                      trimmedLatsStart:trimmedLatsEnd + 1,
+                                      trimmedLonsStart:trimmedLonsEnd + 1]
 
     dataset.close()
 
-    return ma.masked_array(trimmed_data), trimmed_times, trimmed_lats, trimmed_lons
+    return ma.masked_array(trimmedData), trimmedTimes, trimmedLats, trimmedLons
 
 
 # **********************************************************************************************************************
@@ -764,14 +764,14 @@ if __name__ == '__main__':
     minDate = datetime(2005, 1, 1)
     maxDate = datetime(2007, 1, 1)
 
-    trimmed_data, times, trimmed_lats, trimmed_lons = read_netCDF_to_array('/home/campbell/Desktop/TRMM Sample/3B42.20060911.00.7A.nc',
+    trimmedData, times, trimmedLats, trimmedLons = read_netCDF_to_array('/home/campbell/Desktop/TRMM Sample/3B42.20060911.00.7A.nc',
                                                                            'trmm', 'irp', minDate, maxDate, 10, 15
-                                                                           , 10, 15)
+                                                                        , 10, 15)
 
-    print trimmed_data
+    print trimmedData
     print times
-    print trimmed_lats
-    print trimmed_lons
+    print trimmedLats
+    print trimmedLons
 
 
 
