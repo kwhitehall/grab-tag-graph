@@ -37,7 +37,7 @@ def test_read_merg_and_write_merg():
 
     dimensionsDict = {"time": None, "longitude": 9896, "latitude": 3298}
 
-    iomethods.write_MERG_pixel_to_ncdf(lonDict, latDict, timeDict, ch4Dict, 'merg_2006091100_4km-pixel', user.DIRS['CEoriDirName'], globalAttrDict,
+    iomethods.write_merg_to_ncdf(lonDict, latDict, timeDict, ch4Dict, 'merg_2006091100_4km-pixel', user.DIRS['CEoriDirName'], globalAttrDict,
                              dimensionsDict)
 
 if __name__ == '__main__':

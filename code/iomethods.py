@@ -530,10 +530,10 @@ def _decode_time_from_string(timeString):
     print 'Error decoding time string: string does not match a predefined time format'
     return 0
     # **********************************************************************************************************************
-def write_MERG_pixel_to_ncdf(lonDict, latDict, timeDict, ch4Dict, fileName, dirName, globalAttrDict, dimensionsDict):
+def write_merg_to_ncdf(lonDict, latDict, timeDict, ch4Dict, fileName, dirName, globalAttrDict, dimensionsDict):
     '''
-        Purpose:: Write temperature data from specific NumPy arrays to netCDF format. See the method
-                  read_MERG_pixel_file to see how the data is arranged.
+        Purpose:: Write temperature data to netCDF format. See the method
+                  _read_merg_file to see how the data is arranged.
 
         Inputs:: lonDict, latDict, timeDict, ch4Dict are all dictionaries with
                      string keys of 'name', 'dataType', and 'dimensions' and their corresponding data as the value.
@@ -543,10 +543,10 @@ def write_MERG_pixel_to_ncdf(lonDict, latDict, timeDict, ch4Dict, fileName, dirN
                     and the value is the description of the global attribute.
                  dimensionsDict is a dictionary where the key is a string that represents the name of the dimension
                     and the value is either an integer representing the size or none to represent an unlimited dimension
-                 fileName is a string representing the fileName where you got the data from
+                 fileName is a string representing the fileName where you got the data
                  dirName is a string representing where you want to place the newly created file
 
-        Returns:: None. It writes to a netCDF file with extension .nc
+        Returns:: newFilePath, which is the path to the new file. It also writes to a netCDF file
         Assumptions:: fileName is in the format: merg_YYYYMMDDHH_4km-pixel
 
     '''
@@ -554,7 +554,8 @@ def write_MERG_pixel_to_ncdf(lonDict, latDict, timeDict, ch4Dict, fileName, dirN
     newFilePath = os.path.join(dirName, fileName + '.nc')
     ncdf = netCDF4.Dataset(newFilePath, "w", format="NETCDF4")
 
-    ncdf.setncatts(globalAttrDict)  # Set global attributes, dimensions, and lastly, each variable
+    # Set global attributes, dimensions, and lastly, each variable
+    ncdf.setncatts(globalAttrDict)
 
     for nameOfDimension, size in dimensionsDict.iteritems():
         ncdf.createDimension(nameOfDimension, size)
@@ -569,8 +570,9 @@ def write_MERG_pixel_to_ncdf(lonDict, latDict, timeDict, ch4Dict, fileName, dirN
 
     ncdf.createVariable(timeDict['name'], timeDict['dataType'], timeDict['dimensions'])
 
-    dateFromFileName = [token for token in newFilePath.split('_') if token.isdigit()]  # Parse date from MERG binary file name
-    dateAsDateTime = datetime.strptime(dateFromFileName[0], '%Y%m%d%H')         # then set attribute for 'time'
+    # Parse time from filename. Assumes the filename is in the format 'merg_xxxxxxxxxx_4km-pixel'
+    dateFromFileName = file[5:15]
+    dateAsDateTime = datetime.strptime(dateFromFileName, '%Y%m%d%H')
 
     ncdf.variables['time'].setncattr('units', 'hours since ' + str(dateAsDateTime.year) + '-' + str(dateAsDateTime.month) +
                                      '-' + str(dateAsDateTime.day) + ' ' + str(dateAsDateTime.hour))
@@ -586,16 +588,18 @@ def write_MERG_pixel_to_ncdf(lonDict, latDict, timeDict, ch4Dict, fileName, dirN
 
     ncdf.close()
 
+    return newFilePath
+
 
 def _read_merg_file(filepath, shape, offset):
     '''
-        Purpose:: Read merg data from a binary file.
+        Purpose:: Read merg data from a binary file and put it into a numPy array
 
         Input:: filepath - The path to the merg binary file
                 Shape - The shape we want the data to be in
                 Offset - Data is sometimes scaled to fit by reducing the value, so add it back if necessary
 
-        Output:: data - A numPy array containing data from a merg file
+        Output:: data - A numPy array with datatype np.float with the shape that was passed in
 
     '''
 
