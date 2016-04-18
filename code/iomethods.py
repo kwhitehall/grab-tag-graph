@@ -658,6 +658,7 @@ def _check_Bounds(latsList, lonsList, minLat, maxLat, minLon, maxLon, times, min
         
     return True
 
+
 def read_netCDF_to_array(filepath, filetype, variableToExtract, minT, maxT, minLat, maxLat, minLon, maxLon):
     '''
         Purpose:: Extract the data from a single variable on a netCDF file (from a supported source). The user specifies a
@@ -686,6 +687,16 @@ def read_netCDF_to_array(filepath, filetype, variableToExtract, minT, maxT, minL
                         The variable has the dimensions: [time,] latitude, and longitude, in that order
 
     '''
+
+    # Verifying input
+    while -90. > minLat or minLat > 90.:
+        minLat = input("minLat passed to read_netCDF_to_array invalid, enter replacement:")
+    while -90. > maxLat or maxLat > 90.:
+        maxLat = input("maxLat passed to read_netCDF_to_array invalid, enter replacement:")
+    while -180. > minLon or minLon > 180.:
+        minLon = input("minLon passed to read_netCDF_to_array invalid, enter replacement:")
+    while -180. > maxLon or maxLon > 180.:
+        maxLon = input("maxLon passed to read_netCDF_to_array invalid, enter replacement:")
 
     dataset = netCDF4.Dataset(filepath, 'r', format='NETCDF4')
 
@@ -719,7 +730,7 @@ def read_netCDF_to_array(filepath, filetype, variableToExtract, minT, maxT, minL
         time = datetime(*timeNumbers)
         times = [time]
     elif timeDict["method"] is "get_model_times":
-        times = _get_model_times(dataset.variables[timeDict["variable"]])
+        times = _get_model_times(dataset.variables[timeDict["variable"]])[0]
     elif timeDict["method"] is "string_times":
         stringTimes = ["".join(x) for x in dataset.variables["Times"][:]]
         times = [_decode_time_from_string(x) for x in stringTimes]
@@ -740,7 +751,7 @@ def read_netCDF_to_array(filepath, filetype, variableToExtract, minT, maxT, minL
     trimmedLonsEnd = trimmedLonsIndices[-1]
 
     trimmedTimeIndices = [i for i in range(len(times))
-                            if times >= minT and times <= maxT]
+                            if times[i] >= minT and times[i] <= maxT]
     trimmedTimeStart = trimmedTimeIndices[0]
     trimmedTimeEnd = trimmedTimeIndices[-1]
 
@@ -761,12 +772,21 @@ def read_netCDF_to_array(filepath, filetype, variableToExtract, minT, maxT, minL
 # **********************************************************************************************************************
 if __name__ == '__main__':
     # Test for TRMM file, extracting the 'irp' variable
-    minDate = datetime(2005, 1, 1)
-    maxDate = datetime(2007, 1, 1)
+    # minDate = datetime(2005, 1, 1)
+    # maxDate = datetime(2007, 1, 1)
 
-    trimmedData, times, trimmedLats, trimmedLons = read_netCDF_to_array('/home/campbell/Desktop/TRMM Sample/3B42.20060911.00.7A.nc',
-                                                                           'trmm', 'irp', minDate, maxDate, 10, 15
-                                                                        , 10, 15)
+    # trimmedData, times, trimmedLats, trimmedLons = read_netCDF_to_array('/home/campbell/Desktop/TRMM Sample/3B42.20060911.00.7A.nc',
+    #                                                                        'trmm', 'irp', minDate, maxDate, 10, 15
+    #                                                                     , 10, 15)
+
+
+    minDate = datetime(2009, 8, 31)
+    maxDate = datetime(2009, 8, 31)
+
+    trimmedData, times, trimmedLats, trimmedLons = read_netCDF_to_array(
+            '/Users/diegovonbeck/grab-tag-graph-bak/datadir/TRMM/3B42.20090831.00.7A.nc',
+             'trmm', 'irp', minDate, maxDate, 100, 15, 10, 15)
+
 
     print trimmedData
     print times
