@@ -263,6 +263,7 @@ def read_data(varName, latName, lonName, userVariables, fileType):
             (2) Assumes rectilinear grids for input datasets i.e. lat, lon will be 1D arrays
     '''
 
+    # Get list of files that are within the specified range
     if fileType == 'binary':
         userVariables.filelist = _get_fileList_for_binaries(userVariables.DIRS['CEoriDirName'], userVariables.startDateTime,
                                                            userVariables.endDateTime)
@@ -283,6 +284,7 @@ def read_data(varName, latName, lonName, userVariables, fileType):
 
         tmp.close()
     elif fileType == 'binary':
+        # Generate latitudes and longitudes
         alllatsraw = np.arange(59.982, -60., -0.036383683, dtype=np.float)
         alllonsraw = np.arange(0.0182, 360., 0.036378335, dtype=np.float)
 
@@ -296,7 +298,7 @@ def read_data(varName, latName, lonName, userVariables, fileType):
     lonminIndex = (np.where(alllonsraw == lonminNETCDF))[0][0]
     lonmaxIndex = (np.where(alllonsraw == lonmaxNETCDF))[0][0]
 
-    # Subsetting the data
+    # Subset the data
     latsraw = alllatsraw[latminIndex:latmaxIndex]
     lonsraw = alllonsraw[lonminIndex:lonmaxIndex]
 
@@ -331,14 +333,16 @@ def read_data(varName, latName, lonName, userVariables, fileType):
 
         elif fileType == 'binary':
             try:
-                # This data is temperature data in Kelvin, for more information
+                # The data is temperature in Kelvin, for more information
                 # go to http://www.cpc.ncep.noaa.gov/products/global_precip/html/README
                 data = _read_merg_file(file, shape=(2, 3298, 9896), offset=75.)
 
+                # Subset the data
                 data = data[:, latminIndex:latmaxIndex, lonminIndex:lonmaxIndex]
 
-                dateFromFileName = [token for token in file.split('_') if token.isdigit()]  # Parse date from MERG binary file name
-                dateAsDateTime = datetime.strptime(dateFromFileName[0], '%Y%m%d%H')
+                # Parse time from filename. Assumes the filename is in the format 'merg_xxxxxxxxxx_4km-pixel'
+                dateFromFileName = file[5:15]
+                dateAsDateTime = datetime.strptime(dateFromFileName, '%Y%m%d%H')
 
                 timelist.append(dateAsDateTime)
                 outputData.extend(data)
