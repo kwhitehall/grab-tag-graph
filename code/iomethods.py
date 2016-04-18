@@ -666,7 +666,7 @@ def read_netCDF_to_array(filepath, filetype, variableToExtract, minT, maxT, minL
          3D slice spans a space outside the boundaries of the data file), an exception is thrown.
 
 
-        Input:: filePath: path to the netCDF file
+        Input:: filepath: path to the netCDF file
                 filetype: string containing the data source (used to infer the structure, supported: "trmm", "mtsat", wrf")
                 variableToExtract: the name of the netCDF variable to be returned
                 minT: time of the earliest boundary of the slice request
