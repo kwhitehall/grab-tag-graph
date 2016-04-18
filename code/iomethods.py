@@ -283,7 +283,9 @@ def read_data(varName, latName, lonName, userVariables, fileType):
 
         tmp.close()
     elif fileType == 'binary':
-        alllatsraw, alllonsraw, _ = _read_MERG_pixel_file(userVariables.filelist[0])
+        data = _read_merg_file(userVariables.filelist[0], shape=(2, 3298, 9896), offset=75.)
+        alllatsraw = np.arange(59.982, -60., -0.036383683, dtype=np.float)
+        alllonsraw = np.arange(0.0182, 360., 0.036378335, dtype=np.float)
 
     # Get the lat/lon info data (different resolution)
     latminNETCDF = utils.find_nearest(alllatsraw, float(userVariables.LATMIN))
@@ -330,15 +332,17 @@ def read_data(varName, latName, lonName, userVariables, fileType):
 
         elif fileType == 'binary':
             try:
-                _, _, temperatures = read_MERG_pixel_file(file)
+                # This data is temperature data in Kelvin, for more information
+                # go to http://www.cpc.ncep.noaa.gov/products/global_precip/html/README
+                data = _read_merg_file(file, shape=(2, 3298, 9896), offset=75.)
 
-                temperatures = temperatures[:, latminIndex:latmaxIndex, lonminIndex:lonmaxIndex]
+                data = data[:, latminIndex:latmaxIndex, lonminIndex:lonmaxIndex]
 
                 dateFromFileName = [token for token in file.split('_') if token.isdigit()]  # Parse date from MERG binary file name
                 dateAsDateTime = datetime.strptime(dateFromFileName[0], '%Y%m%d%H')
 
                 timelist.append(dateAsDateTime)
-                outputData.extend(temperatures)
+                outputData.extend(data)
             except:
                 print 'bad file!', file
 
@@ -580,37 +584,32 @@ def write_MERG_pixel_to_ncdf(lonDict, latDict, timeDict, ch4Dict, fileName, dirN
     ncdf.close()
 
 
-def _read_MERG_pixel_file(filepath, shape=(2, 3298, 9896), offset=75.): #change variable name "path" to something else
+def _read_merg_file(filepath, shape, offset): #change variable name "path" to something else
     '''
-        Purpose:: Read MERG brightness temperature from binary file. Thanks to Brian Wilson for this contribution.
+        Purpose:: Read merg data from a binary file.
                   File contains two large arrays (2 time epochs: on the hour and the half hour)
                   of temperature (Kelvin) as an unsigned integer byte, offset by 75 so it will fit in the 0-255 range.
 
                   For documentation, see http://www.cpc.ncep.noaa.gov/products/global_precip/html/README
 
-        Input:: Path - The path to the MERG binary file
+        Input:: filepath - The path to the MERG binary file
                 Shape - The shape we want the data to be in
-                Offset - The temperatures were scaled to fit into 1-byte by subtracting 75, so the offset is used to
-                         add 75 back to each temperature.
-        Output:: lon - A numPy array containing longitudes from 0 to 360 degrees
-                 lat - A numpy array containing latitudes from 60 to -60 degrees
-                 temperatures - A numPy array containing temperature data in Kelvin for a certain lat/lon range
+                Offset - Data is sometimes scaled to fit into 1-byte by subtracting 75, so add back the offset
 
-        Assumption::The binary file was unmodified when downloaded. The shape tuple that is hardcoded in the parameter
-                    will always be the same unless the data changes.
+        Output:: data - A numPy array containing data from a merg file
+
+        Assumption:: The binary file was unmodified when downloaded.
 
     '''
+
     pixelFile = open(filepath, 'rb')
     pixelArray = np.fromfile(pixelFile, dtype=np.uint8, count=-1)  # count=-1 means read entire file
-    temperatures = pixelArray.astype(np.float).reshape(shape)
-    temperatures += offset
-
-    lon = np.arange(0.0182, 360., 0.036378335, dtype=np.float)
-    lat = np.arange(59.982, -60., -0.036383683, dtype=np.float)
+    data = pixelArray.astype(np.float).reshape(shape)
+    data += offset
 
     pixelFile.close()
 
-    return lon, lat, temperatures
+    return data
 
 FORMAT_DEFS = {
     "trmm" :
