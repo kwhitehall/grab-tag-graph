@@ -1,5 +1,9 @@
 import sys
 
+from datetime import datetime
+
+from code.iomethods import read_netCDF_to_array
+
 sys.path.insert(0, '../code/')
 
 import iomethods
@@ -40,7 +44,30 @@ def test_read_merg_and_write_merg():
     iomethods.write_merg_to_ncdf(lonDict, latDict, timeDict, ch4Dict, 'merg_2006091100_4km-pixel', user.DIRS['CEoriDirName'], globalAttrDict,
                              dimensionsDict)
 
+def test_read_netCDF_to_array():
+    # Test for TRMM file, extracting the 'irp' variable
+    minDate = datetime(2005, 1, 1)
+    maxDate = datetime(2007, 1, 1)
+
+    trimmedData, times, trimmedLats, trimmedLons = read_netCDF_to_array('/home/campbell/Desktop/TRMM Sample/3B42.20060911.00.7A.nc',
+                                                                           'trmm', 'irp', minDate, maxDate, 10, 15, 10, 15)
+
+    minDate = datetime(2009, 8, 21)
+    maxDate = datetime(2009, 8, 31)
+
+    trimmedData, times, trimmedLats, trimmedLons = read_netCDF_to_array(
+            '/Users/diegovonbeck/grab-tag-graph-bak/datadir/TRMM/3B42.20090831.00.7A.nc',
+             'trmm', 'irp', minDate, maxDate, 100, 15, 10, 15)
+
+    # Compare these with known values
+    print trimmedData
+    print times
+    print trimmedLats
+    print trimmedLons
+
+
 if __name__ == '__main__':
     test_read_merg_and_write_merg()
+    test_read_netCDF_to_array()
 
 

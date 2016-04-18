@@ -837,28 +837,5 @@ def _check_bounds(latsList, lonsList, maxLat, maxLon, maxT, minLat, minLon,
 
 
 # **********************************************************************************************************************
-if __name__ == '__main__':
-    # Test for TRMM file, extracting the 'irp' variable
-    # minDate = datetime(2005, 1, 1)
-    # maxDate = datetime(2007, 1, 1)
-
-    # trimmedData, times, trimmedLats, trimmedLons = read_netCDF_to_array('/home/campbell/Desktop/TRMM Sample/3B42.20060911.00.7A.nc',
-    #                                                                        'trmm', 'irp', minDate, maxDate, 10, 15
-    #                                                                     , 10, 15)
-
-
-    minDate = datetime(2009, 8, 21)
-    maxDate = datetime(2009, 8, 31)
-
-    trimmedData, times, trimmedLats, trimmedLons = read_netCDF_to_array(
-            '/Users/diegovonbeck/grab-tag-graph-bak/datadir/TRMM/3B42.20090831.00.7A.nc',
-             'trmm', 'irp', minDate, maxDate, 100, 15, 10, 15)
-
-
-    print trimmedData
-    print times
-    print trimmedLats
-    print trimmedLons
-
 
 
