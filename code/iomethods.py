@@ -645,20 +645,6 @@ FORMAT_DEFS = {
 }
 
 
-def _check_Bounds(latsList, lonsList, minLat, maxLat, minLon, maxLon, times, minT, maxT):
-    '''
-        Purpose:: Refactor the checking of bounds in a different function. Pass in a variable object isntead of passing
-        in a bunch of single value variables
-    '''
-    if min(latsList) > minLat or min(lonsList) > minLon or \
-            max(latsList) < maxLat or max(lonsList) < maxLon:
-        return False
-    if min(times) > minT or max(times) < maxT:
-        return False
-        
-    return True
-
-
 def read_netCDF_to_array(filepath, filetype, variableToExtract, minT, maxT, minLat, maxLat, minLon, maxLon):
     '''
         Purpose:: Extract the data from a single variable on a netCDF file (from a supported source). The user specifies a
@@ -690,13 +676,29 @@ def read_netCDF_to_array(filepath, filetype, variableToExtract, minT, maxT, minL
 
     # Verifying input
     while -90. > minLat or minLat > 90.:
-        minLat = input("minLat passed to read_netCDF_to_array invalid, enter replacement:")
+        try:
+            minLat = float(raw_input("minLat passed to read_netCDF_to_array invalid, enter replacement:"))
+        except ValueError as e:
+            print "Error parsing coordinates: " + e.message
+            print "Try again"
     while -90. > maxLat or maxLat > 90.:
-        maxLat = input("maxLat passed to read_netCDF_to_array invalid, enter replacement:")
+        try:
+            maxLat = float(raw_input("maxLat passed to read_netCDF_to_array invalid, enter replacement:"))
+        except ValueError as e:
+            print "Error parsing coordinates: " + e.message
+            print "Try again"
     while -180. > minLon or minLon > 180.:
-        minLon = input("minLon passed to read_netCDF_to_array invalid, enter replacement:")
+        try:
+            minLon = float(raw_input("minLon passed to read_netCDF_to_array invalid, enter replacement:"))
+        except ValueError as e:
+            print "Error parsing coordinates: " + e.message
+            print "Try again"
     while -180. > maxLon or maxLon > 180.:
-        maxLon = input("maxLon passed to read_netCDF_to_array invalid, enter replacement:")
+        try:
+            maxLon = float(raw_input("maxLon passed to read_netCDF_to_array invalid, enter replacement:"))
+        except ValueError as e:
+            print "Error parsing coordinates: " + e.message
+            print "Try again"
 
     dataset = netCDF4.Dataset(filepath, 'r', format='NETCDF4')
 
@@ -736,8 +738,15 @@ def read_netCDF_to_array(filepath, filetype, variableToExtract, minT, maxT, minL
         times = [_decode_time_from_string(x) for x in stringTimes]
 
     # Verifying requested area and times are available
-    if not _check_Bounds(latsList, lonsList, minLat, maxLat, minLon, maxLon, times, minT, maxT):
-        raise RuntimeError("Time slice or Area requested is outside of file data range")
+    maxLat, maxLon, maxT, minLat, minLon, minT = _check_bounds(latsList,
+                                                               lonsList,
+                                                               maxLat,
+                                                               maxLon,
+                                                               maxT,
+                                                               minLat,
+                                                               minLon,
+                                                               minT,
+                                                               times)
 
     # Trimming data according to requested area and times
     trimmedLatsIndices = [i for i in range(len(latsList))
@@ -769,6 +778,64 @@ def read_netCDF_to_array(filepath, filetype, variableToExtract, minT, maxT, minL
     return ma.masked_array(trimmedData), trimmedTimes, trimmedLats, trimmedLons
 
 
+def _check_bounds(latsList, lonsList, maxLat, maxLon, maxT, minLat, minLon,
+                  minT, times):
+    while min(latsList) > minLat or max(latsList) < maxLat:
+        print "Requested range is outside file bounds in latitude axis. File " + \
+              " bounds are %f, %f. Requested range is %f, %f" % (
+                  min(latsList), max(latsList), minLat, maxLat)
+
+        lastMinLat = minLat
+        lastMaxLat = maxLat
+        try:
+            minLat = float(raw_input("Enter new minLat for read_netCDF_to_array:"))
+            maxLat = float(raw_input("Enter new maxLat for read_netCDF_to_array:"))
+        except ValueError as e:
+            print "Error parsing coordinates: " + e.message
+            print "Try again"
+            minLat = lastMinLat
+            maxLat = lastMaxLat
+
+    while min(lonsList) > minLon or max(lonsList) < maxLon:
+        print "Requested range is outside file bounds in longitude axis. File " + \
+              " bounds are %f, %f. Requested range is %f, %f" % (
+                  min(lonsList), max(lonsList), minLon, maxLon)
+
+        lastMinLon = minLon
+        lastMaxLon = maxLon
+
+        try:
+            minLon = float(raw_input("Enter new minLon for read_netCDF_to_array:"))
+            maxLon = float(raw_input("Enter new maxLon for read_netCDF_to_array:"))
+        except ValueError as e:
+            print "Error parsing coordinates: " + e.message
+            print "Try again"
+            minLon = lastMinLon
+            maxLon = lastMaxLon
+
+    while min(times) > minT or max(times) < maxT:
+
+        print "Requested range is outside file bounds in time axis. File " + \
+              " bounds are %s, %s. Requested range is %s, %s" % (
+                  min(times), max(times), minT, maxT)
+        lastMinT = minT
+        lastMaxT = maxT
+
+        minTStr = raw_input("Enter new minT for read_netCDF_to_array in yyyy-mm-dd hh:mm:ss format:")
+        maxTStr = raw_input("Enter new maxT for read_netCDF_to_array in yyyy-mm-dd hh:mm:ss format:")
+
+        try:
+            minT = datetime.strptime(minTStr, "%Y-%m-%d %H:%M:%S")
+            maxT = datetime.strptime(maxTStr, "%Y-%m-%d %H:%M:%S")
+        except ValueError as e:
+            print "Error parsing dates: " + e.message
+            print "Try again"
+            minT = lastMinT
+            maxT = lastMaxT
+
+    return maxLat, maxLon, maxT, minLat, minLon, minT
+
+
 # **********************************************************************************************************************
 if __name__ == '__main__':
     # Test for TRMM file, extracting the 'irp' variable
@@ -780,7 +847,7 @@ if __name__ == '__main__':
     #                                                                     , 10, 15)
 
 
-    minDate = datetime(2009, 8, 31)
+    minDate = datetime(2009, 8, 21)
     maxDate = datetime(2009, 8, 31)
 
     trimmedData, times, trimmedLats, trimmedLons = read_netCDF_to_array(
