@@ -645,29 +645,22 @@ FORMAT_DEFS = {
 }
 
 
-def read_netCDF_to_array(filepath, filetype, variableToExtract, minT, maxT, minLat, maxLat, minLon, maxLon):
+def read_netCDF_to_array(filepath, filetype, variableToExtract, userVariable):
     '''
         Purpose:: Extract the data from a single variable on a netCDF file (from a supported source). The user specifies a
          slice of the data in three dimensions: time, latitude, and longitude. The function returns the data points
          inside this slice. If the slice goes outside of the boundaries of the data available in the file (i.e. if the requested
          3D slice spans a space outside the boundaries of the data file), an exception is thrown.
 
-
         Input:: filepath: path to the netCDF file
                 filetype: string containing the data source (used to infer the structure, supported: "trmm", "mtsat", wrf")
                 variableToExtract: the name of the netCDF variable to be returned
-                minT: time of the earliest boundary of the slice request
-                maxT: time of the latest boundary of the slice request
-                minLat: latitude of the southern boundary of the slice request
-                maxLat: latitude of the northern boundary of the slice request
-                minLon: longitude of the western boundary of the slice request
-                maxLon: longitude of the eastern boundary of the slice request
+                userVariable: object holding max time, min time, max/min lon's and lat's
 
         Output:: trimmedData: Masked numPy 3D array ([time, lat, lon]) that contains the data requested.
                  trimmedTimes: list of all positions in the time dimension (in 'datetime' object format)
                  trimmedLat: numpy array of all positions in the latitude dimension
                  trimmedLon: numpy array of all positions in the longitude dimension
-
 
         Assumption(s):: The variable has only 2 or 3 dimensions. If it has 2, then a third dimension is added.
                         The variable has the dimensions: [time,] latitude, and longitude, in that order
@@ -675,27 +668,27 @@ def read_netCDF_to_array(filepath, filetype, variableToExtract, minT, maxT, minL
     '''
 
     # Verifying input
-    while -90. > minLat or minLat > 90.:
+    while -90. > userVariable.MINLAT or userVariable.MINLAT > 90.:
         try:
-            minLat = float(raw_input("minLat passed to read_netCDF_to_array invalid, enter replacement:"))
+            userVariable.MINLAT = float(raw_input("minLat passed to read_netCDF_to_array invalid, enter replacement:"))
         except ValueError as e:
             print "Error parsing coordinates: " + e.message
             print "Try again"
-    while -90. > maxLat or maxLat > 90.:
+    while -90. > userVariable.MAXLAT or userVariable.MAXLAT > 90.:
         try:
-            maxLat = float(raw_input("maxLat passed to read_netCDF_to_array invalid, enter replacement:"))
+            userVariable.MAXLAT = float(raw_input("maxLat passed to read_netCDF_to_array invalid, enter replacement:"))
         except ValueError as e:
             print "Error parsing coordinates: " + e.message
             print "Try again"
-    while -180. > minLon or minLon > 180.:
+    while -180. > userVariable.MINLON or userVariable.MINLON > 180.:
         try:
-            minLon = float(raw_input("minLon passed to read_netCDF_to_array invalid, enter replacement:"))
+            userVariable.MINLON = float(raw_input("minLon passed to read_netCDF_to_array invalid, enter replacement:"))
         except ValueError as e:
             print "Error parsing coordinates: " + e.message
             print "Try again"
-    while -180. > maxLon or maxLon > 180.:
+    while -180. > userVariable.MAXLON or userVariable.MAXLON > 180.:
         try:
-            maxLon = float(raw_input("maxLon passed to read_netCDF_to_array invalid, enter replacement:"))
+            userVariable.MAXLON = float(raw_input("maxLon passed to read_netCDF_to_array invalid, enter replacement:"))
         except ValueError as e:
             print "Error parsing coordinates: " + e.message
             print "Try again"
@@ -738,55 +731,60 @@ def read_netCDF_to_array(filepath, filetype, variableToExtract, minT, maxT, minL
         times = [_decode_time_from_string(x) for x in stringTimes]
 
     # Verifying requested area and times are available
-    maxLat, maxLon, maxT, minLat, minLon, minT = _check_bounds(latsList,
-                                                               lonsList,
-                                                               maxLat,
-                                                               maxLon,
-                                                               maxT,
-                                                               minLat,
-                                                               minLon,
-                                                               minT,
-                                                               times)
+    userVariable = _check_bounds(userVariable)
 
     # Trimming data according to requested area and times
-    trimmedLatsIndices = [i for i in range(len(latsList))
-                            if latsList[i] >= minLat and latsList[i] <= maxLat]
-    trimmedLatsStart = trimmedLatsIndices[0]
-    trimmedLatsEnd = trimmedLatsIndices[-1]
-
-    trimmedLonsIndices = [i for i in range(len(lonsList))
-                            if lonsList[i] >= minLon and lonsList[i] <= maxLon]
-    trimmedLonsStart = trimmedLonsIndices[0]
-    trimmedLonsEnd = trimmedLonsIndices[-1]
+    minT = datetime.strptime(userVariable.startDateTime, '%Y%m%d%H%S')
+    maxT = datetime.strptime(userVariable.endDateTime, '%Y%m%d%H%S')
 
     trimmedTimeIndices = [i for i in range(len(times))
-                            if times[i] >= minT and times[i] <= maxT]
+                          if minT <= times[i] <= maxT]
     trimmedTimeStart = trimmedTimeIndices[0]
     trimmedTimeEnd = trimmedTimeIndices[-1]
 
+    latminNETCDF = utils.find_nearest(latsList, userVariable.LATMIN)
+    latmaxNETCDF = utils.find_nearest(latsList, userVariable.LATMAX)
+    latminIndex = (np.where(latsList == latminNETCDF))[0][0]
+    latmaxIndex = (np.where(latsList == latmaxNETCDF))[0][0]
 
+    trimmedLats = latsList[latminIndex:latmaxIndex]
 
-    trimmedLats = latsList[trimmedLatsStart:trimmedLatsEnd + 1]
-    trimmedLons = lonsList[trimmedLonsStart:trimmedLonsEnd + 1]
+    lonminNETCDF = utils.find_nearest(lonsList, userVariable.LONMIN)
+    lonmaxNETCDF = utils.find_nearest(lonsList, userVariable.LONMAX)
+    lonminIndex = (np.where(lonsList == lonminNETCDF))[0][0]
+    lonmaxIndex = (np.where(lonsList == lonmaxNETCDF))[0][0]
+
+    trimmedLons = lonsList[lonminIndex:lonmaxIndex]
+
+    # +1 after every slice because we want to include that index
     trimmedTimes = times[trimmedTimeStart: trimmedTimeEnd + 1]
     trimmedData = extractedVariable[trimmedTimeStart:trimmedTimeEnd + 1,
-                                      trimmedLatsStart:trimmedLatsEnd + 1,
-                                      trimmedLonsStart:trimmedLonsEnd + 1]
+                                      latminIndex:latmaxIndex + 1,
+                                      lonminIndex:lonminIndex + 1]
 
     dataset.close()
 
     return ma.masked_array(trimmedData), trimmedTimes, trimmedLats, trimmedLons
 
 
-def _check_bounds(latsList, lonsList, maxLat, maxLon, maxT, minLat, minLon,
-                  minT, times):
-    while min(latsList) > minLat or max(latsList) < maxLat:
+def _check_bounds(latsList, lonsList, userVariable, times):
+    '''
+        Purpose::
+
+        Input::
+
+        Output::
+
+        Assumption(s)::
+
+    '''
+    while min(latsList) > userVariable.MINLAT or max(latsList) < userVariable.MAXLAT:
         print "Requested range is outside file bounds in latitude axis. File " + \
               " bounds are %f, %f. Requested range is %f, %f" % (
-                  min(latsList), max(latsList), minLat, maxLat)
+                  min(latsList), max(latsList), userVariable.MINLAT, userVariable.MAXLAT)
 
-        lastMinLat = minLat
-        lastMaxLat = maxLat
+        lastMinLat = userVariable.MINLAT
+        lastMaxLat = userVariable.MAXLAT
         try:
             minLat = float(raw_input("Enter new minLat for read_netCDF_to_array:"))
             maxLat = float(raw_input("Enter new maxLat for read_netCDF_to_array:"))
@@ -796,13 +794,13 @@ def _check_bounds(latsList, lonsList, maxLat, maxLon, maxT, minLat, minLon,
             minLat = lastMinLat
             maxLat = lastMaxLat
 
-    while min(lonsList) > minLon or max(lonsList) < maxLon:
+    while min(lonsList) > userVariable.MINLAT or max(lonsList) < userVariable.MAXLAT:
         print "Requested range is outside file bounds in longitude axis. File " + \
               " bounds are %f, %f. Requested range is %f, %f" % (
-                  min(lonsList), max(lonsList), minLon, maxLon)
+                  min(lonsList), max(lonsList), userVariable.MINLAT, userVariable.MAXLAT)
 
-        lastMinLon = minLon
-        lastMaxLon = maxLon
+        lastMinLon = userVariable.MINLON
+        lastMaxLon = userVariable.MAXLON
 
         try:
             minLon = float(raw_input("Enter new minLon for read_netCDF_to_array:"))
@@ -810,8 +808,11 @@ def _check_bounds(latsList, lonsList, maxLat, maxLon, maxT, minLat, minLon,
         except ValueError as e:
             print "Error parsing coordinates: " + e.message
             print "Try again"
-            minLon = lastMinLon
-            maxLon = lastMaxLon
+            userVariable.MINLON = lastMinLon
+            userVariable.MAXLON = lastMaxLon
+
+    minT = datetime.strptime(userVariable.startDateTime, '%Y%m%d%H%S')
+    maxT = datetime.strptime(userVariable.endDateTime, '%Y%m%d%H%S')
 
     while min(times) > minT or max(times) < maxT:
 
@@ -833,7 +834,10 @@ def _check_bounds(latsList, lonsList, maxLat, maxLon, maxT, minLat, minLon,
             minT = lastMinT
             maxT = lastMaxT
 
-    return maxLat, maxLon, maxT, minLat, minLon, minT
+    userVariable.startDateTime = minT.strftime('%Y%m%d%H%S')
+    userVariable.endDateTime = maxT.strftime('%Y%m%d%H%S')
+
+    return userVariable
 
 
 # **********************************************************************************************************************
