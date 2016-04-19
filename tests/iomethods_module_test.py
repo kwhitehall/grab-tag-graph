@@ -49,7 +49,7 @@ def test_read_netCDF_to_array():
     minDate = datetime(2005, 1, 1)
     maxDate = datetime(2007, 1, 1)
 
-    trimmedData, times, trimmedLats, trimmedLons = iomethods.read_netCDF_to_array('/home/caocampb/Desktop/TRMM Data/3B42.20060911.00.7A.nc',
+    trimmedData, times, trimmedLats, trimmedLons = iomethods.read_netCDF_to_array('../datadir/TRMM/3B42.20090831.00.7A.nc',
                                                                            'trmm', 'irp', minDate, maxDate, 10, 15, 10, 15)
 
     # minDate = datetime(2009, 8, 21)
@@ -90,6 +90,7 @@ def performanceTestDataSubset2():
 
 
 if __name__ == '__main__':
+    
     start_time = timeit.default_timer()
     performanceTestDataSubset1()
     print(timeit.default_timer() - start_time)
@@ -97,5 +98,7 @@ if __name__ == '__main__':
     start_time = timeit.default_timer()
     performanceTestDataSubset2()
     print(timeit.default_timer() - start_time)
+
+    test_read_netCDF_to_array ()
 
 
