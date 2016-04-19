@@ -48,7 +48,7 @@ def _get_fileList_for_binaries(dirPath, startTime, endTime):
     return newFileList
 
 
-def _check_for_files(dirPath, startTime, endTime, tdelta, tRes):
+def _check_for_files(dirPath, startTime, endTime, tdelta, tRes, flag):
     '''
         Purpose:: To ensure all the files between the startTime and endTime
                   exist in the directory supplied
@@ -89,24 +89,43 @@ def _check_for_files(dirPath, startTime, endTime, tdelta, tRes):
         currFileTime = datetime.strptime(startTime[:12], '%Y%m%d%H%m')
         tRes = 'minute'
 
-    filelist = filter(os.path.isfile, glob.glob((dirPath+'/*.nc')))
+    if flag is True:
+        filelist = filter(os.path.isfile, glob.glob((dirPath+'/*.nc')))
+    else:
+        filelist = filter(os.path.isfile, glob.glob(dirPath))
     filelist.sort()
 
     # Check for the filename pattern
-    for eachPart in re.split(r'[_,-,.,/]', re.split(r'.nc', os.path.basename(filelist[0]))[0]):
-        tokenCounter += 1
-        if tokenCounter == 1:
-            filenamePattern += eachPart
-        if eachPart.isdigit():
-            if len(eachPart) >= 6:
-                hasDelimiter = True
-                startTimeInFile += eachPart + '*'
-            elif eachPart in startTime:
-                startTimeInFile += eachPart + '*'
-
-    if hasDelimiter is False:
-        fileDate = int(re.search(r'\d+', re.split(r'.nc', os.path.basename(filelist[0]))[0]).group())
-        filenamePattern = re.split(str(fileDate), os.path.basename(filelist[0]))[0]
+    if flag is True:
+        for eachPart in re.split(r'[_,-,.,/]', re.split(r'.nc', os.path.basename(filelist[0]))[0]):
+            tokenCounter += 1
+            if tokenCounter == 1:
+                filenamePattern += eachPart
+            if eachPart.isdigit():
+                if len(eachPart) >= 6:
+                    hasDelimiter = True
+                    startTimeInFile += eachPart + '*'
+                elif eachPart in startTime:
+                    startTimeInFile += eachPart + '*'
+    
+        if hasDelimiter is False:
+            fileDate = int(re.search(r'\d+', re.split(r'.nc', os.path.basename(filelist[0]))[0]).group())
+            filenamePattern = re.split(str(fileDate), os.path.basename(filelist[0]))[0]
+    else:
+        for eachPart in re.split(r'[_,-,.,/]', re.split(os.path.basename(filelist[0]))[0]):
+            tokenCounter += 1
+            if tokenCounter == 1:
+                filenamePattern += eachPart
+            if eachPart.isdigit():
+                if len(eachPart) >= 6:
+                    hasDelimiter = True
+                    startTimeInFile += eachPart + '*'
+                elif eachPart in startTime:
+                    startTimeInFile += eachPart + '*'
+    
+        if hasDelimiter is False:
+            fileDate = int(re.search(r'\d+', re.split(os.path.basename(filelist[0]))[0]).group())
+            filenamePattern = re.split(str(fileDate), os.path.basename(filelist[0]))[0]
 
     startFile = glob.glob(dirPath+'/'+filenamePattern + '*' + startTimeInFile)[0]
     endTimeInFile = _find_time_in_file(endTime, startTimeInFile)
@@ -195,12 +214,12 @@ def read_vars(userVariables):
         print "Invalid time entered for endDateTime!"
 
     # Check if all the files exists in the MERG and TRMM directories entered
-    test, _ = _check_for_files(userVariables.DIRS['TRMMdirName'], userVariables.startDateTime, userVariables.endDateTime, 3, 'hour')
+    test, _ = _check_for_files(userVariables.DIRS['TRMMdirName'], userVariables.startDateTime, userVariables.endDateTime, 3, 'hour', true)
     if test is False:
         print "Error with files in the TRMM directory entered. Please check your files before restarting. "
         return
 
-    test, userVariables.filelist = _check_for_files(userVariables.DIRS['CEoriDirName'], userVariables.startDateTime, userVariables.endDateTime, 1, 'hour')
+    test, userVariables.filelist = _check_for_files(userVariables.DIRS['CEoriDirName'], userVariables.startDateTime, userVariables.endDateTime, 1, 'hour', true)
 
     if test is False:
         print "Error with files in the original MERG directory entered. Please check your files before restarting. "
