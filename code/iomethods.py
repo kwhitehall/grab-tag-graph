@@ -712,12 +712,12 @@ def read_netCDF_to_array(filepath, filetype, variableToExtract, minT, maxT, minL
     lonsData = dataset.variables[FORMAT_DEFS[filetype]["longitude"]]
 
     # Grabbing list of latitudes and longitudes
-    if filetype is "wrf":
-        latsList = latsData[0,:,0]
-        lonsList = lonsData[0,0,:]
-    else:
+    if len(latsData.shape) == 1: # 1D array from data source.
         latsList = latsData[:]
         lonsList = lonsData[:]
+    else: # 3D array from data source.
+        latsList = latsData[0,:,0]
+        lonsList = lonsData[0,0,:]
 
     # Reformatting longitude format to [-180, 180]
     lonsList[lonsList > 180] = lonsList[lonsList > 180] - 360.
