@@ -634,9 +634,6 @@ def _read_merg_file(filepath, shape, offset):
 FORMAT_DEFS = {
     "trmm" :
         {
-            "longitude" : "longitude",
-            "latitude" : "latitude",
-
             "time_handling": {
                 "method": "get_model_times",
                 "variable": "time"
@@ -644,9 +641,6 @@ FORMAT_DEFS = {
         },
     "mtsat" :
         {
-            "longitude": "longitude",
-            "latitude": "latitude",
-
             "time_handling": {
                 "method" :"filename_time_regex",
                 "regex_object": re.compile("([0-9]{4})([0-9]{2})([0-9]{2})_([0-9]{2})([0-9]{2})")
@@ -654,9 +648,6 @@ FORMAT_DEFS = {
         },
     "wrf":
         {
-            "longitude": "XLONG",
-            "latitude": "XLAT",
-
             "time_handling": {
                 "method": "string_times"
             }
@@ -720,10 +711,21 @@ def read_netCDF_to_array(filepath, filetype, variableToExtract, userVariable):
     if extractedVariable.ndim is 2:
         extractedVariable = extractedVariable[np.newaxis, :, :]
 
-    latsData = dataset.variables[FORMAT_DEFS[filetype]["latitude"]]
-    lonsData = dataset.variables[FORMAT_DEFS[filetype]["longitude"]]
+    # Finding variables for required dimensions
+    variableDimensions = dataset.variables[variableToExtract].dimensions
+    if all([(dim in dataset.variables) for dim in variableDimensions]):
+        timeVariable = variableDimensions[-3] if len(variableDimensions) >= 3 else None
+        latsVariable, lonsVariable = variableDimensions[-2:]
+    else:
+        timeVariable = None
+        latsVariable, lonsVariable = dataset.variables[variableToExtract].coordinates.split()
+
+    if timeVariable == None:
+        timeVariable = "Times"
 
     # Grabbing list of latitudes and longitudes
+    latsData = dataset.variables[latsVariable]
+    lonsData = dataset.variables[lonsVariable]
     if len(latsData.shape) == 1: # 1D array from data source.
         latsList = latsData[:]
         lonsList = lonsData[:]
