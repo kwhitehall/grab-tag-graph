@@ -539,8 +539,6 @@ def _decode_time_from_string(timeString):
             myTime = datetime.strptime(timeString, '%Y-%m-%d %H')
         elif datetime.strptime(timeString, '%Y-%m-%d %H%M'):
             myTime = datetime.strptime(timeString, '%Y-%m-%d %H%M')
-        elif datetime.strptime(timeString, '%Y-%m-%d %H%M'):
-            myTime = datetime.strptime(timeString, '%Y-%m-%d_%H:%M:%S')
         return myTime
 
     except ValueError:
@@ -725,7 +723,7 @@ def read_netCDF_to_array(filepath, filetype, variableToExtract, minT, maxT, minL
         latsVariable, lonsVariable = variableDimensions[-2:]
     else:
         timeVariable = None
-        latsVariable, lonsVariable = dataset.variables[variableToExtract].coordinates.split()
+        lonsVariable, latsVariable = dataset.variables[variableToExtract].coordinates.split()
 
     if timeVariable == None:
         timeVariable = "Times"
@@ -756,7 +754,7 @@ def read_netCDF_to_array(filepath, filetype, variableToExtract, minT, maxT, minL
         times = _get_model_times(dataset.variables[timeDict["variable"]])[0]
     elif timeDict["method"] is "string_times":
         stringTimes = ["".join(x) for x in dataset.variables["Times"][:]]
-        times = [_decode_time_from_string(x) for x in stringTimes]
+        times = [datetime.strptime(x, '%Y-%m-%d_%H:%M:%S') for x in stringTimes]
 
     # Verifying requested area and times are available
     maxLat, maxLon, maxT, minLat, minLon, minT = _check_bounds(latsList,
