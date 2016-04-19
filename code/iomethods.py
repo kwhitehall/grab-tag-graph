@@ -805,13 +805,13 @@ def _check_bounds(latsList, lonsList, userVariable, times):
         lastMinLat = userVariable.MINLAT
         lastMaxLat = userVariable.MAXLAT
         try:
-            minLat = float(raw_input("Enter new minLat for read_netCDF_to_array:"))
-            maxLat = float(raw_input("Enter new maxLat for read_netCDF_to_array:"))
+            userVariable.MINLAT = float(raw_input("Enter new minLat for read_netCDF_to_array:"))
+            userVariable.MAXLAT = float(raw_input("Enter new maxLat for read_netCDF_to_array:"))
         except ValueError as e:
             print "Error parsing coordinates: " + e.message
             print "Try again"
-            minLat = lastMinLat
-            maxLat = lastMaxLat
+            userVariable.MINLAT = lastMinLat
+            userVariable.MAXLAT = lastMaxLat
 
     while min(lonsList) > userVariable.MINLAT or max(lonsList) < userVariable.MAXLAT:
         print "Requested range is outside file bounds in longitude axis. File " + \
@@ -822,8 +822,8 @@ def _check_bounds(latsList, lonsList, userVariable, times):
         lastMaxLon = userVariable.MAXLON
 
         try:
-            minLon = float(raw_input("Enter new minLon for read_netCDF_to_array:"))
-            maxLon = float(raw_input("Enter new maxLon for read_netCDF_to_array:"))
+            userVariable.MINLON = float(raw_input("Enter new minLon for read_netCDF_to_array:"))
+            userVariable.MAXLON = float(raw_input("Enter new maxLon for read_netCDF_to_array:"))
         except ValueError as e:
             print "Error parsing coordinates: " + e.message
             print "Try again"
