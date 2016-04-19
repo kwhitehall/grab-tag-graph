@@ -770,15 +770,11 @@ def read_netCDF_to_array(filepath, filetype, variableToExtract, minT, maxT, minL
                                                                times)
 
     # Trimming data according to requested area and times
-    trimmedLatsIndices = [i for i in range(len(latsList))
-                            if latsList[i] >= minLat and latsList[i] <= maxLat]
-    trimmedLatsStart = trimmedLatsIndices[0]
-    trimmedLatsEnd = trimmedLatsIndices[-1]
+    trimmedLatsStart = np.where(latsList == utils.find_nearest(latsList, minLat))[0][0]
+    trimmedLatsEnd = np.where(latsList == utils.find_nearest(latsList, maxLat))[0][0]
 
-    trimmedLonsIndices = [i for i in range(len(lonsList))
-                            if lonsList[i] >= minLon and lonsList[i] <= maxLon]
-    trimmedLonsStart = trimmedLonsIndices[0]
-    trimmedLonsEnd = trimmedLonsIndices[-1]
+    trimmedLonsStart = np.where(lonsList == utils.find_nearest(lonsList, minLon))[0][0]
+    trimmedLonsEnd = np.where(lonsList == utils.find_nearest(lonsList, maxLon))[0][0]
 
     trimmedTimeIndices = [i for i in range(len(times))
                             if times[i] >= minT and times[i] <= maxT]
