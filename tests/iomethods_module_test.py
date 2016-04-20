@@ -8,7 +8,48 @@ sys.path.insert(0, '../code/')
 import iomethods
 import variables
 import utils
+import unittest
 import numpy as np
+
+class TestIO(unittest.TestCase):
+    def test_read_netCDF_to_array(self):
+        minDate = datetime(2009, 8, 31)
+        maxDate = datetime(2009, 8, 31)
+
+        trimmedData, times, trimmedLats, trimmedLons = iomethods.read_netCDF_to_array('../datadir/TRMM/3B42.20090831.00.7A.nc',
+                                                                               'trmm', 'irp', minDate, maxDate, 10, 15, 10, 15)
+        print trimmedData
+        expectedTrimmedData = [[[0.17999999, 0.44, 0.57999998, 0.57999998, 0.39999998, 0.13, 0., 0.25999999, 1.81999993, 3.36999989, 4.9000001, 5.42999983, 3.86999989, 1.42999995, 0.44999999, 0.09, 0., 0.32999998, 0., 0., 0.],
+                                [0.11, 0.19999999, 0.22999999, 0.29999998, 0.13, 0., 0., 0.17999999, 1.14999998, 2.54999995, 4.00999975, 4.00999975, 3.12999988, 0.81999999, 0., 0., 0.09, 0., 0., 0., 0.],
+                                [0., 0.14999999, 0.11, 0., 0., 0., 0., 0.19999999, 0.53999996, 1.12, 1.62, 2.22000003, 1.31999993, 0.39999998, 0., 0., 0.25, 0., 0., 0., 0.],
+                                [0.61000001, 0.29999998, 0., 0., 0., 0., 0., 0.25, 0.22999999, 0., 0., 0.34, 0.23999999, 0., 0., 0., 0., 0., 0., 0., 0.],
+                                [0.19, 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+                                [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+                                [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+                                [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+                                [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+                                [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+                                [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+                                [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+                                [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+                                [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+                                [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+                                [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+                                [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+                                [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+                                [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+                                [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+                                [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.]]]
+        expectedTimes = [datetime(2009, 8, 31, 0, 0)]
+        expectedLats = [9.875, 10.125, 10.375, 10.625, 10.875, 11.125, 11.375, 11.625, 11.875, 12.125, 12.375,\
+                        12.625, 12.875, 13.125, 13.375, 13.625, 13.875, 14.125, 14.375, 14.625, 14.875]
+        expectedLons = [9.875, 10.125, 10.375, 10.625, 10.875, 11.125, 11.375, 11.625, 11.875, 12.125, 12.375,\
+                        12.625, 12.875, 13.125, 13.375, 13.625, 13.875, 14.125, 14.375, 14.625, 14.875]
+
+        self.assertTrue((expectedTrimmedData == trimmedData).all(), "Trimmed and expected data differ!")
+        self.assertEqual(expectedTimes, times, "Returned time and expected time differ!")
+        self.assertTrue((expectedLats == trimmedLats).all(), "Trimmed and expected Lat ranges differ!")
+        self.assertTrue((expectedLons == trimmedLons).all(), "Trimmed and expected Lon ranges differ!")
 
 def test_read_merg_and_write_merg():
     '''
@@ -46,8 +87,8 @@ def test_read_merg_and_write_merg():
 
 def test_read_netCDF_to_array():
     # Test for TRMM file, extracting the 'irp' variable
-    minDate = datetime(2005, 1, 1)
-    maxDate = datetime(2007, 1, 1)
+    minDate = datetime(2009, 8, 31)
+    maxDate = datetime(2009, 8, 31)
 
     trimmedData, times, trimmedLats, trimmedLons = iomethods.read_netCDF_to_array('../datadir/TRMM/3B42.20090831.00.7A.nc',
                                                                            'trmm', 'irp', minDate, maxDate, 10, 15, 10, 15)
@@ -90,7 +131,7 @@ def performanceTestDataSubset2():
 
 
 if __name__ == '__main__':
-    
+    '''
     start_time = timeit.default_timer()
     performanceTestDataSubset1()
     print(timeit.default_timer() - start_time)
@@ -98,7 +139,7 @@ if __name__ == '__main__':
     start_time = timeit.default_timer()
     performanceTestDataSubset2()
     print(timeit.default_timer() - start_time)
-
-    test_read_netCDF_to_array ()
+    '''
+    unittest.main()
 
 
