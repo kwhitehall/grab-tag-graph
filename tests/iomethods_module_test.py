@@ -17,7 +17,7 @@ class TestIO(unittest.TestCase):
         maxDate = datetime(2009, 8, 31)
 
         trimmedData, times, trimmedLats, trimmedLons = iomethods.read_netCDF_to_array('../datadir/TRMM/3B42.20090831.00.7A.nc',
-                                                                               'trmm', 'irp', minDate, maxDate, 10, 15, 10, 15)
+                                                                               'irp', minDate, maxDate, 10, 15, 10, 15)
         print trimmedData
         expectedTrimmedData = [[[0.17999999, 0.44, 0.57999998, 0.57999998, 0.39999998, 0.13, 0., 0.25999999, 1.81999993, 3.36999989, 4.9000001, 5.42999983, 3.86999989, 1.42999995, 0.44999999, 0.09, 0., 0.32999998, 0., 0., 0.],
                                 [0.11, 0.19999999, 0.22999999, 0.29999998, 0.13, 0., 0., 0.17999999, 1.14999998, 2.54999995, 4.00999975, 4.00999975, 3.12999988, 0.81999999, 0., 0., 0.09, 0., 0., 0., 0.],
@@ -91,14 +91,14 @@ def test_read_netCDF_to_array():
     maxDate = datetime(2009, 8, 31)
 
     trimmedData, times, trimmedLats, trimmedLons = iomethods.read_netCDF_to_array('../datadir/TRMM/3B42.20090831.00.7A.nc',
-                                                                           'trmm', 'irp', minDate, maxDate, 10, 15, 10, 15)
+                                                                        'irp', minDate, maxDate, 10, 15, 10, 15)
 
     # minDate = datetime(2009, 8, 21)
     # maxDate = datetime(2009, 8, 31)
     #
     # trimmedData, times, trimmedLats, trimmedLons = read_netCDF_to_array(
     #         '/Users/diegovonbeck/grab-tag-graph-bak/datadir/TRMM/3B42.20090831.00.7A.nc',
-    #          'trmm', 'irp', minDate, maxDate, 100, 15, 10, 15)
+    #          'irp', minDate, maxDate, 100, 15, 10, 15)
 
     # Compare these with known values
     print trimmedData

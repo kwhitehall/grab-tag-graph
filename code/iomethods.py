@@ -629,31 +629,8 @@ def _read_merg_file(filepath, shape, offset):
 
     return data
 
-FORMAT_DEFS = {
-    "trmm" :
-        {
-            "time_handling": {
-                "method": "get_model_times",
-                "variable": "time"
-            }
-        },
-    "mtsat" :
-        {
-            "time_handling": {
-                "method" :"filename_time_regex",
-                "regex_object": re.compile("([0-9]{4})([0-9]{2})([0-9]{2})_([0-9]{2})([0-9]{2})")
-            }
-        },
-    "wrf":
-        {
-            "time_handling": {
-                "method": "string_times"
-            }
-        }
-}
 
-
-def read_netCDF_to_array(filepath, filetype, variableToExtract, minT, maxT, minLat, maxLat, minLon, maxLon):
+def read_netCDF_to_array(filepath, variableToExtract, minT, maxT, minLat, maxLat, minLon, maxLon):
     '''
         Purpose:: Extract the data from a single variable on a netCDF file (from a supported source). The user specifies a
          slice of the data in three dimensions: time, latitude, and longitude. The function returns the data points
@@ -741,20 +718,37 @@ def read_netCDF_to_array(filepath, filetype, variableToExtract, minT, maxT, minL
     # Reformatting longitude format to [-180, 180]
     lonsList[lonsList > 180] = lonsList[lonsList > 180] - 360.
 
-    # Grabbing list of times
-    timeDict = FORMAT_DEFS[filetype]["time_handling"]
-    if timeDict["method"] is "filename_time_regex":
+    if dataset.variables is None or timeVariable not in dataset.variables:
         filename = os.path.basename(filepath)
 
-        timeMatchGroup = timeDict["regex_object"].search(filename)
+        reObj = re.compile("([0-9]{4})([0-9]{2})([0-9]{2})_([0-9]{2})([0-9]{2})")
+        timeMatchGroup = reObj.search(filename)
         timeNumbers = [int(num) for num in timeMatchGroup.groups()]
         time = datetime(*timeNumbers)
         times = [time]
-    elif timeDict["method"] is "get_model_times":
-        times = _get_model_times(dataset.variables[timeDict["variable"]])[0]
-    elif timeDict["method"] is "string_times":
-        stringTimes = ["".join(x) for x in dataset.variables["Times"][:]]
+    elif dataset.variables[timeVariable].dtype == np.dtype('S1'):
+        stringTimes = ["".join(x) for x in dataset.variables[timeVariable][:]]
         times = [datetime.strptime(x, '%Y-%m-%d_%H:%M:%S') for x in stringTimes]
+    elif hasattr(dataset.variables[timeVariable], "units"):
+        times = _get_model_times(dataset.variables[timeVariable])[0]
+    else:
+        print "No approached worked for fetching the time out of the netCDF " \
+              "file %s. Enter times." % filepath
+        times = []
+        for i in range(extractedVariable.shape[0]):
+            while True:
+                newTimeStr = raw_input("Enter time for data at index %d for "
+                                       "variable %s at file %s, in yyyy-mm-dd "
+                                       "hh:mm:ss format:"
+                                       % (i, variableToExtract, filepath))
+
+                try:
+                    newTime = datetime.strptime(newTimeStr, "%Y-%m-%d %H:%M:%S")
+                    times.append(newTime)
+                    break
+                except ValueError as e:
+                    print "Error parsing dates: " + e.message
+                    print "Try again"
 
     # Verifying requested area and times are available
     maxLat, maxLon, maxT, minLat, minLon, minT = _check_bounds(latsList,
