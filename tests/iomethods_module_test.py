@@ -90,16 +90,17 @@ class TestIO(unittest.TestCase):
 
     def test_check_for_files(self):
         '''
-        Purpose:: Trim's array of numbers outside a certain range by using utils.find_nearest() and np.where()
-                  It's to be compared with list_comprehension_trimmer which does the same thing in a different way
-
+        Purpose:: To ensure all the files between the startTime and endTime
+                  exist in the directory supplied
         '''
 
         test, _ = iomethods.check_for_files('../datadir/TRMM/3B42.20090831.00.7A.nc', '20090830', '20090831', 3, 'hour', flag=True)
         if test is False:
             print "Error with files in the TRMM directory entered."
-
-        #TODO FINISH TEST
+            
+        test1, self.filelist = iomethods.check_for_files('../datadir/MERG/merg_2006091100_4km-pixel', '20090830', '20090831', 1, 'hour', flag=True)
+        if test1 is False:
+            print "Error with files in the MERG directory entered "
 
 def list_comprehension_trimmer():
     '''
