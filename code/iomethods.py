@@ -47,7 +47,7 @@ def _get_fileList_for_binaries(dirPath, startTime, endTime):
     return newFileList
 
 
-def _check_for_files(dirPath, startTime, endTime, tdelta, tRes, flag):
+def check_for_files(dirPath, startTime, endTime, tdelta, tRes, flag):
     '''
         Purpose:: To ensure all the files between the startTime and endTime
                   exist in the directory supplied
