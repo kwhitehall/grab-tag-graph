@@ -766,19 +766,18 @@ def read_netCDF_to_array(filepath, variableToExtract, minT, maxT, minLat, maxLat
     trimmedLonsStart = np.where(lonsList == utils.find_nearest(lonsList, minLon))[0][0]
     trimmedLonsEnd = np.where(lonsList == utils.find_nearest(lonsList, maxLon))[0][0]
 
+    # Can't use np.where() for times, so use list comprehension instead
     trimmedTimeIndices = [i for i in range(len(times))
                             if times[i] >= minT and times[i] <= maxT]
     trimmedTimeStart = trimmedTimeIndices[0]
     trimmedTimeEnd = trimmedTimeIndices[-1]
 
-
-
     trimmedLats = latsList[trimmedLatsStart:trimmedLatsEnd + 1]
     trimmedLons = lonsList[trimmedLonsStart:trimmedLonsEnd + 1]
     trimmedTimes = times[trimmedTimeStart: trimmedTimeEnd + 1]
     trimmedData = extractedVariable[trimmedTimeStart:trimmedTimeEnd + 1,
-                                      trimmedLatsStart:trimmedLatsEnd + 1,
-                                      trimmedLonsStart:trimmedLonsEnd + 1]
+                                    trimmedLatsStart:trimmedLatsEnd + 1,
+                                    trimmedLonsStart:trimmedLonsEnd + 1]
 
     dataset.close()
 
