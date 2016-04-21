@@ -549,7 +549,7 @@ def _decode_time_from_string(timeString):
     # **********************************************************************************************************************
 def write_merg_to_ncdf(lonDict, latDict, timeDict, ch4Dict, fileName, dirName, globalAttrDict, dimensionsDict):
     '''
-        Purpose:: Write temperature data to netCDF format. See the method
+        Purpose:: Write merg data to netCDF format. See the method
                   _read_merg_file to see how the data is arranged.
 
         Inputs:: lonDict, latDict, timeDict, ch4Dict are all dictionaries with

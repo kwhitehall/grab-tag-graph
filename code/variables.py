@@ -94,8 +94,8 @@ class UserVariables(object):
         self.check_lons(self.LONMIN, self.LONMAX)
         self.check_times(self.startDateTime, self.endDateTime)
         self.check_dirs(self.DIRS['CEoriDirName'], self.DIRS['TRMMdirName'])
-        #self.ir_inputs(self.DIRS['CEoriDirName'], self.startDateTime, self.endDateTime)
-        #self.trmm_inputs(self.DIRS['TRMMdirName'], self.startDateTime, self.endDateTime)
+        self.ir_inputs(self.DIRS['CEoriDirName'], self.startDateTime, self.endDateTime)
+        self.trmm_inputs(self.DIRS['TRMMdirName'], self.startDateTime, self.endDateTime)
         self.setup_all()
 
     def check_lats(self, LATMIN, LATMAX):
@@ -171,7 +171,7 @@ class UserVariables(object):
         # Checks that inputs are ok
         if not TRMMdirName == "None":
             # Check if all the files exists in the TRMM directory entered
-            test, _ = iomethods.check_for_files(TRMMdirName, startDateTime, endDateTime, 3, 'hour')
+            test, _ = iomethods.check_for_files(TRMMdirName, startDateTime, endDateTime, 3, 'hour', flag=True)
             if test is False:
                 print "Error with files in the TRMM directory entered. Please check your files before restarting. "
                 return False
@@ -180,7 +180,7 @@ class UserVariables(object):
 
     def ir_inputs(self, CEoriDirName, startDateTime, endDateTime):
         try:
-            test, self.filelist = iomethods.check_for_files(CEoriDirName, startDateTime, endDateTime, 1, 'hour')
+            test, self.filelist = iomethods.check_for_files(CEoriDirName, startDateTime, endDateTime, 1, 'hour', flag=True)
             if test is False:
                 print "Error with files in the MERG directory entered. Please check your files before restarting. "
                 return False

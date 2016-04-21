@@ -54,8 +54,6 @@ class TestIO(unittest.TestCase):
 def test_read_merg_and_write_merg():
     '''
         Purpose:: Tests the functions '_read_merg_file' and '_write_MERG_pixel_to_ncdf' from iomethods.py as a whole
-        Notes:: Change the sys.path.insert(...) argument above to the path where iomethods.py is located
-                (because iomethods_module_test.py is in a different folder than iomethods.py)
     '''
 
     user = variables.UserVariables(useJSON=False)
@@ -66,20 +64,16 @@ def test_read_merg_and_write_merg():
     lon = np.arange(0.0182, 360., 0.036378335, dtype=np.float)
     lat = np.arange(59.982, -60., -0.036383683, dtype=np.float)
 
+    # Generate dictionaries with various dimensions, attributes, and variables
     lonDict = {"name": "longitude", "dataType": "double", "dimensions": ("longitude",), "units": "degrees_east", "long_name": "Longitude", "values": lon}
-
     latDict = {"name": "latitude", "dataType": "double", "dimensions": ("latitude",), "units": "degrees_north", "long_name": "Latitude", "values": lat}
-
     timeDict = {"name": "time", "dataType": "float", "dimensions": ("time",)}
-
     ch4Dict = {"name": "ch4", "dataType": "float", "dimensions": ("time", "latitude", "longitude"), "long_name": "IR BT (add 75 to this value)",
                                                                                                     "time_statistic": "instantaneous",
                                                                                                     "missing_value": float(330),
                                                                                                     "values": temperatures}
-
     globalAttrDict = {"Conventions": "COARDS", "calendar": "standard", "comments": "File", "model": "geos/das",
                       "center": "gsfc"}
-
     dimensionsDict = {"time": None, "longitude": 9896, "latitude": 3298}
 
     iomethods.write_merg_to_ncdf(lonDict, latDict, timeDict, ch4Dict, 'merg_2006091100_4km-pixel', user.DIRS['CEoriDirName'], globalAttrDict,
@@ -106,7 +100,12 @@ def test_read_netCDF_to_array():
     print trimmedLats
     print trimmedLons
 
-def performanceTestDataSubset1():
+def for_comprehension_perf_test():
+    '''
+
+    Returns:
+
+    '''
     lats = np.arange(0, 60., 0.05, dtype=np.float)
 
     trimmedLatsIndices = [i for i in range(len(lats))
@@ -118,7 +117,7 @@ def performanceTestDataSubset1():
     trimmedLats = lats[trimmedLatsEnd:trimmedLatsStart]
 
 
-def performanceTestDataSubset2():
+def find_nearest_perf_test():
     lats = np.arange(0, 60., 0.05, dtype=np.float)
 
     latminNETCDF = utils.find_nearest(lats, float(30))
