@@ -85,7 +85,7 @@ class TestIO(unittest.TestCase):
         output = iomethods.write_merg_to_ncdf(lonDict, latDict, timeDict, ch4Dict, 'merg_2006091100_4km-pixel', user.DIRS['CEoriDirName'],
                                               globalAttrDict, dimensionsDict)
         self.assertIsNotNone(output, "Returned output is empty!")
-        
+
         #TODO validate contents of file, not that it just exists
         self.assertEqual(output, FILE + ".nc", "Output file name differs than expected!")
 

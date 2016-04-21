@@ -171,7 +171,7 @@ class UserVariables(object):
         # Checks that inputs are ok
         if not TRMMdirName == "None":
             # Check if all the files exists in the TRMM directory entered
-            test, _ = iomethods.check_for_files(TRMMdirName, startDateTime, endDateTime, 3, 'hour', flag=True)
+            test, _ = iomethods._check_for_files(TRMMdirName, startDateTime, endDateTime, 3, 'hour', flag=True)
             if test is False:
                 print "Error with files in the TRMM directory entered. Please check your files before restarting. "
                 return False
@@ -180,7 +180,7 @@ class UserVariables(object):
 
     def ir_inputs(self, CEoriDirName, startDateTime, endDateTime):
         try:
-            test, self.filelist = iomethods.check_for_files(CEoriDirName, startDateTime, endDateTime, 1, 'hour', flag=True)
+            test, self.filelist = iomethods._check_for_files(CEoriDirName, startDateTime, endDateTime, 1, 'hour', flag=True)
             if test is False:
                 print "Error with files in the MERG directory entered. Please check your files before restarting. "
                 return False
