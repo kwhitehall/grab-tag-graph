@@ -214,12 +214,12 @@ def read_vars(userVariables):
         print "Invalid time entered for endDateTime!"
 
     # Check if all the files exists in the MERG and TRMM directories entered
-    test, _ = _check_for_files(userVariables.DIRS['TRMMdirName'], userVariables.startDateTime, userVariables.endDateTime, 3, 'hour', true)
+    test, _ = _check_for_files(userVariables.DIRS['TRMMdirName'], userVariables.startDateTime, userVariables.endDateTime, 3, 'hour', True)
     if test is False:
         print "Error with files in the TRMM directory entered. Please check your files before restarting. "
         return
 
-    test, userVariables.filelist = _check_for_files(userVariables.DIRS['CEoriDirName'], userVariables.startDateTime, userVariables.endDateTime, 1, 'hour', true)
+    test, userVariables.filelist = _check_for_files(userVariables.DIRS['CEoriDirName'], userVariables.startDateTime, userVariables.endDateTime, 1, 'hour', True)
 
     if test is False:
         print "Error with files in the original MERG directory entered. Please check your files before restarting. "
@@ -227,8 +227,6 @@ def read_vars(userVariables):
 
     # Create main directory and file structure for storing intel
     userVariables.DIRS['mainDirStr'] = _create_main_directory(userVariables.DIRS['mainDirStr'])
-    TRMMCEdirName = userVariables.DIRS['mainDirStr']+'/TRMMnetcdfCEs'
-    CEdirName = userVariables.DIRS['mainDirStr']+'/MERGnetcdfCEs'
 
     return graphVariables
 # **********************************************************************************************************************

@@ -102,7 +102,6 @@ def test_read_netCDF_to_array():
 
 def list_comprehension_trimmer():
     '''
-
     Purpose:: Trim's array of numbers outside a certain range by using a list comprehension
               It's to be compared with find_nearest_trimmer which does the same thing in a different way
 
@@ -120,7 +119,6 @@ def list_comprehension_trimmer():
 
 def find_nearest_trimmer():
     '''
-
     Purpose:: Trim's array of numbers outside a certain range by using utils.find_nearest() and np.where()
               It's to be compared with list_comprehension_trimmer which does the same thing in a different way
 
