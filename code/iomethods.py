@@ -21,7 +21,7 @@ def _get_fileList_for_binaries(dirPath, startTime, endTime):
         Input:: dirPath: Path to where the binary MERG files are.
                 startTime: The cutoff for the earliest files you want
                 endTime: The cutoff for the latest files you want
-        Output:: A list of a path to files that are between
+        Output:: A list of a path to files that are between startTime and endTime
         Assumptions:: startTime and endTime are in the format YYYYMMDDHHSS
                       The filename always ends with -pixel
                       The date is included in the file name, with the format YYYYMMDDHH
@@ -36,15 +36,14 @@ def _get_fileList_for_binaries(dirPath, startTime, endTime):
     end = datetime.strptime(endTime, '%Y%m%d%H%S')      # the current file's time
 
     for file in fileList:
-        dateFromFileName = [token for token in file.split('_') if token.isdigit()]  # Parse date from MERG binary file name
-        dateAsDateTime = datetime.strptime(dateFromFileName[0], '%Y%m%d%H')
+        dateFromFileName = file[5:15]
+        dateAsDateTime = datetime.strptime(dateFromFileName, '%Y%m%d%H')
 
         if start <= end and start <= dateAsDateTime <= end:
             newFileList.append(file)
         elif start <= dateAsDateTime or dateAsDateTime <= end:
             newFileList.append(file)
 
-    print len(newFileList)
     return newFileList
 
 
@@ -280,7 +279,7 @@ def read_data(varName, latName, lonName, userVariables, fileType):
             (2) Assumes rectilinear grids for input datasets i.e. lat, lon will be 1D arrays
     '''
 
-    # Get list of files that are within the specified range
+    # Get list of files between startDateTime and endDateTime in the passed in userVariables object
     if fileType == 'binary':
         userVariables.filelist = _get_fileList_for_binaries(userVariables.DIRS['CEoriDirName'], userVariables.startDateTime,
                                                            userVariables.endDateTime)
@@ -301,7 +300,8 @@ def read_data(varName, latName, lonName, userVariables, fileType):
 
         tmp.close()
     elif fileType == 'binary':
-        # Generate latitudes and longitudes
+        # Generate latitudes and longitudes because they didn't come with the binary file.
+        # See http://www.cpc.ncep.noaa.gov/products/global_precip/html/README for reasoning behind the numbers
         alllatsraw = np.arange(59.982, -60., -0.036383683, dtype=np.float)
         alllonsraw = np.arange(0.0182, 360., 0.036378335, dtype=np.float)
 
@@ -357,7 +357,7 @@ def read_data(varName, latName, lonName, userVariables, fileType):
                 # Subset the data
                 data = data[:, latminIndex:latmaxIndex, lonminIndex:lonmaxIndex]
 
-                # Parse time from filename. Assumes the filename is in the format 'merg_xxxxxxxxxx_4km-pixel'
+                # Parse time from the file name. Assumes the filename is in the format 'merg_xxxxxxxxxx_4km-pixel'
                 dateFromFileName = file[5:15]
                 dateAsDateTime = datetime.strptime(dateFromFileName, '%Y%m%d%H')
 
@@ -586,7 +586,7 @@ def write_merg_to_ncdf(lonDict, latDict, timeDict, ch4Dict, fileName, dirName, g
     ncdf.createVariable(timeDict['name'], timeDict['dataType'], timeDict['dimensions'])
 
     # Parse time from filename. Assumes the filename is in the format 'merg_xxxxxxxxxx_4km-pixel'
-    dateFromFileName = file[5:15]
+    dateFromFileName = fileName[5:15]
     dateAsDateTime = datetime.strptime(dateFromFileName, '%Y%m%d%H')
 
     ncdf.variables['time'].setncattr('units', 'hours since ' + str(dateAsDateTime.year) + '-' + str(dateAsDateTime.month) +
