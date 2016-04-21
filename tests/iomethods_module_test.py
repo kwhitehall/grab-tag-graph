@@ -100,10 +100,11 @@ def test_read_netCDF_to_array():
     print trimmedLats
     print trimmedLons
 
-def for_comprehension_perf_test():
+def list_comprehension_trimmer():
     '''
 
-    Returns:
+    Purpose:: Trim's array of numbers outside a certain range by using a list comprehension
+              It's to be compared with find_nearest_trimmer which does the same thing in a different way
 
     '''
     lats = np.arange(0, 60., 0.05, dtype=np.float)
@@ -117,7 +118,13 @@ def for_comprehension_perf_test():
     trimmedLats = lats[trimmedLatsEnd:trimmedLatsStart]
 
 
-def find_nearest_perf_test():
+def find_nearest_trimmer():
+    '''
+
+    Purpose:: Trim's array of numbers outside a certain range by using utils.find_nearest() and np.where()
+              It's to be compared with list_comprehension_trimmer which does the same thing in a different way
+
+    '''
     lats = np.arange(0, 60., 0.05, dtype=np.float)
 
     latminNETCDF = utils.find_nearest(lats, float(30))
