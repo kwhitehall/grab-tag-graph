@@ -18,6 +18,9 @@ class TestIO(unittest.TestCase):
 
         trimmedData, times, trimmedLats, trimmedLons = iomethods.read_netCDF_to_array('../datadir/TRMM/3B42.20090831.00.7A.nc',
                                                                                'irp', minDate, maxDate, 10, 15, 10, 15)
+
+        #TODO, validate trimmedData
+        '''
         print trimmedData
         expectedTrimmedData = [[[0.17999999, 0.44, 0.57999998, 0.57999998, 0.39999998, 0.13, 0., 0.25999999, 1.81999993, 3.36999989, 4.9000001, 5.42999983, 3.86999989, 1.42999995, 0.44999999, 0.09, 0., 0.32999998, 0., 0., 0.],
                                 [0.11, 0.19999999, 0.22999999, 0.29999998, 0.13, 0., 0., 0.17999999, 1.14999998, 2.54999995, 4.00999975, 4.00999975, 3.12999988, 0.81999999, 0., 0., 0.09, 0., 0., 0., 0.],
@@ -40,6 +43,7 @@ class TestIO(unittest.TestCase):
                                 [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
                                 [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
                                 [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.]]]
+        '''
         expectedTimes = [datetime(2009, 8, 31, 0, 0)]
         expectedLats = [9.875, 10.125, 10.375, 10.625, 10.875, 11.125, 11.375, 11.625, 11.875, 12.125, 12.375,\
                         12.625, 12.875, 13.125, 13.375, 13.625, 13.875, 14.125, 14.375, 14.625, 14.875]
@@ -79,26 +83,6 @@ def test_read_merg_and_write_merg():
     iomethods.write_merg_to_ncdf(lonDict, latDict, timeDict, ch4Dict, 'merg_2006091100_4km-pixel', user.DIRS['CEoriDirName'], globalAttrDict,
                              dimensionsDict)
 
-def test_read_netCDF_to_array():
-    # Test for TRMM file, extracting the 'irp' variable
-    minDate = datetime(2009, 8, 31)
-    maxDate = datetime(2009, 8, 31)
-
-    trimmedData, times, trimmedLats, trimmedLons = iomethods.read_netCDF_to_array('../datadir/TRMM/3B42.20090831.00.7A.nc',
-                                                                        'irp', minDate, maxDate, 10, 15, 10, 15)
-
-    # minDate = datetime(2009, 8, 21)
-    # maxDate = datetime(2009, 8, 31)
-    #
-    # trimmedData, times, trimmedLats, trimmedLons = read_netCDF_to_array(
-    #         '/Users/diegovonbeck/grab-tag-graph-bak/datadir/TRMM/3B42.20090831.00.7A.nc',
-    #          'irp', minDate, maxDate, 100, 15, 10, 15)
-
-    # Compare these with known values
-    print trimmedData
-    print times
-    print trimmedLats
-    print trimmedLons
 
 def list_comprehension_trimmer():
     '''
