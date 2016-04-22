@@ -47,6 +47,58 @@ def _get_fileList_for_binaries(dirPath, startTime, endTime):
     return newFileList
 
 
+def _check_pattern(dirPath, startTime, endTime, tdelta, tRes, flag, filelist):
+    '''
+        Purpose:: refactored pattern recognition to be more modular and usable by other functions that
+                    that wants to obtain the startTime, startFile, endTime, endFile
+    '''
+    
+    startFile = ''
+    endFile = ''
+    currFile = ''
+    hasDelimiter = False
+    startTimeInFile = ''
+    endTimeInFile = ''
+    currTimeInFile = ''
+    tokenCounter = 0
+    
+    if flag is True:
+        for eachPart in re.split(r'[_,-,.,/]', re.split(r'.nc', os.path.basename(filelist[0]))[0]):
+            tokenCounter += 1
+            if tokenCounter == 1:
+                filenamePattern += eachPart
+            if eachPart.isdigit():
+                if len(eachPart) >= 6:
+                    hasDelimiter = True
+                    startTimeInFile += eachPart + '*'
+                elif eachPart in startTime:
+                    startTimeInFile += eachPart + '*'
+    
+        if hasDelimiter is False:
+            fileDate = int(re.search(r'\d+', re.split(r'.nc', os.path.basename(filelist[0]))[0]).group())
+            filenamePattern = re.split(str(fileDate), os.path.basename(filelist[0]))[0]
+    else:
+        for eachPart in re.split(r'[_,-,.,/]', re.split(os.path.basename(filelist[0]))[0]):
+            tokenCounter += 1
+            if tokenCounter == 1:
+                filenamePattern += eachPart
+            if eachPart.isdigit():
+                if len(eachPart) >= 6:
+                    hasDelimiter = True
+                    startTimeInFile += eachPart + '*'
+                elif eachPart in startTime:
+                    startTimeInFile += eachPart + '*'
+    
+        if hasDelimiter is False:
+            fileDate = int(re.search(r'\d+', re.split(os.path.basename(filelist[0]))[0]).group())
+            filenamePattern = re.split(str(fileDate), os.path.basename(filelist[0]))[0]
+
+    startFile = glob.glob(dirPath+'/'+filenamePattern + '*' + startTimeInFile)[0]
+    endTimeInFile = _find_time_in_file(endTime, startTimeInFile)
+    endFile = glob.glob(dirPath+'/'+filenamePattern + '*' + endTimeInFile + '*')[0]
+    
+    return startTimeInFile, startFile, endTimeInFile, endFile
+
 def check_for_files(dirPath, startTime, endTime, tdelta, tRes, flag):
     '''
         Purpose:: To ensure all the files between the startTime and endTime
@@ -93,44 +145,8 @@ def check_for_files(dirPath, startTime, endTime, tdelta, tRes, flag):
     else:
         filelist = filter(os.path.isfile, glob.glob(dirPath))
     filelist.sort()
-
-    # Check for the filename pattern
-    if flag is True:
-        for eachPart in re.split(r'[_,-,.,/]', re.split(r'.nc', os.path.basename(filelist[0]))[0]):
-            tokenCounter += 1
-            if tokenCounter == 1:
-                filenamePattern += eachPart
-            if eachPart.isdigit():
-                if len(eachPart) >= 6:
-                    hasDelimiter = True
-                    startTimeInFile += eachPart + '*'
-                elif eachPart in startTime:
-                    startTimeInFile += eachPart + '*'
     
-        if hasDelimiter is False:
-            fileDate = int(re.search(r'\d+', re.split(r'.nc', os.path.basename(filelist[0]))[0]).group())
-            filenamePattern = re.split(str(fileDate), os.path.basename(filelist[0]))[0]
-    else:
-        for eachPart in re.split(r'[_,-,.,/]', re.split(os.path.basename(filelist[0]))[0]):
-            tokenCounter += 1
-            if tokenCounter == 1:
-                filenamePattern += eachPart
-            if eachPart.isdigit():
-                if len(eachPart) >= 6:
-                    hasDelimiter = True
-                    startTimeInFile += eachPart + '*'
-                elif eachPart in startTime:
-                    startTimeInFile += eachPart + '*'
-    
-        if hasDelimiter is False:
-            fileDate = int(re.search(r'\d+', re.split(os.path.basename(filelist[0]))[0]).group())
-            filenamePattern = re.split(str(fileDate), os.path.basename(filelist[0]))[0]
-
-    startFile = glob.glob(dirPath+'/'+filenamePattern + '*' + startTimeInFile)[0]
-    endTimeInFile = _find_time_in_file(endTime, startTimeInFile)
-    endFile = glob.glob(dirPath+'/'+filenamePattern + '*' + endTimeInFile + '*')[0]
-
-    currFile = startFile
+    startTimeInFile, currFile, endTimeInFile, endFile = _check_pattern(dirPath, startTime, endTime, tdelta, tRes, flag, filelist)
     filelist = []
 
     # Check for files between startTime and endTime
