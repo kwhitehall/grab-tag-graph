@@ -11,13 +11,24 @@ import utils
 import unittest
 import numpy as np
 
+class MockUserVariables:
+    def __init__(self, LATMIN, LATMAX, LONMIN, LONMAX, startDateTime, endDateTime):
+        self.LATMIN = LATMIN
+        self.LATMAX = LATMAX
+        self.LONMIN = LONMIN
+        self.LONMAX = LONMAX
+        self.startDateTime = startDateTime
+        self.endDateTime = endDateTime
+
 class TestIO(unittest.TestCase):
     def test_read_netCDF_to_array(self):
         minDate = datetime(2009, 8, 31)
         maxDate = datetime(2009, 8, 31)
 
+        userVariables = MockUserVariables('5.0', '15.0', '-5.0', '20.0', "200908310000", "200908312100")
+
         trimmedData, times, trimmedLats, trimmedLons = iomethods.read_netCDF_to_array('../datadir/TRMM/3B42.20090831.00.7A.nc',
-                                                                               'irp', minDate, maxDate, 10, 15, 10, 15)
+                                                                               'irp', minDate, maxDate, 10, 15, 10, 15, userVariables)
         #TODO, validate trimmedData
         '''
         print trimmedData
@@ -96,7 +107,7 @@ class TestIO(unittest.TestCase):
 
         test, _ = iomethods.check_for_files('../datadir/TRMM/3B42.20090831.00.7A.nc', '20090830', '20090831', 3, 'hour', flag=True)
         self.assertTrue(test, "Error with files in the TRMM directory entered.")
-            
+
         test1, self.filelist = iomethods.check_for_files('../datadir/MERG/merg_2006091100_4km-pixel', '20090830', '20090831', 1, 'hour', flag=True)
         self.assertTrue(test1, "Error with files in the MERG directory entered.")
 
