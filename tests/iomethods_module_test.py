@@ -62,8 +62,14 @@ class TestIO(unittest.TestCase):
 
         #self.assertTrue((expectedTrimmedData == trimmedData).all(), "Trimmed and expected data differ!")
         self.assertEqual(expectedTimes, times, "Returned time and expected time differ!")
-        self.assertTrue((expectedLats == trimmedLats).all(), "Trimmed and expected Lat ranges differ!")
-        self.assertTrue((expectedLons == trimmedLons).all(), "Trimmed and expected Lon ranges differ!")
+
+        latsListTest = (expectedLats == trimmedLats)
+        latsListTest = latsListTest if type(latsListTest) is not np.ndarray else latsListTest.all()
+        self.assertTrue(latsListTest, "Trimmed and expected Lat ranges differ!")
+
+        lonsListTest = (expectedLons == trimmedLons)
+        lonsListTest = lonsListTest if type(lonsListTest) is not np.ndarray else lonsListTest.all()
+        self.assertTrue(lonsListTest, "Trimmed and expected Lon ranges differ!")
 
     def test_read_merg_and_write_merg(self):
         '''
