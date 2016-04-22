@@ -47,7 +47,7 @@ def _get_fileList_for_binaries(dirPath, startTime, endTime):
     return newFileList
 
 
-def check_pattern(dirPath, startTime, endTime, tdelta, tRes, flag, filelist):
+def _check_pattern(dirPath, startTime, endTime, tdelta, tRes, flag, filelist):
     '''
         Purpose:: refactored pattern recognition to be more modular and usable by other functions that
                     that wants to obtain the startTime, startFile, endTime, endFile
@@ -146,7 +146,7 @@ def check_for_files(dirPath, startTime, endTime, tdelta, tRes, flag):
         filelist = filter(os.path.isfile, glob.glob(dirPath))
     filelist.sort()
     
-    startTimeInFile, currFile, endTimeInFile, endFile = check_pattern(dirPath, startTime, endTime, tdelta, tRes, flag, filelist)
+    startTimeInFile, currFile, endTimeInFile, endFile = _check_pattern(dirPath, startTime, endTime, tdelta, tRes, flag, filelist)
     filelist = []
 
     # Check for files between startTime and endTime
