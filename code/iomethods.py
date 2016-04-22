@@ -61,7 +61,8 @@ def _check_pattern(dirPath, startTime, endTime, tdelta, tRes, flag, filelist):
     endTimeInFile = ''
     currTimeInFile = ''
     tokenCounter = 0
-    
+    filenamePattern = ''
+
     if flag is True:
         for eachPart in re.split(r'[_,-,.,/]', re.split(r'.nc', os.path.basename(filelist[0]))[0]):
             tokenCounter += 1
@@ -643,6 +644,28 @@ def _read_merg_file(filepath, shape, offset):
 
     return data
 
+def _get_valid_coordinate(coordinate, expectedLow, expectedHigh):
+    try:
+        input = float(raw_input(coordinate + " passed to read_netCDF_to_array "
+            "invalid, must be between %f and %f, enter replacement:"
+            % (expectedLow, expectedHigh)))
+    except ValueError as e:
+        print "Error parsing coordinates: " + e.message
+        print "Try again"
+
+    return input
+
+def _get_valid_time(time, expectedStart, expectedEnd):
+    inputString = raw_input(time + " passed to read_netCDF_to_array "
+             "invalid, must be between %s and %s, enter replacement in "
+             "yyyy-mm-dd hh:mm:ss format:" % (expectedStart, expectedEnd))
+    try:
+        input = datetime.strptime(inputString, "%Y-%m-%d %H:%M:%S")
+    except ValueError as e:
+        print "Error parsing dates: " + e.message
+        print "Try again"
+
+    return input
 
 def read_netCDF_to_array(filepath, variableToExtract, minT, maxT, minLat, maxLat, minLon, maxLon, userVariables):
     '''
@@ -683,60 +706,18 @@ def read_netCDF_to_array(filepath, variableToExtract, minT, maxT, minLat, maxLat
     uvEndTime = datetime.strptime(userVariables.endDateTime, '%Y%m%d%H%M')
 
     while uvLatMin > minLat or minLat > uvLatMax:
-        try:
-            minLat = float(raw_input("minLat passed to read_netCDF_to_array "
-                 "invalid, must be between %f and %f, enter replacement:"
-                 % (uvLatMin, uvLatMax)))
-        except ValueError as e:
-            print "Error parsing coordinates: " + e.message
-            print "Try again"
+        minLat = _get_valid_coordinate ("minLat", uvLatMin, uvLatMax)
     while uvLatMin > maxLat or maxLat > uvLatMax:
-        try:
-            maxLat = float(raw_input("maxLat passed to read_netCDF_to_array "
-                 "invalid, must be between %f and %f, enter replacement:"
-                  % (uvLatMin, uvLatMax)))
-        except ValueError as e:
-            print "Error parsing coordinates: " + e.message
-            print "Try again"
+        maxLat = _get_valid_coordinate ("maxLat", uvLatMin, uvLatMax)
     while uvLonMin > minLon or minLon > uvLonMax:
-        try:
-            minLon = float(raw_input("minLon passed to read_netCDF_to_array "
-                 "invalid, must be between %f and %f, enter replacement:"
-                 % (uvLonMin, userVariables.LONMAX)))
-        except ValueError as e:
-            print "Error parsing coordinates: " + e.message
-            print "Try again"
+        minLon = _get_valid_coordinate ("minLon", uvLonMin, uvLonMax)
     while uvLonMin > maxLon or maxLon > uvLonMax:
-        try:
-            maxLon = float(raw_input("maxLon passed to read_netCDF_to_array "
-                 "invalid, must be between %f and %f, enter replacement:"
-                 % (uvLonMin, uvLonMax)))
-        except ValueError as e:
-            print "Error parsing coordinates: " + e.message
-            print "Try again"
+        maxLon = _get_valid_coordinate ("maxLon", uvLonMin, uvLonMax)
+
     while uvStartTime > minT or minT > uvEndTime:
-
-        minTStr = raw_input("minT passed to read_netCDF_to_array "
-             "invalid, must be between %s and %s, enter replacement in "
-             "yyyy-mm-dd hh:mm:ss format:" % (uvStartTime, uvEndTime))
-
-        try:
-            minT = datetime.strptime(minTStr, "%Y-%m-%d %H:%M:%S")
-        except ValueError as e:
-            print "Error parsing dates: " + e.message
-            print "Try again"
+        minT = _get_valid_time("minT", uvStartTime, uvEndTime)
     while uvStartTime > maxT or maxT > uvEndTime:
-
-        maxTStr = raw_input("maxT passed to read_netCDF_to_array "
-                            "invalid, must be between %s and %s, enter replacement in "
-                            "yyyy-mm-dd hh:mm:ss format:" % (
-                            uvStartTime, uvEndTime))
-
-        try:
-            maxT = datetime.strptime(maxTStr, "%Y-%m-%d %H:%M:%S")
-        except ValueError as e:
-            print "Error parsing dates: " + e.message
-            print "Try again"
+        maxT = _get_valid_time("maxT", uvStartTime, uvEndTime)
 
     dataset = netCDF4.Dataset(filepath, 'r', format='NETCDF4')
 
