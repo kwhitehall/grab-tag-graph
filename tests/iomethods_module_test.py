@@ -114,7 +114,7 @@ class TestIO(unittest.TestCase):
         test, _ = iomethods.check_for_files('../datadir/TRMM/3B42.20090831.00.7A.nc', '20090830', '20090831', 3, 'hour', flag=True)
         self.assertTrue(test, "Error with files in the TRMM directory entered.")
 
-        test1, self.filelist = iomethods.check_for_files('../datadir/MERG/merg_2006091100_4km-pixel', '20090830', '20090831', 1, 'hour', flag=True)
+        test1, self.filelist = iomethods.check_for_files('../datadir/MERG/merg_2006092100_4km-pixel', '20090830', '20090831', 1, 'hour', flag=True)
         self.assertTrue(test1, "Error with files in the MERG directory entered.")
 
 def list_comprehension_trimmer():
