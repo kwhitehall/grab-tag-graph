@@ -122,40 +122,6 @@ class TestIO(unittest.TestCase):
         test1, _ = iomethods.check_for_files('../datadir/MERG', userVariables.startDateTime, userVariables.endDateTime, 1, 'hour', flag=True)
         self.assertTrue(test1, "Error with files in the MERG directory entered.")
 
-def list_comprehension_trimmer():
-    '''
-    Purpose:: Trim's array of numbers outside a certain range by using a list comprehension
-              It's to be compared with find_nearest_trimmer which does the same thing in a different way
-
-    '''
-    lats = np.arange(0, 60., 0.05, dtype=np.float)
-
-    trimmedLatsIndices = [i for i in range(len(lats))
-                          if lats[i] <= 50 and lats[i] >= 30]
-
-    trimmedLatsStart = trimmedLatsIndices[0]
-    trimmedLatsEnd = trimmedLatsIndices[-1]
-
-    trimmedLats = lats[trimmedLatsEnd:trimmedLatsStart]
-
-
-def find_nearest_trimmer():
-    '''
-    Purpose:: Trim's array of numbers outside a certain range by using utils.find_nearest() and np.where()
-              It's to be compared with list_comprehension_trimmer which does the same thing in a different way
-
-    '''
-    lats = np.arange(0, 60., 0.05, dtype=np.float)
-
-    latminNETCDF = utils.find_nearest(lats, float(30))
-    latmaxNETCDF = utils.find_nearest(lats, float(50))
-
-    latminIndex = (np.where(lats == latminNETCDF))[0][0]
-    latmaxIndex = (np.where(lats == latmaxNETCDF))[0][0]
-
-    trimmedLats = lats[latminIndex:latmaxIndex]
-
-
 if __name__ == '__main__':
     unittest.main()
 
