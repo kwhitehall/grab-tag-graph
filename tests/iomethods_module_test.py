@@ -10,6 +10,7 @@ import variables
 import utils
 import unittest
 import numpy as np
+import numpy.ma as ma
 
 class MockUserVariables:
     def __init__(self, LATMIN, LATMAX, LONMIN, LONMAX, startDateTime, endDateTime):
@@ -20,6 +21,7 @@ class MockUserVariables:
         self.startDateTime = startDateTime
         self.endDateTime = endDateTime
 
+
 class TestIO(unittest.TestCase):
     def test_read_netCDF_to_array(self):
         minDate = datetime(2009, 8, 31)
@@ -29,9 +31,9 @@ class TestIO(unittest.TestCase):
 
         trimmedData, times, trimmedLats, trimmedLons = iomethods.read_netCDF_to_array('../datadir/TRMM/3B42.20090831.00.7A.nc',
                                                                                'irp', minDate, maxDate, 10, 15, 10, 15, userVariables)
-        #TODO, validate trimmedData
-        '''
-        print trimmedData
+
+
+
         expectedTrimmedData = [[[0.17999999, 0.44, 0.57999998, 0.57999998, 0.39999998, 0.13, 0., 0.25999999, 1.81999993, 3.36999989, 4.9000001, 5.42999983, 3.86999989, 1.42999995, 0.44999999, 0.09, 0., 0.32999998, 0., 0., 0.],
                                 [0.11, 0.19999999, 0.22999999, 0.29999998, 0.13, 0., 0., 0.17999999, 1.14999998, 2.54999995, 4.00999975, 4.00999975, 3.12999988, 0.81999999, 0., 0., 0.09, 0., 0., 0., 0.],
                                 [0., 0.14999999, 0.11, 0., 0., 0., 0., 0.19999999, 0.53999996, 1.12, 1.62, 2.22000003, 1.31999993, 0.39999998, 0., 0., 0.25, 0., 0., 0., 0.],
@@ -53,14 +55,17 @@ class TestIO(unittest.TestCase):
                                 [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
                                 [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
                                 [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.]]]
-        '''
+        expectedTrimmedData = ma.array(expectedTrimmedData)
+
+
         expectedTimes = [datetime(2009, 8, 31, 0, 0)]
         expectedLats = [9.875, 10.125, 10.375, 10.625, 10.875, 11.125, 11.375, 11.625, 11.875, 12.125, 12.375,\
                         12.625, 12.875, 13.125, 13.375, 13.625, 13.875, 14.125, 14.375, 14.625, 14.875]
         expectedLons = [9.875, 10.125, 10.375, 10.625, 10.875, 11.125, 11.375, 11.625, 11.875, 12.125, 12.375,\
                         12.625, 12.875, 13.125, 13.375, 13.625, 13.875, 14.125, 14.375, 14.625, 14.875]
 
-        #self.assertTrue((expectedTrimmedData == trimmedData).all(), "Trimmed and expected data differ!")
+        self.assertTrue(ma.allclose(expectedTrimmedData, trimmedData), "Trimmed and expected data differ!")
+
         self.assertEqual(expectedTimes, times, "Returned time and expected time differ!")
 
         latsListTest = (expectedLats == trimmedLats)
@@ -104,7 +109,6 @@ class TestIO(unittest.TestCase):
 
         #TODO validate contents of file, not that it just exists
         self.assertEqual(output, FILE + ".nc", "Output file name differs than expected!")
-
 
     def test_check_for_files(self):
         '''
