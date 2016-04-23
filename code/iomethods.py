@@ -276,7 +276,7 @@ def _create_main_directory(mainDirStr):
 
     return MAIN_DIRECTORY
 # **********************************************************************************************************************
-def read_data(varName, latName, lonName, userVariables, fileType):
+def read_data(varName, latName, lonName, userVariables):
     '''
         Purpose::
             Read gridded data into (t, lat, lon) arrays for processing
@@ -285,21 +285,16 @@ def read_data(varName, latName, lonName, userVariables, fileType):
             latName: a string representing the latitude from the file's metadata
             lonName: a string representing the longitude from the file's metadata
             userVariables: a UserVariables object
-            fileType: a string representing whether we want to read either a netCDF file or a binary file.
         Outputs::
             A 3D masked array (t,lat,lon) with only the variables which meet the minimum temperature
-            criteria for each frame if the fileType is netCDF
-            If the fileType is binary, then the data is not masked by temperature
+            criteria for each frame
+
         Assumptions::
             (1) All the files requested to extract data are from the same instrument/model, and thus have the same
             metadata properties (varName, latName, lonName) as entered
             (2) Assumes rectilinear grids for input datasets i.e. lat, lon will be 1D arrays
     '''
 
-    # Get list of files between startDateTime and endDateTime in the passed in userVariables object
-    if fileType == 'binary':
-        userVariables.filelist = _get_fileList_for_binaries(userVariables.DIRS['CEoriDirName'], userVariables.startDateTime,
-                                                           userVariables.endDateTime)
     outputData = []
     timelist = []
 
@@ -308,19 +303,13 @@ def read_data(varName, latName, lonName, userVariables, fileType):
         print 'Error: no files found'
         sys.exit()
 
-    if fileType == 'netCDF':
-        tmp = netCDF4.Dataset(userVariables.filelist[0], 'r+', format='NETCDF4')
+    tmp = netCDF4.Dataset(userVariables.filelist[0], 'r+', format='NETCDF4')
 
-        alllatsraw = tmp.variables[latName][:]
-        alllonsraw = tmp.variables[lonName][:]
-        alllonsraw[alllonsraw > 180] = alllonsraw[alllonsraw > 180] - 360.  # convert to -180,180 if necessary
+    alllatsraw = tmp.variables[latName][:]
+    alllonsraw = tmp.variables[lonName][:]
+    alllonsraw[alllonsraw > 180] = alllonsraw[alllonsraw > 180] - 360.  # convert to -180,180 if necessary
 
-        tmp.close()
-    elif fileType == 'binary':
-        # Generate latitudes and longitudes because they didn't come with the binary file.
-        # See http://www.cpc.ncep.noaa.gov/products/global_precip/html/README for reasoning behind the numbers
-        alllatsraw = np.arange(59.982, -60., -0.036383683, dtype=np.float)
-        alllonsraw = np.arange(0.0182, 360., 0.036378335, dtype=np.float)
+    tmp.close()
 
     # Get the lat/lon info data (different resolution)
     latminNETCDF = utils.find_nearest(alllatsraw, float(userVariables.LATMIN))
@@ -340,48 +329,29 @@ def read_data(varName, latName, lonName, userVariables, fileType):
 
     timeName = 'time'
     for file in userVariables.filelist:
-        if fileType == 'netCDF':
-            try:
-                thisFile = netCDF4.Dataset(file, 'r', format='NETCDF4')
+        try:
+            thisFile = netCDF4.Dataset(file, 'r', format='NETCDF4')
 
-                # Clip the dataset according to user lat, lon coordinates
-                # Mask the data and fill with zeros for later
-                tempRaw = thisFile.variables[varName][:, latminIndex:latmaxIndex, lonminIndex:lonmaxIndex].astype('int16')
-                tempMask = ma.masked_array(tempRaw, mask=(tempRaw > userVariables.T_BB_MAX), fill_value=-999)
-                # Get the actual values that the mask returned
+            # Clip the dataset according to user lat, lon coordinates
+            # Mask the data and fill with zeros for later
+            tempRaw = thisFile.variables[varName][:, latminIndex:latmaxIndex, lonminIndex:lonmaxIndex].astype('int16')
+            tempMask = ma.masked_array(tempRaw, mask=(tempRaw > userVariables.T_BB_MAX), fill_value=-999)
+            # Get the actual values that the mask returned
 
-                tempMaskedValue = tempMask
-                tempMaskedValue[tempMask.mask] = 0
+            tempMaskedValue = tempMask
+            tempMaskedValue[tempMask.mask] = 0
 
-                xtimes = thisFile.variables[timeName]
+            xtimes = thisFile.variables[timeName]
 
-                # Convert this time to a python datestring
-                time2store, _ = _get_model_times(xtimes)
+            # Convert this time to a python datestring
+            time2store, _ = _get_model_times(xtimes)
 
-                # Extend instead of append because get_model_times returns a list and we don't want a list of list
-                timelist.extend(time2store)
-                outputData.extend(tempMaskedValue)
-                thisFile.close()
-            except:
-                print 'bad file!', file
-
-        elif fileType == 'binary':
-            try:
-                # The data is temperature in Kelvin, for more information
-                # go to http://www.cpc.ncep.noaa.gov/products/global_precip/html/README
-                data = _read_merg_file(file, shape=(2, 3298, 9896), offset=75.)
-
-                # Subset the data
-                data = data[:, latminIndex:latmaxIndex, lonminIndex:lonmaxIndex]
-
-                # Parse time from the file name. Assumes the filename is in the format 'merg_xxxxxxxxxx_4km-pixel'
-                dateFromFileName = file[5:15]
-                dateAsDateTime = datetime.strptime(dateFromFileName, '%Y%m%d%H')
-
-                timelist.append(dateAsDateTime)
-                outputData.extend(data)
-            except:
-                print 'bad file!', file
+            # Extend instead of append because get_model_times returns a list and we don't want a list of list
+            timelist.extend(time2store)
+            outputData.extend(tempMaskedValue)
+            thisFile.close()
+        except:
+            print 'bad file!', file
 
     outputData = ma.array(outputData)
 
