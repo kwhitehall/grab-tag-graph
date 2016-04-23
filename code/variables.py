@@ -145,10 +145,11 @@ class UserVariables(object):
             print "Error! MERG invalid path!"
             self.CEoriDirName = raw_input("> Please enter the directory to the MERG netCDF files: \n")
             return False
-        if not os.path.exists(TRMMdirName):
-            print "Error: TRMM invalid path!"
-            self.TRMMdirName = raw_input("> Please enter the location to the raw TRMM netCDF files: \n")
-            return False
+        if not TRMMdirName == "None":
+            if not os.path.exists(TRMMdirName):
+                print "Error: TRMM invalid path!"
+                self.TRMMdirName = raw_input("> Please enter the location to the raw TRMM netCDF files: \n")
+                return False
         return True
 
     def check_times(self, startDateTime, endDateTime):
