@@ -110,7 +110,7 @@ class TestIO(unittest.TestCase):
         Purpose:: To ensure all the files between the startTime and endTime
                   exist in the directory supplied
         '''
-        
+
         test, _ = iomethods.check_for_files('../datadir/TRMM/3B42.20090831.00.7A.nc', '20090830', '20090831', 3, 'hour', flag=True)
         self.assertTrue(test, "Error with files in the TRMM directory entered.")
 

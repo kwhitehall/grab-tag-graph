@@ -644,9 +644,9 @@ def _read_merg_file(filepath, shape, offset):
 
     return data
 
-def _get_valid_coordinate(coordinate, expectedLow, expectedHigh):
+def _get_valid_coordinate(coordinateName, expectedLow, expectedHigh):
     try:
-        input = float(raw_input(coordinate + " passed to read_netCDF_to_array "
+        input = float(raw_input(coordinateName + " passed to read_netCDF_to_array "
             "invalid, must be between %f and %f, enter replacement:"
             % (expectedLow, expectedHigh)))
     except ValueError as e:
@@ -655,8 +655,8 @@ def _get_valid_coordinate(coordinate, expectedLow, expectedHigh):
 
     return input
 
-def _get_valid_time(time, expectedStart, expectedEnd):
-    inputString = raw_input(time + " passed to read_netCDF_to_array "
+def _get_valid_time(timeName, expectedStart, expectedEnd):
+    inputString = raw_input(timeName + " passed to read_netCDF_to_array "
              "invalid, must be between %s and %s, enter replacement in "
              "yyyy-mm-dd hh:mm:ss format:" % (expectedStart, expectedEnd))
     try:
