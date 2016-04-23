@@ -105,20 +105,18 @@ class TestIO(unittest.TestCase):
         #TODO validate contents of file, not that it just exists
         self.assertEqual(output, FILE + ".nc", "Output file name differs than expected!")
 
-    '''
-    errors in the logic of check_for_files function. Please disregard this test for now...working on a fix
+
     def test_check_for_files(self):
         '''
         Purpose:: To ensure all the files between the startTime and endTime
                   exist in the directory supplied
         '''
-
-        test, _ = iomethods.check_for_files('../datadir/TRMM/3B42.20090831.00.7A.nc', '20090830', '20090831', 3, 'hour', flag=True)
+        userVariables = MockUserVariables('5.0', '15.0', '-5.0', '20.0', "200908310000", "200908312100")
+        test, _ = iomethods.check_for_files('../datadir/TRMM/3B42.20090831.00.7A.nc', userVariables.startDateTime, userVariables.endDateTime, 3, 'hour', flag=True)
         self.assertTrue(test, "Error with files in the TRMM directory entered.")
 
-        test1, _ = iomethods.check_for_files('../datadir/MERG/merg_2006092100_4km-pixel', '20090830', '20090831', 1, 'hour', flag=True)
+        test1, _ = iomethods.check_for_files('../datadir/MERG/merg_2006092100_4km-pixel', userVariables.startDateTime, userVariables.endDateTime, 1, 'hour', flag=True)
         self.assertTrue(test1, "Error with files in the MERG directory entered.")
-    '''
 
 def list_comprehension_trimmer():
     '''
