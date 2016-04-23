@@ -112,10 +112,10 @@ class TestIO(unittest.TestCase):
                   exist in the directory supplied
         '''
         userVariables = MockUserVariables('5.0', '15.0', '-5.0', '20.0', "200908310000", "200908312100")
-        test, _ = iomethods.check_for_files('../datadir/TRMM/3B42.20090831.00.7A.nc', userVariables.startDateTime, userVariables.endDateTime, 3, 'hour', flag=True)
+        test, _ = iomethods.check_for_files('../datadir/TRMM', userVariables.startDateTime, userVariables.endDateTime, 3, 'hour', flag=True)
         self.assertTrue(test, "Error with files in the TRMM directory entered.")
 
-        test1, _ = iomethods.check_for_files('../datadir/MERG/merg_2006092100_4km-pixel', userVariables.startDateTime, userVariables.endDateTime, 1, 'hour', flag=True)
+        test1, _ = iomethods.check_for_files('../datadir/MERG', userVariables.startDateTime, userVariables.endDateTime, 1, 'hour', flag=True)
         self.assertTrue(test1, "Error with files in the MERG directory entered.")
 
 def list_comprehension_trimmer():
