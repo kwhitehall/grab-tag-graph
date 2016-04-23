@@ -792,6 +792,25 @@ def read_netCDF_to_array(filepath, variableToExtract, minT, maxT, minLat, maxLat
 
 def _check_bounds(latsList, lonsList, maxLat, maxLon, maxT, minLat, minLon,
                   minT, times):
+    '''
+        Purpose:: Check if longitudes, latitudes, and times are in the range requested. If it's not, ask the user to
+                  supply it until it passes.
+
+        Input:: latsList: list of latitudes
+                lonsList: list of longitudes
+                maxLat: maximum latitude we want
+                maxLon: maximum longitude we want
+                maxT: maximum time we want
+                minLat: minimum latitude we want
+                minLon: minimum longitude we want
+                minT: minimum time we want
+                times: list of times
+
+        Output:: maxLat, maxLon, maxT, minT, minLat, maxLat, with values in range for all of them.
+        
+        Assumptions::
+    '''
+
     while min(latsList) > minLat or max(latsList) < maxLat:
         print "Requested range is outside file bounds in latitude axis. File " + \
               " bounds are %f, %f. Requested range is %f, %f" % (
