@@ -40,3 +40,7 @@ Community Mailing List
 Please visit the [Google Group](https://groups.google.com/d/forum/gtg-users) to see what's going on this project. It is a forum for persons users (not necessarily developers to discuss problems compiling & running the code, and suggestions for upgrades.
 
 Subscribe at [gtg-users@googlegroups.com](gtg-users@googlegroups.com)
+
+License
+=======
+The source code associated with the Grab 'em Tag 'em Graph 'em method is licensed under the [Apache License v2.0](http://www.apache.org/licenses/LICENSE-2.0) a copy of which ships with this code.
