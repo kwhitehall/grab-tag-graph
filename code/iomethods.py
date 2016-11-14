@@ -253,6 +253,11 @@ def read_data(varName, latName, lonName, userVariables, filelist=None):
     global LAT
     global LON
 
+    mem = utils.sufficient_mem(userVariables.DIRS, userVariables.filelist, userVariables.numProcs)
+    if not mem:
+        print 'There is not enough memory on this system to complete this task'
+        sys.exit()
+
     timeName = 'time'
 
     filelistInstructions = userVariables.DIRS['CEoriDirName']+'/*'

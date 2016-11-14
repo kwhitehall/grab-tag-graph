@@ -9,6 +9,34 @@ import numpy as np
 import numpy.ma as ma
 from netCDF4 import Dataset
 from scipy.ndimage import map_coordinates
+from psutil import virtual_memory
+
+def sufficient_mem(fileNamesDict, filelist, numProc):
+    '''
+    Purpose:: To check for the avialable memory on a system and compare with
+               the memory needed to complete the work
+
+    Input:: filesDict - dictionary with paths to inputFiles
+            filelist - list of core (MERG)files to be used
+            num of processes
+
+    Output:: boolean indicating if there is sufficient mem or not
+    '''
+    sysMem = virtual_memory()
+    maxMemList = [] 
+    maxMemList.append(max(os.path.getsize(i) for i in filelist))
+
+    for directory in fileNamesDict:
+        if not 'CEoriDirName' in directory or not 'mainDirStr' in directory:
+            maxMemList.append(max(os.path.getsize(i) for i in glob.glob(fileNamesDict[directory]+'/*')))
+
+    #min mem required = 2 * fileSizes * numProc
+    minMemReq = sum((2 * i * numProc) for i in maxMemList)
+
+    if minMemReq > maxMemList:
+        return False
+    else:
+        return True
 
 
 def do_regrid(inputGrid, lat, lon, lat2, lon2, order=1, mdi=-999999999):

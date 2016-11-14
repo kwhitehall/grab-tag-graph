@@ -16,7 +16,6 @@ from scipy import ndimage
 # GTG modules
 import utils
 
-NUM_IMAGE_WORKERS = 2  # Number of workers to send off for extracting CE in the independent image frames
 P_TIME = 0
 
 # ------------------------ End GLOBAL VARS -------------------------
@@ -76,7 +75,7 @@ def find_cloud_elements(mergImgs, timelist, lat, lon, userVariables, graphVariab
     global LON
     LON = lon
 
-    p = Pool(NUM_IMAGE_WORKERS)
+    p = Pool(userVariables.numProcs)
     image_proc_start = time.time()
 
     results = p.map(CeFinder(timelist, userVariables, TRMMdirName), xrange(mergImgs.shape[0]))
