@@ -51,7 +51,7 @@ def main():
     print "\n -------------- Read MERG Data ----------"
     print "\n Start the timer for the data ingest process"
     readMergStart = time.time()
-    mergImgs, timeList, LAT, LON, userVariables = iomethods.read_data('ch4', 'latitude', 'longitude', userVariables)
+    mergImgs, timeList, LAT, LON, userVariables = iomethods.read_data('ch4', 'latitude', 'longitude', userVariables, fileType='netCDF')
     readMergEnd = time.time()
     print "\n End the timer for the data ingest process"
     print "\n Total time to complete data ingest is %g seconds" % (readMergEnd - readMergStart)
@@ -63,7 +63,7 @@ def main():
     findCEsStart = time.time()
     print "\n Using both MERG and TRMM simultaneously "
     # CEGraph = mccSearch.find_cloud_elements(mergImgs,timeList,userVariables.DIRS['mainDirStr'], LAT,LON,userVariables, graphVariables, userVariables.DIRS['TRMMdirName'])
-    CEGraph, _ = mccSearch.find_cloud_elements(mergImgs, timeList, LAT, LON, userVariables, graphVariables, userVariables. DIRS['TRMMdirName'])
+    CEGraph, _ = mccSearch.find_cloud_elements(mergImgs, timeList, LAT, LON, userVariables, graphVariables, userVariables.DIRS['TRMMdirName'])
     findCEsEnd = time.time()
     print "\n Number of cloud elements found is: ", CEGraph.number_of_nodes()
     print "\n End the timer for findCloudElements process"
